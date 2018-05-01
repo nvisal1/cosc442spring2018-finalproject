@@ -29,13 +29,9 @@ import net.sf.freecol.common.model.PathNode;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * Listens to the mouse being moved at the level of the Canvas.
- */
+/** Listens to the mouse being moved at the level of the Canvas. */
 public final class CanvasMouseMotionListener extends AbstractCanvasListener
     implements MouseMotionListener {
-
     private static final Logger logger = Logger.getLogger(CanvasMouseMotionListener.class.getName());
 
     /** Number of pixels that must be moved before a goto is enabled. */
@@ -47,7 +43,6 @@ public final class CanvasMouseMotionListener extends AbstractCanvasListener
      */
     private Tile lastTile;
     
-
     /**
      * Creates a new listener for mouse movement.
      *
@@ -56,7 +51,6 @@ public final class CanvasMouseMotionListener extends AbstractCanvasListener
     public CanvasMouseMotionListener(FreeColClient freeColClient, Canvas canvas) {
         super(freeColClient, canvas);
     }
-
 
     /**
      * Invoked when the mouse has been moved.
@@ -76,18 +70,16 @@ public final class CanvasMouseMotionListener extends AbstractCanvasListener
 
             Tile tile = canvas.convertToMapTile(e.getX(), e.getY());
 
-            if (tile != null) {
-                if (lastTile != tile) {
-                    Unit active = canvas.getActiveUnit();
-                    lastTile = tile;
-                    if (active != null && active.getTile() != tile) {
-                        PathNode dragPath = active.findPath(tile);
-                        canvas.setGotoPath(dragPath);
-                    } else {
-                        canvas.setGotoPath(null);
-                    }
-                }
-            }
+            if (tile != null && lastTile != tile) {
+			    Unit active = canvas.getActiveUnit();
+			    lastTile = tile;
+			    if (active != null && active.getTile() != tile) {
+			        PathNode dragPath = active.findPath(tile);
+			        canvas.setGotoPath(dragPath);
+			    } else {
+			        canvas.setGotoPath(null);
+			    }
+			}
         }
     }
 
@@ -98,13 +90,12 @@ public final class CanvasMouseMotionListener extends AbstractCanvasListener
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-
         performDragScrollIfActive(e);
 
         Tile tile = canvas.convertToMapTile(e.getX(), e.getY());
         if (tile != null
-            && ((e.getModifiers() & MouseEvent.BUTTON1_MASK)
-                == MouseEvent.BUTTON1_MASK)) {
+            && (e.getModifiers() & MouseEvent.BUTTON1_MASK)
+                == MouseEvent.BUTTON1_MASK) {
             // only perform the goto for the left mouse button
             if (canvas.isGotoStarted()) {
                 Unit active = canvas.getActiveUnit();

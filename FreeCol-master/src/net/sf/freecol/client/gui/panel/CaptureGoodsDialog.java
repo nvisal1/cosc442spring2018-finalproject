@@ -42,32 +42,21 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * Panel for choosing the goods to capture.
- */
+/** Panel for choosing the goods to capture. */
 public final class CaptureGoodsDialog extends FreeColDialog<List<Goods>> {
-
     private static final Logger logger = Logger.getLogger(CaptureGoodsDialog.class.getName());
 
-
     private static class GoodsItem extends JCheckBox {
-
         private final Goods goods;
-
 
         public GoodsItem(Goods goods) {
             this.goods = goods;
         }
 
-
         public Goods getGoods() {
             return this.goods;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return Messages.message(this.goods.getLabel());
@@ -76,15 +65,6 @@ public final class CaptureGoodsDialog extends FreeColDialog<List<Goods>> {
 
     private static class CheckBoxRenderer extends JCheckBox
         implements ListCellRenderer<GoodsItem> {
-
-        public CheckBoxRenderer() {
-            //setBackground(UIManager.getColor("List.textBackground"));
-            //setForeground(UIManager.getColor("List.textForeground"));
-        }
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Component getListCellRendererComponent(JList<? extends GoodsItem> list,
                                                       GoodsItem value,
@@ -109,7 +89,6 @@ public final class CaptureGoodsDialog extends FreeColDialog<List<Goods>> {
 
     /** The list of goods to display. */
     private JList<GoodsItem> goodsList;
-
 
     /**
      * Creates a new CaptureGoodsDialog.
@@ -162,9 +141,13 @@ public final class CaptureGoodsDialog extends FreeColDialog<List<Goods>> {
                 public void mouseClicked(MouseEvent me) {
                     JList<GoodsItem> gl = CaptureGoodsDialog.this.goodsList;
                     int index = gl.locationToIndex(me.getPoint());
-                    if (index < 0) return;
+                    if (index < 0) {
+						return;
+					}
                     GoodsItem item = gl.getModel().getElementAt(index);
-                    if (item.isEnabled()) item.setSelected(!item.isSelected());
+                    if (item.isEnabled()) {
+						item.setSelected(!item.isSelected());
+					}
                     updateComponents();
                 }
             });
@@ -185,40 +168,31 @@ public final class CaptureGoodsDialog extends FreeColDialog<List<Goods>> {
             new ImageIcon(getImageLibrary().getUnitImage(winner)), c);
     }
 
-
-    /**
-     * Update the components of the goods list.
-     */
+    /** Update the components of the goods list. */
     private void updateComponents() {
         int selectedCount = 0;
         for (int i = 0; i < this.goodsList.getModel().getSize(); i++) {
             GoodsItem gi = this.goodsList.getModel().getElementAt(i);
-            if (gi.isSelected()) selectedCount++;
+            if (gi.isSelected()) {
+				selectedCount++;
+			}
         }
 
-        if (selectedCount >= this.maxCargo) {
-            this.allButton.setEnabled(false);
-            for (int i = 0; i < this.goodsList.getModel().getSize(); i++) {
-                GoodsItem gi = this.goodsList.getModel().getElementAt(i);
-                if (!gi.isSelected()) gi.setEnabled(false);
-            }
-        } else {
-            this.allButton.setEnabled(true);
-            for (int i = 0; i < this.goodsList.getModel().getSize(); i++) {
-                GoodsItem gi = this.goodsList.getModel().getElementAt(i);
-                if (!gi.isSelected()) gi.setEnabled(true);
-            }
-        }
+        {
+			this.allButton.setEnabled(selectedCount < this.maxCargo);
+			for (int i = 0; i < this.goodsList.getModel().getSize(); i++) {
+				GoodsItem gi = this.goodsList.getModel().getElementAt(i);
+				if (!gi.isSelected()) {
+					gi.setEnabled(selectedCount < this.maxCargo);
+				}
+			}
+		}
 
         goodsList.repaint();
     }
 
+    /** Implement FreeColDialog. */
 
-    // Implement FreeColDialog
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Goods> getResponse() {
         Object value = getValue();
@@ -226,7 +200,9 @@ public final class CaptureGoodsDialog extends FreeColDialog<List<Goods>> {
         if (options.get(0).equals(value)) {
             for (int i = 0; i < this.goodsList.getModel().getSize(); i++) {
                 GoodsItem gi = this.goodsList.getModel().getElementAt(i);
-                if (gi.isSelected()) gl.add(gi.getGoods());
+                if (gi.isSelected()) {
+					gl.add(gi.getGoods());
+				}
             }
         }
         return gl;

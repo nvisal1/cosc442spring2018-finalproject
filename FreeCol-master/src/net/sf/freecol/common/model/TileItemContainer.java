@@ -33,13 +33,11 @@ import net.sf.freecol.common.model.Direction;
 import net.sf.freecol.common.model.Map.Layer;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
 /**
  * Contains <code>TileItem</code>s and can be used by a {@link Tile}
  * to make certain tasks easier.
  */
 public class TileItemContainer extends FreeColGameObject {
-
     private static final Logger logger = Logger.getLogger(TileItemContainer.class.getName());
 
     /** A comparator to sort by ascending zIndex. */
@@ -61,7 +59,6 @@ public class TileItemContainer extends FreeColGameObject {
 
     /** All tile items, sorted by zIndex. */
     private final List<TileItem> tileItems = new ArrayList<>();
-
 
     /**
      * Create an empty <code>TileItemContainer</code>.
@@ -132,7 +129,6 @@ public class TileItemContainer extends FreeColGameObject {
         super(game, id);
     }
 
-
     /**
      * Get the tile this container belongs to.
      *
@@ -158,7 +154,9 @@ public class TileItemContainer extends FreeColGameObject {
      */
     public final void setTileItems(final List<TileItem> newTileItems) {
         this.tileItems.clear();
-        if (newTileItems != null) this.tileItems.addAll(newTileItems);
+        if (newTileItems != null) {
+			this.tileItems.addAll(newTileItems);
+		}
         invalidateCache();
     }
 
@@ -260,7 +258,9 @@ public class TileItemContainer extends FreeColGameObject {
                 removed = true;
             }
         }
-        if (removed) invalidateCache();
+        if (removed) {
+			invalidateCache();
+		}
     }
 
     /**
@@ -311,7 +311,9 @@ public class TileItemContainer extends FreeColGameObject {
      *     <code>TileItem</code> if of higher magnitude, or null on error.
      */
     public final TileItem addTileItem(TileItem item) {
-        if (item == null) return null;
+        if (item == null) {
+			return null;
+		}
         for (int index = 0; index < tileItems.size(); index++) {
             TileItem oldItem = tileItems.get(index);
             if (item instanceof TileImprovement
@@ -362,7 +364,9 @@ public class TileItemContainer extends FreeColGameObject {
     public final <T extends TileItem> void removeAll(Class<T> c) {
         Iterator<TileItem> iterator = tileItems.iterator();
         while (iterator.hasNext()) {
-            if (c.isInstance(iterator.next())) iterator.remove();
+            if (c.isInstance(iterator.next())) {
+				iterator.remove();
+			}
         }
     }
 
@@ -438,7 +442,9 @@ public class TileItemContainer extends FreeColGameObject {
             if (item instanceof TileImprovement
                 && ((TileImprovement)item).isComplete()) {
                 Direction direction = targetTile.getDirection(fromTile);
-                if (direction == null) return INFINITY;
+                if (direction == null) {
+					return INFINITY;
+				}
                 moveCost = Math.min(moveCost, 
                     ((TileImprovement)item).getMoveCost(direction, moveCost));
             }
@@ -490,12 +496,10 @@ public class TileItemContainer extends FreeColGameObject {
                         ticR.getType(), ticR.getName());
                     addTileItem(r);
                 }
-            } else if (item instanceof TileImprovement) {
-                if (!copyOnlyNatural
-                    || ((TileImprovement)item).getType().isNatural()) {
-                    addTileItem(new TileImprovement(getGame(), tile, 
-                                                    (TileImprovement)item));
-                }
+            } else if (item instanceof TileImprovement && (!copyOnlyNatural
+			    || ((TileImprovement)item).getType().isNatural())) {
+			addTileItem(new TileImprovement(getGame(), tile, 
+			                                (TileImprovement)item));
             }
         }
     }
@@ -510,24 +514,17 @@ public class TileItemContainer extends FreeColGameObject {
         return tileItems.contains(t);
     }
 
-
     // Low level
 
-    /**
-     * Removes all references to this object.
-     */
+    /** Removes all references to this object. */
     @Override
     public void disposeResources() {
         tileItems.clear();
         super.disposeResources();
     }
 
+    /** Override FreeColGameObject. */
 
-    // Override FreeColGameObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int checkIntegrity(boolean fix) {
         int result = super.checkIntegrity(fix);
@@ -567,18 +564,13 @@ public class TileItemContainer extends FreeColGameObject {
         return result;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TILE_TAG = "tile";
-    // @compat 0.11.3
+    /** @compat 0.11.3 */
     private static final String OLD_TILE_IMPROVEMENT_TAG = "tileimprovement";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -586,9 +578,6 @@ public class TileItemContainer extends FreeColGameObject {
         xw.writeAttribute(TILE_TAG, tile);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -598,9 +587,6 @@ public class TileItemContainer extends FreeColGameObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -609,9 +595,6 @@ public class TileItemContainer extends FreeColGameObject {
                                         Tile.class, (Tile)null, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -620,9 +603,6 @@ public class TileItemContainer extends FreeColGameObject {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Game game = getGame();
@@ -637,37 +617,30 @@ public class TileItemContainer extends FreeColGameObject {
                 lcr.setTile(tile);
                 // end @compat 0.10.4
             }
-
         } else if (Resource.getXMLElementTagName().equals(tag)) {
             tileItems.add(xr.readFreeColGameObject(game, Resource.class));
-
         } else if (TileImprovement.getXMLElementTagName().equals(tag)
                    // @compat 0.11.3
                    || OLD_TILE_IMPROVEMENT_TAG.equals(tag)
                    // end @compat 0.11.3
                    ) {
             tileItems.add(xr.readFreeColGameObject(game, TileImprovement.class));
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(64);
         sb.append("[").append(getId());
-        for (TileItem item : tileItems) sb.append(" ").append(item);
+        for (TileItem item : tileItems) {
+			sb.append(" ").append(item);
+		}
         sb.append("]");
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

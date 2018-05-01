@@ -33,12 +33,8 @@ import net.sf.freecol.common.model.Settlement;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * Handy library of GoalDeciders.
- */
+/** Handy library of GoalDeciders. */
 public final class GoalDeciders {
-
     /**
      * Gets a composite goal decider composed of two or more individual
      * goal deciders.  The first one dominates the second etc.
@@ -65,30 +61,34 @@ public final class GoalDeciders {
             @Override
             public boolean hasSubGoals() {
                 for (int i = 0; i < gds.length; i++) {
-                    if (!all && i > this.winner) break;
+                    if (!all && i > this.winner) {
+						break;
+					}
                     if (gds[i].hasSubGoals()) {
-                        if (!all) return true;
-                    } else {
-                        if (all) return false;
-                    }
+                        if (!all) {
+							return true;
+						}
+                    } else if (all) {
+						return false;
+					}
                 }
                 return !all;
             }
             @Override
             public boolean check(Unit u, PathNode path) {
                 for (int i = 0; i < gds.length; i++) {
-                    if (!all && i > this.winner) break;
+                    if (!all && i > this.winner) {
+						break;
+					}
                     if (gds[i].check(u, path)) {
                         if (!all) {
                             this.winner = i;
                             this.goal = path;
                             return true;
                         }
-                    } else {
-                        if (all) {
-                            return false;
-                        }
-                    }
+                    } else if (all) {
+					    return false;
+					}
                 }
                 if (all) {
                     this.winner = 0;
@@ -109,7 +109,7 @@ public final class GoalDeciders {
     public static GoalDecider getOurClosestSettlementGoalDecider() {
         return new GoalDecider() {
             private PathNode bestPath = null;
-            private float bestValue = 0.0f;
+            private float bestValue;
 
             @Override
             public PathNode getGoal() { return bestPath; }
@@ -120,7 +120,7 @@ public final class GoalDeciders {
                 Location loc = path.getLastNode().getLocation();
                 Settlement settlement = loc.getSettlement();
                 if (settlement != null && settlement.getOwner().owns(u)) {
-                    float value = ((settlement.isConnectedPort()) ? 2.0f
+                    float value = (settlement.isConnectedPort() ? 2.0f
                         : 1.0f) / (path.getTotalTurns() + 1);
                     if (bestValue < value) {
                         bestValue = value;
@@ -154,12 +154,10 @@ public final class GoalDeciders {
                     && tile.isExploredBy(u.getOwner())
                     && tile.isDirectlyHighSeasConnected()
                     && (tile.getFirstUnit() == null
-                        || u.getOwner().owns(tile.getFirstUnit()))) {
-                    if (best == null || path.getCost() < best.getCost()) {
-                        best = path;
-                        return true;
-                    }
-                }
+                        || u.getOwner().owns(tile.getFirstUnit())) && (best == null || path.getCost() < best.getCost())) {
+				    best = path;
+				    return true;
+				}
                 return false;
             }
         };
@@ -212,7 +210,8 @@ public final class GoalDeciders {
             public boolean check(Unit u, PathNode path) {
                 int cost;
                 if (Map.isSameLocation(path.getLocation(), target)) {
-                    if ((cost = path.getCost()) < bestCost) {
+                    cost = path.getCost();
+					if (cost < bestCost) {
                         best = path;
                         bestCost = cost;
                     }
@@ -232,25 +231,27 @@ public final class GoalDeciders {
      */
     public static GoalDecider getAdjacentLocationGoalDecider(Location target) {
         final Tile tile = target.getTile();
-        if (tile == null) return null;
+        if (tile != null) {
+			return new GoalDecider() {
+			    private PathNode best = null;
 
-        return new GoalDecider() {
-            private PathNode best = null;
+			    @Override
+			    public PathNode getGoal() { return best; }
+			    @Override
+			    public boolean hasSubGoals() { return false; }
+			    @Override
+			    public boolean check(Unit u, PathNode path) {
+			        Tile t = path.getTile();
+			        if (t != null && t.isAdjacent(tile)) {
+			            best = path;
+			            return true;
+			        }
+			        return false;
+			    }
+			};
+		}
 
-            @Override
-            public PathNode getGoal() { return best; }
-            @Override
-            public boolean hasSubGoals() { return false; }
-            @Override
-            public boolean check(Unit u, PathNode path) {
-                Tile t = path.getTile();
-                if (t != null && t.isAdjacent(tile)) {
-                    best = path;
-                    return true;
-                }
-                return false;
-            }
-        };
+        return null;
     }
 
     /**
@@ -259,7 +260,7 @@ public final class GoalDeciders {
      *
      * @param enemies The list of enemy <code>Player</code>s.
      * @return A suitable <code>GoalDecider</code>.
-     **/
+     */
     public static GoalDecider getEnemySettlementGoalDecider(final Collection<Player> enemies) {
         return new GoalDecider() {
             private PathNode best = null;
@@ -271,9 +272,13 @@ public final class GoalDeciders {
             @Override
             public boolean check(Unit u, PathNode path) {
                 Tile t = path.getTile();
-                if (t == null || !t.isLand()) return false;
+                if (t == null || !t.isLand()) {
+					return false;
+				}
                 Settlement s = t.getSettlement();
-                if (s == null) return false;
+                if (s == null) {
+					return false;
+				}
                 if (enemies.contains(s.getOwner())) {
                     best = path;
                     return true;
@@ -311,11 +316,15 @@ public final class GoalDeciders {
             public boolean check(Unit u, PathNode pathNode) {
                 Tile tile = pathNode.getTile();
                 if (tile == null || !tile.isLand() || !tile.isEmpty()
-                    || tile.hasSettlement()) return false;
+                    || tile.hasSettlement()) {
+					return false;
+				}
                 final Player owner = u.getOwner();
                 boolean found = false, danger = false;
                 for (Tile t : pathNode.getTile().getSurroundingTiles(1)) {
-                    if (!t.isHighSeasConnected() || t.isLand()) continue;
+                    if (!t.isHighSeasConnected() || t.isLand()) {
+						continue;
+					}
                     for (Tile t2 : t.getSurroundingTiles(1)) {
                         Settlement settlement = t2.getSettlement();
                         if (settlement != null
@@ -370,7 +379,9 @@ public final class GoalDeciders {
             @Override
             public boolean check(Unit u, PathNode pathNode) {
                 Tile tile = pathNode.getTile();
-                if (enemy.canSee(tile)) return false;
+                if (enemy.canSee(tile)) {
+					return false;
+				}
                 this.goal = pathNode;
                 return true;
             }
@@ -446,11 +457,9 @@ public final class GoalDeciders {
      * search.
      */
     public static class MultipleAdjacentDecider {
-
         private final GoalDecider gd;
 
         private final HashMap<Location, PathNode> results = new HashMap<>();
-
 
         /**
          * Create a multiple decider.
@@ -468,7 +477,9 @@ public final class GoalDeciders {
                     @Override
                     public boolean check(Unit u, PathNode path) {
                         Tile tile = path.getTile();
-                        if (tile == null) return false;
+                        if (tile == null) {
+							return false;
+						}
                         for (Location loc : locs) {
                             if (tile.isAdjacent(loc.getTile())) {
                                 PathNode p = results.get(loc);
@@ -490,5 +501,5 @@ public final class GoalDeciders {
         public HashMap<Location, PathNode> getResults() {
             return results;
         }
-    };
+    }
 }

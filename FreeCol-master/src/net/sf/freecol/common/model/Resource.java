@@ -30,14 +30,12 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
 /**
  * Represents a production resource, such as prime tobacco, or an ore
  * vein, located on a Tile. A resource may be exhausted. In the
  * original game, only resources that produced silver were exhausted.
  */
 public class Resource extends TileItem {
-
     private static final Logger logger = Logger.getLogger(Resource.class.getName());
 
     /** Some resources are unlimited. */
@@ -48,7 +46,6 @@ public class Resource extends TileItem {
 
     /** The amount of the resource present. */
     private int quantity;
-
 
     /**
      * Creates a standard <code>Resource</code>-instance.
@@ -92,7 +89,6 @@ public class Resource extends TileItem {
     public Resource(Game game, String id) {
         super(game, id);
     }
-
 
     /**
      * Get the type of this resource.
@@ -162,51 +158,37 @@ public class Resource extends TileItem {
      * @return The final value of quantity.
      */
     public int useQuantity(int usedQuantity) {
-        if (quantity == UNLIMITED) {
-            ; // No change
-        } else if (quantity >= usedQuantity) {
-            quantity -= usedQuantity;
-        } else {
-            // Shouldn't generally happen.  Do something more drastic here?
-            logger.severe("Insufficient quantity in " + this);
-            quantity = 0;
-        }
+        if (quantity != UNLIMITED) {
+			if (quantity >= usedQuantity) {
+			    quantity -= usedQuantity;
+			} else {
+			    // Shouldn't generally happen.  Do something more drastic here?
+			    logger.severe("Insufficient quantity in " + this);
+			    quantity = 0;
+			}
+		}
         return quantity;
     }
 
+    /** Implement Named. */
 
-    // Implement Named
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getNameKey() {
         return getType().getNameKey();
     }
 
+    /** Interface TileItem. */
 
-    // Interface TileItem
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final int getZIndex() {
         return Tile.RESOURCE_ZINDEX;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isTileTypeAllowed(TileType tileType) {
         return tileType.canHaveResourceType(getType());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int applyBonus(GoodsType goodsType, UnitType unitType,
                           int potential) {
@@ -217,21 +199,12 @@ public class Resource extends TileItem {
                 : quantity);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean canProduce(GoodsType goodsType, UnitType unitType) {
-        if (goodsType == null) return false;
-        // The presence of a resource can give a tile the ability to
-        // produce a goods type.
-        return (int)applyModifiers(0f, getGame().getTurn(),
+        return goodsType != null && (int)applyModifiers(0f, getGame().getTurn(),
             getProductionModifiers(goodsType, unitType)) > 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Modifier> getProductionModifiers(GoodsType goodsType,
                                                  UnitType unitType) {
@@ -240,44 +213,29 @@ public class Resource extends TileItem {
                 .getModifiers(goodsType.getId(), unitType));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isNatural() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isComplete() {
         return true;
     }
     
+    /** Override FreeColGameObject. */
 
-    // Override FreeColGameObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int checkIntegrity(boolean fix) {
         return (type == null) ? -1 : 1;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String QUANTITY_TAG = "quantity";
     private static final String TILE_TAG = "tile";
     private static final String TYPE_TAG = "type";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -289,9 +247,6 @@ public class Resource extends TileItem {
         xw.writeAttribute(QUANTITY_TAG, quantity);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -307,18 +262,12 @@ public class Resource extends TileItem {
         quantity = xr.getAttribute(QUANTITY_TAG, 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return (quantity == UNLIMITED) ? getType().getId()
-            : Integer.toString(quantity) + " " + getType().getId();
+            : quantity + " " + getType().getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

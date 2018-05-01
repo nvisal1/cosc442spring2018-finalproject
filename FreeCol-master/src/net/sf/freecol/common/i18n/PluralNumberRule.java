@@ -19,13 +19,11 @@
 
 package net.sf.freecol.common.i18n;
 
-
 /**
  * Number optimized for languages that distinguish the categories one
  * and other.
  */
 public class PluralNumberRule extends Number {
-
     @Override
     public Category getCategory(double input) {
         if (input == 1) {
@@ -34,5 +32,4 @@ public class PluralNumberRule extends Number {
             return Category.other;
         }
     }
-
 }

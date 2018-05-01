@@ -32,12 +32,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.UnitTypeChange.ChangeType;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * The various types of units in FreeCol.
- */
+/** The various types of units in FreeCol. */
 public final class UnitType extends BuildableType implements Consumer {
-
     /** The default offence value. */
     public static final int DEFAULT_OFFENCE = 0;
 
@@ -54,17 +50,17 @@ public final class UnitType extends BuildableType implements Consumer {
     private int defence = DEFAULT_DEFENCE;
 
     /** The capacity of this UnitType. */
-    private int space = 0;
+    private int space;
 
     /** Is this the default unit type? */
-    private boolean defaultUnit = false;
+    private boolean defaultUnit;
 
     /**
      * The number of hit points this UnitType has. At the moment, this
      * is only used for ships. All other UnitTypes are downgraded or
      * destroyed if they lose a battle.
      */
-    private int hitPoints = 0;
+    private int hitPoints;
 
     /** The space taken by this UnitType. */
     private int spaceTaken = 1;
@@ -82,16 +78,16 @@ public final class UnitType extends BuildableType implements Consumer {
     private int lineOfSight = 1;
 
     /** The probability of recruiting a Unit of this type in Europe. */
-    private int recruitProbability = 0;
+    private int recruitProbability;
 
     /** The expert production of this UnitType. */
     private GoodsType expertProduction = null;
 
     /** How much a Unit of this type contributes to the Player's score. */
-    private int scoreValue = 0;
+    private int scoreValue;
 
     /** The maximum experience a unit of this type can accumulate. */
-    private int maximumExperience = 0;
+    private int maximumExperience;
 
     /**
      * The maximum attrition this UnitType can accumulate without
@@ -114,7 +110,6 @@ public final class UnitType extends BuildableType implements Consumer {
     /** The goods consumed per turn when in a settlement. */
     private TypeCountMap<GoodsType> consumption = null;
 
-
     /**
      * Creates a new <code>UnitType</code> instance.
      *
@@ -126,7 +121,6 @@ public final class UnitType extends BuildableType implements Consumer {
 
         this.defaultRole = specification.getDefaultRole();
     }
-
 
     /**
      * Get a key for the working as this unit type message.
@@ -188,7 +182,7 @@ public final class UnitType extends BuildableType implements Consumer {
      * @return True if base offensive ability is greater than the default.
      */
     public boolean isOffensive() {
-        return getBaseOffence() > UnitType.DEFAULT_OFFENCE;
+        return getBaseOffence() > DEFAULT_OFFENCE;
     }
 
     /**
@@ -219,7 +213,7 @@ public final class UnitType extends BuildableType implements Consumer {
      * @return True if base defensive ability is greater than the default.
      */
     public boolean isDefensive() {
-        return getBaseDefence() > UnitType.DEFAULT_DEFENCE;
+        return getBaseDefence() > DEFAULT_DEFENCE;
     }
 
     /**
@@ -408,7 +402,9 @@ public final class UnitType extends BuildableType implements Consumer {
      * @return A suitable role identifier for display purposes.
      */
     public String getDisplayRoleId() {
-        for (Role r : getExpertRoles()) return r.getId();
+        for (Role r : getExpertRoles()) {
+			return r.getId();
+		}
         return Specification.DEFAULT_ROLE_ID;
     }
 
@@ -438,7 +434,9 @@ public final class UnitType extends BuildableType implements Consumer {
      * @param change The <code>UnitTypeChange</code> to add.
      */
     private void addTypeChange(UnitTypeChange change) {
-        if (typeChanges == null) typeChanges = new ArrayList<>();
+        if (typeChanges == null) {
+			typeChanges = new ArrayList<>();
+		}
         typeChanges.add(change);
     }
 
@@ -613,12 +611,8 @@ public final class UnitType extends BuildableType implements Consumer {
         consumption.incrementCount(type, amount);
     }
 
+    /** Override FreeColObject. */
 
-    // Override FreeColObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int compareTo(FreeColObject other) {
         int cmp = 0;
@@ -626,10 +620,11 @@ public final class UnitType extends BuildableType implements Consumer {
             UnitType ut = (UnitType)other;
             cmp = getIndex() - ut.getIndex();
         }
-        if (cmp == 0) cmp = super.compareTo(other);
+        if (cmp == 0) {
+			cmp = super.compareTo(other);
+		}
         return cmp;
     }
-
 
     // Interface Consumer
 
@@ -671,13 +666,12 @@ public final class UnitType extends BuildableType implements Consumer {
         return hasAbility(Ability.FOUND_COLONY);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String CONSUMES_TAG = "consumes";
-    // @compat 0.10.7
+    /** @compat 0.10.7 */
     private static final String DEFAULT_EQUIPMENT_TAG = "default-equipment";
-    // end @compat
+    /** End @compat. */
     private static final String DEFAULT_ROLE_TAG = "default-role";
     private static final String DEFAULT_UNIT_TAG = "default-unit";
     private static final String DEFENCE_TAG = "defence";
@@ -699,7 +693,7 @@ public final class UnitType extends BuildableType implements Consumer {
     private static final String DOWNGRADE_TAG = "downgrade";
     private static final String UNIT_TAG = "unit";
     private static final String UPGRADE_TAG = "upgrade";
-    // @compat 0.11.3
+    /** @compat 0.11.3 */
     private static final String OLD_DEFAULT_UNIT_TAG = "defaultUnit";
     private static final String OLD_HIT_POINTS_TAG = "hitPoints";
     private static final String OLD_LINE_OF_SIGHT_TAG = "lineOfSight";
@@ -709,11 +703,8 @@ public final class UnitType extends BuildableType implements Consumer {
     private static final String OLD_SCORE_VALUE_TAG = "scoreValue";
     private static final String OLD_SKILL_TAUGHT_TAG = "skillTaught";
     private static final String OLD_SPACE_TAKEN_TAG = "spaceTaken";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -761,9 +752,6 @@ public final class UnitType extends BuildableType implements Consumer {
         xw.writeAttribute(PRIORITY_TAG, priority);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -778,7 +766,9 @@ public final class UnitType extends BuildableType implements Consumer {
             xw.writeEndElement();
         }
 
-        for (UnitTypeChange change : getTypeChanges()) change.toXML(xw);
+        for (UnitTypeChange change : getTypeChanges()) {
+			change.toXML(xw);
+		}
 
         if (consumption != null) {
             for (GoodsType goodsType : consumption.keySet()) {
@@ -793,9 +783,6 @@ public final class UnitType extends BuildableType implements Consumer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -811,75 +798,75 @@ public final class UnitType extends BuildableType implements Consumer {
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_DEFAULT_UNIT_TAG)) {
             defaultUnit = xr.getAttribute(OLD_DEFAULT_UNIT_TAG, false);
-        } else
-        // end @compat 0.11.3
-            defaultUnit = xr.getAttribute(DEFAULT_UNIT_TAG, false);
+        } else {
+			defaultUnit = xr.getAttribute(DEFAULT_UNIT_TAG, false);
+		}
 
         movement = xr.getAttribute(MOVEMENT_TAG, parent.movement);
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_LINE_OF_SIGHT_TAG)) {
             lineOfSight = xr.getAttribute(OLD_LINE_OF_SIGHT_TAG, parent.lineOfSight);
-        } else
-        // end @compat 0.11.3
-            lineOfSight = xr.getAttribute(LINE_OF_SIGHT_TAG, parent.lineOfSight);
+        } else {
+			lineOfSight = xr.getAttribute(LINE_OF_SIGHT_TAG, parent.lineOfSight);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_SCORE_VALUE_TAG)) {
             scoreValue = xr.getAttribute(OLD_SCORE_VALUE_TAG, parent.scoreValue);
-        } else
-        // end @compat 0.11.3
-            scoreValue = xr.getAttribute(SCORE_VALUE_TAG, parent.scoreValue);
+        } else {
+			scoreValue = xr.getAttribute(SCORE_VALUE_TAG, parent.scoreValue);
+		}
 
         space = xr.getAttribute(SPACE_TAG, parent.space);
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_HIT_POINTS_TAG)) {
             hitPoints = xr.getAttribute(OLD_HIT_POINTS_TAG, parent.hitPoints);
-        } else
-        // end @compat 0.11.3
-            hitPoints = xr.getAttribute(HIT_POINTS_TAG, parent.hitPoints);
+        } else {
+			hitPoints = xr.getAttribute(HIT_POINTS_TAG, parent.hitPoints);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_SPACE_TAKEN_TAG)) {
             spaceTaken = xr.getAttribute(OLD_SPACE_TAKEN_TAG, parent.spaceTaken);
-        } else
-        // end @compat 0.11.3
-            spaceTaken = xr.getAttribute(SPACE_TAKEN_TAG, parent.spaceTaken);
+        } else {
+			spaceTaken = xr.getAttribute(SPACE_TAKEN_TAG, parent.spaceTaken);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MAXIMUM_EXPERIENCE_TAG)) {
             maximumExperience = xr.getAttribute(OLD_MAXIMUM_EXPERIENCE_TAG,
                                                 parent.maximumExperience);
-        } else
-        // end @compat 0.11.3
-            maximumExperience = xr.getAttribute(MAXIMUM_EXPERIENCE_TAG,
+        } else {
+			maximumExperience = xr.getAttribute(MAXIMUM_EXPERIENCE_TAG,
                                                 parent.maximumExperience);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MAXIMUM_ATTRITION_TAG)) {
             maximumAttrition = xr.getAttribute(OLD_MAXIMUM_ATTRITION_TAG,
                                                parent.maximumAttrition);
-        } else
-        // end @compat 0.11.3
-            maximumAttrition = xr.getAttribute(MAXIMUM_ATTRITION_TAG,
+        } else {
+			maximumAttrition = xr.getAttribute(MAXIMUM_ATTRITION_TAG,
                                                parent.maximumAttrition);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_SKILL_TAUGHT_TAG)) {
             skillTaught = xr.getType(spec, OLD_SKILL_TAUGHT_TAG, UnitType.class, this);
-        } else
-        // end @compat 0.11.3
-            skillTaught = xr.getType(spec, SKILL_TAUGHT_TAG, UnitType.class, this);
+        } else {
+			skillTaught = xr.getType(spec, SKILL_TAUGHT_TAG, UnitType.class, this);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_RECRUIT_PROBABILITY_TAG)) {
             recruitProbability = xr.getAttribute(OLD_RECRUIT_PROBABILITY_TAG,
                                                  parent.recruitProbability);
-        } else
-        // end @compat 0.11.3
-            recruitProbability = xr.getAttribute(RECRUIT_PROBABILITY_TAG,
+        } else {
+			recruitProbability = xr.getAttribute(RECRUIT_PROBABILITY_TAG,
                                                  parent.recruitProbability);
+		}
 
         // New in 0.11.4, but default is backward compatible.
         priority = xr.getAttribute(PRIORITY_TAG, Consumer.UNIT_PRIORITY);
@@ -891,16 +878,11 @@ public final class UnitType extends BuildableType implements Consumer {
         expertProduction = xr.getType(spec, EXPERT_PRODUCTION_TAG,
                                       GoodsType.class, parent.expertProduction);
 
-        if (parent != this) { // Handle "extends" for super-type fields
-            if (!xr.hasAttribute(REQUIRED_POPULATION_TAG)) {
-                setRequiredPopulation(parent.getRequiredPopulation());
-            }
-        }
+        if (parent != this && !xr.hasAttribute(REQUIRED_POPULATION_TAG)) {
+		    setRequiredPopulation(parent.getRequiredPopulation());
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -917,12 +899,16 @@ public final class UnitType extends BuildableType implements Consumer {
             defaultRole = parent.defaultRole;
 
             if (parent.typeChanges != null) {
-                if (typeChanges == null) typeChanges = new ArrayList<>();
+                if (typeChanges == null) {
+					typeChanges = new ArrayList<>();
+				}
                 typeChanges.addAll(parent.typeChanges);
             }
 
             if (parent.consumption != null) {
-                if (consumption == null) consumption = new TypeCountMap<>();
+                if (consumption == null) {
+					consumption = new TypeCountMap<>();
+				}
                 consumption.putAll(parent.consumption);
             }
 
@@ -957,9 +943,6 @@ public final class UnitType extends BuildableType implements Consumer {
         // end @compat
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -974,24 +957,22 @@ public final class UnitType extends BuildableType implements Consumer {
         // @compat 0.10.7
         } else if (DEFAULT_EQUIPMENT_TAG.equals(tag)) {
             String id = xr.getAttribute(ID_ATTRIBUTE_TAG, null);
-            String roleId = ("model.equipment.horses".equals(id))
+            String roleId = "model.equipment.horses".equals(id)
                 ? "model.role.scout"
-                : ("model.equipment.muskets".equals(id))
+                : "model.equipment.muskets".equals(id)
                 ? "model.role.soldier"
-                : ("model.equipment.tools".equals(id))
+                : "model.equipment.tools".equals(id)
                 ? "model.role.pioneer"
-                : ("model.equipment.missionary".equals(id))
+                : "model.equipment.missionary".equals(id)
                 ? "model.role.missionary"
                 : Specification.DEFAULT_ROLE_ID;
             defaultRole = spec.getRole(roleId);
             xr.closeTag(DEFAULT_EQUIPMENT_TAG);
         // end @compat
-
         } else if (DEFAULT_ROLE_TAG.equals(tag)) {
             defaultRole = xr.getType(spec, ID_ATTRIBUTE_TAG,
                                      Role.class, spec.getDefaultRole());
             xr.closeTag(DEFAULT_ROLE_TAG);
-
         } else if (DOWNGRADE_TAG.equals(tag) || UPGRADE_TAG.equals(tag)) {
             if (xr.getAttribute(DELETE_TAG, false)) {
                 if (typeChanges != null) {
@@ -1005,7 +986,6 @@ public final class UnitType extends BuildableType implements Consumer {
                     }
                 }
                 xr.closeTag(tag);
-
             } else {
                 UnitTypeChange change
                     = new UnitTypeChange(xr, spec);// Closes tag
@@ -1016,23 +996,16 @@ public final class UnitType extends BuildableType implements Consumer {
                 }
                 addTypeChange(change);
             }
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

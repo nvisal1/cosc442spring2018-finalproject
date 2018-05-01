@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.client.gui.option;
 
 /**
@@ -27,16 +26,12 @@ package net.sf.freecol.client.gui.option;
  * information.
  */
 public interface OptionUpdater {
-
     /**
      * Updates the value of the {@link net.sf.freecol.common.option.Option}
      * this object keeps.
      */
-    public void updateOption();
+    void updateOption();
 
-    /**
-     * Reset with the value from the option.
-     */
-    public void reset();
-
+    /** Reset with the value from the option. */
+    void reset();
 }

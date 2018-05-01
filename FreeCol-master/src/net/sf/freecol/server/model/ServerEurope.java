@@ -43,18 +43,11 @@ import static net.sf.freecol.common.util.RandomUtils.*;
 import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-
-/**
- * The server version of Europe.
- */
+/** The server version of Europe. */
 public class ServerEurope extends Europe implements ServerModelObject {
-
     private static final Logger logger = Logger.getLogger(ServerEurope.class.getName());
 
-
-    /**
-     * Trivial constructor required for all ServerModelObjects.
-     */
+    /** Trivial constructor required for all ServerModelObjects. */
     public ServerEurope(Game game, String id) {
         super(game, id);
     }
@@ -70,25 +63,27 @@ public class ServerEurope extends Europe implements ServerModelObject {
         super(game, owner);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equipForRole(Unit unit, Role role, int roleCount) {
-        if (!unit.roleIsAvailable(role)) return false;
+        if (!unit.roleIsAvailable(role)) {
+			return false;
+		}
 
         // Get the change in goods
         List<AbstractGoods> required = unit.getGoodsDifference(role, roleCount);
 
         // Check the pricing
         int price = priceGoods(required);
-        if (price < 0 || !unit.getOwner().checkGold(price)) return false;
+        if (price < 0 || !unit.getOwner().checkGold(price)) {
+			return false;
+		}
 
         // Sell any excess
         final ServerPlayer owner = (ServerPlayer)getOwner();
         for (AbstractGoods ag : required) {
-            if (ag.getAmount() >= 0) continue;
+            if (ag.getAmount() >= 0) {
+				continue;
+			}
             if (owner.canTrade(ag.getType(), Market.Access.EUROPE)) {
                 int rm = owner.sell(null, ag.getType(), -ag.getAmount());
                 if (rm > 0) {
@@ -98,7 +93,9 @@ public class ServerEurope extends Europe implements ServerModelObject {
         }
         // Buy what is needed
         for (AbstractGoods ag : required) {
-            if (ag.getAmount() <= 0) continue;
+            if (ag.getAmount() <= 0) {
+				continue;
+			}
             int m = owner.buy(null, ag.getType(), ag.getAmount());
             if (m > 0) {
                 owner.addExtraTrade(new AbstractGoods(ag.getType(), -m));
@@ -134,7 +131,9 @@ public class ServerEurope extends Europe implements ServerModelObject {
                 if (spec.hasOption(optionId)
                     && (unitTypeId = spec.getString(optionId)) != null
                     && (unitType = spec.getUnitType(unitTypeId)) != null
-                    && addRecruitable(unitType)) continue;
+                    && addRecruitable(unitType)) {
+					continue;
+				}
                 break; // Failed
             }
             // end @compat
@@ -148,9 +147,7 @@ public class ServerEurope extends Europe implements ServerModelObject {
         } while (addRecruitable(unitType));
     }
 
-    /**
-     * Increases the base price and lower cap for recruits.
-     */
+    /** Increases the base price and lower cap for recruits. */
     public void increaseRecruitmentDifficulty() {
         final Specification spec = getSpecification();
         recruitPrice += spec.getInteger(GameOptions.RECRUIT_PRICE_INCREASE);
@@ -172,7 +169,7 @@ public class ServerEurope extends Europe implements ServerModelObject {
         // An invalid slot is normal when the player has no control over
         // recruit type.
         final int count = MigrationType.getMigrantCount();
-        int index = (MigrationType.specificMigrantSlot(slot))
+        int index = MigrationType.specificMigrantSlot(slot)
             ? MigrationType.migrantSlotToIndex(slot)
             : randomInt(logger, "Choose emigrant", random, count);
         UnitType result = recruitables.get(index);
@@ -213,7 +210,9 @@ public class ServerEurope extends Europe implements ServerModelObject {
         boolean result = false;
         int i = 0;
         for (UnitType ut : recruitables) {
-            if (hasAbility(Ability.CAN_RECRUIT_UNIT, ut)) continue;
+            if (hasAbility(Ability.CAN_RECRUIT_UNIT, ut)) {
+				continue;
+			}
             UnitType newType = RandomChoice.getWeightedRandom(logger,
                 "Replace recruit", recruits, random);
             recruitables.set(i, newType);
@@ -251,10 +250,10 @@ public class ServerEurope extends Europe implements ServerModelObject {
     public void increasePrice(UnitType unitType, int price) {
         final Specification spec = getSpecification();
         String baseOption = GameOptions.PRICE_INCREASE_PER_TYPE;
-        String option = (spec.getBoolean(baseOption))
+        String option = spec.getBoolean(baseOption)
             ? "model.option.priceIncrease." + unitType.getSuffix()
             : "model.option.priceIncrease";
-        int increase = (spec.hasOption(option)) ? spec.getInteger(option) : 0;
+        int increase = spec.hasOption(option) ? spec.getInteger(option) : 0;
         if (increase != 0) {
             unitPrices.put(unitType, price + increase);
         }
@@ -303,7 +302,6 @@ public class ServerEurope extends Europe implements ServerModelObject {
         }
         return ret;
     }
-
 
     /**
      * Returns the tag name of the root element representing this object.

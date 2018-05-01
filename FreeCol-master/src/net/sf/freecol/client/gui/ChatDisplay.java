@@ -28,11 +28,8 @@ import java.util.Date;
 
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * ChatDisplay manages use of <code>GUIMessage</code>.
- */
+/** ChatDisplay manages use of <code>GUIMessage</code>. */
 public class ChatDisplay {
-
     /** The number of messages getting remembered. */
     private static final int MESSAGE_COUNT = 3;
 
@@ -134,7 +131,7 @@ public class ChatDisplay {
         int i = 0;
         while (i < getMessageCount()) {
             long creationTime = getMessage(i).getCreationTime();
-            if ((currentTime - creationTime) >= MESSAGE_AGE) {
+            if (currentTime - creationTime >= MESSAGE_AGE) {
                 result = true;
                 messages.remove(i);
             } else {
@@ -143,5 +140,4 @@ public class ChatDisplay {
         }
         return result;
     }
-
 }

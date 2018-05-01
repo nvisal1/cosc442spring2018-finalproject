@@ -21,12 +21,8 @@ package net.sf.freecol.common.networking;
 
 import org.w3c.dom.Element;
 
-
-/**
- * A network request handler knows how to handle in a given request type.
- */
+/** A network request handler knows how to handle in a given request type. */
 public interface NetworkRequestHandler {
-
     /**
      * Handle a request represented by an {@link Element} and return another
      * {@link Element} or null as the answer.

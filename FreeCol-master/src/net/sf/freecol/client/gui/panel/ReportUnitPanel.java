@@ -47,37 +47,22 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * This panel displays a unit Report.
- */
+/** This panel displays a unit Report. */
 public abstract class ReportUnitPanel extends ReportPanel {
-
-    /**
-     * Units in Europe.
-     */
+    /** Units in Europe. */
     private final List<Unit> inEurope = new ArrayList<>();
 
-    /**
-     * Units in colonies.
-     */
+    /** Units in colonies. */
     private final Map<Colony, List<Unit>> inColonies = new HashMap<>();
 
-    /**
-     * Units in other locations.
-     */
+    /** Units in other locations. */
     private final Map<String, List<Unit>> inLocations = new HashMap<>();
 
-    /**
-     * Records the number of units of each type.
-     */
+    /** Records the number of units of each type. */
     private final Map<String, TypeCountMap<UnitType>> units = new HashMap<>();
 
-    /**
-     * Whether to show colonies even if no selected units are present.
-     */
-    private boolean showColonies = false;
-
+    /** Whether to show colonies even if no selected units are present. */
+    private boolean showColonies;
 
     /**
      * The constructor that will add the items to this panel.
@@ -121,7 +106,6 @@ public abstract class ReportUnitPanel extends ReportPanel {
         revalidate();
         repaint();
     }
-
 
     protected int getCount(String key, UnitType type) {
         TypeCountMap<UnitType> map = units.get(key);
@@ -219,21 +203,14 @@ public abstract class ReportUnitPanel extends ReportPanel {
         return button;
     }
 
-
     // To be implemented by specific unit panels.
     
-    /**
-     * Gather the overall unit data, mostly by calling addUnit() above.
-     */
+    /** Gather the overall unit data, mostly by calling addUnit() above. */
     protected abstract void gatherData();
 
-    /**
-     * Add a section for the REF.
-     */
+    /** Add a section for the REF. */
     protected abstract void addREFUnits();
 
-    /**
-     * Add a section for specific unit types owned by the player.
-     */
+    /** Add a section for specific unit types owned by the player. */
     protected abstract void addOwnUnits();
 }

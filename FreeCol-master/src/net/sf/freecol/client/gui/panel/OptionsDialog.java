@@ -38,12 +38,8 @@ import net.sf.freecol.common.io.FreeColDirectories;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.option.OptionGroup;
 
-
-/**
- * Dialog for changing the options of an {@link OptionGroup}.
- */
+/** Dialog for changing the options of an {@link OptionGroup}. */
 public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
-
     private static final Logger logger = Logger.getLogger(OptionsDialog.class.getName());
 
     private final boolean editable;
@@ -54,7 +50,6 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
     private JScrollPane scrollPane;
     private MigPanel optionPanel;
     protected MigPanel panel;
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -75,7 +70,6 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
         this.optionGroupId = optionGroupId;
         preparePanel(headerKey, this.ui);
     }
-
 
     /**
      * Is this dialog editable?
@@ -122,9 +116,7 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
         return this.optionGroupId;
     }
 
-    /**
-     * Load the panel.
-     */
+    /** Load the panel. */
     private void preparePanel(String headerKey, OptionGroupUI ui) {
         this.optionPanel = new MigPanel("ReportPanelUI");
         this.optionPanel.setOpaque(true);
@@ -181,7 +173,9 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
     protected boolean load(File file) {
         OptionGroup og = getSpecification()
             .loadOptionsFile(getOptionGroupId(), file);
-        if (og == null) return false;
+        if (og == null) {
+			return false;
+		}
 
         reset(og);
         return true;
@@ -195,7 +189,9 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
      */
     protected boolean save(File file) {
         OptionGroup og = Specification.saveOptionsFile(this.group, file);
-        if (og != null) return true;
+        if (og != null) {
+			return true;
+		}
         getGUI().showErrorMessage(FreeCol.badSave(file));
         return false;
     }
@@ -207,7 +203,7 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
      */
     protected boolean loadDefaultOptions() {
         File f = FreeColDirectories.getOptionsFile(getDefaultFileName());
-        return (f.exists()) ? load(f) : false;
+        return f.exists() && load(f);
     }
 
     /**
@@ -220,19 +216,15 @@ public abstract class OptionsDialog extends FreeColDialog<OptionGroup> {
         return save(f);
     }
 
+    /** Override FreeColDialog. */
 
-    // Override FreeColDialog
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public OptionGroup getResponse() {
         OptionGroup value = super.getResponse();
-        if (value == null) {
-            getOptionUI().reset();
-        } else {
+        if (value != null) {
             getOptionUI().updateOption();
+        } else {
+            getOptionUI().reset();
         }
         return value;
     }

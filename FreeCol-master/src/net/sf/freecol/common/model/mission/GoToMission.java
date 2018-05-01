@@ -29,22 +29,13 @@ import net.sf.freecol.common.model.Unit;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The GoToMission causes a Unit to move towards its destination.
- */
+/** The GoToMission causes a Unit to move towards its destination. */
 public class GoToMission extends AbstractMission {
-
-    /**
-     * The number of turns this mission has been blocked.
-     */
+    /** The number of turns this mission has been blocked. */
     private int blockedCount;
 
-    /**
-     * The destination of this Mission.
-     */
+    /** The destination of this Mission. */
     private Location destination;
-
 
     /**
      * Creates a new <code>GoToMission</code> instance.
@@ -124,16 +115,11 @@ public class GoToMission extends AbstractMission {
         this.blockedCount = newBlockedCount;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public MissionState doMission() {
         // FIXME: do we need access to the InGameController?
         return MissionState.OK;
     }
-
 
     /**
      * Returns true if the mission is still valid.
@@ -159,16 +145,11 @@ public class GoToMission extends AbstractMission {
         return unit.getInitialMovesLeft() > 0;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String BLOCKED_COUNT_TAG = "blockedCount";
     private static final String DESTINATION_TAG = "destination";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -178,9 +159,6 @@ public class GoToMission extends AbstractMission {
         xw.writeAttribute(BLOCKED_COUNT_TAG, blockedCount);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -191,9 +169,6 @@ public class GoToMission extends AbstractMission {
         blockedCount = xr.getAttribute(BLOCKED_COUNT_TAG, 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 
@@ -205,7 +180,4 @@ public class GoToMission extends AbstractMission {
     public static String getXMLElementTagName() {
         return "goToMission";
     }
-
-
-
 }

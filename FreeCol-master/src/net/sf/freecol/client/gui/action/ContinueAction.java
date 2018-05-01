@@ -26,14 +26,9 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.io.FreeColDirectories;
 
-
-/**
- * Action to load and start the most recent save game of the client.
- */
+/** Action to load and start the most recent save game of the client. */
 public class ContinueAction extends FreeColAction {
-
     public static final String id = "continueAction";
-
 
     /**
      * Creates a new <code>ContinueAction</code>.
@@ -48,12 +43,8 @@ public class ContinueAction extends FreeColAction {
         putValue(SHORT_DESCRIPTION, null);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         File lastSave = FreeColDirectories.getLastSaveGameFile();

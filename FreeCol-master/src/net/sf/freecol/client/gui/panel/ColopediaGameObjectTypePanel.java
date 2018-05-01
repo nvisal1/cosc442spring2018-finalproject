@@ -51,20 +51,14 @@ import net.sf.freecol.common.model.ResourceType;
 import net.sf.freecol.common.model.UnitType;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * This panel displays details of game objects in the Colopedia.
- */
+/** This panel displays details of game objects in the Colopedia. */
 public abstract class ColopediaGameObjectTypePanel<T extends FreeColGameObjectType>
     extends FreeColPanel implements ColopediaDetailPanel<T> {
-
-
     /** The enclosing colopedia panel. */
     private ColopediaPanel colopediaPanel; 
 
     /** The specific panel id. */
     private final String id;
-
 
     /**
      * Create a new Colopedia game object type panel.
@@ -81,7 +75,6 @@ public abstract class ColopediaGameObjectTypePanel<T extends FreeColGameObjectTy
         this.colopediaPanel = colopediaPanel;
         this.id = "colopediaAction." + id;
     }
-
 
     /**
      * Get the panel id.
@@ -276,12 +269,8 @@ public abstract class ColopediaGameObjectTypePanel<T extends FreeColGameObjectTy
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

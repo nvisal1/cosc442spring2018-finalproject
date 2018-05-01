@@ -31,18 +31,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when spying on a settlement.
- */
+/** The message sent when spying on a settlement. */
 public class SpySettlementMessage extends DOMMessage {
-
     /** The identifier of the object doing the spying. */
     private final String unitId;
 
     /** The direction the spy is looking. */
     private final String directionString;
-
 
     /**
      * Create a new <code>SpySettlementMessage</code> with the
@@ -71,7 +66,6 @@ public class SpySettlementMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.directionString = element.getAttribute("direction");
     }
-
 
     /**
      * Handle a "spySettlement"-message.

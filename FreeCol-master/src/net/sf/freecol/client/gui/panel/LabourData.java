@@ -39,12 +39,8 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 import net.sf.freecol.common.model.WorkLocation;
 
-
-/**
- * Holds labour statistics for the labour report.
- */
+/** Holds labour statistics for the labour report. */
 public class LabourData {
-
     private static final LocationData.Getter UNITS_IN_EUROPE_GETTER = new LocationData.Getter() {
         @Override
         public LocationData getLocationData(UnitData unitData) {
@@ -67,19 +63,15 @@ public class LabourData {
     };
 
     public static class ProductionData {
-        /**
-         * number of colonists
-         */
+        /** Number of colonists. */
         private int colonists;
 
-        /**
-         * Potential production
-         */
+        /** Potential production. */
         private int production;
 
         public void addProduction(int production) {
             colonists = getColonists() + 1;
-            this.production = this.getProduction() + production;
+            this.production = getProduction() + production;
         }
 
         public int getColonists() {
@@ -97,64 +89,41 @@ public class LabourData {
     }
 
     public static class LocationData {
-
         public interface Getter {
             LocationData getLocationData(UnitData unitData);
         }
 
-        /**
-         * associated unit data
-         */
+        /** Associated unit data. */
         private final UnitData unitData;
 
-        /**
-         * if this is the total for the unit data
-         */
+        /** If this is the total for the unit data. */
         private final boolean isTotal;
 
-        /**
-         * experts working in their expert field
-         */
+        /** Experts working in their expert field. */
         private final ProductionData workingProfessionals = new ProductionData();
 
-        /**
-         * lumberjacks working as something else
-         */
+        /** Lumberjacks working as something else. */
         private int workingAmateurs;
 
-        /**
-         * others working as lumberjacks
-         */
+        /** Others working as lumberjacks. */
         private final ProductionData otherWorkingAmateurs = new ProductionData();
 
-        /**
-         * net production of goods
-         */
+        /** Net production of goods. */
         private int netProduction;
 
-        /**
-         * teachers
-         */
+        /** Teachers. */
         private int teachers;
 
-        /**
-         * students learning this job (i.e. lumberjacks, not free colonists)
-         */
+        /** Students learning this job (i.e. lumberjacks, not free colonists) */
         private int otherStudents;
 
-        /**
-         * of the other students
-         */
+        /** Of the other students. */
         private String otherStudentsName;
 
-        /**
-         * students in their old type (i.e. free colonists, not lumberjacks)
-         */
+        /** Students in their old type (i.e. free colonists, not lumberjacks) */
         private int students;
 
-        /**
-         * not working colonists
-         */
+        /** Not working colonists. */
         private int notWorking;
 
         public LocationData(UnitData unitData) {
@@ -203,7 +172,7 @@ public class LabourData {
         }
 
         /**
-         * in the summary for all unit types, some rows are skipped
+         * In the summary for all unit types, some rows are skipped.
          *
          * @return the rows to display the unit data
          */
@@ -211,13 +180,27 @@ public class LabourData {
             boolean isSummary = getUnitData().isSummary();
 
             int rows = 0;
-            if (workingProfessionals.getColonists() > 0) rows++;
-            if (workingAmateurs > 0) rows++;
-            if (!isSummary && otherWorkingAmateurs.getColonists() > 0) rows++;
-            if (teachers > 0) rows++;
-            if (students > 0) rows++;
-            if (!isSummary && otherStudents > 0) rows++;
-            if (notWorking > 0) rows++;
+            if (workingProfessionals.getColonists() > 0) {
+				rows++;
+			}
+            if (workingAmateurs > 0) {
+				rows++;
+			}
+            if (!isSummary && otherWorkingAmateurs.getColonists() > 0) {
+				rows++;
+			}
+            if (teachers > 0) {
+				rows++;
+			}
+            if (students > 0) {
+				rows++;
+			}
+            if (!isSummary && otherStudents > 0) {
+				rows++;
+			}
+            if (notWorking > 0) {
+				rows++;
+			}
 
             return rows;
         }
@@ -268,14 +251,11 @@ public class LabourData {
     }
 
     public static class UnitData {
-
         private final UnitType unitType;
 
-        private boolean summary = false;
+        private boolean summary;
 
-        /**
-         * Map[Colony, colony details]]
-         */
+        /** Map[Colony, colony details]]. */
         private final Map<Colony, LocationData> details = new LinkedHashMap<>();
 
         private final LocationData total = new LocationData(this, true);
@@ -292,7 +272,7 @@ public class LabourData {
         }
 
         /**
-         * get labour data (create on demand)
+         * Get labour data (create on demand).
          *
          * @param colony
          * @return labour data
@@ -307,7 +287,7 @@ public class LabourData {
         }
 
         public String getUnitName() {
-            return (isSummary()) ? null : Messages.getName(unitType);
+            return isSummary() ? null : Messages.getName(unitType);
         }
 
         public boolean hasDetails() {
@@ -495,10 +475,10 @@ public class LabourData {
         } else if (unit.hasAbility(Ability.SPEAK_WITH_CHIEF)) {
             workingAs = scout;
         }
-        if (workingAs == null) {
-            getter.getLocationData(unitData).notWorking++;
-        } else {
+        if (workingAs != null) {
             incrementOutsideWorker(unitData, unit, workingAs, getter);
+        } else {
+            getter.getLocationData(unitData).notWorking++;
         }
     }
 
@@ -531,26 +511,28 @@ public class LabourData {
             UnitData learning = getUnitData(Unit.getUnitTypeTeaching(teacher.getType(), unit.getType()));
             learning.getLocationData(colony).addOtherStudent(unitData.getUnitName());
         }
-        if (wl.canTeach()) colonyData.teachers++;
+        if (wl.canTeach()) {
+			colonyData.teachers++;
+		}
 
         GoodsType currentlyWorking = unit.getWorkType();
         int production = (currentlyWorking == null) ? 0
             : wl.getProductionOf(unit, currentlyWorking);
 
         UnitData workingAs = experts.get(currentlyWorking);
-        if (workingAs == null) {
-            ; // pass
-        } else if (workingAs.getUnitType() == unit.getType()) {
-            colonyData.getWorkingProfessionals().addProduction(production);
-        } else {
-            colonyData.workingAmateurs++;
+        if (workingAs != null) {
+			if (workingAs.getUnitType() == unit.getType()) {
+			    colonyData.getWorkingProfessionals().addProduction(production);
+			} else {
+			    colonyData.workingAmateurs++;
 
-            workingAs.getLocationData(colony).otherWorkingAmateurs.addProduction(production);
-        }
+			    workingAs.getLocationData(colony).otherWorkingAmateurs.addProduction(production);
+			}
+		}
     }
 
     /**
-     * get profession data (create on demand)
+     * Get profession data (create on demand).
      *
      * @param unitType goods unitType
      * @return profession data

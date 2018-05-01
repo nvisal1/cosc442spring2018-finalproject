@@ -34,12 +34,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Specification;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * Used for grouping {@link Option}s.
- */
+/** Used for grouping {@link Option}s. */
 public class OptionGroup extends AbstractOption<OptionGroup> {
-
     private static final Logger logger = Logger.getLogger(OptionGroup.class.getName());
 
     /** The options in this group. */
@@ -54,7 +50,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
 
     /** Is this option group user editable? */
     private boolean editable = true;
-
 
     /**
      * Creates a new <code>OptionGroup</code>.
@@ -97,7 +92,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
 
         readFromXML(xr);
     }
-
 
     /**
      * Is this option group editable?
@@ -217,13 +211,13 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
                 // Merge from the top level, so that the new
                 // option will end up in the group inherited
                 // from the standard client-options.xml.
-                result = result && this.merge(o);
+                result = result && merge(o);
             }
             if (result) {
                 optionGroup.setEditable(editable && optionGroup.isEditable());
             }
             logger.finest("Merged option group " + id
-                + " contents into " + this.getId());
+                + " contents into " + getId());
             return result;
         }
                 
@@ -238,7 +232,7 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
                 options.remove(index);
                 options.add(index, option);
                 optionMap.put(id, option);
-                logger.finest("Merged option " + id + " into " + this.getId()
+                logger.finest("Merged option " + id + " into " + getId()
                     + ": " + option.toString() + "/");
                 return true;
             }
@@ -277,7 +271,9 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
      */
     public Option remove(String id) {
         Option op = optionMap.remove(id);
-        if (op != null) options.remove(op);
+        if (op != null) {
+			options.remove(op);
+		}
         return op;
     }
 
@@ -298,7 +294,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
     public Iterator<Option> iterator() {
         return options.iterator();
     }
-
 
     // Convenience accessors.
 
@@ -473,15 +468,11 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         }
     }
 
+    /** Interface Option. */
 
-    // Interface Option
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public OptionGroup clone() {
-        OptionGroup result = new OptionGroup(this.getId(), getSpecification());
+        OptionGroup result = new OptionGroup(getId(), getSpecification());
         result.editable = this.editable;
         result.setValues(this);
         result.options.addAll(this.options);
@@ -489,17 +480,12 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public OptionGroup getValue() {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public void setValue(OptionGroup value) {
@@ -515,34 +501,22 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setValue(String valueString, String defaultValueString) {
         // No op.  Needed to avoid endless warnings from parent implementation.
     }
 
+    /** Override AbstractOption. */
 
-    // Override AbstractOption
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isNullValueOK() {
         return true;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String EDITABLE_TAG = "editable";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -550,19 +524,15 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         xw.writeAttribute(EDITABLE_TAG, editable);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
-        for (Option o : options) o.toXML(xw);
+        for (Option o : options) {
+			o.toXML(xw);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -570,9 +540,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         editable = xr.getAttribute(EDITABLE_TAG, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Do *not* clear containers.
@@ -581,9 +548,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readChild(FreeColXMLReader xr) throws XMLStreamException {
         String optionId = xr.readId();
@@ -592,7 +556,7 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
             AbstractOption abstractOption = readOption(xr);
             if (abstractOption != null) {
                 add(abstractOption);
-                abstractOption.setGroup(this.getId());
+                abstractOption.setGroup(getId());
             }
         } else {
             // FreeColActions are read here.
@@ -600,9 +564,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -614,9 +575,6 @@ public class OptionGroup extends AbstractOption<OptionGroup> {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

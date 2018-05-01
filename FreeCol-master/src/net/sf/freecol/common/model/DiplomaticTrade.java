@@ -34,19 +34,17 @@ import static net.sf.freecol.common.util.StringUtils.*;
 
 import org.w3c.dom.Element;
 
-
 /**
  * The class <code>DiplomaticTrade</code> represents an offer one player can
  * make another.
  */
 public class DiplomaticTrade extends FreeColObject {
-
     /** A context for the trade. */
-    public static enum TradeContext {
-        CONTACT,    /** First contact between Europeans */
-        DIPLOMATIC, /** Scout negotiating */
-        TRADE,      /** Carrier trading */
-        TRIBUTE;    /** Offensive unit demanding */
+    public enum TradeContext {
+        CONTACT,    /** First contact between Europeans. */
+        DIPLOMATIC, /** Scout negotiating. */
+        TRADE,      /** Carrier trading. */
+        TRIBUTE;    /** Offensive unit demanding. */
 
         /**
          * Get a message key for this trade context.
@@ -59,12 +57,11 @@ public class DiplomaticTrade extends FreeColObject {
     }
 
     /** A type for the trade status. */
-    public static enum TradeStatus {
+    public enum TradeStatus {
         PROPOSE_TRADE,
         ACCEPT_TRADE,
         REJECT_TRADE
     }
-
 
     /** The game in play. */
     private final Game game;
@@ -87,7 +84,6 @@ public class DiplomaticTrade extends FreeColObject {
     /** Counter for the number of iterations on this attempt to agree. */
     private int version;
 
-
     /**
      * Creates a new <code>DiplomaticTrade</code> instance.
      *
@@ -107,7 +103,9 @@ public class DiplomaticTrade extends FreeColObject {
         this.recipient = recipient;
         this.status = TradeStatus.PROPOSE_TRADE;
         this.items.clear();
-        if (items != null) this.items.addAll(items);
+        if (items != null) {
+			this.items.addAll(items);
+		}
         this.version = version;
     }
 
@@ -122,7 +120,6 @@ public class DiplomaticTrade extends FreeColObject {
 
         readFromXMLElement(element);
     }
-
 
     /**
      * Get the trade context.
@@ -272,9 +269,7 @@ public class DiplomaticTrade extends FreeColObject {
         }
     }
 
-    /**
-     * Remove all trade items from this agreement.
-     */
+    /** Remove all trade items from this agreement. */
     public void clear() {
         items.clear();
     }
@@ -404,15 +399,12 @@ public class DiplomaticTrade extends FreeColObject {
         return version;
     }
 
-    /**
-     * Increment the version of this agreement.
-     */
+    /** Increment the version of this agreement. */
     public void incrementVersion() {
         this.version++;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String CONTEXT_TAG = "context";
     private static final String RECIPIENT_TAG = "recipient";
@@ -420,10 +412,6 @@ public class DiplomaticTrade extends FreeColObject {
     private static final String STATUS_TAG = "status";
     private static final String VERSION_TAG = "version";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -439,19 +427,15 @@ public class DiplomaticTrade extends FreeColObject {
         xw.writeAttribute(VERSION_TAG, version);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
-        for (TradeItem item : items) item.toXML(xw);
+        for (TradeItem item : items) {
+			item.toXML(xw);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -471,9 +455,6 @@ public class DiplomaticTrade extends FreeColObject {
         version = xr.getAttribute(VERSION_TAG, 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -482,40 +463,27 @@ public class DiplomaticTrade extends FreeColObject {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
 
         if (ColonyTradeItem.getXMLElementTagName().equals(tag)) {
             add(new ColonyTradeItem(game, xr));
-
         } else if (GoldTradeItem.getXMLElementTagName().equals(tag)) {
             add(new GoldTradeItem(game, xr));
-
         } else if (GoodsTradeItem.getXMLElementTagName().equals(tag)) {
             add(new GoodsTradeItem(game, xr));
-
         } else if (InciteTradeItem.getXMLElementTagName().equals(tag)) {
             add(new InciteTradeItem(game, xr));
-
         } else if (StanceTradeItem.getXMLElementTagName().equals(tag)) {
             add(new StanceTradeItem(game, xr));
-
         } else if (UnitTradeItem.getXMLElementTagName().equals(tag)) {
             add(new UnitTradeItem(game, xr));
-
         } else {
             super.readChild(xr);
         }
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
@@ -526,14 +494,13 @@ public class DiplomaticTrade extends FreeColObject {
             .append(" to=").append(recipient.getId())
             .append(" version=").append(getVersion())
             .append(" [");
-        for (TradeItem item : getTradeItems()) sb.append(" ").append(item);
+        for (TradeItem item : getTradeItems()) {
+			sb.append(" ").append(item);
+		}
         sb.append(" ]]");
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

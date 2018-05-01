@@ -32,12 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * The message sent when looting cargo.
- */
+/** The message sent when looting cargo. */
 public class LootCargoMessage extends DOMMessage {
-
     /** The object identifier of the unit that is looting. */
     private final String winnerId;
 
@@ -46,7 +42,6 @@ public class LootCargoMessage extends DOMMessage {
 
     /** The goods to be looted. */
     private final List<Goods> goods;
-
 
     /**
      * Create a new <code>LootCargoMessage</code>.
@@ -86,7 +81,6 @@ public class LootCargoMessage extends DOMMessage {
         }
     }
 
-
     // Public interface
 
     /**
@@ -94,7 +88,7 @@ public class LootCargoMessage extends DOMMessage {
      *
      * @return The winner unit.
      */
-    public Unit getUnit(Game game) throws ClassCastException {
+    public Unit getUnit(Game game) {
         return game.getFreeColGameObject(winnerId, Unit.class);
     }
 
@@ -115,7 +109,6 @@ public class LootCargoMessage extends DOMMessage {
     public List<Goods> getGoods() {
         return goods;
     }
-
 
     /**
      * Handle a "lootCargo"-message.

@@ -38,19 +38,16 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Handles the network messages that arrives before the game starts.
  * 
  * @see PreGameController
  */
 public final class PreGameInputHandler extends InputHandler {
-
     private static final Logger logger = Logger.getLogger(PreGameInputHandler.class.getName());
 
     /** Is the game launching yet. */
-    private boolean launching = false;
-
+    private boolean launching;
 
     /**
      * The constructor to use.
@@ -154,11 +151,13 @@ public final class PreGameInputHandler extends InputHandler {
                 "Only the server admin can launch the game.");
         }
 
-        if (launching) return null;
+        if (launching) {
+			return null;
+		}
         launching = true;
 
         // Check that no two players have the same nation
-        ArrayList<Nation> nations = new ArrayList<>();
+        java.util.HashSet<Nation> nations = new java.util.HashSet<>();
         for (Player player : getGame().getLivePlayers(null)) {
             final Nation nation = getGame().getSpecification()
                 .getNation(player.getNationId());

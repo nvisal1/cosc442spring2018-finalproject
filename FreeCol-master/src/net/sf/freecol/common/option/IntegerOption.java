@@ -28,12 +28,8 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Specification;
 
-
-/**
- * Represents an option where the valid choice is an integer.
- */
+/** Represents an option where the valid choice is an integer. */
 public class IntegerOption extends AbstractOption<Integer> {
-
     private static final Logger logger = Logger.getLogger(IntegerOption.class.getName());
 
     /** The value of this option. */
@@ -44,7 +40,6 @@ public class IntegerOption extends AbstractOption<Integer> {
 
     /** A lower bound on the value of this option. */
     private int minimumValue = Integer.MIN_VALUE;
-
 
     /**
      * Creates a new <code>IntegerOption</code>.
@@ -64,7 +59,6 @@ public class IntegerOption extends AbstractOption<Integer> {
     public IntegerOption(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Get the minimum allowed value.
@@ -112,12 +106,8 @@ public class IntegerOption extends AbstractOption<Integer> {
         return Math.min(Math.max(value, this.minimumValue), this.maximumValue);
     }
 
+    /** Interface Option. */
 
-    // Interface Option
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IntegerOption clone() {
         IntegerOption result = new IntegerOption(getId(), getSpecification());
@@ -127,17 +117,11 @@ public class IntegerOption extends AbstractOption<Integer> {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Integer getValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setValue(Integer value) {
         final int oldValue = this.value;
@@ -149,11 +133,8 @@ public class IntegerOption extends AbstractOption<Integer> {
         isDefined = true;
     }
 
-    // Override AbstractOption
+    /** Override AbstractOption. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setValue(String valueString, String defaultValueString) {
         String str = (valueString != null) ? valueString : defaultValueString;
@@ -164,16 +145,11 @@ public class IntegerOption extends AbstractOption<Integer> {
         }
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String MAXIMUM_VALUE_TAG = "maximumValue";
     private static final String MINIMUM_VALUE_TAG = "minimumValue";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -189,9 +165,6 @@ public class IntegerOption extends AbstractOption<Integer> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -203,9 +176,6 @@ public class IntegerOption extends AbstractOption<Integer> {
         this.value = limitValue(this.value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -215,9 +185,6 @@ public class IntegerOption extends AbstractOption<Integer> {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

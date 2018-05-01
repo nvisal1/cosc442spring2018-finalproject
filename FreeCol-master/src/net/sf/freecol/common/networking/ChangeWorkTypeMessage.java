@@ -28,18 +28,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when changing the work type of a unit.
- */
+/** The message sent when changing the work type of a unit. */
 public class ChangeWorkTypeMessage extends DOMMessage {
-
     /** The identifier of the unit that is working. */
     private final String unitId;
 
     /** The goods type to produce. */
     private final String workTypeId;
-
 
     /**
      * Create a new <code>ChangeWorkTypeMessage</code> with the
@@ -69,7 +64,6 @@ public class ChangeWorkTypeMessage extends DOMMessage {
         this.workTypeId = element.getAttribute("workType");
     }
 
-
     /**
      * Handle a "changeWorkType"-message.
      *
@@ -94,13 +88,13 @@ public class ChangeWorkTypeMessage extends DOMMessage {
         }
 
         GoodsType type = server.getSpecification().getGoodsType(workTypeId);
-        if (type == null) {
-            return DOMMessage.clientError("Not a goods type: " + workTypeId);
+        if (type != null) {
+            return server.getInGameController()
+			    .changeWorkType(serverPlayer, unit, type);
         }
 
         // Proceed to changeWorkType.
-        return server.getInGameController()
-            .changeWorkType(serverPlayer, unit, type);
+        return DOMMessage.clientError("Not a goods type: " + workTypeId);
     }
 
     /**
@@ -124,4 +118,3 @@ public class ChangeWorkTypeMessage extends DOMMessage {
         return "changeWorkType";
     }
 }
-

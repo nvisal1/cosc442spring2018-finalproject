@@ -65,7 +65,6 @@ import net.sf.freecol.server.ai.mission.WorkInsideColonyMission;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Objects of this class contains AI-information for a single {@link Unit}.
  *
@@ -77,7 +76,6 @@ import org.w3c.dom.Element;
  * @see Mission
  */
 public class AIUnit extends TransportableAIObject {
-
     private static final Logger logger = Logger.getLogger(AIUnit.class.getName());
 
     /** The Unit this AIObject contains AI-information for. */
@@ -86,9 +84,8 @@ public class AIUnit extends TransportableAIObject {
     /** The mission to which this AI unit has been assigned. */
     private Mission mission;
 
-    /** The goal.  Currently unused. */
+    /** The goal. Currently unused. */
     private Goal goal = null;
-
 
     /**
      * Creates a new uninitialized <code>AIUnit</code>.
@@ -150,7 +147,6 @@ public class AIUnit extends TransportableAIObject {
         uninitialized = getUnit() == null;
     }
 
-
     /**
      * Gets the <code>Unit</code> this <code>AIUnit</code> controls.
      *
@@ -205,12 +201,9 @@ public class AIUnit extends TransportableAIObject {
         this.goal = goal;
     }
 
-
     // Internal
 
-    /**
-     * Request a rearrangement of any colony at the current location.
-     */
+    /** Request a rearrangement of any colony at the current location. */
     private void requestLocalRearrange() {
         Location loc;
         Colony colony;
@@ -240,7 +233,6 @@ public class AIUnit extends TransportableAIObject {
             setTransport(aiCarrier);
         }
     }
-
 
     // Public routines
 
@@ -281,7 +273,7 @@ public class AIUnit extends TransportableAIObject {
      * @return True if the unit has cargo aboard.
      */
     public final boolean hasCargo() {
-        return (unit == null) ? false : unit.hasCargo();
+        return unit != null && unit.hasCargo();
     }
 
     /**
@@ -318,7 +310,9 @@ public class AIUnit extends TransportableAIObject {
      * @param lb A <code>LogBuilder</code> to log to.
      */
     public void doMission(LogBuilder lb) {
-        if (this.mission != null) this.mission.doMission(lb);
+        if (this.mission != null) {
+			this.mission.doMission(lb);
+		}
     }
 
     /**
@@ -328,7 +322,9 @@ public class AIUnit extends TransportableAIObject {
      * @return The new current <code>Mission</code>.
      */
     public Mission changeMission(Mission mission) {
-        if (this.mission == mission) return this.mission;
+        if (this.mission == mission) {
+			return this.mission;
+		}
 
         if (this.mission != null) {
             this.mission.dispose();
@@ -387,52 +383,47 @@ public class AIUnit extends TransportableAIObject {
         final Specification spec = getSpecification();
         final Player player = unit.getOwner();
         Location loc = Location.upLoc(unit.getLocation());
-        if (!(loc instanceof UnitLocation)) return false;
+        if (!(loc instanceof UnitLocation)) {
+			return false;
+		}
         int count = role.getMaximumCount();
         if (count > 0) {
             for (; count > 0; count--) {
                 List<AbstractGoods> req = unit.getGoodsDifference(role, count);
                 int price = ((UnitLocation)loc).priceGoods(req);
-                if (price < 0) continue;
-                if (player.checkGold(price)) break;
+                if (price < 0) {
+					continue;
+				}
+                if (player.checkGold(price)) {
+					break;
+				}
             }
-            if (count <= 0) return false;
+            if (count <= 0) {
+				return false;
+			}
         }
         return AIMessage.askEquipForRole(this, role, count)
             && unit.getRole() == role && unit.getRoleCount() == count;
     }
 
-        
-    // Implement TransportableAIObject
+            /** Implement TransportableAIObject. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getTransportPriority() {
-        return (hasMission()) ? super.getTransportPriority() : 0;
+        return hasMission() ? super.getTransportPriority() : 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Locatable getTransportLocatable() {
         return unit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTransportSource() {
         return (getUnit() == null || getUnit().isDisposed()) ? null
             : getUnit().getLocation();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTransportDestination() {
         return (getUnit() == null || getUnit().isDisposed() || !hasMission())
@@ -440,14 +431,13 @@ public class AIUnit extends TransportableAIObject {
             : mission.getTransportDestination();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public PathNode getDeliveryPath(Unit carrier, Location dst) {
         if (dst == null) {
             dst = getTransportDestination();
-            if (dst == null) return null;
+            if (dst == null) {
+				return null;
+			}
         }
         dst = Location.upLoc(dst);
 
@@ -467,56 +457,49 @@ public class AIUnit extends TransportableAIObject {
                     dst.getTile(), carrier, null);
             }
         }
-        if (path != null) path.ensureDisembark();
+        if (path != null) {
+			path.ensureDisembark();
+		}
         return path;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public PathNode getIntermediatePath(Unit carrier, Location dst) {
         return null; // NYI
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTransportDestination(Location destination) {
         throw new RuntimeException("AI unit transport destination set by mission.");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean carriableBy(Unit carrier) {
         return carrier.couldCarry(getUnit());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean canMove() {
         return getUnit().getMovesLeft() > 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean leaveTransport() {
         final Unit unit = getUnit();
-        if (!unit.isOnCarrier()) return true; // Harmless error
+        if (!unit.isOnCarrier()) {
+			return true;
+		} // Harmless error
 
         // Just leave at once if in Europe
-        if (unit.isInEurope()) return leaveTransport(null);
+        if (unit.isInEurope()) {
+			return leaveTransport(null);
+		}
 
         // Otherwise if not on the map, do nothing.
         final Tile tile = unit.getTile();
-        if (tile == null) return false;
+        if (tile == null) {
+			return false;
+		}
 
         // Try to go to the target location.
         final Mission mission = getMission();
@@ -524,7 +507,9 @@ public class AIUnit extends TransportableAIObject {
             : mission.getTarget();
         Direction direction;
         if (target != null) {
-            if (Map.isSameLocation(target, tile)) return leaveTransport(null);
+            if (Map.isSameLocation(target, tile)) {
+				return leaveTransport(null);
+			}
             if (target.getTile() != null
                 && (direction = tile.getDirection(target.getTile())) != null) {
                 return leaveTransport(direction);
@@ -542,7 +527,9 @@ public class AIUnit extends TransportableAIObject {
         }
 
         // Just get off here if possible.
-        if (tile.isLand()) return leaveTransport(null);
+        if (tile.isLand()) {
+			return leaveTransport(null);
+		}
 
         // Collect neighbouring land tiles, get off if one has our settlement
         List<Tile> tiles = new ArrayList<>();
@@ -556,7 +543,9 @@ public class AIUnit extends TransportableAIObject {
         }
 
         // No adjacent unblocked tile, fail.
-        if (tiles.isEmpty()) return false;
+        if (tiles.isEmpty()) {
+			return false;
+		}
 
         // Pick the available tile with the shortest path to one of our
         // settlements, or the tile with the highest defence value.
@@ -583,12 +572,11 @@ public class AIUnit extends TransportableAIObject {
         return leaveTransport(tile.getDirection((best != null) ? best : safe));
     }               
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean leaveTransport(Direction direction) {
-        if (!unit.isOnCarrier()) return false;
+        if (!unit.isOnCarrier()) {
+			return false;
+		}
         final Unit carrier = unit.getCarrier();
         boolean result = (direction == null)
             ? (AIMessage.askDisembark(this)
@@ -602,13 +590,12 @@ public class AIUnit extends TransportableAIObject {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean joinTransport(Unit carrier, Direction direction) {
         AIUnit aiCarrier = getAIMain().getAIUnit(carrier);
-        if (aiCarrier == null) return false;
+        if (aiCarrier == null) {
+			return false;
+		}
         boolean result = AIMessage.askEmbark(aiCarrier, unit, direction)
             && unit.getLocation() == carrier;
 
@@ -619,23 +606,17 @@ public class AIUnit extends TransportableAIObject {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         String reason = Mission.invalidTransportableReason(this);
         return (reason != null) ? reason
-            : (hasMission()) ? getMission().invalidReason()
+            : hasMission() ? getMission().invalidReason()
             : null;
     }
 
-
     // Override AIObject
 
-    /**
-     * Disposes this object and any attached mission.
-     */
+    /** Disposes this object and any attached mission. */
     @Override
     public void dispose() {
         dropTransport();
@@ -670,20 +651,19 @@ public class AIUnit extends TransportableAIObject {
         return result;
     }
 
-
-    // Serialization
-
-    // @compat 0.10.3
-    private static final String TILE_IMPROVEMENT_PLAN_MISSION_TAG = "tileImprovementPlanMission";
-    // end @compat
-    // @compat 0.10.5
-    private static final String IDLE_AT_COLONY_MISSION_TAG = "idleAtColonyMission";
-    // end @compat
-
-
     /**
-     * {@inheritDoc}
+     * Serialization
+
+     * @compat 0.10.3
      */
+    private static final String TILE_IMPROVEMENT_PLAN_MISSION_TAG = "tileImprovementPlanMission";
+    /**
+     * End @compat
+     * @compat 0.10.5
+     */
+    private static final String IDLE_AT_COLONY_MISSION_TAG = "idleAtColonyMission";
+    /** End @compat. */
+
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -693,9 +673,6 @@ public class AIUnit extends TransportableAIObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -711,19 +688,15 @@ public class AIUnit extends TransportableAIObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         super.readChildren(xr);
 
-        if (getUnit() != null) uninitialized = false;
+        if (getUnit() != null) {
+			uninitialized = false;
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final AIMain aiMain = getAIMain();
@@ -732,76 +705,54 @@ public class AIUnit extends TransportableAIObject {
         mission = null;
         if (BuildColonyMission.getXMLElementTagName().equals(tag)) {
             mission = new BuildColonyMission(aiMain, this, xr);
-
         } else if (CashInTreasureTrainMission.getXMLElementTagName().equals(tag)) {
             mission = new CashInTreasureTrainMission(aiMain, this, xr);
-
         } else if (DefendSettlementMission.getXMLElementTagName().equals(tag)) {
             mission = new DefendSettlementMission(aiMain, this, xr);
-
         } else if (IdleAtSettlementMission.getXMLElementTagName().equals(tag)
             // @compat 0.10.5
             || IDLE_AT_COLONY_MISSION_TAG.equals(tag)
             // end @compat
                    ) {
             mission = new IdleAtSettlementMission(aiMain, this, xr);
-
         } else if (IndianBringGiftMission.getXMLElementTagName().equals(tag)) {
             mission = new IndianBringGiftMission(aiMain, this, xr);
-
         } else if (IndianDemandMission.getXMLElementTagName().equals(tag)) {
             mission = new IndianDemandMission(aiMain, this, xr);
-
         } else if (MissionaryMission.getXMLElementTagName().equals(tag)) {
             mission = new MissionaryMission(aiMain, this, xr);
-
         } else if (PioneeringMission.getXMLElementTagName().equals(tag)
             // @compat 0.10.3
             || TILE_IMPROVEMENT_PLAN_MISSION_TAG.equals(tag)
             // end @compat
                    ) {
             mission = new PioneeringMission(aiMain, this, xr);
-
         } else if (PrivateerMission.getXMLElementTagName().equals(tag)) {
             mission = new PrivateerMission(aiMain, this, xr);
-
         } else if (ScoutingMission.getXMLElementTagName().equals(tag)) {
             mission = new ScoutingMission(aiMain, this, xr);
-
         } else if (TransportMission.getXMLElementTagName().equals(tag)) {
             mission = new TransportMission(aiMain, this, xr);
-
         } else if (UnitSeekAndDestroyMission.getXMLElementTagName().equals(tag)) {
             mission = new UnitSeekAndDestroyMission(aiMain, this, xr);
-
         } else if (UnitWanderHostileMission.getXMLElementTagName().equals(tag)) {
             mission = new UnitWanderHostileMission(aiMain, this, xr);
-
         } else if (UnitWanderMission.getXMLElementTagName().equals(tag)) {
             mission = new UnitWanderMission(aiMain, this, xr);
-
         } else if (WishRealizationMission.getXMLElementTagName().equals(tag)) {
             mission = new WishRealizationMission(aiMain, this, xr);
-
         } else if (WorkInsideColonyMission.getXMLElementTagName().equals(tag)) {
             mission = new WorkInsideColonyMission(aiMain, this, xr);
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return (unit == null) ? "AIUnit-null" : unit.toString("AIUnit ");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

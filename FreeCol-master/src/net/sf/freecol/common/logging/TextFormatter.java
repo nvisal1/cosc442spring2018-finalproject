@@ -25,18 +25,8 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-
-/**
- * Formats a log record's data into human-readable text.
- */
+/** Formats a log record's data into human-readable text. */
 final class TextFormatter extends Formatter {
-
-    /**
-     * The constructor to use.
-     */
-    public TextFormatter() {
-    }
-
     /**
      * Formats the given log record's data into human-readable text.
      * 

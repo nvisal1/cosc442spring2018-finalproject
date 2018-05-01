@@ -30,18 +30,13 @@ import javax.swing.filechooser.FileFilter;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.ChoiceItem;
 
-
-/**
- * A dialog for choosing a file to save.
- */
+/** A dialog for choosing a file to save. */
 public final class SaveDialog extends FreeColDialog<File> {
-
     /**
      * We need a magic cookie to use for the cancel response, as
      * the JFileChooser does not tolerate setValue(null).
      */
     private static final File cancelFile = new File(".");
-
 
     /**
      * Creates a dialog to choose a file to load.
@@ -77,10 +72,6 @@ public final class SaveDialog extends FreeColDialog<File> {
         initializeDialog(frame, DialogType.QUESTION, true, fileChooser, null, c);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public File getResponse() {
         if (responded()) {

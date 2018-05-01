@@ -76,12 +76,8 @@ import net.sf.freecol.common.option.Option;
 import net.sf.freecol.common.option.OptionGroup;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * The API and common reusable functionality for the overall GUI.
- */
+/** The API and common reusable functionality for the overall GUI. */
 public class GUI {
-
     protected static final Logger logger = Logger.getLogger(GUI.class.getName());
 
     /** Warning levels. */
@@ -99,7 +95,6 @@ public class GUI {
     /** An image library to use. */
     protected final ImageLibrary imageLibrary;
 
-
     /**
      * Create the GUI.
      *
@@ -111,8 +106,7 @@ public class GUI {
         this.imageLibrary = new ImageLibrary(scaleFactor);
     }
 
-
-    // Simple accessors
+    /** Simple accessors. */
 
     protected InGameController igc() {
         return freeColClient.getInGameController();
@@ -136,9 +130,7 @@ public class GUI {
     public void installLookAndFeel(String fontName) throws FreeColException {
     }
 
-    /**
-     * Quit the GUI.  All that is required is to exit the full screen.
-     */
+    /** Quit the GUI. All that is required is to exit the full screen. */
     public void quit() throws Exception {
     }
 
@@ -151,9 +143,7 @@ public class GUI {
     public void initializeInGame(Tile tile) {
     }
 
-    /**
-     * Set up the mouse listeners for the canvas and map viewer.
-     */
+    /** Set up the mouse listeners for the canvas and map viewer. */
     public void setupMouseListeners() {
     }
 
@@ -165,9 +155,7 @@ public class GUI {
     public void displaySplashScreen(final InputStream splashStream) {
     }
 
-    /**
-     * Hide the splash screen.
-     */
+    /** Hide the splash screen. */
     public void hideSplashScreen() {
     }
 
@@ -188,30 +176,21 @@ public class GUI {
         logger.info("It seems that the GraphicsEnvironment is headless!");
     }
 
-    /**
-     * Change the windowed mode.
-     */
+    /** Change the windowed mode. */
     public void changeWindowedMode() {
     }
 
-    /**
-     * Start the GUI for the map editor.
-     */
+    /** Start the GUI for the map editor. */
     public void startMapEditorGUI() {
     }
 
-
     // Non-trivial public routines.
 
-    /**
-     * Start/stop the goto path display.
-     */
+    /** Start/stop the goto path display. */
     public void activateGotoPath() {
     }
 
-    /**
-     * Stop the goto path display.
-     */
+    /** Stop the goto path display. */
     public void clearGotoPath() {
     }
 
@@ -259,15 +238,11 @@ public class GUI {
                                    boolean privateChat) {
     }
 
-    /**
-     * Refresh the GUI.
-     */
+    /** Refresh the GUI. */
     public void refresh() {
     }
 
-    /**
-     * Reset the menu bar.
-     */
+    /** Reset the menu bar. */
     public void resetMenuBar() {
     }
 
@@ -301,12 +276,9 @@ public class GUI {
         return false;
     }
 
-    /**
-     * Update the menu bar.
-     */
+    /** Update the menu bar. */
     public void updateMenuBar() {
     }
-
 
     // Animation handling
 
@@ -344,7 +316,6 @@ public class GUI {
     public void animateUnitMove(Unit unit, Tile srcTile, Tile dstTile) {
     }
 
-
     // MapControls handling
 
     /**
@@ -379,7 +350,6 @@ public class GUI {
 
     public void miniMapToggleFogOfWarControls() {
     }
-
 
     // Dialogs that return values
 
@@ -445,25 +415,29 @@ public class GUI {
      * @return True if the unit can proceed.
      */
     public boolean confirmAbandonEducation(Unit unit, boolean leaveColony) {
-        if (!unit.isInColony()) return true;
+        if (!unit.isInColony()) {
+			return true;
+		}
         boolean teacher = unit.getStudent() != null;
         // if leaving the colony, the student loses learning spot, so
         // check with player
         boolean student = leaveColony && unit.getTeacher() != null;
-        if (!teacher && !student) return true;
+        if (!teacher && !student) {
+			return true;
+		}
 
-        Building school = (Building)((teacher) ? unit.getLocation()
+        Building school = (Building)(teacher ? unit.getLocation()
             : unit.getTeacher().getLocation());
         StringTemplate label = unit.getLabel(Unit.UnitLabelType.NATIONAL);
-        StringTemplate template = (leaveColony) ? StringTemplate
+        StringTemplate template = leaveColony ? StringTemplate
             .template("abandonEducation.text")
             .addStringTemplate("%unit%", label)
             .addName("%colony%", school.getColony().getName())
             .addNamed("%building%", school)
-            .addStringTemplate("%action%", (teacher)
+            .addStringTemplate("%action%", teacher
                 ? StringTemplate.key("abandonEducation.action.teaching")
                 : StringTemplate.key("abandonEducation.action.studying"))
-            : (teacher)
+            : teacher
             ? StringTemplate.template("abandonTeaching.text")
                 .addStringTemplate("%unit%", label)
                 .addNamed("%building%", school)
@@ -482,7 +456,9 @@ public class GUI {
      */
     public boolean confirmClearTradeRoute(Unit unit) {
         TradeRoute tr = unit.getTradeRoute();
-        if (tr == null) return true;
+        if (tr == null) {
+			return true;
+		}
         StringTemplate template = StringTemplate
             .template("clearTradeRoute.text")
             .addStringTemplate("%unit%",
@@ -558,7 +534,9 @@ public class GUI {
         } else if (target == attacker.getTile()) {
             // Fortify on tile owned by another nation
             enemy = target.getOwner();
-            if (enemy == null) return true;
+            if (enemy == null) {
+				return true;
+			}
         } else {
             Unit defender = target.getDefendingUnit(attacker);
             if (defender == null) {
@@ -631,10 +609,10 @@ public class GUI {
             : (is.getAlarm(player).getLevel() == Tension.Level.HAPPY)
             ? "confirmTribute.happy"
             : "confirmTribute.normal";
-        return (confirm(is.getTile(), StringTemplate.template(messageId)
+        return confirm(is.getTile(), StringTemplate.template(messageId)
                 .addName("%settlement%", is.getName())
                 .addStringTemplate("%nation%", other.getNationLabel()),
-                attacker, "confirmTribute.yes", "confirmTribute.no"))
+                attacker, "confirmTribute.yes", "confirmTribute.no")
             ? 1 : -1;
     }
 
@@ -791,7 +769,6 @@ public class GUI {
                                                       boolean canBuy,
                                                       boolean canSell,
                                                       boolean canGift) {
-
         ArrayList<ChoiceItem<TradeAction>> choices = new ArrayList<>();
         if (canBuy) {
             choices.add(new ChoiceItem<>(Messages.message("tradeProposition.toBuy"),
@@ -805,7 +782,9 @@ public class GUI {
             choices.add(new ChoiceItem<>(Messages.message("tradeProposition.toGift"),
                                          TradeAction.GIFT, canGift));
         }
-        if (choices.isEmpty()) return null;
+        if (choices.isEmpty()) {
+			return null;
+		}
 
         return getChoice(settlement.getTile(), template,
                          settlement, "cancel", choices);
@@ -862,18 +841,18 @@ public class GUI {
         String name = getInput(tile, StringTemplate
             .template("nameColony.text"), suggested,
             "accept", "cancel");
-        if (name == null) {
-            // Cancelled
-        } else if (name.isEmpty()) {
-            showInformationMessage("enterSomeText"); // 0-length is invalid
-        } else if (player.getSettlementByName(name) != null) {
-            // Must be unique
-            showInformationMessage(tile, StringTemplate
-                .template("nameColony.notUnique")
-                .addName("%name%", name));
-        } else {
-            return name;
-        }
+        if (name != null) {
+			if (name.isEmpty()) {
+			    showInformationMessage("enterSomeText"); // 0-length is invalid
+			} else if (player.getSettlementByName(name) != null) {
+			    // Must be unique
+			    showInformationMessage(tile, StringTemplate
+			        .template("nameColony.notUnique")
+			        .addName("%name%", name));
+			} else {
+			    return name;
+			}
+		}
         player.putSettlementName(suggested);
         return null;
     }
@@ -940,13 +919,15 @@ public class GUI {
         GoodsType[] wantedGoods = settlement.getWantedGoods();
         int present = 0;
         for (; present < wantedGoods.length; present++) {
-            if (wantedGoods[present] == null) break;
+            if (wantedGoods[present] == null) {
+				break;
+			}
         }
         if (present > 0) {
             StringTemplate t = StringTemplate.template("scoutSettlement.trade."
-                + Integer.toString(present));
+                + present);
             for (int i = 0; i < present; i++) {
-                String tradeKey = "%goods" + Integer.toString(i+1) + "%";
+                String tradeKey = "%goods" + (i+1) + "%";
                 t.addNamed(tradeKey, wantedGoods[i]);
             }
             template.addStringTemplate(t).addName("\n\n");
@@ -995,7 +976,6 @@ public class GUI {
         return getChoice(unit.getTile(), template,
                          goods.getType(), "cancel", choices);
     }
-
 
     /**
      * General modal choice dialog.
@@ -1207,7 +1187,7 @@ public class GUI {
         alertSound();
     }
 
-    final public void showInformationMessage(Settlement displayObject,
+    public final void showInformationMessage(Settlement displayObject,
                                        String messageId) {
         showInformationMessage(displayObject, StringTemplate.key(messageId));
     }
@@ -1222,7 +1202,7 @@ public class GUI {
         alertSound();
     }
 
-    final public void showInformationMessage(Tile displayObject,
+    public final void showInformationMessage(Tile displayObject,
                                        String messageId) {
         showInformationMessage(displayObject, StringTemplate.key(messageId));
     }
@@ -1246,7 +1226,7 @@ public class GUI {
         return null;
     }
 
-    final public File showLoadSaveFileDialog() {
+    public final File showLoadSaveFileDialog() {
         File file = showLoadDialog(FreeColDirectories.getSaveDirectory());
         if (file != null && !file.isFile()) {
             showErrorMessage("error.noSuchFile");
@@ -1445,7 +1425,6 @@ public class GUI {
     public void toggleViewMode() {
     }
 
-
     // Forwarding to SoundController, only for gui classes in need of sound
 
     /**
@@ -1513,5 +1492,4 @@ public class GUI {
             }
         }
     }
-
 }

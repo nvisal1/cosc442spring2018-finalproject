@@ -29,17 +29,12 @@ import net.sf.freecol.common.networking.MessageHandler;
 
 import org.w3c.dom.Element;
 
-
-/**
- * Provides common methods for input handlers.
- */
+/** Provides common methods for input handlers. */
 public abstract class InputHandler implements MessageHandler {
-
     private static final Logger logger = Logger.getLogger(InputHandler.class.getName());
 
     /** The main FreeCol client object. */
     private final FreeColClient freeColClient;
-
 
     /**
      * The constructor to use.
@@ -49,7 +44,6 @@ public abstract class InputHandler implements MessageHandler {
     public InputHandler(FreeColClient freeColClient) {
         this.freeColClient = freeColClient;
     }
-
 
     /**
      * Gets the main freecol client object.
@@ -88,7 +82,6 @@ public abstract class InputHandler implements MessageHandler {
      */
     @Override
     public abstract Element handle(Connection connection, Element element);
-
 
     // Useful handlers
 

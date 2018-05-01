@@ -25,13 +25,11 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.Utils;
 
-
 /**
  * The <code>Scope</code> class determines whether a given
  * <code>FreeColGameObjectType</code> fulfills certain requirements.
  */
 public class Scope extends FreeColObject {
-
     /** 
      * The identifier of a <code>FreeColGameObjectType</code>, or
      * <code>Option</code>.
@@ -57,12 +55,9 @@ public class Scope extends FreeColObject {
     private boolean matchesNull = true;
 
     /** Whether the match is negated. */
-    private boolean matchNegated = false;
+    private boolean matchNegated;
 
-
-    /**
-     * Deliberately empty constructor.
-     */
+    /** Deliberately empty constructor. */
     public Scope() {}
 
     /**
@@ -74,7 +69,6 @@ public class Scope extends FreeColObject {
     public Scope(FreeColXMLReader xr) throws XMLStreamException {
         readFromXML(xr);
     }
-
 
     /**
      * Get a key to display this scope with.
@@ -194,11 +188,12 @@ public class Scope extends FreeColObject {
         }
         if (methodName != null) {
             Object ret = object.invokeMethod(methodName, Object.class, null);
-            if (!String.valueOf(ret).equals(methodValue)) return matchNegated;
+            if (!String.valueOf(ret).equals(methodValue)) {
+				return matchNegated;
+			}
         }
         return !matchNegated;
     }
-
 
     // @compat 0.10.7
     /**
@@ -212,23 +207,16 @@ public class Scope extends FreeColObject {
         scope.setMatchNegated(true);
         return scope;
     }
-    // end @compat 0.10.7
+    /** End @compat 0.10.7 Override Object */
 
-
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (o == this) {
+			return true;
+		}
         if (o instanceof Scope) {
             Scope otherScope = (Scope) o;
-            if (matchNegated != otherScope.matchNegated) {
-                return false;
-            }
-            if (matchesNull != otherScope.matchesNull) {
+            if (matchNegated != otherScope.matchNegated || matchesNull != otherScope.matchesNull) {
                 return false;
             }
             if (type == null) {
@@ -267,9 +255,6 @@ public class Scope extends FreeColObject {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -282,8 +267,7 @@ public class Scope extends FreeColObject {
         return 31 * hash + (matchNegated ? 1 : 0);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String ABILITY_ID_TAG = "ability-id";
     private static final String ABILITY_VALUE_TAG = "ability-value";
@@ -292,15 +276,11 @@ public class Scope extends FreeColObject {
     private static final String METHOD_NAME_TAG = "method-name";
     private static final String METHOD_VALUE_TAG = "method-value";
     private static final String TYPE_TAG = "type";
-    // @compat 0.11.3
+    /** @compat 0.11.3 */
     private static final String OLD_MATCH_NEGATED_TAG = "matchNegated";
     private static final String OLD_MATCHES_NULL_TAG = "matchesNull";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         // Scopes do not have ids, no super.writeAttributes().
@@ -330,9 +310,6 @@ public class Scope extends FreeColObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         // Scopes do not have ids, no super.readAttributes().
@@ -341,16 +318,16 @@ public class Scope extends FreeColObject {
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MATCH_NEGATED_TAG)) {
             matchNegated = xr.getAttribute(OLD_MATCH_NEGATED_TAG, false);
-        } else
-        // end @compat 0.11.3
-            matchNegated = xr.getAttribute(MATCH_NEGATED_TAG, false);
+        } else {
+			matchNegated = xr.getAttribute(MATCH_NEGATED_TAG, false);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MATCHES_NULL_TAG)) {
             matchesNull = xr.getAttribute(OLD_MATCHES_NULL_TAG, true);
-        } else
-        // end @compat 0.11.3
-            matchesNull = xr.getAttribute(MATCHES_NULL_TAG, true);
+        } else {
+			matchesNull = xr.getAttribute(MATCHES_NULL_TAG, true);
+		}
 
         type = xr.getAttribute(TYPE_TAG, (String)null);
         // @compat 0.10.x
@@ -372,9 +349,6 @@ public class Scope extends FreeColObject {
         methodValue = xr.getAttribute(METHOD_VALUE_TAG, (String)null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(64);
@@ -385,15 +359,16 @@ public class Scope extends FreeColObject {
         if (methodName != null) {
             sb.append(" ").append(methodName).append("=").append(methodValue);
         }
-        if (matchesNull) sb.append(" matches-null");
-        if (matchNegated) sb.append(" match-negated");
+        if (matchesNull) {
+			sb.append(" matches-null");
+		}
+        if (matchNegated) {
+			sb.append(" match-negated");
+		}
         sb.append("]");
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

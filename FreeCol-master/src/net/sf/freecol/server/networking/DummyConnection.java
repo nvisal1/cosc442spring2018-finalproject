@@ -27,17 +27,12 @@ import net.sf.freecol.common.networking.MessageHandler;
 
 import org.w3c.dom.Element;
 
-
-/**
- * A dummy connection, used for AI players.
- */
+/** A dummy connection, used for AI players. */
 public final class DummyConnection extends Connection {
-
     /** The message handler to simulate using when receiving messages. */
     private MessageHandler outgoingMessageHandler;
 
     private DummyConnection otherConnection;
-
 
     /**
      * Sets up a dummy connection using the specified {@link MessageHandler}s.
@@ -49,7 +44,6 @@ public final class DummyConnection extends Connection {
         super(name);
         setMessageHandler(incomingMessageHandler);
     }
-
 
     /**
      * Sets the outgoing MessageHandler for this Connection.
@@ -79,9 +73,7 @@ public final class DummyConnection extends Connection {
         return otherConnection;
     }
 
-    /**
-     * Closes this connection.
-     */
+    /** Closes this connection. */
     @Override
     public void close() {
         // Do nothing.
@@ -143,9 +135,6 @@ public final class DummyConnection extends Connection {
         return reply;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "[DummyConnection " + getName() + "]";

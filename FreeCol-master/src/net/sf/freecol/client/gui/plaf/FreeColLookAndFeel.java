@@ -37,12 +37,8 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import net.sf.freecol.common.FreeColException;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * Implements the FreeCol look and feel.
- */
+/** Implements the FreeCol look and feel. */
 public class FreeColLookAndFeel extends MetalLookAndFeel {
-
     private static final Logger logger = Logger.getLogger(FreeColLookAndFeel.class.getName());
 
     private static final Class uiClasses[] = {
@@ -67,15 +63,12 @@ public class FreeColLookAndFeel extends MetalLookAndFeel {
         FreeColTransparentPanelUI.class
     };
 
-
     /**
      * Initiates a new FreeCol look and feel.
      *
      * @exception FreeColException If the ui directory could not be found.
      */
     public FreeColLookAndFeel() throws FreeColException {
-        super();
-
         setCurrentTheme(new DefaultMetalTheme() {
                 @Override
                 protected ColorUIResource getPrimary1() {
@@ -177,7 +170,6 @@ public class FreeColLookAndFeel extends MetalLookAndFeel {
             } else {
                 u.put("cursor.go", Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
-
         } catch (ClassNotFoundException e) {
             logger.log(Level.SEVERE, "Failed to load look and feel!", e);
             System.exit(1);
@@ -227,7 +219,6 @@ public class FreeColLookAndFeel extends MetalLookAndFeel {
     public String getDescription() {
         return "The default Look and Feel for FreeCol";
     }
-
 
     /**
      * Gets the name of this Look and Feel.

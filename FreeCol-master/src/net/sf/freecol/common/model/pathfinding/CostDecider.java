@@ -17,12 +17,10 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.model.pathfinding;
 
 import net.sf.freecol.common.model.Location;
 import net.sf.freecol.common.model.Unit;
-
 
 /**
  * Determines the cost of a single move.
@@ -30,8 +28,7 @@ import net.sf.freecol.common.model.Unit;
  * and {@link net.sf.freecol.common.model.Map#search}.
  */
 public interface CostDecider {
-
-    public static final int ILLEGAL_MOVE = -1;
+    int ILLEGAL_MOVE = -1;
     
     /**
      * Determines the cost of a single move.
@@ -45,7 +42,7 @@ public interface CostDecider {
      * @return The cost of moving the given unit from the
      *     <code>oldLocation</code> to the <code>newLocation</code>.
      */
-    public int getCost(Unit unit, Location oldLocation, Location newLocation,
+    int getCost(Unit unit, Location oldLocation, Location newLocation,
                        int movesLeftBefore);
     
     /**
@@ -54,7 +51,7 @@ public interface CostDecider {
      * 
      * @return The number of moves left.
      */
-    public int getMovesLeft();
+    int getMovesLeft();
 
     /**
      * Gets the number of turns consumed.
@@ -62,5 +59,5 @@ public interface CostDecider {
      * 
      * @return The number of turns consumed.
      */    
-    public int getNewTurns();    
+    int getNewTurns();    
 }

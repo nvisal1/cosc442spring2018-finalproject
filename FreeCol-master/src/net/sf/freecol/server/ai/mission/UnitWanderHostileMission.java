@@ -32,18 +32,15 @@ import static net.sf.freecol.common.util.RandomUtils.*;
 import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
-
 /**
  * Mission for wandering around, attacking targets owned by a player we 
  * do not like.
  */
 public class UnitWanderHostileMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(UnitWanderHostileMission.class.getName());
 
     /** The tag for this mission. */
     private static final String tag = "AI hostile-wanderer";
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -73,7 +70,6 @@ public class UnitWanderHostileMission extends Mission {
         readFromXML(xr);
     }
 
-
     /**
      * Why would this mission be invalid with the given unit.
      *
@@ -83,8 +79,8 @@ public class UnitWanderHostileMission extends Mission {
      */
     private static String invalidMissionReason(AIUnit aiUnit) {
         final Unit unit = aiUnit.getUnit();
-        return (!unit.isOffensiveUnit()) ? Mission.UNITNOTOFFENSIVE
-            : (!unit.hasTile()) ? Mission.UNITNOTONMAP
+        return !unit.isOffensiveUnit() ? Mission.UNITNOTOFFENSIVE
+            : !unit.hasTile() ? Mission.UNITNOTONMAP
             : null;
     }
 
@@ -116,56 +112,41 @@ public class UnitWanderHostileMission extends Mission {
             : null;
     }
 
-
-    // Implement Mission
-    //   Inherit dispose, getBaseTransportPriority, getTransportDestination
-
     /**
-     * {@inheritDoc}
+     * Implement Mission
+     *   Inherit dispose, getBaseTransportPriority, getTransportDestination.
      */
+
     @Override
     public Location getTarget() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {}
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isOneTime() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return invalidReason(getAIUnit(), null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
         String reason = invalidReason();
-        if (reason != null) return lbFail(lb, false, reason);
+        if (reason != null) {
+			return lbFail(lb, false, reason);
+		}
 
         // Make random moves in a reasonably consistent direction,
         // checking for a target along the way.
@@ -182,20 +163,20 @@ public class UnitWanderHostileMission extends Mission {
                     return lbDone(lb, true, "found target ", m.getTarget());
                 }
                 check = checkTurns;
-            } else check--;
+            } else {
+				check--;
+			}
 
-            if ((d = moveRandomly(tag, d)) == null) break;
+            d = moveRandomly(tag, d);
+			if (d == null) {
+				break;
+			}
         }
         return lbAt(lb);
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

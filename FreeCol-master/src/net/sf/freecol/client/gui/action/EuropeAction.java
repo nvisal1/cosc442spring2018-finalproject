@@ -23,15 +23,12 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * An action for displaying the
  * {@link net.sf.freecol.client.gui.panel.EuropePanel}.
  */
 public class EuropeAction extends MapboardAction {
-
     public static final String id = "europeAction";
-
 
     /**
      * Creates a new <code>EuropeAction</code>.
@@ -42,12 +39,8 @@ public class EuropeAction extends MapboardAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         return super.shouldBeEnabled()
@@ -55,12 +48,8 @@ public class EuropeAction extends MapboardAction {
             && getFreeColClient().getMyPlayer().getEurope() != null;
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showEuropePanel();

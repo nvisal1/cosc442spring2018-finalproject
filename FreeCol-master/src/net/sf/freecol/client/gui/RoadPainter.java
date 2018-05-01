@@ -39,15 +39,12 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.TileImprovement;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * This class is responsible for drawing the Roads on a tile.
- */
+/** This class is responsible for drawing the Roads on a tile. */
 public final class RoadPainter {
-    // Helper variables for displaying the map.
+    /** Helper variables for displaying the map. */
     private int tileHeight, tileWidth, halfHeight, halfWidth;
 
-    // roads
+    /** Roads. */
     private final EnumMap<Direction, Point2D.Float> corners =
         new EnumMap<>(Direction.class);
     private final EnumMap<Direction, List<Direction>> prohibitedRoads =
@@ -156,5 +153,4 @@ public final class RoadPainter {
         g.setColor(oldColor);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     }
-
 }

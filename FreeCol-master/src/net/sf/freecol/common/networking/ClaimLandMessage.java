@@ -31,12 +31,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when the client requests claiming land.
- */
+/** The message sent when the client requests claiming land. */
 public class ClaimLandMessage extends DOMMessage {
-
     /** The tile to claim. */
     private final String tileId;
 
@@ -45,7 +41,6 @@ public class ClaimLandMessage extends DOMMessage {
 
     /** The price to pay for the tile. */
     private final String priceString;
-
 
     /**
      * Create a new <code>ClaimLandMessage</code>.
@@ -76,7 +71,6 @@ public class ClaimLandMessage extends DOMMessage {
         this.claimantId = element.getAttribute("claimant");
         this.priceString = element.getAttribute("price");
     }
-
 
     /**
      * Handle a "claimLand"-message.

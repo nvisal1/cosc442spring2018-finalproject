@@ -28,18 +28,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when naming a new land.
- */
+/** The message sent when naming a new land. */
 public class NewLandNameMessage extends DOMMessage {
-
     /** The unit that has come ashore. */
     private final String unitId;
 
     /** The name to use. */
     private final String newLandName;
-
 
     /**
      * Create a new <code>NewLandNameMessage</code> with the
@@ -69,7 +64,6 @@ public class NewLandNameMessage extends DOMMessage {
         this.newLandName = element.getAttribute("newLandName");
     }
 
-
     // Public interface
 
     /**
@@ -90,7 +84,6 @@ public class NewLandNameMessage extends DOMMessage {
     public String getNewLandName() {
         return newLandName;
     }
-
 
     /**
      * Handle a "newLandName"-message.

@@ -16,10 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/**********************************************
- * Please see "Howto" at the end of this file! *
- **********************************************/
+/* Please see "Howto" at the end of this file! */
 
 package net.sf.freecol.server.ai.goal;
 
@@ -35,7 +32,6 @@ import static net.sf.freecol.common.util.StringUtils.*;
 import net.sf.freecol.server.ai.AIObject;
 import net.sf.freecol.server.ai.AIPlayer;
 import net.sf.freecol.server.ai.AIUnit;
-
 
 /**
  * A Goal is used to encapsulate a specific part of the
@@ -54,7 +50,6 @@ import net.sf.freecol.server.ai.AIUnit;
  * Scouting, Trade, Piracy).
  */
 public abstract class Goal extends AIObject implements GoalConstants {
-
     private static final Logger logger = Logger.getLogger(Goal.class.getName());
 
     private float relativeWeight;
@@ -66,7 +61,7 @@ public abstract class Goal extends AIObject implements GoalConstants {
     private final Goal parentGoal;
 
     /**
-     * Standard constructor
+     * Standard constructor.
      *
      * @param p The {@link AIPlayer} this goal belongs to
      * @param g The parent goal; may be null if we're a direct goal of the AIPlayer
@@ -223,11 +218,11 @@ public abstract class Goal extends AIObject implements GoalConstants {
      * @return The absolute weight [0;1] of the parent goal, or 1 if a parent goal does not exist
      */
     public float getParentWeight() {
-        if (parentGoal == null) {
+        if (parentGoal != null) {
             //we must be a direct goal of our AIPlayer
-            return 1.0f;
-        } else {
             return parentGoal.getAbsoluteWeight();
+        } else {
+            return 1.0f;
         }
     }
 
@@ -302,7 +297,6 @@ public abstract class Goal extends AIObject implements GoalConstants {
 //      */
 //     protected void requestUnit(UnitType ut) {
 //         int turnsWithoutUnit = getGame().getTurn().getNumber() - turnLastUnitAdded;
-//
 //         //FIXME: Uncomment after AIPlayer.addUnitWish() has been written.
 //         //player.addUnitWish(this, ut, getAbsoluteWeight(), turnsWithoutUnit);
 //     }
@@ -326,7 +320,6 @@ public abstract class Goal extends AIObject implements GoalConstants {
      * @param minProduction The minimum a unit needs to produce to be considered.
      */
     protected void requestWorker(GoodsType gt, int minProduction) {
-
         //FIXME: Uncomment after AIPlayer.addWorkerWish() has been written.
         //int turnsWithoutUnit = getGame().getTurn().getNumber() - turnLastUnitAdded;
         //player.addWorkerWish(this, gt, minProduction, getAbsoluteWeight(), turnsWithoutUnit);
@@ -460,7 +453,6 @@ public abstract class Goal extends AIObject implements GoalConstants {
         AIUnit yieldedUnit = null;
         boolean isOwnUnit = false;
 
-
         Iterator<AIUnit> uit = getOwnedAIUnitsIterator();
         while (uit.hasNext()) {
             AIUnit u = uit.next();
@@ -501,7 +493,7 @@ public abstract class Goal extends AIObject implements GoalConstants {
         Iterator<AIUnit> uit = getOwnedAIUnitsIterator();
         while (uit.hasNext()) {
             AIUnit u = uit.next();
-            if (!(u.getGoal()==this)) {
+            if (u.getGoal() != this) {
                 logger.warning("Goal "+ getGoalDescription() + " owns unit with another goal: "
                                + u.getGoal().getGoalDescription());
                 removeUnit(u);
@@ -551,8 +543,7 @@ public abstract class Goal extends AIObject implements GoalConstants {
         return "aiGoal";
     }
 
-/* INTERFACE ******************************************************************/
-
+/* INTERFACE */
 
     /**
      * Since internal implementation details may vary,
@@ -621,8 +612,6 @@ public abstract class Goal extends AIObject implements GoalConstants {
      *             stream.
      */
     //protected abstract void readFromXML(FreeColXMLReader xr) throws XMLStreamException;
-
-
 
 /* How this is supposed to work:
  *

@@ -33,13 +33,8 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * This panel displays the Naval Report.
- */
+/** This panel displays the Naval Report. */
 public final class ReportNavalPanel extends ReportUnitPanel {
-
-
     /**
      * The constructor that will add the items to this panel.
      *
@@ -48,7 +43,6 @@ public final class ReportNavalPanel extends ReportUnitPanel {
     public ReportNavalPanel(FreeColClient freeColClient) {
         super(freeColClient, "reportNavalAction", false);
     }
-
 
     private boolean reportable(UnitType unitType) {
         return unitType.isNaval()
@@ -59,11 +53,8 @@ public final class ReportNavalPanel extends ReportUnitPanel {
         return unit.isNaval();
     }
 
-    // Implement ReportUnitPanel
+    /** Implement ReportUnitPanel. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void gatherData() {
         for (Unit unit : getMyPlayer().getUnits()) {
@@ -73,9 +64,6 @@ public final class ReportNavalPanel extends ReportUnitPanel {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void addREFUnits() {
         final Specification spec = getSpecification();
@@ -95,9 +83,6 @@ public final class ReportNavalPanel extends ReportUnitPanel {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void addOwnUnits() {
         final Specification spec = getSpecification();
@@ -108,7 +93,9 @@ public final class ReportNavalPanel extends ReportUnitPanel {
         reportPanel.add(new JSeparator(JSeparator.HORIZONTAL), "growx");
 
         for (UnitType unitType : getSpecification().getUnitTypeList()) {
-            if (!reportable(unitType)) continue;
+            if (!reportable(unitType)) {
+				continue;
+			}
             AbstractUnit au = new AbstractUnit(unitType,
                                                Specification.DEFAULT_ROLE_ID,
                                                getCount("naval", unitType));

@@ -30,12 +30,8 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.ObjectWithId;
 import net.sf.freecol.common.model.Specification;
 
-
-/**
- * A wrapped for a file containing a FreeCol modification (mod).
- */
+/** A wrapped for a file containing a FreeCol modification (mod). */
 public class FreeColModFile extends FreeColDataFile implements ObjectWithId {
-
     protected static final String SPECIFICATION_FILE = "specification.xml";
     protected static final String MOD_DESCRIPTOR_FILE = "mod.xml";
 
@@ -49,7 +45,6 @@ public class FreeColModFile extends FreeColDataFile implements ObjectWithId {
     /** The identifier for the parent of this mod, if any. */
     private String parent;
 
-
     /**
      * Make a FreeColModFile from a File.
      *
@@ -62,7 +57,6 @@ public class FreeColModFile extends FreeColDataFile implements ObjectWithId {
         readModDescriptor();
     }
 
-
     /**
      * Gets the input stream to the specification.
      *
@@ -74,7 +68,6 @@ public class FreeColModFile extends FreeColDataFile implements ObjectWithId {
         try {
             return getInputStream(SPECIFICATION_FILE);
         } catch (FileNotFoundException fnfe) {
-            ; // Normal for graphic-only mods.
         }
         return null;
     }
@@ -110,7 +103,7 @@ public class FreeColModFile extends FreeColDataFile implements ObjectWithId {
     protected void readModDescriptor() throws IOException {
         try (
             FreeColXMLReader xr
-                = new FreeColXMLReader(getModDescriptorInputStream());
+                = new FreeColXMLReader(getModDescriptorInputStream())
         ) {
             xr.nextTag();
             id = xr.readId();

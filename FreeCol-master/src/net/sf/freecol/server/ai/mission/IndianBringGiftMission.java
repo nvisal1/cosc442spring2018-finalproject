@@ -39,7 +39,6 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
-
 /**
  * Mission for bringing a gift to a specified player.
  *
@@ -52,7 +51,6 @@ import net.sf.freecol.server.ai.AIUnit;
  * </ol>
  */
 public class IndianBringGiftMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(IndianBringGiftMission.class.getName());
 
     /** The tag for this mission. */
@@ -63,7 +61,6 @@ public class IndianBringGiftMission extends Mission {
 
     /** Has the gift been collected? */
     private boolean collected;
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -94,7 +91,6 @@ public class IndianBringGiftMission extends Mission {
 
         readFromXML(xr);
     }
-
 
     public Colony getColony() { return this.colony; }
 
@@ -136,7 +132,9 @@ public class IndianBringGiftMission extends Mission {
      */
     private static String invalidColonyReason(AIUnit aiUnit, Colony colony) {
         String reason = invalidTargetReason(colony);
-        if (reason != null) return reason;
+        if (reason != null) {
+			return reason;
+		}
         final Unit unit = aiUnit.getUnit();
         final Player owner = unit.getOwner();
         Player targetPlayer = colony.getOwner();
@@ -147,7 +145,9 @@ public class IndianBringGiftMission extends Mission {
             Tension tension = unit.getHomeIndianSettlement()
                 .getAlarm(targetPlayer);
             if (tension != null && tension.getLevel()
-                .compareTo(Tension.Level.HAPPY) > 0) return "unhappy";
+                .compareTo(Tension.Level.HAPPY) > 0) {
+				return "unhappy";
+			}
         }
         return null;
     }
@@ -179,30 +179,19 @@ public class IndianBringGiftMission extends Mission {
             : Mission.TARGETINVALID;
     }
 
+    /** Mission interface Inherit dispose, getBaseTransportPriority, isOneTime. */
 
-    // Mission interface
-    //   Inherit dispose, getBaseTransportPriority, isOneTime
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTransportDestination() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTarget() {
-        return (this.collected) ? this.colony
+        return this.collected ? this.colony
             : getUnit().getHomeIndianSettlement();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {
         if (target instanceof Colony) {
@@ -210,30 +199,23 @@ public class IndianBringGiftMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return getTarget();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return invalidReason(getAIUnit(), this.colony);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
         String reason = invalidReason();
-        if (reason != null) return lbFail(lb, false, reason);
+        if (reason != null) {
+			return lbFail(lb, false, reason);
+		}
 
         final AIUnit aiUnit = getAIUnit();
         final Unit unit = getUnit();
@@ -269,7 +251,9 @@ public class IndianBringGiftMission extends Mission {
             // Load the goods.
             lbAt(lb);
             Goods gift = is.getRandomGift(getAIRandom());
-            if (gift == null) return lbFail(lb, false, "found no gift");
+            if (gift == null) {
+				return lbFail(lb, false, "found no gift");
+			}
             if (!AIMessage.askLoadGoods(is, gift.getType(), gift.getAmount(),
                                         aiUnit) || !hasGift()) {
                 return lbFail(lb, false, "failed to collect gift");
@@ -318,22 +302,17 @@ public class IndianBringGiftMission extends Mission {
                     unit.getGoodsList().get(0));
                 AIMessage.askCloseTransaction(aiUnit, settlement);
             }
-            return (result)
+            return result
                 ? lbDone(lb, false, "delivered")
                 : lbFail(lb, false, "delivery");
         }
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String COLLECTED_TAG = "collected";
     private static final String COLONY_TAG = "colony";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -345,9 +324,6 @@ public class IndianBringGiftMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -358,9 +334,6 @@ public class IndianBringGiftMission extends Mission {
                                       Colony.class, (Colony)null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

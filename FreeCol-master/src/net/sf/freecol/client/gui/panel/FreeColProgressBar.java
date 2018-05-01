@@ -34,7 +34,6 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.StringTemplate;
 
-
 /**
  * Implements a simple progress bar suitable for use with
  * FreeCol. Unlike JProgressBar, it also displays the expected
@@ -42,18 +41,17 @@ import net.sf.freecol.common.model.StringTemplate;
  * Used in the colony panel for the building progress.
  */
 public class FreeColProgressBar extends JPanel {
+    /** The minimum value of the progress bar. */
+    private int min;
 
-    // The minimum value of the progress bar
-    private int min = 0;
-
-    // The maximum value of the progress bar
+    /** The maximum value of the progress bar. */
     private int max = 100;
 
-    // The current value of the progress bar
-    private int value = 0;
+    /** The current value of the progress bar. */
+    private int value;
 
-    // The expected increase next turn
-    private int step = 0;
+    /** The expected increase next turn. */
+    private int step;
 
     private int iconWidth;
 
@@ -65,9 +63,7 @@ public class FreeColProgressBar extends JPanel {
      */
     private GoodsType goodsType = null;
 
-
     private Image image;
-
 
     /**
      * Creates a new <code>FreeColProgressBar</code> instance.
@@ -114,7 +110,6 @@ public class FreeColProgressBar extends JPanel {
         setPreferredSize(new Dimension(200, 20));
     }
 
-
     /**
      * Update the data of the progress bar.
      *
@@ -143,7 +138,6 @@ public class FreeColProgressBar extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setFont(FontLibrary.createFont(FontLibrary.FontType.SIMPLE,
             FontLibrary.FontSize.TINY));
@@ -185,7 +179,7 @@ public class FreeColProgressBar extends JPanel {
         }
 
         String stepSignal = (step < 0) ? "-" : "+";
-        String progressString = String.valueOf(value) + stepSignal + Math.abs(step) + "/" + max;
+        String progressString = value + stepSignal + Math.abs(step) + "/" + max;
         String turnsString = Messages.message("notApplicable");
         if (max <= value) {
             turnsString = "0";

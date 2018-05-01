@@ -34,12 +34,8 @@ import net.sf.freecol.common.util.LogBuilder;
 
 import org.w3c.dom.Element;
 
-
-/**
- * Represents the need for goods within a <code>Colony</code>.
- */
+/** Represents the need for goods within a <code>Colony</code>. */
 public class GoodsWish extends Wish {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(GoodsWish.class.getName());
 
@@ -48,7 +44,6 @@ public class GoodsWish extends Wish {
 
     /** The amount of goods required. */
     private int amountRequested;
-
 
     /**
      * Creates a new uninitialized <code>GoodsWish</code>.
@@ -121,7 +116,6 @@ public class GoodsWish extends Wish {
         uninitialized = goodsType == null;
     }
 
-
     /**
      * Updates this <code>GoodsWish</code> with the given attributes.
      *
@@ -133,7 +127,9 @@ public class GoodsWish extends Wish {
         this.goodsType = goodsType;
         this.amountRequested = amount;
         setValue(value);
-        if (transportable != null) transportable.incrementTransportPriority();
+        if (transportable != null) {
+			transportable.incrementTransportPriority();
+		}
     }
 
     /**
@@ -197,21 +193,18 @@ public class GoodsWish extends Wish {
     @Override
     public int checkIntegrity(boolean fix) {
         int result = super.checkIntegrity(fix);
-        if (goodsType == null || amountRequested <= 0) result = -1;
+        if (goodsType == null || amountRequested <= 0) {
+			result = -1;
+		}
         return result;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String AMOUNT_REQUESTED_TAG = "amountRequested";
     private static final String GOODS_TYPE_TAG = "goodsType";
     private static final String TRANSPORTABLE_TAG = "transportable";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -221,9 +214,6 @@ public class GoodsWish extends Wish {
         xw.writeAttribute(AMOUNT_REQUESTED_TAG, amountRequested);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -232,7 +222,7 @@ public class GoodsWish extends Wish {
         final Specification spec = getSpecification();
 
         // Delegated from Wish
-        transportable = (xr.hasAttribute(TRANSPORTABLE_TAG))
+        transportable = xr.hasAttribute(TRANSPORTABLE_TAG)
             ? xr.makeAIObject(aiMain, TRANSPORTABLE_TAG,
                               AIGoods.class, (AIGoods)null, true)
             : null;
@@ -244,33 +234,26 @@ public class GoodsWish extends Wish {
                                           GoodsContainer.CARGO_SIZE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         super.readChildren(xr);
 
-        if (goodsType != null && amountRequested > 0) uninitialized = false;
+        if (goodsType != null && amountRequested > 0) {
+			uninitialized = false;
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         LogBuilder lb = new LogBuilder(32);
         lb.add("[", getId(),
             " ", amountRequested,
-            " ", ((goodsType == null) ? "null" : goodsType.getSuffix()),
+            " ", (goodsType == null) ? "null" : goodsType.getSuffix(),
             " -> ", destination,
             " (", getValue(), ")]");
         return lb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -32,14 +32,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-
-/**
- * Merge some translation updates.
- */
+/** Merge some translation updates. */
 public class MergeTranslations {
-    
     public static void main(String[] args) throws Exception {
-
         File sourceDirectory = new File(args[0]);
         if (!sourceDirectory.isDirectory()) {
             System.exit(1);
@@ -59,7 +54,6 @@ public class MergeTranslations {
             });
         
         for (String name : sourceFiles) {
-
             System.out.println("Processing source file: " + name);
 
             File sourceFile = new File(sourceDirectory, name);
@@ -98,7 +92,6 @@ public class MergeTranslations {
                     }
                 }
                 out.close();
-
             }
         }
     }
@@ -107,7 +100,7 @@ public class MergeTranslations {
         Map<String, String> result = new HashMap<>();
         try (
             FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader); 
+            BufferedReader bufferedReader = new BufferedReader(fileReader) 
         ) {
             String line = bufferedReader.readLine();
             while (line != null) {
@@ -122,6 +115,4 @@ public class MergeTranslations {
         }
         return result;
     }
-
 }
-

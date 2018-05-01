@@ -29,12 +29,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when naming a new region.
- */
+/** The message sent when naming a new region. */
 public class NewRegionNameMessage extends DOMMessage {
-
     /** The object identifier of the region being discovered. */
     private final String regionId;
 
@@ -46,7 +42,6 @@ public class NewRegionNameMessage extends DOMMessage {
 
     /** The new name. */
     private final String newRegionName;
-
 
     /**
      * Create a new <code>NewRegionNameMessage</code> with the
@@ -82,7 +77,6 @@ public class NewRegionNameMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.newRegionName = element.getAttribute("newRegionName");
     }
-
 
     // Public interface
 

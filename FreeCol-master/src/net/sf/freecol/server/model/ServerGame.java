@@ -61,17 +61,12 @@ import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.ChangePriority;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-
-/**
- * The server representation of the game.
- */
+/** The server representation of the game. */
 public class ServerGame extends Game implements ServerModelObject {
-
     private static final Logger logger = Logger.getLogger(ServerGame.class.getName());
 
-    /** Timestamp of last move, if any.  Do not serialize. */
+    /** Timestamp of last move, if any. Do not serialize. */
     private long lastTime = -1L;
-
 
     /**
      * Creates a new game model.
@@ -103,10 +98,9 @@ public class ServerGame extends Game implements ServerModelObject {
         this(specification);
 
         this.freeColGameObjectListener = freeColGameObjectListener;
-        this.setGame(this);
+        setGame(this);
         readFromXML(xr);
     }
-
 
     /**
      * Get a list of connected server players, optionally excluding
@@ -133,7 +127,9 @@ public class ServerGame extends Game implements ServerModelObject {
     public void sendToAll(ChangeSet cs, ServerPlayer... serverPlayers) {
         List<ServerPlayer> live = getConnectedPlayers();
         for (ServerPlayer sp : serverPlayers) {
-            if (!live.contains(sp)) live.add(sp);
+            if (!live.contains(sp)) {
+				live.add(sp);
+			}
         }
         sendToList(live, cs);
     }
@@ -154,10 +150,11 @@ public class ServerGame extends Game implements ServerModelObject {
      * @param serverPlayers The list of <code>ServerPlayer</code>s to send to.
      */
     public void sendToList(List<ServerPlayer> serverPlayers, ChangeSet cs) {
-        for (ServerPlayer s : serverPlayers) s.send(cs);
+        for (ServerPlayer s : serverPlayers) {
+			s.send(cs);
+		}
     }
     
-
     /**
      * Makes a trivial server object in this game given a server object tag
      * and an identifier.
@@ -199,7 +196,9 @@ public class ServerGame extends Game implements ServerModelObject {
      */
     public void updatePlayers(List<ServerPlayer> players) {
         ChangeSet cs = new ChangeSet();
-        for (ServerPlayer sp : players) cs.addPlayer(sp);
+        for (ServerPlayer sp : players) {
+			cs.addPlayer(sp);
+		}
         sendToAll(cs);
     }
 
@@ -221,7 +220,9 @@ public class ServerGame extends Game implements ServerModelObject {
      * @param random A pseudo-random number source.
      */
     public void randomize(Random random) {
-        if (random != null) NameCache.requireCitiesOfCibola(random);
+        if (random != null) {
+			NameCache.requireCitiesOfCibola(random);
+		}
     }
 
     /**
@@ -234,33 +235,35 @@ public class ServerGame extends Game implements ServerModelObject {
         if (spec.getBoolean(GameOptions.VICTORY_DEFEAT_REF)) {
             Player winner = find(getLiveEuropeanPlayers(null),
                 p -> p.getPlayerType() == Player.PlayerType.INDEPENDENT);
-            if (winner != null) return winner;
+            if (winner != null) {
+				return winner;
+			}
         }
         if (spec.getBoolean(GameOptions.VICTORY_DEFEAT_EUROPEANS)) {
             List<Player> winners = getLiveEuropeanPlayers(null).stream()
                 .filter(p -> !p.isREF())
                 .collect(Collectors.toList());
-            if (winners.size() == 1) return winners.get(0);
+            if (winners.size() == 1) {
+				return winners.get(0);
+			}
         }
         if (spec.getBoolean(GameOptions.VICTORY_DEFEAT_HUMANS)) {
             List<Player> winners = getLiveEuropeanPlayers(null).stream()
                 .filter(p -> !p.isAI())
                 .collect(Collectors.toList());
-            if (winners.size() == 1) return winners.get(0);
+            if (winners.size() == 1) {
+				return winners.get(0);
+			}
         }
         return null;
     }
 
-
-    /**
-     * Is the next player in a new turn?
-     */
+    /** Is the next player in a new turn? */
     public boolean isNextPlayerInNewTurn() {
         Player nextPlayer = getNextPlayer();
         return players.indexOf(currentPlayer) > players.indexOf(nextPlayer)
             || currentPlayer == nextPlayer;
     }
-
 
     /**
      * Change to the next turn for this game.
@@ -322,7 +325,9 @@ public class ServerGame extends Game implements ServerModelObject {
                                              Event event) {
         Limit yearLimit
             = event.getLimit("model.limit.spanishSuccession.year");
-        if (!yearLimit.evaluate(this)) return null;
+        if (!yearLimit.evaluate(this)) {
+			return null;
+		}
 
         Limit weakLimit
             = event.getLimit("model.limit.spanishSuccession.weakestPlayer");
@@ -331,7 +336,9 @@ public class ServerGame extends Game implements ServerModelObject {
         Map<Player, Integer> scores = new HashMap<>();
         boolean ready = false;
         for (Player player : getLiveEuropeanPlayers(null)) {
-            if (player.isREF()) continue;
+            if (player.isREF()) {
+				continue;
+			}
             ready |= strongLimit.evaluate(player);
             // Human players can trigger the event, but only transfer assets
             // between AI players.
@@ -339,7 +346,9 @@ public class ServerGame extends Game implements ServerModelObject {
                 scores.put(player, player.getSpanishSuccessionScore());
             }
         }
-        if (!ready) return null; // No player meets the support limit.
+        if (!ready) {
+			return null;
+		} // No player meets the support limit.
 
         int bestScore = Integer.MIN_VALUE;
         int worstScore = Integer.MAX_VALUE;
@@ -359,7 +368,9 @@ public class ServerGame extends Game implements ServerModelObject {
         }
         if (weakestAIPlayer == null
             || strongestAIPlayer == null
-            || weakestAIPlayer == strongestAIPlayer) return null;
+            || weakestAIPlayer == strongestAIPlayer) {
+			return null;
+		}
 
         lb.add("Spanish succession scores[");
         for (Entry<Player, Integer> entry : scores.entrySet()) {
@@ -372,7 +383,9 @@ public class ServerGame extends Game implements ServerModelObject {
         ServerPlayer weakest = (ServerPlayer)weakestAIPlayer;
         for (Player player : getLiveNativePlayers(null)) {
             for (IndianSettlement is : player.getIndianSettlements()) {
-                if (!is.hasMissionary(weakest)) continue;
+                if (!is.hasMissionary(weakest)) {
+					continue;
+				}
                 lb.add(" ", is.getName(), "(mission)");
                 is.getTile().cacheUnseen(strongest);//+til
                 tiles.add(is.getTile());
@@ -410,7 +423,9 @@ public class ServerGame extends Game implements ServerModelObject {
                     cs.add(See.only(strongest), unit);
                 } else if (unit.getLocation() instanceof Tile) {
                     Tile tile = unit.getTile();
-                    if (!tiles.contains(tile)) tiles.add(tile);
+                    if (!tiles.contains(tile)) {
+						tiles.add(tile);
+					}
                 }
             }
         }
@@ -447,19 +462,14 @@ public class ServerGame extends Game implements ServerModelObject {
         return weakest;
     }
 
+    /** Interface Object. */
 
-    // Interface Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
         // ServerGame does not add any significant fields, so Game.equals
         // suffices.
         return super.equals(o);
     }
-
 
     // Serialization
 

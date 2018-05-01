@@ -32,15 +32,11 @@ import net.sf.freecol.common.model.Unit.MoveType;
 import net.sf.freecol.server.ai.AIPlayer;
 import net.sf.freecol.server.ai.AIUnit;
 
-
-/**
- * A goal to make a move to a tile adjacent to a target tile.
- */
+/** A goal to make a move to a tile adjacent to a target tile. */
 public class GotoAdjacentGoal extends Goal {
-
     private static final Logger logger = Logger.getLogger(GotoAdjacentGoal.class.getName());
 
-    //the destination tile
+    /** The destination tile. */
     private final Tile target;
 
     public GotoAdjacentGoal(AIPlayer p, Goal g, float w, AIUnit u, Tile t) {
@@ -92,7 +88,6 @@ public class GotoAdjacentGoal extends Goal {
                         && pathNode.getTile() != target
                         && (u.getUnit().getMoveType(pathNode.getDirection()) == MoveType.MOVE
                           ||u.getUnit().getMoveType(pathNode.getDirection()) == MoveType.EXPLORE_LOST_CITY_RUMOUR)) {
-                        
                             if(u.getUnit().getMoveType(pathNode.getDirection()) == MoveType.EXPLORE_LOST_CITY_RUMOUR) {
                                 logger.warning("Accidental rumour exploration!");
                             }
@@ -130,7 +125,6 @@ public class GotoAdjacentGoal extends Goal {
         return descr;
     }
     
-
     @Override
     public void toXML(FreeColXMLWriter xw) throws XMLStreamException {
     }
@@ -139,9 +133,6 @@ public class GotoAdjacentGoal extends Goal {
     public void readFromXML(FreeColXMLReader xr) throws XMLStreamException {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 }

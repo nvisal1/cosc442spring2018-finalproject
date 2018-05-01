@@ -43,14 +43,9 @@ import net.sf.freecol.common.option.OptionGroup;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * Handles the network messages that arrives before the game starts.
- */
+/** Handles the network messages that arrives before the game starts. */
 public final class PreGameInputHandler extends InputHandler {
-
     private static final Logger logger = Logger.getLogger(PreGameInputHandler.class.getName());
-
 
     /**
      * The constructor to use.
@@ -60,7 +55,6 @@ public final class PreGameInputHandler extends InputHandler {
     public PreGameInputHandler(FreeColClient freeColClient) {
         super(freeColClient);
     }
-
 
     /**
      * Deals with incoming messages that have just been received.
@@ -74,37 +68,37 @@ public final class PreGameInputHandler extends InputHandler {
     public synchronized Element handle(Connection connection,
                                        Element element) {
         String type = (element == null) ? "(null)" : element.getTagName();
-        return ("addPlayer".equals(type))
+        return "addPlayer".equals(type)
             ? addPlayer(element)
-            : ("chat".equals(type))
+            : "chat".equals(type)
             ? chat(element)
-            : ("disconnect".equals(type))
+            : "disconnect".equals(type)
             ? disconnect(element)
-            : ("error".equals(type))
+            : "error".equals(type)
             ? error(element)
-            : ("logout".equals(type))
+            : "logout".equals(type)
             ? logout(element)
-            : ("multiple".equals(type))
+            : "multiple".equals(type)
             ? multiple(connection, element)
-            : ("playerReady".equals(type))
+            : "playerReady".equals(type)
             ? playerReady(element)
-            : ("removePlayer".equals(type))
+            : "removePlayer".equals(type)
             ? removePlayer(element)
-            : ("setAvailable".equals(type))
+            : "setAvailable".equals(type)
             ? setAvailable(element)
-            : ("startGame".equals(type))
+            : "startGame".equals(type)
             ? startGame(element)
-            : ("updateColor".equals(type))
+            : "updateColor".equals(type)
             ? updateColor(element)
-            : ("updateGame".equals(type))
+            : "updateGame".equals(type)
             ? updateGame(element)
-            : ("updateGameOptions".equals(type))
+            : "updateGameOptions".equals(type)
             ? updateGameOptions(element)
-            : ("updateMapGeneratorOptions".equals(type))
+            : "updateMapGeneratorOptions".equals(type)
             ? updateMapGeneratorOptions(element)
-            : ("updateNation".equals(type))
+            : "updateNation".equals(type)
             ? updateNation(element)
-            : ("updateNationType".equals(type))
+            : "updateNationType".equals(type)
             ? updateNationType(element)
             : unknown(element);
     }
@@ -123,10 +117,10 @@ public final class PreGameInputHandler extends InputHandler {
             .getElementsByTagName(Player.getXMLElementTagName()).item(0);
         String id = FreeColObject.readId(playerElement);
         FreeColGameObject fcgo = game.getFreeColGameObject(id);
-        if (fcgo == null) {
-            game.addPlayer(new Player(game, playerElement));
-        } else {
+        if (fcgo != null) {
             fcgo.readFromXMLElement(playerElement);
+        } else {
+            game.addPlayer(new Player(game, playerElement));
         }
         getGUI().refreshPlayersTable();
 
@@ -157,7 +151,7 @@ public final class PreGameInputHandler extends InputHandler {
      * @return Null.
      */
     private Element error(Element element)  {
-        getGUI().showErrorMessage((element.hasAttribute("messageID"))
+        getGUI().showErrorMessage(element.hasAttribute("messageID")
             ? element.getAttribute("messageID")
             : null,
             element.getAttribute("message"));

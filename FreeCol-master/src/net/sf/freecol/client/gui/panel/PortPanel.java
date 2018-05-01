@@ -30,7 +30,6 @@ import java.util.List;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * This class provides common functionality for panels that display
  * ports, such as the ColonyPanel and the EuropePanel.  This includes
@@ -38,13 +37,11 @@ import net.sf.freecol.common.model.Unit;
  * CargoPanel for displaying the cargo aboard that carrier.
  */
 public abstract class PortPanel extends FreeColPanel {
-
     protected CargoPanel cargoPanel;
     protected InPortPanel inPortPanel;
     protected UnitLabel selectedUnitLabel;
     protected DefaultTransferHandler defaultTransferHandler;
     protected MouseListener pressListener;
-
 
     /**
      * Create a new port panel.
@@ -57,7 +54,6 @@ public abstract class PortPanel extends FreeColPanel {
 
         this.selectedUnitLabel = null;
     }
-
 
     /**
      * Get the cargo panel.
@@ -132,22 +128,14 @@ public abstract class PortPanel extends FreeColPanel {
      */
     public abstract List<Unit> getUnitList();
 
+    /** Override JComponent. */
 
-    // Override JComponent
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TransferHandler getTransferHandler() {
         return defaultTransferHandler;
     }
 
-
-    // Override Component
-    /**
-     * {@inheritDoc}
-     */
+    /** Override Component. */
     @Override
     public void removeNotify() {
         super.removeNotify();

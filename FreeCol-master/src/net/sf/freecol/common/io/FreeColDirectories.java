@@ -29,14 +29,12 @@ import javax.swing.filechooser.FileSystemView;
 
 import net.sf.freecol.FreeCol;
 
-
-/**
- * Simple container for the freecol file and directory structure model.
- */
+/** Simple container for the freecol file and directory structure model. */
 public class FreeColDirectories {
-
-    // No logger!  Many of these routines are called before logging is
-    // initialized.
+    /**
+     * No logger!  Many of these routines are called before logging is
+     * initialized.
+     */
 
     private static final String AUTOSAVE_DIRECTORY = "autosave";
 
@@ -76,7 +74,7 @@ public class FreeColDirectories {
     private static final String XDG_CACHE_HOME_ENV = "XDG_CACHE_HOME";
     private static final String XDG_CACHE_HOME_DEFAULT = ".cache";
 
-    // Public names, used by the respective dialogs
+    /** Public names, used by the respective dialogs. */
 
     public static final String BASE_CLIENT_OPTIONS_FILE_NAME = "client-options.xml";
 
@@ -90,7 +88,6 @@ public class FreeColDirectories {
 
     public static final String MAP_GENERATOR_OPTIONS_FILE_NAME
         = "map_generator_options.xml";
-
 
     /**
      * The directory containing automatically created save games.  At
@@ -118,11 +115,7 @@ public class FreeColDirectories {
      */
     private static File dataDirectory = new File(DATA_DIRECTORY);
 
-    /**
-     * The path to the log file.
-     *
-     * Can be overridden at the command line.
-     */
+    /** The path to the log file. Can be overridden at the command line. */
     private static String logFilePath = null;
 
     /**
@@ -133,16 +126,10 @@ public class FreeColDirectories {
      */
     private static File saveDirectory = null;
 
-    /**
-     * The current save game file.
-     *
-     * Can be modified in game.
-     */
+    /** The current save game file. Can be modified in game. */
     private static File savegameFile = null;
 
-    /**
-     * The directory where freecol saves transient information.
-     */
+    /** The directory where freecol saves transient information. */
     private static File userCacheDirectory = null;
 
     /**
@@ -161,11 +148,8 @@ public class FreeColDirectories {
      */
     private static File userDataDirectory = null;
 
-    /**
-     * An optional directory containing user mods.
-     */
+    /** An optional directory containing user mods. */
     private static File userModsDirectory = null;
-
 
     /**
      * Does the OS look like Mac OS X?
@@ -211,9 +195,9 @@ public class FreeColDirectories {
      */
     public static String checkDir(File dir) {
         return (dir == null || !dir.exists()) ? "cli.error.home.notExists"
-            : (!dir.isDirectory()) ? "cli.error.home.notDir"
-            : (!dir.canRead()) ? "cli.error.home.noRead"
-            : (!dir.canWrite()) ? "cli.error.home.noWrite"
+            : !dir.isDirectory() ? "cli.error.home.notDir"
+            : !dir.canRead() ? "cli.error.home.noRead"
+            : !dir.canWrite() ? "cli.error.home.noWrite"
             : null;
     }
 
@@ -240,11 +224,15 @@ public class FreeColDirectories {
      * @return The XDG compliance state.
      */
     private static int getXDGDirs(File[] dirs) {
-        if (onMacOSX() || onWindows() || !onUnix()) return -1;
+        if (onMacOSX() || onWindows() || !onUnix()) {
+			return -1;
+		}
 
         int ret = -1;
         File home = getUserDefaultDirectory();
-        if (home == null) return -1; // Fail badly
+        if (home == null) {
+			return -1;
+		} // Fail badly
         String[][] xdg = { { XDG_CONFIG_HOME_ENV, XDG_CONFIG_HOME_DEFAULT },
                            { XDG_DATA_HOME_ENV,   XDG_DATA_HOME_DEFAULT },
                            { XDG_CACHE_HOME_ENV,  XDG_CACHE_HOME_DEFAULT } };
@@ -274,17 +262,25 @@ public class FreeColDirectories {
                 todo[i] = d;
             }
         }
-        if (ret < 0) return -1; // No evidence of interest in XDG standard
-        if (ret == xdg.length) return 1; // Already fully XDG compliant
+        if (ret < 0) {
+			return -1;
+		} // No evidence of interest in XDG standard
+        if (ret == xdg.length) {
+			return 1;
+		} // Already fully XDG compliant
 
         // Create the directories for migration
         for (int i = 0; i < xdg.length; i++) {
             if (todo[i] != null) {
                 if (!todo[i].getPath().endsWith(FREECOL_DIRECTORY)) {
-                    if (!todo[i].mkdir()) return -1;
+                    if (!todo[i].mkdir()) {
+						return -1;
+					}
                     todo[i] = new File(todo[i], FREECOL_DIRECTORY);
                 }
-                if (!todo[i].mkdir()) return -1;
+                if (!todo[i].mkdir()) {
+					return -1;
+				}
                 dirs[i] = todo[i];
             }
         }
@@ -310,10 +306,12 @@ public class FreeColDirectories {
      */
     private static File requireDir(File dir) {
         if (dir.exists()) {
-            if (dir.isDirectory() && dir.canWrite()) return dir;
-        } else {
-            if (dir.mkdir()) return dir;
-        }
+            if (dir.isDirectory() && dir.canWrite()) {
+				return dir;
+			}
+        } else if (dir.mkdir()) {
+			return dir;
+		}
         return null;
     }
 
@@ -332,12 +330,18 @@ public class FreeColDirectories {
      * @return The migration state.
      */
     private static int getMacOSXDirs(File[] dirs) {
-        if (!onMacOSX()) return -1;
+        if (!onMacOSX()) {
+			return -1;
+		}
         int ret = 0;
         File homeDir = getUserDefaultDirectory();
-        if (homeDir == null) return -1;
+        if (homeDir == null) {
+			return -1;
+		}
         File libDir = new File(homeDir, "Library");
-        if (!isGoodDirectory(libDir)) return -1;
+        if (!isGoodDirectory(libDir)) {
+			return -1;
+		}
 
         if (dirs[0] == null) {
             File prefsDir = new File(libDir, "Preferences");
@@ -348,9 +352,13 @@ public class FreeColDirectories {
                     if (d.isDirectory() && d.canWrite()) {
                         dirs[0] = d;
                         ret++;
-                    } else return -1;
+                    } else {
+						return -1;
+					}
                 }
-            } else return -1;
+            } else {
+				return -1;
+			}
         }
 
         if (dirs[1] == null) {
@@ -362,28 +370,37 @@ public class FreeColDirectories {
                     if (d.isDirectory() && d.canWrite()) {
                         dirs[1] = d;
                         ret++;
-                    } else return -1;
+                    } else {
+						return -1;
+					}
                 }
-            } else return -1;
+            } else {
+				return -1;
+			}
         }
 
         if (dirs[2] == null) {
             dirs[2] = dirs[1];
         }
 
-        if (ret == 2) return 1;
+        if (ret == 2) {
+			return 1;
+		}
 
         File d = requireDir(new File(dirs[0], FREECOL_DIRECTORY));
-        if (d == null) return -1;
+        if (d == null) {
+			return -1;
+		}
         dirs[0] = d;
 
         d = requireDir(new File(dirs[1], FREECOL_DIRECTORY));
-        if (d == null) return -1;
+        if (d == null) {
+			return -1;
+		}
         dirs[1] = d;
 
         return 0;
     }
-
 
     /**
      * Get FreeCol directories for Windows.
@@ -400,12 +417,18 @@ public class FreeColDirectories {
      * @return The migration state.
      */
     private static int getWindowsDirs(File[] dirs) {
-        if (onMacOSX() || !onWindows() || onUnix()) return -1;
+        if (onMacOSX() || !onWindows() || onUnix()) {
+			return -1;
+		}
 
         File home = getUserDefaultDirectory();
-        if (home == null) return -1; // Fail badly
+        if (home == null) {
+			return -1;
+		} // Fail badly
         File d = requireDir(new File(home, FREECOL_DIRECTORY));
-        if (d == null) return -1;
+        if (d == null) {
+			return -1;
+		}
         dirs[0] = dirs[1] = dirs[2] = d;
         return 1; // Do not migrate windows
     }
@@ -422,13 +445,19 @@ public class FreeColDirectories {
     private static File getOldUserDirectory() {
         File home = getUserDefaultDirectory();
         File old = new File(home, "FreeCol");
-        if (old.exists() && old.isDirectory() && old.canRead()) return old;
+        if (old.exists() && old.isDirectory() && old.canRead()) {
+			return old;
+		}
         old = new File(home, ".freecol");
-        if (old.exists() && old.isDirectory() && old.canRead()) return old;
+        if (old.exists() && old.isDirectory() && old.canRead()) {
+			return old;
+		}
         old = new File(home, "Library");
         if (old.exists() && old.isDirectory() && old.canRead()) {
             old = new File(old, "FreeCol");
-            if (old.exists() && old.isDirectory() && old.canRead()) return old;
+            if (old.exists() && old.isDirectory() && old.canRead()) {
+				return old;
+			}
         }
         return null;
     }
@@ -449,8 +478,8 @@ public class FreeColDirectories {
                 Files.copy(src.toPath(), dst.toPath(),
                     StandardCopyOption.COPY_ATTRIBUTES);
             } catch (IOException ioe) {
-                System.err.println("Could not copy " + src.toString() + " to "
-                    + dst.toString() + ": " + ioe.getMessage());
+                System.err.println("Could not copy " + src + " to "
+                    + dst + ": " + ioe.getMessage());
             }
         }
     }
@@ -463,7 +492,9 @@ public class FreeColDirectories {
      */
     private static boolean insistDirectory(File file) {
         if (file.exists()) {
-            if (file.isDirectory()) return true;
+            if (file.isDirectory()) {
+				return true;
+			}
             System.err.println("Could not create directory " + file.getPath()
                 + " because a non-directory with that name is already there.");
             return false;
@@ -477,17 +508,16 @@ public class FreeColDirectories {
         }
     }
 
-    /**
-     * Derive the directory for the autosave files from the save directory.
-     */
+    /** Derive the directory for the autosave files from the save directory. */
     private static void deriveAutosaveDirectory() {
         if (autosaveDirectory == null && saveDirectory != null) {
             autosaveDirectory = new File(saveDirectory, AUTOSAVE_DIRECTORY);
-            if (!insistDirectory(autosaveDirectory)) autosaveDirectory = null;
+            if (!insistDirectory(autosaveDirectory)) {
+				autosaveDirectory = null;
+			}
         }
     }
         
-
     // Main initialization/bootstrap routines.
     // These need to be called early before the subsidiary directory
     // accessors are used.
@@ -502,20 +532,26 @@ public class FreeColDirectories {
      * @return A (non-i18n) error message on failure, null on success.
      */
     public static String setDataDirectory(String path) {
-        if (path == null) path = DATA_DIRECTORY;
+        if (path == null) {
+			path = DATA_DIRECTORY;
+		}
         File dir = new File(path);
-        if (!dir.isDirectory()) return "Not a directory: " + path;
-        if (!dir.canRead()) return "Can not read directory: " + path;
+        if (!dir.isDirectory()) {
+			return "Not a directory: " + path;
+		}
+        if (!dir.canRead()) {
+			return "Can not read directory: " + path;
+		}
         dataDirectory = dir;
         if (getBaseDirectory() == null) {
             return "Can not find base resources directory: " + path
                 + SEPARATOR + BASE_DIRECTORY;
         }
-        if (getI18nDirectory() == null) {
-            return "Can not find I18n resources directory: " + path
-                + SEPARATOR + I18N_DIRECTORY;
+        if (getI18nDirectory() != null) {
+            return null;
         }
-        return null;
+        return "Can not find I18n resources directory: " + path
+		    + SEPARATOR + I18N_DIRECTORY;
     }
 
     /**
@@ -549,14 +585,17 @@ public class FreeColDirectories {
      */
     public static synchronized String setUserDirectories() {
         if (userConfigDirectory != null
-            && !isGoodDirectory(userConfigDirectory))
-            userConfigDirectory = null;
+            && !isGoodDirectory(userConfigDirectory)) {
+			userConfigDirectory = null;
+		}
         if (userDataDirectory != null
-            && !isGoodDirectory(userDataDirectory))
-            userDataDirectory = null;
+            && !isGoodDirectory(userDataDirectory)) {
+			userDataDirectory = null;
+		}
         if (userCacheDirectory != null
-            && !isGoodDirectory(userCacheDirectory))
-            userCacheDirectory = null;
+            && !isGoodDirectory(userCacheDirectory)) {
+			userCacheDirectory = null;
+		}
         File dirs[] = { userConfigDirectory, userDataDirectory,
                         userCacheDirectory };
 
@@ -565,28 +604,36 @@ public class FreeColDirectories {
         int migrate = (dirs[0] != null && isGoodDirectory(dirs[0])
             && dirs[1] != null && isGoodDirectory(dirs[1])
             && dirs[2] != null && isGoodDirectory(dirs[2])) ? 1
-            : (onMacOSX()) ? getMacOSXDirs(dirs)
-            : (onUnix()) ? getXDGDirs(dirs)
-            : (onWindows()) ? getWindowsDirs(dirs)
+            : onMacOSX() ? getMacOSXDirs(dirs)
+            : onUnix() ? getXDGDirs(dirs)
+            : onWindows() ? getWindowsDirs(dirs)
             : -1;
         File oldDir = getOldUserDirectory();
         if (migrate < 0) {
-            if (oldDir == null) return "main.userDir.fail";
+            if (oldDir == null) {
+				return "main.userDir.fail";
+			}
             dirs[0] = dirs[1] = dirs[2] = oldDir; // Do not migrate.
             migrate = 1;
         }
 
         // Only set user directories if not already overridden at the
         // command line, and do not migrate in such cases.
-        if (userConfigDirectory == null) {
-            userConfigDirectory = dirs[0];
-        } else migrate = 1;
-        if (userDataDirectory == null) {
-            userDataDirectory = dirs[1];
-        } else migrate = 1;
-        if (userCacheDirectory == null) {
-            userCacheDirectory = dirs[2];
-        } else migrate = 1;
+        if (userConfigDirectory != null) {
+            migrate = 1;
+        } else {
+			userConfigDirectory = dirs[0];
+		}
+        if (userDataDirectory != null) {
+            migrate = 1;
+        } else {
+			userDataDirectory = dirs[1];
+		}
+        if (userCacheDirectory != null) {
+            migrate = 1;
+        } else {
+			userCacheDirectory = dirs[2];
+		}
         if (migrate == 0 && oldDir != null) {
             copyIfFound(oldDir, "classic", userConfigDirectory);
             copyIfFound(oldDir, "freecol", userConfigDirectory);
@@ -600,17 +647,21 @@ public class FreeColDirectories {
 
         if (saveDirectory == null) {
             saveDirectory = new File(getUserDataDirectory(), SAVE_DIRECTORY);
-            if (!insistDirectory(saveDirectory)) return "main.userDir.fail";
+            if (!insistDirectory(saveDirectory)) {
+				return "main.userDir.fail";
+			}
         }
         deriveAutosaveDirectory();
 
         userModsDirectory = new File(getUserDataDirectory(), MODS_DIRECTORY);
-        if (!insistDirectory(userModsDirectory)) userModsDirectory = null;
+        if (!insistDirectory(userModsDirectory)) {
+			userModsDirectory = null;
+		}
 
         return (migrate > 0) ? null
-            : (onMacOSX())  ? "main.userDir.macosx"
-            : (onUnix())    ? "main.userDir.unix"
-            : (onWindows()) ? "main.userDir.windows"
+            : onMacOSX()  ? "main.userDir.macosx"
+            : onUnix()    ? "main.userDir.unix"
+            : onWindows() ? "main.userDir.windows"
             : null;
     }
 
@@ -731,7 +782,7 @@ public class FreeColDirectories {
      */
     public static File getOptionsDirectory() {
         File dir = new File(getUserConfigDirectory(), FreeCol.getTC());
-        return (insistDirectory(dir)) ? dir : null;
+        return insistDirectory(dir) ? dir : null;
     }
 
     /**
@@ -791,11 +842,15 @@ public class FreeColDirectories {
         File file = new File(path);
         if (!file.exists() || !file.isFile() || !file.canRead()) {
             file = new File(getSaveDirectory(), path);
-            if (!file.exists() || !file.isFile() || !file.canRead()) return false;
+            if (!file.exists() || !file.isFile() || !file.canRead()) {
+				return false;
+			}
         }
         savegameFile = file;
         File parent = file.getParentFile();
-        if (parent == null) parent = new File(".");
+        if (parent == null) {
+			parent = new File(".");
+		}
         saveDirectory = parent;
         deriveAutosaveDirectory();
         return true;
@@ -811,8 +866,8 @@ public class FreeColDirectories {
     public static File getLastSaveGameFile() {
         File lastSave = null;
         for (File directory : new File[] {
-                FreeColDirectories.getSaveDirectory(),
-                FreeColDirectories.getAutosaveDirectory() }) {
+                getSaveDirectory(),
+                getAutosaveDirectory() }) {
             for (File savegame : directory.listFiles(FreeColSavegameFile.getFileFilter())) {
                 if (lastSave == null
                     || savegame.lastModified() > lastSave.lastModified()) {
@@ -861,7 +916,9 @@ public class FreeColDirectories {
     public static String setUserCacheDirectory(String path) {
         File dir = new File(path);
         String ret = checkDir(dir);
-        if (ret == null) userCacheDirectory = dir;
+        if (ret == null) {
+			userCacheDirectory = dir;
+		}
         return ret;
     }
 
@@ -885,7 +942,9 @@ public class FreeColDirectories {
     public static String setUserConfigDirectory(String path) {
         File dir = new File(path);
         String ret = checkDir(dir);
-        if (ret == null) userConfigDirectory = dir;
+        if (ret == null) {
+			userConfigDirectory = dir;
+		}
         return ret;
     }
 
@@ -910,7 +969,9 @@ public class FreeColDirectories {
     public static String setUserDataDirectory(String path) {
         File dir = new File(path);
         String ret = checkDir(dir);
-        if (ret == null) userDataDirectory = dir;
+        if (ret == null) {
+			userDataDirectory = dir;
+		}
         return ret;
     }
 

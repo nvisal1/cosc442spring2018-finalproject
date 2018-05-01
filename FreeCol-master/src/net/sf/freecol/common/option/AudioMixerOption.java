@@ -33,12 +33,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Specification;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * Option for selecting an audio mixer.
- */
+/** Option for selecting an audio mixer. */
 public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapper> {
-
     @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger(AudioMixerOption.class.getName());
 
@@ -47,13 +43,11 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
      * potentially null value.
      */
     public static class MixerWrapper implements Comparable<MixerWrapper> {
-
         /** The name for this wrapper. */
         private final String name;
 
         /** The mixer info for a mixer. */
         private final Mixer.Info mixerInfo;
-
 
         public MixerWrapper(String name, Mixer.Info mixerInfo) {
             this.name = name;
@@ -68,7 +62,7 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
             return mixerInfo;
         }
 
-        // Implement Comparable<MixerWrapper>
+        /** Implement Comparable<MixerWrapper>. */
 
         @Override
         public int compareTo(MixerWrapper mw) {
@@ -77,11 +71,7 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o instanceof MixerWrapper) {
-                return ((MixerWrapper)o).getKey().equals(getKey());
-            }
-            return false;
+            return this == o || (o instanceof MixerWrapper && ((MixerWrapper)o).getKey().equals(getKey()));
         }
 
         @Override
@@ -124,10 +114,8 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
         audioMixers.add(0, DEFAULT_MIXER_WRAPPER);
     }
 
-
     /** The value of this option. */
     private MixerWrapper value = null;
-
 
     /**
      * Creates a new <code>AudioMixerOption</code>.
@@ -137,7 +125,6 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
     public AudioMixerOption(Specification specification) {
         super(specification);
     }
-
 
     /**
      * Gets a mixer wrapper by name.
@@ -158,12 +145,8 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
         return new ArrayList<>(audioMixers);
     }
 
+    /** Interface Option. */
 
-    // Interface Option
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public AudioMixerOption clone() {
         AudioMixerOption result = new AudioMixerOption(getSpecification());
@@ -171,34 +154,28 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final MixerWrapper getValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final void setValue(MixerWrapper newValue) {
         final MixerWrapper oldValue = this.value;
-        if (newValue == null) newValue = DEFAULT_MIXER_WRAPPER;
+        if (newValue == null) {
+			newValue = DEFAULT_MIXER_WRAPPER;
+		}
         this.value = newValue;
         if (!newValue.equals(oldValue)) {
             firePropertyChange(VALUE_TAG, oldValue, value);
         }
     }
 
-
-    // Override AbstractOption
-    // generateChoices() is effectively done in the audioMixers initialization.
-    
     /**
-     * {@inheritDoc}
+     * Override AbstractOption
+     * generateChoices() is effectively done in the audioMixers initialization.
      */
+    
     @Override
     protected void setValue(String valueString, String defaultValueString) {
         MixerWrapper mw = null;
@@ -208,17 +185,14 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
         if (mw == null && defaultValueString != null) {
             mw = getMixerWrapperByName(defaultValueString);
         }
-        if (mw == null) mw = DEFAULT_MIXER_WRAPPER;
+        if (mw == null) {
+			mw = DEFAULT_MIXER_WRAPPER;
+		}
         setValue(mw);
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -228,9 +202,6 @@ public class AudioMixerOption extends AbstractOption<AudioMixerOption.MixerWrapp
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

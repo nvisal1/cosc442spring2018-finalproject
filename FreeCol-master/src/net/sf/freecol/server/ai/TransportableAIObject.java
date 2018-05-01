@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.server.ai;
 
 import javax.xml.stream.XMLStreamException;
@@ -33,7 +32,6 @@ import net.sf.freecol.server.ai.mission.TransportMission;
 
 import org.w3c.dom.Element;
 
-
 /**
  * A single item in a carrier's transport list.  Any {@link Locatable}
  * which should be able to be transported by a carrier using the
@@ -43,15 +41,10 @@ import org.w3c.dom.Element;
  * @see net.sf.freecol.server.ai.mission.TransportMission
  */
 public abstract class TransportableAIObject extends ValuedAIObject {
-
-    /**
-     * The priority for a goods that are hitting the warehouse limit.
-     */
+    /** The priority for a goods that are hitting the warehouse limit. */
     public static final int IMPORTANT_DELIVERY = 110;
 
-    /**
-     * The priority for goods that provide at least a full cargo load.
-     */
+    /** The priority for goods that provide at least a full cargo load. */
     public static final int FULL_DELIVERY = 100;
 
     /**
@@ -70,7 +63,7 @@ public abstract class TransportableAIObject extends ValuedAIObject {
     /**
      * The extra priority value added to the base value of
      * {@link #TOOLS_FOR_COLONY_PRIORITY}
-     * if a Pioneer is lacking tools
+     * if a Pioneer is lacking tools.
      */
     public static final int TOOLS_FOR_PIONEER = 90;
 
@@ -87,7 +80,6 @@ public abstract class TransportableAIObject extends ValuedAIObject {
      * this object.
      */
     private AIUnit transport;
-
 
     /**
      * Create a new uninitialized transportable AI object.
@@ -127,7 +119,6 @@ public abstract class TransportableAIObject extends ValuedAIObject {
         super(aiMain, xr);
     }
 
-
     // Fundamental access
 
     /**
@@ -148,9 +139,7 @@ public abstract class TransportableAIObject extends ValuedAIObject {
         setValue(transportPriority);
     }
 
-    /**
-     * Increases the transport priority.
-     */
+    /** Increases the transport priority. */
     public final void incrementTransportPriority() {
         setValue(getValue() + 1);
     }
@@ -172,7 +161,6 @@ public abstract class TransportableAIObject extends ValuedAIObject {
     public final void setTransport(AIUnit transport) {
         this.transport = transport;
     }
-
 
     // Public routines
 
@@ -200,7 +188,9 @@ public abstract class TransportableAIObject extends ValuedAIObject {
                 && getLocation() != transport.getUnit()) {
                 TransportMission tm
                     = transport.getMission(TransportMission.class);
-                if (tm != null) tm.removeTransportable(this);
+                if (tm != null) {
+					tm.removeTransportable(this);
+				}
             }
             setTransport(null);
         }
@@ -225,16 +215,20 @@ public abstract class TransportableAIObject extends ValuedAIObject {
         Location now;
         Locatable l = getTransportLocatable();
         if (l != null && (now = l.getLocation()) instanceof Unit
-            && !(aiCarrier != null && aiCarrier.getUnit() == now)) {
-            if (!leaveTransport()) return false;
-        }
+            && (aiCarrier == null || aiCarrier.getUnit() != now) && !leaveTransport()) {
+			return false;
+		}
 
         AIUnit old = getTransport();
         if (old != null) {
-            if (old == aiCarrier) return true;
+            if (old == aiCarrier) {
+				return true;
+			}
 
             TransportMission tm = old.getMission(TransportMission.class);
-            if (tm != null) tm.removeTransportable(this);
+            if (tm != null) {
+				tm.removeTransportable(this);
+			}
         }
         setTransport(null);
         if (aiCarrier != null) {
@@ -256,7 +250,6 @@ public abstract class TransportableAIObject extends ValuedAIObject {
         Locatable l = getTransportLocatable();
         return (l == null) ? null : l.getLocation();
     }
-
 
     // TransportableAIObject abstract routines
 
@@ -366,15 +359,10 @@ public abstract class TransportableAIObject extends ValuedAIObject {
      */
     public abstract String invalidReason();
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TRANSPORT_TAG = "transport";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -387,16 +375,13 @@ public abstract class TransportableAIObject extends ValuedAIObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
 
         final AIMain aiMain = getAIMain();
 
-        transport = (xr.hasAttribute(TRANSPORT_TAG))
+        transport = xr.hasAttribute(TRANSPORT_TAG)
             ? xr.makeAIObject(aiMain, TRANSPORT_TAG,
                               AIUnit.class, (AIUnit)null, true)
             : null;

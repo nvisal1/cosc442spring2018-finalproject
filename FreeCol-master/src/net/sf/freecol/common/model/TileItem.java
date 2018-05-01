@@ -25,16 +25,11 @@ import javax.xml.stream.XMLStreamException;
 
 import net.sf.freecol.common.io.FreeColXMLReader;
 
-
-/**
- * Represents a <code>TileItem</code> item on a <code>Tile</code>.
- */
+/** Represents a <code>TileItem</code> item on a <code>Tile</code>. */
 public abstract class TileItem extends FreeColGameObject
     implements Locatable, Named {
-
     /** The tile where the tile item is. */
     protected Tile tile;
-
 
     /**
      * Creates a new <code>TileItem</code>.
@@ -74,7 +69,6 @@ public abstract class TileItem extends FreeColGameObject
     public TileItem(Game game, String id) {
         super(game, id);
     }
-
 
     // Routines to be implemented by subclasses.
 
@@ -140,20 +134,13 @@ public abstract class TileItem extends FreeColGameObject
      */
     public abstract boolean isComplete();
 
+    /** Interface Locatable. */
 
-    // Interface Locatable
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getLocation() {
         return tile;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean setLocation(Location newLocation) {
         if (newLocation == null || newLocation instanceof Tile) {
@@ -163,35 +150,23 @@ public abstract class TileItem extends FreeColGameObject
         throw new IllegalArgumentException("newLocation is not a Tile");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isInEurope() {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Tile getTile() {
         return tile;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getSpaceTaken() {
         return 0;
     }
 
-    // Interface Named
+    /** Interface Named. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public abstract String getNameKey();
 }

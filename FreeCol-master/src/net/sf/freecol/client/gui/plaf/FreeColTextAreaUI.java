@@ -27,15 +27,12 @@ import javax.swing.plaf.basic.BasicTextAreaUI;
 
 import net.sf.freecol.client.gui.ImageLibrary;
 
-
 /**
  * Provides a tiled background image "image.background.FreeColTextArea" to
  * text areas.
  */
 public class FreeColTextAreaUI extends BasicTextAreaUI {
-
     private final JComponent c;
-
 
     public FreeColTextAreaUI(JComponent c) {
         this.c = c;
@@ -52,11 +49,10 @@ public class FreeColTextAreaUI extends BasicTextAreaUI {
     }
 
     @Override
-    public void paintBackground(java.awt.Graphics g) {
+    public void paintBackground(Graphics g) {
         JComponent c = getComponent();
         if (c.isOpaque()) {
             ImageLibrary.drawTiledImage("image.background.FreeColTextArea", g, c, null);
         }
     }
-
 }

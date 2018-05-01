@@ -62,7 +62,6 @@ import net.sf.freecol.common.networking.NewRegionNameMessage;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 /**
  * Handle the network messages that arrives while in the game.
  *
@@ -82,10 +81,9 @@ import org.w3c.dom.NodeList;
  * GUI.invokeNowOrWait.
  */
 public final class InGameInputHandler extends InputHandler {
-
     private static final Logger logger = Logger.getLogger(InGameInputHandler.class.getName());
 
-    // A bunch of predefined non-closure runnables.
+    /** A bunch of predefined non-closure runnables. */
     private final Runnable closeMenusRunnable = () -> {
         igc().closeMenus();
     };
@@ -96,7 +94,6 @@ public final class InGameInputHandler extends InputHandler {
         igc().reconnect();
     };
 
-
     /**
      * The constructor to use.
      *
@@ -105,7 +102,6 @@ public final class InGameInputHandler extends InputHandler {
     public InGameInputHandler(FreeColClient freeColClient) {
         super(freeColClient);
     }
-
 
     /**
      * Shorthand to get the controller.
@@ -165,7 +161,9 @@ public final class InGameInputHandler extends InputHandler {
         NodeList nodes = parent.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Element e = (Element)nodes.item(i);
-            if (key.equals(FreeColObject.readId(e))) return e;
+            if (key.equals(FreeColObject.readId(e))) {
+				return e;
+			}
         }
         return null;
     }
@@ -194,12 +192,8 @@ public final class InGameInputHandler extends InputHandler {
         return u;
     }
 
+    /** Override InputHandler. */
 
-    // Override InputHandler
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Element handle(Connection connection, Element element) {
         if (element == null) {
@@ -286,7 +280,6 @@ public final class InGameInputHandler extends InputHandler {
         return reply;
     }
 
-
     // Individual message handlers
 
     /**
@@ -313,21 +306,18 @@ public final class InGameInputHandler extends InputHandler {
             if (FoundingFather.getXMLElementTagName().equals(tag)) {
                 FoundingFather father
                     = spec.getFoundingFather(FreeColObject.readId(e));
-                if (father != null) player.addFather(father);
+                if (father != null) {
+					player.addFather(father);
+				}
                 player.invalidateCanSeeTiles();// Might be coronado?
-                
             } else if (HistoryEvent.getXMLElementTagName().equals(tag)) {
                 player.getHistory().add(new HistoryEvent(e));
-
             } else if (LastSale.getXMLElementTagName().equals(tag)) {
                 player.addLastSale(new LastSale(e));
-
             } else if (ModelMessage.getXMLElementTagName().equals(tag)) {
                 player.addModelMessage(new ModelMessage(e));
-
             } else if (TradeRoute.getXMLElementTagName().equals(tag)) {
                 player.getTradeRoutes().add(new TradeRoute(game, e));
-
             } else {
                 logger.warning("addObject unrecognized: " + tag);
             }
@@ -349,10 +339,10 @@ public final class InGameInputHandler extends InputHandler {
             Element playerElement = (Element)nodes.item(i);
             String id = FreeColObject.readId(playerElement);
             Player p = game.getFreeColGameObject(id, Player.class);
-            if (p == null) {
-                game.addPlayer(new Player(game, playerElement));
-            } else {
+            if (p != null) {
                 p.readFromXMLElement(playerElement);
+            } else {
+                game.addPlayer(new Player(game, playerElement));
             }
         }
         return null;
@@ -379,7 +369,8 @@ public final class InGameInputHandler extends InputHandler {
             throw new IllegalStateException("Attack animation for: "
                 + player.getId() + " missing attacker attribute.");
         }
-        if ((u = game.getFreeColGameObject(str, Unit.class)) == null
+        u = game.getFreeColGameObject(str, Unit.class);
+		if (u == null
             && (u = selectUnitFromElement(game, element, str)) == null) {
             throw new IllegalStateException("Attack animation for: "
                 + player.getId() + " omitted attacker: " + str);
@@ -390,7 +381,8 @@ public final class InGameInputHandler extends InputHandler {
             throw new IllegalStateException("Attack animation for: "
                 + player.getId() + " missing defender attribute.");
         }
-        if ((u = game.getFreeColGameObject(str, Unit.class)) == null
+        u = game.getFreeColGameObject(str, Unit.class);
+		if (u == null
             && (u = selectUnitFromElement(game, element, str)) == null) {
             throw new IllegalStateException("Attack animation for: "
                 + player.getId() + " omitted defender: " + str);
@@ -596,10 +588,10 @@ public final class InGameInputHandler extends InputHandler {
             Element e = (Element) nodes.item(i);
             String id = FreeColObject.readId(e);
             Unit u = game.getFreeColGameObject(id, Unit.class);
-            if (u == null) {
-                logger.warning("Object is not a unit");
-            } else {
+            if (u != null) {
                 u.dispose();
+            } else {
+                logger.warning("Object is not a unit");
             }
         }
         return null;
@@ -649,14 +641,12 @@ public final class InGameInputHandler extends InputHandler {
                 } else {
                     object.removeAbility(new Ability(e, spec));
                 }
-
             } else if (Modifier.getXMLElementTagName().equals(tag)) {
                 if (add) {
                     object.addModifier(new Modifier(e, spec));
                 } else {
                     object.removeModifier(new Modifier(e, spec));
                 }
-
             } else {
                 logger.warning("featureChange unrecognized: " + tag);
             }
@@ -789,7 +779,9 @@ public final class InGameInputHandler extends InputHandler {
         final Unit unit = message.getUnit(game);
         final String defenderId = message.getDefenderId();
         final List<Goods> goods = message.getGoods();
-        if (unit == null || goods == null) return null;
+        if (unit == null || goods == null) {
+			return null;
+		}
 
         invokeLater(() -> { igc().loot(unit, goods, defenderId); });
         return null;
@@ -828,7 +820,9 @@ public final class InGameInputHandler extends InputHandler {
         for (int i = 0; i < nodes.getLength(); i++) {
             try {
                 Element reply = handle(connection, (Element)nodes.item(i));
-                if (reply != null) results.add(reply);
+                if (reply != null) {
+					results.add(reply);
+				}
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Caught crash in multiple item " + i
                     + ", continuing.", e);
@@ -850,7 +844,9 @@ public final class InGameInputHandler extends InputHandler {
         final Unit unit = message.getUnit(getFreeColClient().getMyPlayer());
         final String defaultName = message.getNewLandName();
         if (unit == null || defaultName == null 
-            || !unit.hasTile()) return null;
+            || !unit.hasTile()) {
+			return null;
+		}
 
         invokeLater(() -> { igc().newLandName(defaultName, unit); });
         return null;
@@ -870,7 +866,9 @@ public final class InGameInputHandler extends InputHandler {
         final Unit unit = message.getUnit(getFreeColClient().getMyPlayer());
         final Region region = message.getRegion(game);
         final String defaultName = message.getNewRegionName();
-        if (defaultName == null || region == null) return null;
+        if (defaultName == null || region == null) {
+			return null;
+		}
 
         invokeLater(() -> {
                 igc().newRegionName(region, defaultName, tile, unit);
@@ -1090,18 +1088,20 @@ public final class InGameInputHandler extends InputHandler {
             Element e = (Element)nodeList.item(i);
             String id = FreeColObject.readId(e);
             FreeColGameObject fcgo = getGame().getFreeColGameObject(id);
-            if (fcgo == null) {
-                logger.warning("Update object not present in client: " + id);
-            } else {
+            if (fcgo != null) {
                 fcgo.readFromXMLElement(e);
+            } else {
+                logger.warning("Update object not present in client: " + id);
             }
-            if ((fcgo instanceof Player && (fcgo == player))
+            if ((fcgo instanceof Player && fcgo == player)
                 || ((fcgo instanceof Settlement || fcgo instanceof Unit)
                     && player.owns((Ownable)fcgo))) {
                 visibilityChange = true;//-vis(player)
             }
         }
-        if (visibilityChange) player.invalidateCanSeeTiles();//+vis(player)
+        if (visibilityChange) {
+			player.invalidateCanSeeTiles();
+		}//+vis(player)
 
         return null;
     }

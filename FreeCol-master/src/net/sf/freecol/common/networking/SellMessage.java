@@ -30,12 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when selling at an IndianSettlement.
- */
+/** The message sent when selling at an IndianSettlement. */
 public class SellMessage extends DOMMessage {
-
     /** The object identifier of the unit that is selling. */
     private final String unitId;
 
@@ -47,7 +43,6 @@ public class SellMessage extends DOMMessage {
 
     /** The sale price. */
     private final String goldString;
-
 
     /**
      * Create a new <code>SellMessage</code>.
@@ -84,7 +79,6 @@ public class SellMessage extends DOMMessage {
         this.goldString = element.getAttribute("gold");
     }
 
-
     // Public interface
 
     /**
@@ -99,7 +93,6 @@ public class SellMessage extends DOMMessage {
             return -1;
         }
     }
-
 
     /**
      * Handle a "sell"-message.
@@ -135,7 +128,9 @@ public class SellMessage extends DOMMessage {
         }
 
         int gold = getGold();
-        if (gold < 0) return DOMMessage.clientError("Bad gold: " + goldString);
+        if (gold < 0) {
+			return DOMMessage.clientError("Bad gold: " + goldString);
+		}
 
         // Proceed to sell
         return server.getInGameController()

@@ -29,14 +29,9 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.common.i18n.Messages;
 
-
-/**
- * A FreeColDialog with input field/s.
- */
+/** A FreeColDialog with input field/s. */
 public abstract class FreeColInputDialog<T> extends FreeColDialog<T> {
-
     private static final Logger logger = Logger.getLogger(FreeColInputDialog.class.getName());
-
 
     /**
      * Internal constructor.
@@ -69,7 +64,6 @@ public abstract class FreeColInputDialog<T> extends FreeColDialog<T> {
         initializeInputDialog(frame, modal, obj, icon, okKey, cancelKey);
     }
 
-
     /**
      * Initialize this input dialog.
      *
@@ -92,18 +86,16 @@ public abstract class FreeColInputDialog<T> extends FreeColDialog<T> {
         initializeDialog(frame, DialogType.QUESTION, modal, obj, icon, c);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public T getResponse() {
         if (responded()) {
             Object value = getValue();
-            if (value == this.options.get(0)) return getInputValue();
+            if (value == this.options.get(0)) {
+				return getInputValue();
+			}
         }
         return null;
     }
-
 
     /**
      * Extract the input value from the input field/s.
@@ -111,5 +103,5 @@ public abstract class FreeColInputDialog<T> extends FreeColDialog<T> {
      *
      * @return The value of the input field/s.
      */
-    abstract protected T getInputValue();
+    protected abstract T getInputValue();
 }

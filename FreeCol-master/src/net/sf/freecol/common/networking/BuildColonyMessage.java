@@ -28,18 +28,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when the client requests building of a colony.
- */
+/** The message sent when the client requests building of a colony. */
 public class BuildColonyMessage extends DOMMessage {
-
     /** The name of the new colony. */
     private final String colonyName;
 
     /** The unit that is building the colony. */
     private final String builderId;
-
 
     /**
      * Create a new <code>BuildColonyMessage</code> with the supplied name
@@ -67,7 +62,6 @@ public class BuildColonyMessage extends DOMMessage {
         this.colonyName = element.getAttribute("name");
         this.builderId = element.getAttribute("unit");
     }
-
 
     /**
      * Handle a "buildColony"-message.
@@ -97,12 +91,10 @@ public class BuildColonyMessage extends DOMMessage {
 
         if (colonyName == null) {
             return DOMMessage.clientError("Null colony name");
-        } else if (Player.ASSIGN_SETTLEMENT_NAME.equals(colonyName)) {
-            ; // ok
-        } else if (game.getSettlementByName(colonyName) != null) {
-            return DOMMessage.clientError("Non-unique colony name "
-                + colonyName);
-        }
+        } else if (!Player.ASSIGN_SETTLEMENT_NAME.equals(colonyName) && game.getSettlementByName(colonyName) != null) {
+		    return DOMMessage.clientError("Non-unique colony name "
+		        + colonyName);
+		}
 
         Tile tile = unit.getTile();
         if (!player.canClaimToFoundSettlement(tile)) {

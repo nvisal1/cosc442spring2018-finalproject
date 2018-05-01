@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.client.gui.panel;
 
 import java.awt.Color;
@@ -30,15 +29,12 @@ import net.miginfocom.swing.MigLayout;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * This class represents a panel that holds a JColorChooser and OK
  * and cancel buttons.
  */
 public final class ColorChooserPanel extends FreeColPanel {
-
     private final JColorChooser colorChooser;
-
 
     /**
      * The constructor to use.
@@ -66,17 +62,12 @@ public final class ColorChooserPanel extends FreeColPanel {
         setSize(getPreferredSize());
     }
 
-
     public Color getColor() {
         return this.colorChooser.getColor();
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

@@ -52,18 +52,16 @@ import net.sf.freecol.common.model.WorkLocation;
 
 import static net.sf.freecol.common.util.StringUtils.lastPart;
 
-
 /**
  * This label holds Unit data in addition to the JLabel data, which makes it
  * ideal to use for drag and drop purposes.
  */
 public final class UnitLabel extends JLabel
     implements ActionListener, Draggable {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(UnitLabel.class.getName());
 
-    public static enum UnitAction {
+    public enum UnitAction {
         ASSIGN,
         CLEAR_SPECIALITY,
         ACTIVATE_UNIT,
@@ -71,8 +69,8 @@ public final class UnitLabel extends JLabel
         SENTRY,
         COLOPEDIA,
         LEAVE_TOWN,
-        WORK_COLONYTILE, // Must match the WorkLocation actual type
-        WORK_BUILDING,   // Must match the WorkLocation actual type
+        WORK_COLONYTILE, /** Must match the WorkLocation actual type. */
+        WORK_BUILDING,   /** Must match the WorkLocation actual type. */
         CLEAR_ORDERS,
         ASSIGN_TRADE_ROUTE,
         LEAVE_SHIP,
@@ -87,12 +85,11 @@ public final class UnitLabel extends JLabel
 
     private boolean selected;
 
-    private boolean isSmall = false;
+    private boolean isSmall;
 
     private boolean ignoreLocation;
     
     private boolean useTileImageLibrary;
-
 
     /**
      * Creates a JLabel to display a unit.
@@ -129,7 +126,6 @@ public final class UnitLabel extends JLabel
         this(freeColClient, unit, isSmall, ignoreLocation, false);
     }
 
-
     /**
      * Creates a JLabel to display a unit.
      *
@@ -155,7 +151,6 @@ public final class UnitLabel extends JLabel
 
         updateIcon();
     }
-
 
     /**
      * Returns this UnitLabel's unit data.
@@ -263,16 +258,15 @@ public final class UnitLabel extends JLabel
         if (ignoreLocation || selected
             || (!unit.isCarrier() && unit.getState() != Unit.UnitState.SENTRY)) {
             setEnabled(true);
-        } else if (unit.getOwner() != player
-            && unit.getColony() == null) {
-            setEnabled(true);
         } else {
-            setEnabled(false);
-        }
+			setEnabled(unit.getOwner() != player
+			    && unit.getColony() == null);
+		}
 
         super.paintComponent(g);
-        if (ignoreLocation)
-            return;
+        if (ignoreLocation) {
+			return;
+		}
 
         if (unit.getLocation() instanceof ColonyTile) {
             GoodsType workType = unit.getWorkType();
@@ -305,19 +299,17 @@ public final class UnitLabel extends JLabel
                                                       getWidth() - repairImage2.getWidth(null)));
                 g.drawImage(repairImage1,
                             leftIndent, // indent from left side of label (icon is placed at the left side)
-                            ((getHeight() - textHeight) / 2),
+                            (getHeight() - textHeight) / 2,
                             null);
                 g.drawImage(repairImage2,
                             leftIndent,
-                            ((getHeight() - textHeight) / 2) + repairImage1.getHeight(null),
+                            (getHeight() - textHeight) / 2 + repairImage1.getHeight(null),
                             null);
             }
         }
     }
 
-    /**
-     * Update the icon for this unit label.
-     */
+    /** Update the icon for this unit label. */
     public void updateIcon() {
         setDescriptionLabel(unit.getDescription(Unit.UnitLabelType.FULL));
         setSmall(isSmall);
@@ -348,23 +340,15 @@ public final class UnitLabel extends JLabel
             .toUpperCase(Locale.US);
     }
 
+    /** Interface Draggable. */
 
-    // Interface Draggable
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isOnCarrier() {
         return unit != null && unit.isOnCarrier();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final Game game = freeColClient.getGame();
@@ -379,25 +363,32 @@ public final class UnitLabel extends JLabel
                               game.getFreeColGameObject(args[1], Unit.class));
             break;
         case WORK_COLONYTILE:
-            if (args.length < 3) break;
+            if (args.length < 3) {
+				break;
+			}
             ColonyTile colonyTile
                 = game.getFreeColGameObject(args[1], ColonyTile.class);
-            if (args.length >= 4 && "!".equals(args[3])) {
-                // Claim tile if needed
-                if (!igc.claimTile(colonyTile.getWorkTile(),
-                                   unit.getColony())) break;
-            }
-            if (colonyTile != unit.getLocation()) igc.work(unit, colonyTile);
+            if (args.length >= 4 && "!".equals(args[3]) && !igc.claimTile(colonyTile.getWorkTile(),
+			                   unit.getColony())) {
+				break;
+			}
+            if (colonyTile != unit.getLocation()) {
+				igc.work(unit, colonyTile);
+			}
             if ((gt = spec.getGoodsType(args[2])) != null
                 && unit.getWorkType() != gt) {
                 igc.changeWorkType(unit, gt);
             }
             break;
         case WORK_BUILDING:
-            if (args.length < 3) break;
+            if (args.length < 3) {
+				break;
+			}
             Building building
                 = game.getFreeColGameObject(args[1], Building.class);
-            if (building != unit.getLocation()) igc.work(unit, building);
+            if (building != unit.getLocation()) {
+				igc.work(unit, building);
+			}
             if ((gt = spec.getGoodsType(args[2])) != null
                 && unit.getWorkType() != gt) {
                 igc.changeWorkType(unit, gt);

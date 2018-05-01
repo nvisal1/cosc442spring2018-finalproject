@@ -28,18 +28,13 @@ import net.sf.freecol.server.model.ServerUnit;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent updating a unit's current stop.
- */
+/** The message sent updating a unit's current stop. */
 public class SetCurrentStopMessage extends DOMMessage {
-
     /** The identifier of the unit whose stop is to be set. */
     private final String unitId;
 
     /** The index of the new stop. */
     private final String index;
-
 
     /**
      * Create a new <code>SetCurrentStopMessage</code> for the
@@ -67,7 +62,6 @@ public class SetCurrentStopMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.index = element.getAttribute("index");
     }
-
 
     /**
      * Handle a "setCurrentStop"-message.

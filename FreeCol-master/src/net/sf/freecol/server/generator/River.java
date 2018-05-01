@@ -34,12 +34,8 @@ import net.sf.freecol.server.model.ServerRegion;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-
-/**
- * A river for the map generator.
- */
+/** A river for the map generator. */
 public class River {
-
     private static final Logger logger = Logger.getLogger(SimpleMapGenerator.class.getName());
 
     private final TileImprovementType riverType;
@@ -48,7 +44,7 @@ public class River {
      * Possible direction changes for a river.
      * @see net.sf.freecol.common.model.Map
      */
-    private static enum DirectionChange {
+    private enum DirectionChange {
         STRAIGHT_AHEAD,
         RIGHT_TURN,
         LEFT_TURN;
@@ -88,46 +84,29 @@ public class River {
         }
     }
 
-    /**
-     * Current direction the river is flowing in.
-     */
+    /** Current direction the river is flowing in. */
     private Direction direction;
 
-    /**
-     * The map on which the river flows.
-     */
+    /** The map on which the river flows. */
     private final Map map;
 
-    /**
-     * A list of river sections.
-     */
+    /** A list of river sections. */
     private List<RiverSection> sections = new ArrayList<>();
 
-    /**
-     * The next river.
-     */
+    /** The next river. */
     private River nextRiver = null;
 
-    /**
-     * The ServerRegion this River belongs to.
-     */
+    /** The ServerRegion this River belongs to. */
     private ServerRegion region;
 
-    /**
-     * The random number source.
-     */
+    /** The random number source. */
     private final Random random;
 
-    /**
-     * A hashtable of position-river pairs.
-     */
+    /** A hashtable of position-river pairs. */
     private final java.util.Map<Tile, River> riverMap;
 
-    /**
-     * Whether the river is connected to the high seas.
-     */
-    private boolean connected = false;
-
+    /** Whether the river is connected to the high seas. */
+    private boolean connected;
 
     /**
      * Constructor.
@@ -202,7 +181,6 @@ public class River {
      * @param tile The <code>Tile</code> of the confluence.
      */
     public void grow(RiverSection lastSection, Tile tile) {
-
         boolean found = false;
 
         for (RiverSection section : sections) {
@@ -287,7 +265,6 @@ public class River {
      * @return true if a river was created, false otherwise.
      */
     private boolean flow(Tile source) {
-
         if (sections.size() % 2 == 0) {
             // get random new direction
             int length = DirectionChange.values().length;
@@ -300,14 +277,16 @@ public class River {
         for (DirectionChange change : DirectionChange.values()) {
             Direction dir = change.getNewDirection(direction);
             Tile nextTile = source.getNeighbourOrNull(dir);
-            if (nextTile == null) continue;
+            if (nextTile == null) {
+				continue;
+			}
 
             // is the tile suitable for this river?
             if (!riverType.isTileTypeAllowed(nextTile.getType())) {
                 // Mountains, ocean cannot have rivers
                 logger.fine("Tile (" + nextTile + ") can not have a river.");
                 continue;
-            } else if (this.contains(nextTile)) {
+            } else if (contains(nextTile)) {
                 logger.fine("Tile (" + nextTile + ") is already in river.");
                 continue;
             } else if (isNextToSelf(nextTile)) {
@@ -318,9 +297,9 @@ public class River {
                 for (DirectionChange change2 : DirectionChange.values()) {
                     Direction lastDir = change2.getNewDirection(dir);
                     Tile t = nextTile.getNeighbourOrNull(lastDir);
-                    if (t == null) continue;
-                    if (t.isLand() && !t.hasRiver()) continue;
-
+                    if (t == null || (t.isLand() && !t.hasRiver())) {
+						continue;
+					}
                     sections.add(new RiverSection(source, dir));
                     RiverSection lastSection = new RiverSection(nextTile,
                             lastDir);
@@ -337,7 +316,6 @@ public class River {
                         if (getLength() < 10) {
                             region = nextRiver.region;
                         }
-                        drawToMap(sections);
                     } else {
                         // flow into the sea (or a lake)
                         logger.fine("Tile (" + t + ") is next to water.");
@@ -353,8 +331,8 @@ public class River {
                                 TileImprovement.SMALL_RIVER);
                         }
                         connected |= t.isHighSeasConnected();
-                        drawToMap(sections);
                     }
+					drawToMap(sections);
                     return true;
                 }
                 // not next to water
@@ -392,12 +370,9 @@ public class River {
                 drawToMap(deltaSections);
             }
         }
-
     }
 
-    /**
-     * Draws the completed river to the map.
-     */
+    /** Draws the completed river to the map. */
     private void drawToMap(List<RiverSection> sections) {
         RiverSection oldSection = null;
 

@@ -22,12 +22,8 @@ package net.sf.freecol.common.model;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.i18n.NameCache;
 
-
-/**
- * Represents a given turn in the game.
- */
+/** Represents a given turn in the game. */
 public class Turn {
-
     /** The starting year (1492 in Col1). */
     private static int startingYear = 1492;
 
@@ -37,10 +33,8 @@ public class Turn {
     /** The number of seasons. */
     private static int seasonNumber = 2;
 
-
     /** The numerical value of the Turn, never less than one. */
     private int turn = 1;
-
 
     /**
      * Creates a new <code>Turn</code> instance.
@@ -50,7 +44,6 @@ public class Turn {
     public Turn(int turn) {
         this.turn = turn;
     }
-
 
     /**
      * Initialize the fundamental Turn year constants.  Called from
@@ -124,9 +117,7 @@ public class Turn {
         return ret;
     }
 
-    /**
-     * Increases the turn number by one.
-     */
+    /** Increases the turn number by one. */
     public Turn next() {
         return new Turn(turn + 1);
     }
@@ -237,7 +228,7 @@ public class Turn {
         String result = String.valueOf(getYear());
         if (season >= 0) {
             final int SeasonNumberDigits = String.valueOf(getSeasonNumber()).length(); // for leading zeroes
-            result += "_" + String.format("%0"+String.valueOf(SeasonNumberDigits)+"d", season+1)
+            result += "_" + String.format("%0"+SeasonNumberDigits+"d", season+1)
                 + "_" + NameCache.getSeasonName(season);
         }
         return result;
@@ -253,34 +244,21 @@ public class Turn {
         return (turns == FreeColObject.UNDEFINED)
             ? Messages.message("notApplicable")
             : (turns >= 0) ? Integer.toString(turns)
-            : ">" + Integer.toString(-turns - 1);
+            : ">" + (-turns - 1);
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Turn) {
-            return this.turn == ((Turn)o).turn;
-        }
-        return false;
+        return o instanceof Turn && this.turn == ((Turn)o).turn;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return turn;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return String.valueOf(turn);

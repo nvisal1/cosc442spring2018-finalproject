@@ -32,7 +32,6 @@ import net.sf.freecol.client.gui.action.ActionManager;
 import net.sf.freecol.client.gui.action.FreeColAction;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * A button with a set of images which is used to give commands
  * to a unit with the mouse instead of the keyboard. The UnitButton
@@ -42,7 +41,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * be placed on a JComponent in order to be useable.
  */
 public final class UnitButton extends JButton {
-
     private final String actionId;
     private final ActionManager am;
 
@@ -66,7 +64,6 @@ public final class UnitButton extends JButton {
         setAction(null);
         setAction(am.getFreeColAction(actionId));
     }
-
 
     @Override
     protected void configurePropertiesFromAction(Action a) {

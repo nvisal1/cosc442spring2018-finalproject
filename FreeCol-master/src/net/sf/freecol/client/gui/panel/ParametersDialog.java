@@ -35,12 +35,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.common.i18n.Messages;
 
-
-/**
- * A dialog for editing parameters.
- */
+/** A dialog for editing parameters. */
 public class ParametersDialog extends FreeColDialog<Parameters> {
-    
     private static final int COLUMNS = 5;
 
     private static final int DEFAULT_distToLandFromHighSeas = 4;
@@ -50,7 +46,6 @@ public class ParametersDialog extends FreeColDialog<Parameters> {
     private final JTextField inputD;
 
     private final JTextField inputM;
-
 
     /**
      * Create a new parameters dialog.
@@ -110,28 +105,26 @@ public class ParametersDialog extends FreeColDialog<Parameters> {
         initializeDialog(frame, DialogType.QUESTION, true, panel, null, c);
     }
 
-
-    /**
-     * Force the text fields to contain non-negative integers.
-     */
+    /** Force the text fields to contain non-negative integers. */
     private void checkFields() {
         try {
             int d = Integer.parseInt(inputD.getText());
-            if (d <= 0) throw new NumberFormatException();
+            if (d <= 0) {
+				throw new NumberFormatException();
+			}
         } catch (NumberFormatException nfe) {
             inputD.setText(Integer.toString(DEFAULT_distToLandFromHighSeas));
         }
         try {
             int m = Integer.parseInt(inputM.getText());
-            if (m <= 0) throw new NumberFormatException();
+            if (m <= 0) {
+				throw new NumberFormatException();
+			}
         } catch (NumberFormatException nfe) {
             inputM.setText(Integer.toString(DEFAULT_maxDistanceToEdge));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Parameters getResponse() {
         Object value = getValue();
@@ -143,12 +136,8 @@ public class ParametersDialog extends FreeColDialog<Parameters> {
         return null;
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void requestFocus() {
         this.inputD.requestFocus();

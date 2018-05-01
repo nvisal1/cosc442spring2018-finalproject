@@ -19,12 +19,8 @@
 
 package net.sf.freecol.common;
 
-
-/**
- * The Exception thrown by the FreeCol application.
- */
+/** The Exception thrown by the FreeCol application. */
 public final class FreeColException extends Exception {
-    
     /**
      * Build a new FreeCol specific exception with the given message.
      *

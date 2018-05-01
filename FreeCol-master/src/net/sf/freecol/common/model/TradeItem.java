@@ -26,12 +26,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Stance;
 import net.sf.freecol.common.util.Utils;
 
-
-/**
- * One of the items a DiplomaticTrade consists of.
- */
+/** One of the items a DiplomaticTrade consists of. */
 public abstract class TradeItem extends FreeColObject {
-
     /** The game this TradeItem belongs to. */
     protected final Game game;
 
@@ -40,7 +36,6 @@ public abstract class TradeItem extends FreeColObject {
 
     /** The player who is to receive this item. */
     private Player destination;
-
 
     /**
      * Creates a new <code>TradeItem</code> instance.
@@ -69,7 +64,6 @@ public abstract class TradeItem extends FreeColObject {
 
         readFromXML(xr);
     }
-
 
     /**
      * Gets the game.  The subclasses need this.
@@ -125,7 +119,6 @@ public abstract class TradeItem extends FreeColObject {
     public final Player getOther(Player player) {
         return (player == source) ? destination : source;
     }
-
 
     // The following routines must be supplied/overridden by the subclasses.
 
@@ -231,25 +224,15 @@ public abstract class TradeItem extends FreeColObject {
      */
     public abstract int evaluateFor(Player player);
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof TradeItem) {
-            return Utils.equals(this.source, ((TradeItem)other).source)
-                && Utils.equals(this.destination, ((TradeItem)other).destination)
-                && super.equals(other);
-        }
-        return false;
+        return other instanceof TradeItem && Utils.equals(this.source, ((TradeItem)other).source)
+		    && Utils.equals(this.destination, ((TradeItem)other).destination)
+		    && super.equals(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -257,16 +240,11 @@ public abstract class TradeItem extends FreeColObject {
         return 37 * hash + Utils.hashCode(destination);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String DESTINATION_TAG = "destination";
     private static final String SOURCE_TAG = "source";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -276,9 +254,6 @@ public abstract class TradeItem extends FreeColObject {
         xw.writeAttribute(DESTINATION_TAG, destination);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);

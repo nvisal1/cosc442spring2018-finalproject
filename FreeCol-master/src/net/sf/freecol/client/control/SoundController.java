@@ -34,16 +34,11 @@ import net.sf.freecol.common.option.PercentageOption;
 import net.sf.freecol.common.resources.ResourceManager;
 import net.sf.freecol.common.sound.SoundPlayer;
 
-/**
- * Controls the SoundPlayer.
- */
+/** Controls the SoundPlayer. */
 public class SoundController {
-
     private static final Logger logger = Logger.getLogger(SoundController.class.getName());
 
-
     private SoundPlayer soundPlayer;
-
 
     /**
      * Prepare the sound system.
@@ -127,5 +122,4 @@ public class SoundController {
                 : mixer.getMixerInfo().getName();
         return Messages.message("current") + ":  " + text;
     }
-
 }

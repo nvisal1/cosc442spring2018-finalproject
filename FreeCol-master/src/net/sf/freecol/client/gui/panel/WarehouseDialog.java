@@ -41,16 +41,11 @@ import net.sf.freecol.common.model.ExportData;
 import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.GoodsType;
 
-
-/**
- * A dialog to display a colony warehouse.
- */
+/** A dialog to display a colony warehouse. */
 public final class WarehouseDialog extends FreeColConfirmDialog {
-
     private static final Logger logger = Logger.getLogger(WarehouseDialog.class.getName());
 
     private JPanel warehousePanel;
-
 
     /**
      * Creates a dialog to display the warehouse.
@@ -89,10 +84,6 @@ public final class WarehouseDialog extends FreeColConfirmDialog {
         initializeConfirmDialog(frame, true, panel, icon, "ok", "cancel");
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Boolean getResponse() {
         Boolean result = super.getResponse();
@@ -107,9 +98,7 @@ public final class WarehouseDialog extends FreeColConfirmDialog {
         return result;
     }
 
-
     private class WarehouseGoodsPanel extends MigPanel {
-
         private final Colony colony;
 
         private final GoodsType goodsType;
@@ -121,7 +110,6 @@ public final class WarehouseDialog extends FreeColConfirmDialog {
         private final JSpinner highLevel;
 
         private final JSpinner exportLevel;
-
 
         public WarehouseGoodsPanel(FreeColClient freeColClient, Colony colony,
                                    GoodsType goodsType) {
@@ -177,7 +165,7 @@ public final class WarehouseDialog extends FreeColConfirmDialog {
             // export level settings
             SpinnerNumberModel exportLevelModel
                 = new SpinnerNumberModel(exportData.getExportLevel(), 0,
-                    (goodsType.limitIgnored()) ? maxCapacity : capacity, 1);
+                    goodsType.limitIgnored() ? maxCapacity : capacity, 1);
             exportLevel = new JSpinner(exportLevelModel);
             Utility.localizeToolTip(exportLevel,
                 "warehouseDialog.exportLevel.shortDescription");
@@ -194,10 +182,10 @@ public final class WarehouseDialog extends FreeColConfirmDialog {
             int exportLevelValue = ((SpinnerNumberModel)exportLevel.getModel())
                 .getNumber().intValue();
             ExportData exportData = colony.getExportData(goodsType);
-            boolean changed = (export.isSelected() != exportData.getExported())
-                || (lowLevelValue != exportData.getLowLevel())
-                || (highLevelValue != exportData.getHighLevel())
-                || (exportLevelValue != exportData.getExportLevel());
+            boolean changed = export.isSelected() != exportData.getExported()
+                || lowLevelValue != exportData.getLowLevel()
+                || highLevelValue != exportData.getHighLevel()
+                || exportLevelValue != exportData.getExportLevel();
 
             exportData.setExported(export.isSelected());
             exportData.setLowLevel(lowLevelValue);

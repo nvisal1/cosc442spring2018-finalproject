@@ -43,7 +43,6 @@ import net.sf.freecol.common.option.IntegerOption;
 import net.sf.freecol.common.option.StringOption;
 import net.sf.freecol.common.option.UnitTypeOption;
 
-
 /**
  * This class provides visualization for an
  * {@link net.sf.freecol.common.option.AbstractUnitOption} in order to enable
@@ -51,10 +50,8 @@ import net.sf.freecol.common.option.UnitTypeOption;
  */
 public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
     implements ItemListener {
-
     private class AbstractUnitRenderer
         extends FreeColComboBoxRenderer<AbstractUnitOption> {
-
         @Override
         public void setLabelValues(JLabel label, AbstractUnitOption value) {
             label.setText(Messages.message(value.getValue().getLabel()));
@@ -63,7 +60,6 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
 
     private class RoleRenderer
         extends FreeColComboBoxRenderer<String> {
-
         @Override
         public void setLabelValues(JLabel label, String value) {
             label.setText(Messages.getName(value));
@@ -75,7 +71,6 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
     private final UnitTypeOptionUI typeUI;
     private final StringOptionUI roleUI;
     private final boolean roleEditable;
-
 
     /**
      * Creates a new <code>AbstractUnitOptionUI</code> for the given
@@ -96,7 +91,7 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
         StringOption roleOption = option.getRole();
 
         boolean numberEditable = editable
-            && (numberOption.getMaximumValue() > numberOption.getMinimumValue());
+            && numberOption.getMaximumValue() > numberOption.getMinimumValue();
         numberUI = new IntegerOptionUI(numberOption, numberEditable);
         Utility.localizeToolTip(numberUI.getComponent(), "report.numberOfUnits");
         panel.add(numberUI.getComponent(), "width 30%");
@@ -119,7 +114,6 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
         initialize();
     }
 
-
     @Override
     public void itemStateChanged(ItemEvent e) {
         JComboBox<String> box = roleUI.getComponent();
@@ -138,28 +132,18 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
         box.setEnabled(enable);
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ListCellRenderer getListCellRenderer() {
         return new AbstractUnitRenderer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JPanel getComponent() {
         return panel;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         typeUI.updateOption();
@@ -171,9 +155,6 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption>
         getOption().setValue(new AbstractUnit(type, roleId, number));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         typeUI.reset();

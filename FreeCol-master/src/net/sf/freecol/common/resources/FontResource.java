@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * A <code>Resource</code> wrapping a <code>Font</code>.
  *
@@ -34,13 +33,11 @@ import java.util.logging.Logger;
  * @see Font
  */
 public class FontResource extends Resource {
-
     private static final Logger logger = Logger.getLogger(FontResource.class.getName());
 
     public static final String SCHEME = "font:";
 
     private Font font;
-
 
     public FontResource(Font font) {
         this.font = font;
@@ -79,7 +76,6 @@ public class FontResource extends Resource {
         }
     }
 
-
     /**
      * Gets the <code>Font</code> represented by this resource.  As
      * failure to load a critical font might remove the ability to
@@ -91,7 +87,7 @@ public class FontResource extends Resource {
      */
     public Font getFont() {
         if (font == null) {
-            font = FontResource.getEmergencyFont();
+            font = getEmergencyFont();
             logger.warning("Font is null");
         }
         return font;

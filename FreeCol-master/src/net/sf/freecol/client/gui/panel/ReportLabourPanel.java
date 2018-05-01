@@ -53,30 +53,23 @@ import net.sf.freecol.common.model.TypeCountMap;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * This panel displays the Labour Report.
- */
+/** This panel displays the Labour Report. */
 public final class ReportLabourPanel extends ReportPanel {
-
     /** An individual unit type panel. */
     private class LabourUnitPanel extends JPanel {
-
         public boolean selected;
         public final UnitType unitType;
-
 
         public LabourUnitPanel(UnitType unitType, int count) {
             this.unitType = unitType;
             setOpaque(false);
             setLayout(new MigLayout("wrap 2", "[60, right][left]"));
             add(new JLabel(new ImageIcon(getImageLibrary().getSmallUnitImage(
-                    unitType, (count == 0)))),
+                    unitType, count == 0))),
                 "spany 2");
             add(new JLabel(Messages.getName(unitType)));
             add(new JLabel(Integer.toString(count)));
         }
-
 
         @Override
         public void paint(Graphics g) {
@@ -97,10 +90,6 @@ public final class ReportLabourPanel extends ReportPanel {
     /** A renderer for the labour unit panels. */
     private static class LabourUnitPanelRenderer
         implements ListCellRenderer<LabourUnitPanel> {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Component getListCellRendererComponent(JList<? extends LabourUnitPanel> list,
                                                       LabourUnitPanel value,
@@ -111,7 +100,6 @@ public final class ReportLabourPanel extends ReportPanel {
             return value;
         }
     }
-
 
     /** The map of unit type to location and count. */
     private final Map<UnitType, Map<Location, Integer>> data;
@@ -125,10 +113,7 @@ public final class ReportLabourPanel extends ReportPanel {
     /** A list of panels for the unit types. */
     private JList<LabourUnitPanel> panelList = null;
 
-
-    /**
-     * The constructor that will add the items to this panel.
-     */
+    /** The constructor that will add the items to this panel. */
     public ReportLabourPanel(FreeColClient freeColClient) {
         super(freeColClient, "reportLabourAction");
 
@@ -154,10 +139,10 @@ public final class ReportLabourPanel extends ReportPanel {
                 location = location.getTile();
             }
             Integer count = unitMap.get(location);
-            if (count == null) {
-                unitMap.put(location, 1);
-            } else {
+            if (count != null) {
                 unitMap.put(location, count + 1);
+            } else {
+                unitMap.put(location, 1);
             }
         }
 
@@ -216,12 +201,8 @@ public final class ReportLabourPanel extends ReportPanel {
                                              this.unitCount, this.colonies);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();

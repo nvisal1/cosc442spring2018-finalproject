@@ -31,12 +31,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when inciting a native settlement.
- */
+/** The message sent when inciting a native settlement. */
 public class InciteMessage extends DOMMessage {
-
     /** The identifier of the unit inciting. */
     private final String unitId;
 
@@ -48,7 +44,6 @@ public class InciteMessage extends DOMMessage {
 
     /** The amount of gold in the bribe. */
     private final String goldString;
-
 
     /**
      * Create a new <code>InciteMessage</code> with the
@@ -85,7 +80,6 @@ public class InciteMessage extends DOMMessage {
         this.enemyId = element.getAttribute("enemyId");
         this.goldString = element.getAttribute("gold");
     }
-
 
     /**
      * Handle a "incite"-message.

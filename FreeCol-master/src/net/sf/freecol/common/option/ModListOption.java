@@ -22,13 +22,11 @@ package net.sf.freecol.common.option;
 import net.sf.freecol.common.io.FreeColModFile;
 import net.sf.freecol.common.model.Specification;
 
-
 /**
  * Represents an option where the valid choice is a list of
  * FreeColModFiles.
  */
 public class ModListOption extends ListOption<FreeColModFile> {
-
     /**
      * Creates a new <code>ModListOption</code>.
      *
@@ -52,10 +50,6 @@ public class ModListOption extends ListOption<FreeColModFile> {
         setAllowDuplicates(false);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModListOption clone() {
         ModListOption ret = new ModListOption(getId(), getSpecification());
@@ -63,12 +57,8 @@ public class ModListOption extends ListOption<FreeColModFile> {
         return ret;
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

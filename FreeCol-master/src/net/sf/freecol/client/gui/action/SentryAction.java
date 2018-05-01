@@ -24,14 +24,9 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * An action to set sentry state to the active unit.
- */
+/** An action to set sentry state to the active unit. */
 public class SentryAction extends UnitAction {
-
     public static final String id = "sentryAction";
-
 
     /**
      * Creates this action.
@@ -44,12 +39,8 @@ public class SentryAction extends UnitAction {
         addImageIcons("sentry");
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         igc().changeState(getGUI().getActiveUnit(), Unit.UnitState.SENTRY);

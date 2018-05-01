@@ -39,14 +39,12 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * This label holds Goods data in addition to the JLabel data, which
  * makes it ideal to use for drag and drop purposes.
  */
 public final class GoodsLabel extends AbstractGoodsLabel
     implements Draggable {
-
     GUI gui;
  
     /**
@@ -60,7 +58,6 @@ public final class GoodsLabel extends AbstractGoodsLabel
         this.gui = gui;
         initialize();
     }
-
 
     /**
      * Public routine to get a foreground color for a given goods type and
@@ -88,9 +85,7 @@ public final class GoodsLabel extends AbstractGoodsLabel
         return ResourceManager.getColor(key);
     }
 
-    /**
-     * Initialize this label.
-     */
+    /** Initialize this label. */
     private void initialize() {
         final Goods goods = getGoods();
         final Location location = goods.getLocation();
@@ -100,7 +95,9 @@ public final class GoodsLabel extends AbstractGoodsLabel
         final GoodsType type = goods.getType();
         final Specification spec = goods.getGame().getSpecification();
 
-        if (getAmount() < GoodsContainer.CARGO_SIZE) setPartialChosen(true);
+        if (getAmount() < GoodsContainer.CARGO_SIZE) {
+			setPartialChosen(true);
+		}
 
         if (player == null
             || !type.isStorable()
@@ -127,7 +124,6 @@ public final class GoodsLabel extends AbstractGoodsLabel
         return (Goods)getAbstractGoods();
     }
 
-
     // Override AbstractGoods
 
     /**
@@ -145,12 +141,8 @@ public final class GoodsLabel extends AbstractGoodsLabel
         setIcon(new ImageIcon(image));
     }
 
+    /** Implement Draggable. */
 
-    // Implement Draggable
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isOnCarrier() {
         Goods goods = getGoods();

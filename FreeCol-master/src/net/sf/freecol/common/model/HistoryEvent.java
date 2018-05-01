@@ -30,13 +30,9 @@ import static net.sf.freecol.common.util.StringUtils.*;
 
 import org.w3c.dom.Element;
 
-
-/**
- * A notable event in the history of a game.
- */
+/** A notable event in the history of a game. */
 public class HistoryEvent extends StringTemplate {
-
-    public static enum HistoryEventType implements Named {
+    public enum HistoryEventType implements Named {
         DISCOVER_NEW_WORLD,
         DISCOVER_REGION,
         MEET_NATION,
@@ -47,7 +43,7 @@ public class HistoryEvent extends StringTemplate {
         COLONY_DESTROYED,
         COLONY_CONQUERED,
         DESTROY_SETTLEMENT,
-        // FIXME: when exactly is a European nation destroyed?
+        /** FIXME: when exactly is a European nation destroyed? */
         DESTROY_NATION,
         NATION_DESTROYED,
         FOUNDING_FATHER,
@@ -74,16 +70,13 @@ public class HistoryEvent extends StringTemplate {
         
         // Implement Named
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getNameKey() {
             return Messages.nameKey("model." + getKey());
         }
     }
 
-
-    /** The turn in which the event took place */
+    /** The turn in which the event took place. */
     private Turn turn;
 
     /** The type of event. */
@@ -94,7 +87,6 @@ public class HistoryEvent extends StringTemplate {
 
     /** Points for this event, if any. */
     private int score;
-
 
     /**
      * Create a new history event of given turn and type.
@@ -130,7 +122,6 @@ public class HistoryEvent extends StringTemplate {
     public HistoryEvent(Element element) {
         readFromXMLElement(element);
     }
-
 
     /**
      * Get the turn of this history event.
@@ -208,58 +199,40 @@ public class HistoryEvent extends StringTemplate {
         this.score = score;
     }
 
+    /** Override StringTemplate routines to return HistoryEvents. */
 
-    // Override StringTemplate routines to return HistoryEvents
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HistoryEvent add(String key, String value) {
         return (HistoryEvent)super.add(key, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HistoryEvent addName(String key, String value) {
         return (HistoryEvent)super.addName(key, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HistoryEvent addNamed(String key, Named value) {
         return (HistoryEvent)super.addNamed(key, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HistoryEvent addAmount(String key, Number amount) {
         return (HistoryEvent)super.addAmount(key, amount);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HistoryEvent addStringTemplate(String key, StringTemplate template) {
         return (HistoryEvent)super.addStringTemplate(key, template);
     }
 
+    /** Interface Object. */
 
-    // Interface Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+			return true;
+		}
         if (o instanceof HistoryEvent) {
             HistoryEvent h = (HistoryEvent)o;
             return turn == h.turn && eventType == h.eventType
@@ -269,18 +242,13 @@ public class HistoryEvent extends StringTemplate {
         return false;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String EVENT_TYPE_TAG = "eventType";
     private static final String PLAYER_ID_TAG = "playerId";
     private static final String SCORE_TAG = "score";
     private static final String TURN_TAG = "turn";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -289,14 +257,13 @@ public class HistoryEvent extends StringTemplate {
 
         xw.writeAttribute(EVENT_TYPE_TAG, eventType);
 
-        if (playerId != null) xw.writeAttribute(PLAYER_ID_TAG, playerId);
+        if (playerId != null) {
+			xw.writeAttribute(PLAYER_ID_TAG, playerId);
+		}
 
         xw.writeAttribute(SCORE_TAG, score);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -311,9 +278,6 @@ public class HistoryEvent extends StringTemplate {
         score = xr.getAttribute(SCORE_TAG, 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
@@ -328,9 +292,6 @@ public class HistoryEvent extends StringTemplate {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

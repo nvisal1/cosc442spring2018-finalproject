@@ -21,7 +21,6 @@ package net.sf.freecol.common.i18n;
 
 import java.util.logging.Logger;
 
-
 /**
  * Classes implementing this interface can determine the category and
  * the index of a double based on the number rules for a language.
@@ -31,8 +30,7 @@ import java.util.logging.Logger;
  * Common Locale Data Repository</a>.
  */
 public abstract class Number implements Selector {
-
-    public enum Category { zero, one, two, few, many, other };
+    public enum Category { zero, one, two, few, many, other }
 
     private static final Logger logger = Logger.getLogger(Number.class.getName());
 
@@ -44,9 +42,6 @@ public abstract class Number implements Selector {
      */
     public abstract Category getCategory(double selector);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getKey(String selector, String template) {
         try {

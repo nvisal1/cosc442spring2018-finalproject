@@ -32,12 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when a missionary establishes/denounces a mission.
- */
+/** The message sent when a missionary establishes/denounces a mission. */
 public class MissionaryMessage extends DOMMessage {
-
     /** The identifier of the missionary. */
     private final String unitId;
 
@@ -46,7 +42,6 @@ public class MissionaryMessage extends DOMMessage {
 
     /** Is this a denunciation? */
     private final boolean denounce;
-
 
     /**
      * Create a new <code>MissionaryMessage</code> with the
@@ -79,7 +74,6 @@ public class MissionaryMessage extends DOMMessage {
         this.directionString = element.getAttribute("direction");
         this.denounce = Boolean.parseBoolean(element.getAttribute("denounce"));
     }
-
 
     /**
      * Handle a "missionary"-message.
@@ -127,15 +121,13 @@ public class MissionaryMessage extends DOMMessage {
                 return DOMMessage.clientError("Unit lacks denouncement ability: "
                     + unitId);
             }
-        } else {
-            if (missionary != null) {
-                return DOMMessage.clientError("Establishing extra mission at: "
-                    + is.getId());
-            } else if (!unit.hasAbility(Ability.ESTABLISH_MISSION)) {
-                return DOMMessage.clientError("Unit lacks establish mission ability: "
-                    + unitId);
-            }
-        }
+        } else if (missionary != null) {
+		    return DOMMessage.clientError("Establishing extra mission at: "
+		        + is.getId());
+		} else if (!unit.hasAbility(Ability.ESTABLISH_MISSION)) {
+		    return DOMMessage.clientError("Unit lacks establish mission ability: "
+		        + unitId);
+		}
 
         MoveType type = unit.getMoveType(is.getTile());
         if (type != MoveType.ENTER_INDIAN_SETTLEMENT_WITH_MISSIONARY) {
@@ -144,7 +136,7 @@ public class MissionaryMessage extends DOMMessage {
         }
 
         // Valid, proceed to denounce/establish.
-        return (denounce)
+        return denounce
             ? server.getInGameController()
                 .denounceMission(serverPlayer, unit, is)
             : server.getInGameController()

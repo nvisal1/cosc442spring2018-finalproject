@@ -25,12 +25,8 @@ import net.sf.freecol.common.model.Settlement;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.server.control.ChangeSet;
 
-
-/**
- * A type of session to handle trading.
- */
+/** A type of session to handle trading. */
 public class TradeSession extends TransactionSession {
-
     private static final Logger logger = Logger.getLogger(TradeSession.class.getName());
 
     /** The moves the trading unit has left at start of session. */
@@ -48,7 +44,6 @@ public class TradeSession extends TransactionSession {
     /** Whether giving a gift is still valid in this session. */
     private boolean canGift;
 
-
     /**
      * Creates a new <code>TradeSession</code>.
      *
@@ -63,11 +58,6 @@ public class TradeSession extends TransactionSession {
         canBuy = !atWar;
         canSell = !atWar && unit.hasGoodsCargo();
         canGift = unit.hasGoodsCargo();
-    }
-
-    @Override
-    public void complete(ChangeSet cs) {
-        super.complete(cs);
     }
 
     public int getMovesLeft() {

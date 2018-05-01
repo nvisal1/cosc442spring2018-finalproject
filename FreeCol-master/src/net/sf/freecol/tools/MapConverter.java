@@ -34,14 +34,9 @@ import net.sf.freecol.common.io.FreeColTcFile;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.server.FreeColServer;
 
-
-/**
- * Convert map formats.
- */
+/** Convert map formats. */
 public class MapConverter {
-
     public static void main(String[] args) throws Exception {
-
         Specification specification = new FreeColTcFile("freecol").getSpecification();
 
         for (String filename : args) {
@@ -75,6 +70,4 @@ public class MapConverter {
             }
         }
     }
-
 }
-

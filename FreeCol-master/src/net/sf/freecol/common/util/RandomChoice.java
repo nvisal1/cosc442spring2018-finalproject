@@ -25,15 +25,10 @@ import java.util.logging.Logger;
 
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-
-/**
- * A class to provide flat and weighted random selection from a collection.
- */
+/** A class to provide flat and weighted random selection from a collection. */
 public class RandomChoice<T> {
-
     private final int probability;
     private final T object;
-
 
     public RandomChoice(T object, int probability) {
         this.probability = probability;
@@ -48,15 +43,18 @@ public class RandomChoice<T> {
         return object;
     }
 
-
     private static <T> T select(Collection<RandomChoice<T>> input,
                                 int probability) {
-        if (input.isEmpty()) return null;
+        if (input.isEmpty()) {
+			return null;
+		}
 
         int total = 0;
         for (RandomChoice<T> choice : input) {
             total += choice.getProbability();
-            if (probability < total) return choice.getObject();
+            if (probability < total) {
+				return choice.getObject();
+			}
         }
         return input.iterator().next().getObject();
     }

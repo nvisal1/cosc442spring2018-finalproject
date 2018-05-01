@@ -39,7 +39,6 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.TileImprovementType;
 
-
 /**
  * This is the menu bar used in-game.
  *
@@ -51,11 +50,9 @@ import net.sf.freecol.common.model.TileImprovementType;
  * @see MapEditorMenuBar
  */
 public class InGameMenuBar extends FreeColMenuBar {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(InGameMenuBar.class.getName());
     
-
     /**
      * Creates a new <code>FreeColMenuBar</code>. This menu bar will include
      * all of the submenus and items.
@@ -75,7 +72,6 @@ public class InGameMenuBar extends FreeColMenuBar {
         // ActionManger.  So DebugMenu needs to be refactored to remove
         // inner classes so that this MenuBar can lose its unnecessary
         // reference to the main controller.  See FreeColMenuTest.
-        //
         // Okay, I lied.. the update() and paintComponent() methods in
         // this MenuBar use freeColClient, too. But so what.  Move
         // those to another class too. :)
@@ -83,15 +79,12 @@ public class InGameMenuBar extends FreeColMenuBar {
 
         // Add a mouse listener so that autoscrolling can happen in
         // this menubar
-        this.addMouseMotionListener(listener);
+        addMouseMotionListener(listener);
         
         reset();
     }
 
-
-    /**
-     * Resets this menu bar.
-     */
+    /** Resets this menu bar. */
     @Override
     public final void reset() {
         removeAll();
@@ -249,13 +242,9 @@ public class InGameMenuBar extends FreeColMenuBar {
         menu.add(getMenuItem(ShowMapGeneratorOptionsAction.id));
 
         add(menu);
-
     }
 
-
-    /**
-     * Paints information about gold, tax and year.
-     */
+    /** Paints information about gold, tax and year. */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -282,5 +271,4 @@ public class InGameMenuBar extends FreeColMenuBar {
             g2d.drawString(displayString, getWidth() - 10 - (int) displayStringBounds.getWidth(), y);
         }
     }
-
 }

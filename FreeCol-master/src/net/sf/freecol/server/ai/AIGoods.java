@@ -42,12 +42,10 @@ import net.sf.freecol.server.ai.mission.Mission;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Objects of this class contains AI-information for a single {@link Goods}.
  */
 public class AIGoods extends TransportableAIObject {
-
     private static final Logger logger = Logger.getLogger(AIGoods.class.getName());
 
     /** The underlying goods. */
@@ -55,7 +53,6 @@ public class AIGoods extends TransportableAIObject {
 
     /** The destination location for the goods. */
     private Location destination;
-
 
     /**
      * Creates a new uninitialized <code>AIGoods</code>.
@@ -120,7 +117,6 @@ public class AIGoods extends TransportableAIObject {
         uninitialized = getGoods() == null;
     }
 
-
     /**
      * Gets the goods this <code>AIGoods</code> is controlling.
      *
@@ -166,7 +162,6 @@ public class AIGoods extends TransportableAIObject {
         goods.setAmount(amount);
     }
 
-
     // Internal
 
     /**
@@ -176,10 +171,14 @@ public class AIGoods extends TransportableAIObject {
      * @return True if the unload succeeds.
      */
     private boolean leaveTransport(int amount) {
-        if (!(goods.getLocation() instanceof Unit)) return false;
+        if (!(goods.getLocation() instanceof Unit)) {
+			return false;
+		}
         final Unit carrier = (Unit)goods.getLocation();
         final GoodsType type = goods.getType();
-        if (carrier.getGoodsCount(type) < amount) return false;
+        if (carrier.getGoodsCount(type) < amount) {
+			return false;
+		}
 
         final AIUnit aiCarrier = getAIMain().getAIUnit(carrier);
         int oldAmount = carrier.getGoodsCount(type);
@@ -200,104 +199,77 @@ public class AIGoods extends TransportableAIObject {
         return result;
     }
 
+    /** Implement TransportableAIObject. */
 
-    // Implement TransportableAIObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Locatable getTransportLocatable() {
         return getGoods();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTransportSource() {
         return (goods == null) ? null : goods.getLocation();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTransportDestination() {
         return this.destination;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTransportDestination(Location destination) {
         this.destination = destination;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public PathNode getDeliveryPath(Unit carrier, Location dst) {
-        if (dst == null) dst = Location.upLoc(getTransportDestination());
+        if (dst == null) {
+			dst = Location.upLoc(getTransportDestination());
+		}
 
         PathNode path = (goods.getLocation() == carrier) ? carrier.findPath(dst)
             : (goods.getLocation() instanceof Unit) ? null
             : carrier.findPath(goods.getLocation(), dst, null, null);
-        if (path != null) path.convertToGoodsDeliveryPath();
+        if (path != null) {
+			path.convertToGoodsDeliveryPath();
+		}
         return path;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public PathNode getIntermediatePath(Unit carrier, Location dst) {
         return null; // NYI
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean carriableBy(Unit carrier) {
         return carrier.couldCarry(getGoods());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean canMove() {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean leaveTransport() {
         return leaveTransport(null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean leaveTransport(Direction direction) {
-        if (direction != null) return false;
-        return leaveTransport(goods.getAmount());
+        return direction == null && leaveTransport(goods.getAmount());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean joinTransport(Unit carrier, Direction direction) {
-        if (direction != null) return false;
+        if (direction != null) {
+			return false;
+		}
         final AIUnit aiCarrier = getAIMain().getAIUnit(carrier);
-        if (aiCarrier == null) return false;
+        if (aiCarrier == null) {
+			return false;
+		}
 
         final GoodsType type = goods.getType();
         boolean failed = false;
@@ -318,9 +290,6 @@ public class AIGoods extends TransportableAIObject {
         return !failed;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         String reason = Mission.invalidTransportableReason(this);
@@ -336,22 +305,19 @@ public class AIGoods extends TransportableAIObject {
             : null;
     }
 
-
     // Override AIObject
 
-    /**
-     * Disposes this object.
-     */
+    /** Disposes this object. */
     @Override
     public void dispose() {
         dropTransport();
         if (destination != null) {
             if (destination instanceof Colony) {
                 AIColony aic = getAIMain().getAIColony((Colony)destination);
-                if (aic != null) aic.removeExportGoods(this);
-            } else if (destination instanceof Europe) {
-                // Nothing to remove.
-            } else {
+                if (aic != null) {
+					aic.removeExportGoods(this);
+				}
+            } else if (!(destination instanceof Europe)) {
                 logger.warning("Unknown type of destination: " + destination);
             }
             destination = null;
@@ -375,14 +341,16 @@ public class AIGoods extends TransportableAIObject {
             : (goods.getType() == null) ? "null-goods-type"
             : (goods.getAmount() <= 0) ? "non-positive-goods-amount"
             : (goods.getLocation() == null) ? "null-location"
-            : (((FreeColGameObject)goods.getLocation()).isDisposed()) ? "disposed-location"
+            : ((FreeColGameObject)goods.getLocation()).isDisposed() ? "disposed-location"
             : null;
         if (destination != null
             && ((FreeColGameObject)destination).isDisposed()) {
             if (fix) {
                 logger.warning("Fixing disposed destination for " + this);
                 destination = null;
-                if (result > 0) result = 0;
+                if (result > 0) {
+					result = 0;
+				}
             } else {
                 why = "disposed-destination";
             }
@@ -394,15 +362,10 @@ public class AIGoods extends TransportableAIObject {
         return result;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String DESTINATION_TAG = "destination";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -412,19 +375,15 @@ public class AIGoods extends TransportableAIObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
-        if (goods != null) goods.toXML(xw);
+        if (goods != null) {
+			goods.toXML(xw);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -434,19 +393,15 @@ public class AIGoods extends TransportableAIObject {
         destination = xr.getLocationAttribute(game, DESTINATION_TAG, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         super.readChildren(xr);
 
-        if (getGoods() != null) uninitialized = false;
+        if (getGoods() != null) {
+			uninitialized = false;
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
@@ -457,30 +412,27 @@ public class AIGoods extends TransportableAIObject {
             } else {
                 goods = new Goods(getAIMain().getGame(), xr);
             }
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         LogBuilder lb = new LogBuilder(64);
         lb.add("[", getId(), " ", goods);
-        if (goods != null) lb.add(" at ", goods.getLocation());
+        if (goods != null) {
+			lb.add(" at ", goods.getLocation());
+		}
         lb.add(" -> ", destination);
         AIUnit transport = getTransport();
-        if (transport != null) lb.add(" using ", transport.getUnit());
+        if (transport != null) {
+			lb.add(" using ", transport.getUnit());
+		}
         lb.add("/", getTransportPriority(), "]");
         return lb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

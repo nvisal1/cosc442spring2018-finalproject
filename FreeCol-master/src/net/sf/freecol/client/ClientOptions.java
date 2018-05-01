@@ -56,7 +56,6 @@ import net.sf.freecol.common.util.Utils;
 
 import javax.xml.stream.events.XMLEvent;
 
-
 /**
  * Defines how available client options are displayed on the Setting
  * dialog from File/Preferences Also contains several Comparators used
@@ -78,13 +77,10 @@ import javax.xml.stream.events.XMLEvent;
  * <li>model.option.UNIQUENAME.shortDescription</li></ul>
  */
 public class ClientOptions extends OptionGroup {
-
     private static final Logger logger = Logger.getLogger(ClientOptions.class.getName());
 
-    //
     // Constants for each client option.
     // Keep these in sync with data/base/client-options.xml.
-    //
 
     // clientOptions.personal
 
@@ -92,13 +88,12 @@ public class ClientOptions extends OptionGroup {
     public static final String NAME
         = "model.option.playerName";
 
-
     // clientOptions.gui
 
     /** Option for setting the language. */
     public static final String LANGUAGE
         = "model.option.languageOption";
-    // Value for automatic language selection.
+    /** Value for automatic language selection. */
     public static final String AUTOMATIC
         = "clientOptions.gui.languageOption.autoDetectLanguage";
 
@@ -258,7 +253,6 @@ public class ClientOptions extends OptionGroup {
     public static final String ENEMY_MOVE_ANIMATION_SPEED
         = "model.option.enemyMoveAnimationSpeed";
 
-
     // clientOptions.messages
 
    /**
@@ -301,7 +295,6 @@ public class ClientOptions extends OptionGroup {
         = "model.option.labourReport";
     public static final int LABOUR_REPORT_CLASSIC = 0;
     public static final int LABOUR_REPORT_COMPACT = 1;
-
 
     // clientOptions.savegames
 
@@ -352,7 +345,6 @@ public class ClientOptions extends OptionGroup {
     public static final String BEFORE_LAST_TURN_NAME
         = "model.option.beforeLastTurnName";
 
-
     // clientOptions.warehouse
 
     /** The amount of stock the custom house should keep when selling goods. */
@@ -374,7 +366,6 @@ public class ClientOptions extends OptionGroup {
     public static final String STOCK_ACCOUNTS_FOR_PRODUCTION
         = "model.option.stockAccountsForProduction";
 
-
     // clientOptions.audio
 
     /** Choose the default mixer. */
@@ -388,7 +379,6 @@ public class ClientOptions extends OptionGroup {
     /** Play an alert sound on message arrival. */
     public static final String AUDIO_ALERTS
         = "model.option.audioAlerts";
-
 
     // clientOptions.other
 
@@ -422,13 +412,11 @@ public class ClientOptions extends OptionGroup {
     public static final int UNLOAD_OVERFLOW_RESPONSE_NEVER = 1;
     public static final int UNLOAD_OVERFLOW_RESPONSE_ALWAYS = 2;
 
-
     // clientOptions.mods
 
     /** The mods. */
     public static final String USER_MODS
         = "clientOptions.mods.userMods";
-
 
     // Comparators for sorting colonies.
     /** Compare by ascending age. */
@@ -455,11 +443,10 @@ public class ClientOptions extends OptionGroup {
     private static final Comparator<Colony> colonyPositionComparator
         = Comparator.comparingInt(c -> Location.getRank(c));
 
-
     private class MessageSourceComparator implements Comparator<ModelMessage> {
         private final Game game;
 
-        // sort according to message source
+        /** Sort according to message source. */
 
         private MessageSourceComparator(Game game) {
             this.game = game;
@@ -475,11 +462,9 @@ public class ClientOptions extends OptionGroup {
             FreeColGameObject source1 = game.getMessageSource(message1);
             FreeColGameObject source2 = game.getMessageSource(message2);
             int base = getClassIndex(source1) - getClassIndex(source2);
-            if (base == 0) {
-                if (source1 instanceof Colony) {
-                    return getColonyComparator().compare((Colony) source1, (Colony) source2);
-                }
-            }
+            if (base == 0 && source1 instanceof Colony) {
+			    return getColonyComparator().compare((Colony) source1, (Colony) source2);
+			}
             return base;
         }
 
@@ -505,7 +490,6 @@ public class ClientOptions extends OptionGroup {
         = (m1, m2) -> m1.getMessageType().ordinal()
                     - m2.getMessageType().ordinal();
 
-
     /**
      * Creates a new <code>ClientOptions</code>.
      *
@@ -516,7 +500,6 @@ public class ClientOptions extends OptionGroup {
         super(getXMLElementTagName());
     }
 
-
     /**
      * Loads the options from the given reader.
      *
@@ -524,7 +507,9 @@ public class ClientOptions extends OptionGroup {
      * @return True if the options were loaded without error.
      */
     private boolean load(FreeColXMLReader xr) {
-        if (xr == null) return false;
+        if (xr == null) {
+			return false;
+		}
         try {
             xr.nextTag();
             readFromXML(xr);
@@ -542,7 +527,9 @@ public class ClientOptions extends OptionGroup {
      * @return True if the options were loaded without error.
      */
     private boolean load(BufferedInputStream bis) {
-        if (bis == null) return false;
+        if (bis == null) {
+			return false;
+		}
         try {
             return load(new FreeColXMLReader(bis));
         } catch (IOException ioe) {
@@ -558,7 +545,7 @@ public class ClientOptions extends OptionGroup {
      * @return True if the options were loaded without error.
      */
     private boolean load(InputStream is) {
-        return (is == null) ? false : load(new BufferedInputStream(is));
+        return is != null && load(new BufferedInputStream(is));
     }
 
     /**
@@ -568,7 +555,9 @@ public class ClientOptions extends OptionGroup {
      * @return True if the options were loaded without error.
      */
     public boolean load(File file) {
-        if (file == null) return false;
+        if (file == null) {
+			return false;
+		}
         try {
             return load(new FileInputStream(file));
         } catch (FileNotFoundException fnfe) {
@@ -585,7 +574,7 @@ public class ClientOptions extends OptionGroup {
      */
     public boolean merge(File file) {
         ClientOptions clop = new ClientOptions();
-        return (!clop.load(file)) ? false : this.merge(clop);
+        return clop.load(file) && merge(clop);
     }
 
     /**
@@ -595,7 +584,9 @@ public class ClientOptions extends OptionGroup {
      * @return True if the options were loaded without error.
      */
     private boolean load(FreeColSavegameFile save) {
-        if (save == null) return false;
+        if (save == null) {
+			return false;
+		}
         try {
             return load(save.getInputStream(FreeColSavegameFile.CLIENT_OPTIONS));
         } catch (IOException ioe) {
@@ -612,7 +603,7 @@ public class ClientOptions extends OptionGroup {
      */
     public boolean merge(FreeColSavegameFile save) {
         ClientOptions clop = new ClientOptions();
-        return (!clop.load(save)) ? false : this.merge(clop);
+        return clop.load(save) && merge(clop);
     }
         
     /**
@@ -622,12 +613,14 @@ public class ClientOptions extends OptionGroup {
      */
     public List<FreeColModFile> getActiveMods() {
         List<FreeColModFile> active = new ArrayList<>();
-        ModListOption option = (ModListOption)getOption(ClientOptions.USER_MODS);
+        ModListOption option = (ModListOption)getOption(USER_MODS);
         if (option != null) {
             for (FreeColModFile modInfo : option.getOptionValues()) {
                 if (modInfo != null && modInfo.getId() != null) {
                     FreeColModFile f = Mods.getFreeColModFile(modInfo.getId());
-                    if (f != null) active.add(f);
+                    if (f != null) {
+						active.add(f);
+					}
                 }
             }
         }
@@ -644,7 +637,7 @@ public class ClientOptions extends OptionGroup {
         if (options.canRead()) {
             try (
                 FileInputStream fis = new FileInputStream(options);
-                FreeColXMLReader xr = new FreeColXMLReader(fis);
+                FreeColXMLReader xr = new FreeColXMLReader(fis)
             ) {
                 xr.nextTag();
                 for (int type = xr.getEventType();

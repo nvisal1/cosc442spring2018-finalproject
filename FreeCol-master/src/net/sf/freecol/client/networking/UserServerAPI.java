@@ -25,16 +25,11 @@ import net.sf.freecol.client.gui.GUI;
 import net.sf.freecol.common.debug.FreeColDebugger;
 import net.sf.freecol.common.networking.ServerAPI;
 
-
-/**
- * Implementation of the ServerAPI.
- */
+/** Implementation of the ServerAPI. */
 public class UserServerAPI extends ServerAPI {
-
     private final GUI gui;
 
     public UserServerAPI(GUI gui) {
-        super();
         this.gui = gui;
     }
 

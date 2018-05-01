@@ -33,13 +33,9 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.FontLibrary;
 import net.sf.freecol.common.model.Region;
 
-
-/**
- * This panel displays the exploration report.
- */
+/** This panel displays the exploration report. */
 public final class ReportExplorationPanel extends ReportPanel {
-
-    // only use this for regions that have already been discovered!
+    /** Only use this for regions that have already been discovered! */
     private static final Comparator<Region> regionComparator = new Comparator<Region>() {
         @Override
         public int compare(Region region1, Region region2) {
@@ -74,9 +70,7 @@ public final class ReportExplorationPanel extends ReportPanel {
 
         reportPanel.setLayout(new MigLayout("wrap 5, fillx", "", ""));
 
-        /**
-         * Header Row
-         */
+        /* Header Row */
         Font font = FontLibrary.createFont(FontLibrary.FontType.NORMAL,
             FontLibrary.FontSize.TINY, Font.BOLD, getImageLibrary().getScaleFactor());
         JLabel nameOfRegion = Utility.localizedLabel("report.exploration.nameOfRegion");
@@ -95,7 +89,7 @@ public final class ReportExplorationPanel extends ReportPanel {
         valueOfRegion.setFont(font);
         reportPanel.add(valueOfRegion);
         
-        /**
+        /*
          * Content Rows
          * 
          * TODO: Display "None" if no contents, though this would be rare.

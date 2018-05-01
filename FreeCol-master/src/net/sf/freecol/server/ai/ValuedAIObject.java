@@ -29,20 +29,17 @@ import net.sf.freecol.common.model.FreeColObject;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Abstract class of AI object with a simple enclosed comparable
  * integer value.
  */
 public abstract class ValuedAIObject extends AIObject {
-
     /** A comparator by descending AI object value. */
     public static final Comparator<ValuedAIObject> valuedComparator
         = Comparator.comparingInt(ValuedAIObject::getValue).reversed();
 
     /** The value of this AIObject. */
     private int value;
-
 
     /**
      * Creates a new <code>ValuedAIObject</code> instance.
@@ -91,7 +88,6 @@ public abstract class ValuedAIObject extends AIObject {
         super(aiMain, xr);
     }
 
-
     /**
      * Get the <code>Value</code> value.
      *
@@ -110,12 +106,8 @@ public abstract class ValuedAIObject extends AIObject {
         this.value = newValue;
     }
 
+    /** Override FreeColObject. */
 
-    // Override FreeColObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int compareTo(FreeColObject other) {
         int cmp = 0;
@@ -123,16 +115,14 @@ public abstract class ValuedAIObject extends AIObject {
             ValuedAIObject vao = (ValuedAIObject)other;
             cmp = vao.value - this.value;
         }
-        if (cmp == 0) cmp = super.compareTo(other);
+        if (cmp == 0) {
+			cmp = super.compareTo(other);
+		}
         return cmp;
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -140,9 +130,6 @@ public abstract class ValuedAIObject extends AIObject {
         xw.writeAttribute(VALUE_TAG, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);

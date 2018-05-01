@@ -24,12 +24,8 @@ import java.awt.event.WindowListener;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * The WindowListener for the WindowedFrame class.
- */
+/** The WindowListener for the WindowedFrame class. */
 public final class WindowedFrameListener implements WindowListener {
-
     private final FreeColClient freeColClient;
 
     /**

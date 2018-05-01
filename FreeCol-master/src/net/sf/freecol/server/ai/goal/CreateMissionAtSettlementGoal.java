@@ -34,7 +34,6 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIPlayer;
 import net.sf.freecol.server.ai.AIUnit;
 
-
 /**
  * This {@link Goal} deals with one missionary unit.
  * </p><p>
@@ -48,13 +47,12 @@ import net.sf.freecol.server.ai.AIUnit;
  * Excess units will be given back to the parent, or the {@link AIPlayer} directly.
  */
 public class CreateMissionAtSettlementGoal extends Goal {
-
     private static final Logger logger = Logger.getLogger(CreateMissionAtSettlementGoal.class.getName());
 
-    //the settlement to build a mission at
+    /** The settlement to build a mission at. */
     private final IndianSettlement target;
 
-    //our only possible subgoal, a GoToAdjacentGoal
+    /** Our only possible subgoal, a GoToAdjacentGoal. */
     private GotoAdjacentGoal gotoSubGoal;
 
     public CreateMissionAtSettlementGoal(AIPlayer p, Goal g, float w, AIUnit u, IndianSettlement i) {
@@ -135,10 +133,7 @@ public class CreateMissionAtSettlementGoal extends Goal {
             while (uit.hasNext()) {
                 AIUnit u = uit.next();
                 uit.remove();
-                if (!"model.role.missionary".equals(u.getUnit().getRole().getId())) {
-                    //FIXME: Uncomment after this method has been added to AIPlayer
-                    //player.addUnit(u);
-                } else {
+                if ("model.role.missionary".equals(u.getUnit().getRole().getId())) {
                     if (!hasFoundMissionary) {
                         hasFoundMissionary = true;
                         if (u.getUnit().getTile().isAdjacent(target.getTile())) {
@@ -185,7 +180,6 @@ public class CreateMissionAtSettlementGoal extends Goal {
         return descr;
     }
 
-
     @Override
     public void toXML(FreeColXMLWriter xw) throws XMLStreamException {
         //FIXME
@@ -196,9 +190,6 @@ public class CreateMissionAtSettlementGoal extends Goal {
         //FIXME
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 }

@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 
 import net.sf.freecol.common.io.sza.SimpleZippedAnimation;
 
-
 /**
  * A <code>Resource</code> wrapping a <code>SimpleZippedAnimation</code>.
  * 
@@ -42,7 +41,6 @@ public class SZAResource extends Resource implements Resource.Preloadable {
     private volatile SimpleZippedAnimation szAnimation = null;
     private final Object loadingLock = new Object();
 
-
     /**
      * Do not use directly.
      *
@@ -53,10 +51,7 @@ public class SZAResource extends Resource implements Resource.Preloadable {
         super(resourceLocator);
     }
 
-
-    /**
-     * Preloading the animation.
-     */
+    /** Preloading the animation. */
     @Override
     public void preload() {
         synchronized (loadingLock) {

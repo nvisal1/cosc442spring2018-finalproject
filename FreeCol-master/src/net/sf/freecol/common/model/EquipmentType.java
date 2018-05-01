@@ -28,7 +28,6 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
 /**
  * This whole class is now @compat 0.10.x.  We no longer use equipment types.
  *
@@ -39,7 +38,6 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
  * derived from it) in that it must be attached to a unit.
  */
 public class EquipmentType extends BuildableType {
-
     public static final EquipmentType[] NO_EQUIPMENT = new EquipmentType[0];
 
     /** The maximum number of equipment items that can be combined. */
@@ -57,20 +55,19 @@ public class EquipmentType extends BuildableType {
      * (if captureEquipmentByIndians is true) or Europeans (otherwise).
      */
     private String captureEquipmentId = null;
-    private boolean captureEquipmentByIndians = false;
+    private boolean captureEquipmentByIndians;
 
     /** The default Role of the Unit carrying this type of Equipment. */
     private Role role = null;
 
     /** Is this military equipment? */
-    private boolean militaryEquipment = false;
+    private boolean militaryEquipment;
 
     /**
      * A list containing the object identifiers of equipment types
      * compatible with this one.
      */
     private List<String> compatibleEquipment = null;
-
 
     /**
      * Simple constructor.
@@ -81,7 +78,6 @@ public class EquipmentType extends BuildableType {
     public EquipmentType(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Get the maximum combinable amount of this equipment type.
@@ -132,13 +128,9 @@ public class EquipmentType extends BuildableType {
      * @return True if the equipment is compatible.
      */
     public boolean isCompatibleWith(EquipmentType otherType) {
-        if (this.getId().equals(otherType.getId())) {
-            // model.equipment.tools for example
-            return true;
-        }
-        return compatibleEquipment != null
+        return getId().equals(otherType.getId()) || (compatibleEquipment != null
             && compatibleEquipment.contains(otherType.getId())
-            && otherType.compatibleEquipment.contains(getId());
+            && otherType.compatibleEquipment.contains(getId()));
     }
 
     /**
@@ -147,7 +139,9 @@ public class EquipmentType extends BuildableType {
      * @param equipmentId The equipment identifier.
      */
     private void addCompatibleEquipment(String equipmentId) {
-        if (compatibleEquipment == null) compatibleEquipment = new ArrayList<>();
+        if (compatibleEquipment == null) {
+			compatibleEquipment = new ArrayList<>();
+		}
         compatibleEquipment.add(equipmentId);
     }
 
@@ -179,12 +173,8 @@ public class EquipmentType extends BuildableType {
         return militaryEquipment;
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int result = 1;
@@ -194,33 +184,33 @@ public class EquipmentType extends BuildableType {
         return 37 * result + ((getId() == null) ? 0 : getId().hashCode());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) {
+			return true;
+		}
+        if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
         EquipmentType other = (EquipmentType) obj;
         if (compatibleEquipment == null) {
-            if (other.compatibleEquipment != null)
-                return false;
-        } else if (!compatibleEquipment.equals(other.compatibleEquipment))
-            return false;
+            if (other.compatibleEquipment != null) {
+				return false;
+			}
+        } else if (!compatibleEquipment.equals(other.compatibleEquipment)) {
+			return false;
+		}
         if (getId() == null) {
-            if (other.getId() != null)
-                return false;
-        } else if (!getId().equals(other.getId()))
-            return false;
+            if (other.getId() != null) {
+				return false;
+			}
+        } else if (!getId().equals(other.getId())) {
+			return false;
+		}
         return true;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String BY_INDIANS_TAG = "by-indians";
     private static final String CAPTURE_EQUIPMENT_TAG = "capture-equipment";
@@ -228,14 +218,10 @@ public class EquipmentType extends BuildableType {
     private static final String COMPATIBLE_EQUIPMENT_TAG = "compatible-equipment";
     private static final String MAXIMUM_COUNT_TAG = "maximum-count";
     private static final String ROLE_TAG = "role";
-    // @compat 0.10.0
+    /** @compat 0.10.0 */
     private static final String REQUIRED_LOCATION_ABILITY_TAG = "required-location-ability";
-    // end @compat
+    /** End @compat. */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -247,9 +233,6 @@ public class EquipmentType extends BuildableType {
         xw.writeAttribute(ROLE_TAG, role);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -275,9 +258,6 @@ public class EquipmentType extends BuildableType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -290,9 +270,6 @@ public class EquipmentType extends BuildableType {
                           getSpecification().getDefaultRole());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -313,9 +290,6 @@ public class EquipmentType extends BuildableType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -325,7 +299,6 @@ public class EquipmentType extends BuildableType {
             captureEquipmentId = xr.readId();
             captureEquipmentByIndians = xr.getAttribute(BY_INDIANS_TAG, false);
             xr.closeTag(CAPTURE_EQUIPMENT_TAG);
-
         } else if (COMPATIBLE_EQUIPMENT_TAG.equals(tag)) {
             addCompatibleEquipment(xr.readId());
             xr.closeTag(COMPATIBLE_EQUIPMENT_TAG);
@@ -339,15 +312,11 @@ public class EquipmentType extends BuildableType {
             spec.addAbility(abilityId);
             xr.closeTag(REQUIRED_LOCATION_ABILITY_TAG);
         // end @compat
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -27,15 +27,10 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.util.Utils;
 
-
-/**
- * A trade item consisting of a player to incite war against.
- */
+/** A trade item consisting of a player to incite war against. */
 public class InciteTradeItem extends TradeItem {
-    
     /** The victim player. */
     private Player victim;
-
 
     /**
      * Creates a new <code>InciteTradeItem</code> inincite.
@@ -64,46 +59,31 @@ public class InciteTradeItem extends TradeItem {
         super(game, xr);
     }
 
+    /** Interface TradeItem. */
 
-    // Interface TradeItem
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isValid() {
         return victim != null && victim != getSource()
             && victim != getDestination();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isUnique() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StringTemplate getLabel() {
         return StringTemplate.template(Messages.descriptionKey("model.tradeItem.incite"))
             .addStringTemplate("%nation%", victim.getNationLabel());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Player getVictim() {
         return victim;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int evaluateFor(Player player) {
         final Player victim = getVictim();
         switch (player.getStance(victim)) {
@@ -120,39 +100,24 @@ public class InciteTradeItem extends TradeItem {
         return (getSource() == player) ? -value : value;
     }
     
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof InciteTradeItem) {
-            return Utils.equals(this.victim, ((InciteTradeItem)other).victim)
-                && super.equals(other);
-        }
-        return false;
+        return other instanceof InciteTradeItem && Utils.equals(this.victim, ((InciteTradeItem)other).victim)
+		    && super.equals(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
         return 37 * hash + Utils.hashCode(this.victim);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String VICTIM_TAG = "victim";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -160,9 +125,6 @@ public class InciteTradeItem extends TradeItem {
         xw.writeAttribute(VICTIM_TAG, victim);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -171,9 +133,6 @@ public class InciteTradeItem extends TradeItem {
                                           Player.class, (Player)null, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -182,9 +141,6 @@ public class InciteTradeItem extends TradeItem {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

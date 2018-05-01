@@ -36,12 +36,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
-/**
- * Collection of small static helper methods using Collections.
- */
+/** Collection of small static helper methods using Collections. */
 public class CollectionUtils {
-
     /** Trivial integer accumulator. */
     public static final BinaryOperator<Integer> integerAccumulator
         = (i1, i2) -> i1 + i2;
@@ -50,7 +46,7 @@ public class CollectionUtils {
     public static final BinaryOperator<Double> doubleAccumulator
         = (d1, d2) -> d1 + d2;
 
-    /** Useful comparators for mapEntriesBy* */
+    /** Useful comparators for mapEntriesBy. */
     public static final Comparator<Integer> ascendingIntegerComparator
         = Comparator.comparingInt(i -> i);
     public static final Comparator<Integer> descendingIntegerComparator
@@ -73,7 +69,7 @@ public class CollectionUtils {
     @SafeVarargs
     public static <T> Set<T> makeUnmodifiableSet(T... members) {
         Set<T> tmp = new HashSet<>();
-        for (T t : members) tmp.add(t);
+        Collections.addAll(tmp, members);
         return Collections.<T>unmodifiableSet(tmp);
     }
 
@@ -86,7 +82,7 @@ public class CollectionUtils {
     @SafeVarargs
     public static <T> List<T> makeUnmodifiableList(T... members) {
         List<T> tmp = new ArrayList<>();
-        for (T t : members) tmp.add(t);
+        Collections.addAll(tmp, members);
         return Collections.<T>unmodifiableList(tmp);
     }
 
@@ -149,50 +145,54 @@ public class CollectionUtils {
      * @return A iterable yielding all the permutations of the original list.
      */
     public static <T> Iterable<List<T>> getPermutations(final List<T> l) {
-        if (l == null) return null;
-        return new Iterable<List<T>>() {
-            @Override
-            public Iterator<List<T>> iterator() {
-                return new Iterator<List<T>>() {
-                    private final List<T> original = new ArrayList<>(l);
-                    private final int n = l.size();
-                    private final int np = factorial(n);
-                    private int index = 0;
+        if (l != null) {
+			return new Iterable<List<T>>() {
+			    @Override
+			    public Iterator<List<T>> iterator() {
+			        return new Iterator<List<T>>() {
+			            private final List<T> original = new ArrayList<>(l);
+			            private final int n = l.size();
+			            private final int np = factorial(n);
+			            private int index;
 
-                    private int factorial(int n) {
-                        int total = n;
-                        while (--n > 1) total *= n;
-                        return total;
-                    }
+			            private int factorial(int n) {
+			                int total = n;
+			                while (--n > 1) {
+								total *= n;
+							}
+			                return total;
+			            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return index < np;
-                    }
+			            @Override
+			            public boolean hasNext() {
+			                return index < np;
+			            }
 
-                    // FIXME: see if we can do it with one array:-)
-                    @Override
-                    public List<T> next() {
-                        List<T> pick = new ArrayList<>(original);
-                        List<T> result = new ArrayList<>();
-                        int current = index++;
-                        int divisor = np;
-                        for (int i = n; i > 0; i--) {
-                            divisor /= i;
-                            int j = current / divisor;
-                            result.add(pick.remove(j));
-                            current -= j * divisor;
-                        }
-                        return result;
-                    }
+			            /** FIXME: see if we can do it with one array:-) */
+			            @Override
+			            public List<T> next() {
+			                List<T> pick = new ArrayList<>(original);
+			                List<T> result = new ArrayList<>();
+			                int current = index++;
+			                int divisor = np;
+			                for (int i = n; i > 0; i--) {
+			                    divisor /= i;
+			                    int j = current / divisor;
+			                    result.add(pick.remove(j));
+			                    current -= j * divisor;
+			                }
+			                return result;
+			            }
 
-                    @Override
-                    public void remove() {
-                        throw new RuntimeException("remove() not implemented");
-                    }
-                };
-            }
-        };
+			            @Override
+			            public void remove() {
+			                throw new RuntimeException("remove() not implemented");
+			            }
+			        };
+			    }
+			};
+		}
+        return null;
     }
 
     /**
@@ -205,7 +205,11 @@ public class CollectionUtils {
         T datum = null;
         boolean first = true;
         for (T t : collection) {
-            if (first) datum = t; else if (t != datum) return false;
+            if (first) {
+				datum = t;
+			} else if (t != datum) {
+				return false;
+			}
             first = false;
         }
         return true;
@@ -219,7 +223,9 @@ public class CollectionUtils {
      */
     public static <T> void rotate(final List<T> list, int n) {
         final int len = list.size();
-        if (len <= 0 || n == 0) return;
+        if (len <= 0 || n == 0) {
+			return;
+		}
         n %= len;
         if (n > 0) {
             for (; n > 0; n--) {
@@ -241,7 +247,9 @@ public class CollectionUtils {
      */
     public static <T> void reverse(final List<T> list) {
         final int len = list.size();
-        if (len <= 0) return;
+        if (len <= 0) {
+			return;
+		}
         for (int i = 0, j = len-1; i < j; i++, j--) {
             T t = list.get(i);
             list.set(i, list.get(j));
@@ -258,15 +266,21 @@ public class CollectionUtils {
      *     equal in the sense of their equals() method.
      */
     public static <T> boolean listEquals(List<T> one, List<T> two) {
-        if (one == null) return two == null;
-        if (two == null) return false;
+        if (one == null) {
+			return two == null;
+		}
+        if (two == null) {
+			return false;
+		}
         
         Iterator<T> oneI = one.iterator();
         Iterator<T> twoI = two.iterator();
         for (;;) {
             if (oneI.hasNext()) {
                 if (twoI.hasNext()) {
-                    if (!Utils.equals(oneI.next(), twoI.next())) break;
+                    if (!Utils.equals(oneI.next(), twoI.next())) {
+						break;
+					}
                 } else {
                     break;
                 }

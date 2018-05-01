@@ -55,12 +55,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * Handles the network messages that arrives while in the game.
- */
+/** Handles the network messages that arrives while in the game. */
 public final class AIInGameInputHandler implements MessageHandler {
-
     private static final Logger logger = Logger.getLogger(AIInGameInputHandler.class.getName());
 
     /** The player for whom I work. */
@@ -71,7 +67,6 @@ public final class AIInGameInputHandler implements MessageHandler {
 
     /** The main AI object. */
     private final AIMain aiMain;
-
 
     /**
      * The constructor to use.
@@ -98,7 +93,6 @@ public final class AIInGameInputHandler implements MessageHandler {
         this.aiMain = aiMain;
     }
 
-
     /**
      * Get the AI player using this <code>AIInGameInputHandler</code>.
      *
@@ -118,7 +112,6 @@ public final class AIInGameInputHandler implements MessageHandler {
         return aiMain.getAIUnit(unit);
     }
 
-
     // Implement MessageHandler
 
     /**
@@ -131,7 +124,9 @@ public final class AIInGameInputHandler implements MessageHandler {
      */
     @Override
     public synchronized Element handle(Connection connection, Element element) {
-        if (element == null) return null;
+        if (element == null) {
+			return null;
+		}
         final String tag = element.getTagName();
         Element reply = null;
         try {
@@ -203,7 +198,9 @@ public final class AIInGameInputHandler implements MessageHandler {
             = new ChooseFoundingFatherMessage(game, element);
         FoundingFather ff = aiPlayer.selectFoundingFather(message.getFathers());
         logger.finest(aiPlayer.getId() + " chose founding father: " + ff);
-        if (ff != null) message.setFather(ff);
+        if (ff != null) {
+			message.setFather(ff);
+		}
         return message.toXMLElement();
     }
 
@@ -268,7 +265,9 @@ public final class AIInGameInputHandler implements MessageHandler {
         } catch (NumberFormatException e) {
             n = -1;
         }
-        for (int i = 0; i < n; i++) AIMessage.askEmigrate(aiPlayer, 0);
+        for (int i = 0; i < n; i++) {
+			AIMessage.askEmigrate(aiPlayer, 0);
+		}
         return null;
     }
 
@@ -329,7 +328,9 @@ public final class AIInGameInputHandler implements MessageHandler {
         int space = unit.getSpaceLeft();
         while (!goods.isEmpty()) {
             Goods g = goods.remove(0);
-            if (g.getSpaceTaken() > space) continue; // Approximate
+            if (g.getSpaceTaken() > space) {
+				continue;
+			} // Approximate
             loot.add(g);
             space -= g.getSpaceTaken();
         }
@@ -388,7 +389,9 @@ public final class AIInGameInputHandler implements MessageHandler {
         for (int i = 0; i < nodes.getLength(); i++) {
             try {
                 Element reply = handle(connection, (Element) nodes.item(i));
-                if (reply != null) results.add(reply);
+                if (reply != null) {
+					results.add(reply);
+				}
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Caught crash in multiple item " + i
                     + ", continuing.", e);

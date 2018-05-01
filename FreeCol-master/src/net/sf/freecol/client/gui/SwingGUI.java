@@ -106,12 +106,8 @@ import net.sf.freecol.common.resources.Video;
 
 import static net.sf.freecol.common.util.StringUtils.lastPart;
 
-
-/**
- * A wrapper providing functionality for the overall GUI using Java Swing.
- */
+/** A wrapper providing functionality for the overall GUI using Java Swing. */
 public class SwingGUI extends GUI {
-
     private final GraphicsDevice graphicsDevice;
 
     /**
@@ -134,7 +130,6 @@ public class SwingGUI extends GUI {
 
     private JWindow splash;
 
-
     /**
      * Create the GUI.
      *
@@ -147,8 +142,7 @@ public class SwingGUI extends GUI {
         logger.info("GUI constructed using scale factor " + scaleFactor);
     }
 
-
-    // Simple accessors
+    /** Simple accessors. */
 
     public Canvas getCanvas() {
         return canvas;
@@ -180,9 +174,7 @@ public class SwingGUI extends GUI {
         Utility.initStyleContext(font);
     }
 
-    /**
-     * Quit the GUI.  All that is required is to exit the full screen.
-     */
+    /** Quit the GUI. All that is required is to exit the full screen. */
     @Override
     public void quit() throws Exception {
         if (canvas != null) {
@@ -204,9 +196,7 @@ public class SwingGUI extends GUI {
         setSelectedTile(tile);
     }
 
-    /**
-     * Set up the mouse listeners for the canvas and map viewer.
-     */
+    /** Set up the mouse listeners for the canvas and map viewer. */
     @Override
     public void setupMouseListeners() {
         canvas.setupMouseListeners();
@@ -220,7 +210,9 @@ public class SwingGUI extends GUI {
     @Override
     public void displaySplashScreen(final InputStream splashStream) {
         splash = null;
-        if (splashStream == null) return;
+        if (splashStream == null) {
+			return;
+		}
         try {
             BufferedImage im = ImageIO.read(splashStream);
             splash = new JWindow(graphicsDevice.getDefaultConfiguration());
@@ -237,9 +229,7 @@ public class SwingGUI extends GUI {
         }
     }
 
-    /**
-     * Hide the splash screen.
-     */
+    /** Hide the splash screen. */
     @Override
     public void hideSplashScreen() {
         if (splash != null) {
@@ -262,7 +252,6 @@ public class SwingGUI extends GUI {
         final VideoComponent vp = new VideoComponent(video, muteAudio);
 
         final class AbortListener implements ActionListener, KeyListener, MouseListener, VideoListener {
-
             private Timer t = null;
 
             @Override
@@ -374,16 +363,12 @@ public class SwingGUI extends GUI {
         // Work around a Java 2D bug that seems to be X11 specific.
         // According to:
         //   http://www.oracle.com/technetwork/java/javase/index-142560.html
-        //
         //   ``The use of pixmaps typically results in better
         //     performance. However, in certain cases, the opposite is true.''
-        //
         // The standard workaround is to use -Dsun.java2d.pmoffscreen=false,
         // but this is too hard for some users, so provide an option to
         // do it easily.  However respect the initial value if present.
-        //
         // Remove this if Java 2D is ever fixed.  DHYB.
-        //
         final String pmoffscreen = "sun.java2d.pmoffscreen";
         BooleanOption usePixmaps
             = (BooleanOption) opts.getOption(ClientOptions.USE_PIXMAPS);
@@ -430,34 +415,29 @@ public class SwingGUI extends GUI {
         logger.info("Starting in Move Units View Mode");
     }
 
-    /**
-     * Change the windowed mode.
-     */
+    /** Change the windowed mode. */
     @Override
     public void changeWindowedMode() {
         canvas.changeWindowedMode();
     }
 
-    /**
-     * Start the GUI for the map editor.
-     */
+    /** Start the GUI for the map editor. */
     @Override
     public void startMapEditorGUI() {
         canvas.startMapEditorGUI();
     }
 
-
     // Non-trivial public routines.
 
-    /**
-     * Start/stop the goto path display.
-     */
+    /** Start/stop the goto path display. */
     @Override
     public void activateGotoPath() {
         Unit unit = getActiveUnit();
 
         // Action should be disabled if there is no active unit, but make sure
-        if (unit == null) return;
+        if (unit == null) {
+			return;
+		}
 
         // Enter "goto mode" if not already activated; otherwise cancel it
         if (canvas.isGotoStarted()) {
@@ -478,15 +458,15 @@ public class SwingGUI extends GUI {
         }
     }
 
-    /**
-     * Stop the goto path display.
-     */
+    /** Stop the goto path display. */
     @Override
     public void clearGotoPath() {
         Unit unit = getActiveUnit();
 
         // Action should be disabled if there is no active unit, but make sure
-        if (unit == null) return;
+        if (unit == null) {
+			return;
+		}
         canvas.stopGoto();
     }
 
@@ -506,9 +486,7 @@ public class SwingGUI extends GUI {
             player.getName() + ": " + message, player.getNationColor()));
     }
 
-    /**
-     * Refresh the GUI.
-     */
+    /** Refresh the GUI. */
     @Override
     public void refresh() {
         mapViewer.forceReposition();
@@ -526,9 +504,7 @@ public class SwingGUI extends GUI {
         }
     }
 
-    /**
-     * Reset the menu bar.
-     */
+    /** Reset the menu bar. */
     @Override
     public void resetMenuBar() {
         freeColClient.updateActions();
@@ -595,7 +571,6 @@ public class SwingGUI extends GUI {
         canvas.updateMenuBar();
     }
 
-
     // Animation handling
 
     /**
@@ -646,7 +621,6 @@ public class SwingGUI extends GUI {
         Animations.unitMove(freeColClient, unit, srcTile, dstTile);
     }
 
-
     // MapControls handling
 
     /**
@@ -687,24 +661,32 @@ public class SwingGUI extends GUI {
 
     @Override
     public void updateMapControls() {
-        if (mapControls != null) mapControls.update();
+        if (mapControls != null) {
+			mapControls.update();
+		}
     }
 
     public void updateMapControlsInCanvas() {
-        if (mapControls == null) return;
+        if (mapControls == null) {
+			return;
+		}
         mapControls.removeFromComponent(canvas);
         mapControls.addToComponent(canvas);
     }
 
     @Override
     public void zoomInMapControls() {
-        if (mapControls == null) return;
+        if (mapControls == null) {
+			return;
+		}
         mapControls.zoomIn();
     }
 
     @Override
     public void zoomOutMapControls() {
-        if (mapControls == null) return;
+        if (mapControls == null) {
+			return;
+		}
         mapControls.zoomOut();
     }
 
@@ -720,16 +702,19 @@ public class SwingGUI extends GUI {
 
     @Override
     public void miniMapToggleViewControls() {
-        if (mapControls == null) return;
+        if (mapControls == null) {
+			return;
+		}
         mapControls.toggleView();
     }
 
     @Override
     public void miniMapToggleFogOfWarControls() {
-        if (mapControls == null) return;
+        if (mapControls == null) {
+			return;
+		}
         mapControls.toggleFogOfWar();
     }
-
 
     // Dialogs that return values
 
@@ -879,8 +864,7 @@ public class SwingGUI extends GUI {
                                       okKey, cancelKey);
     }
 
-
-    // Trivial delegations to Canvas
+    /** Trivial delegations to Canvas. */
 
     @Override
     public void closeMainPanel() {
@@ -1048,7 +1032,9 @@ public class SwingGUI extends GUI {
                 updateMapControls();
             }
         }
-        if (!freeColClient.isInGame()) showMainPanel(null);
+        if (!freeColClient.isInGame()) {
+			showMainPanel(null);
+		}
     }
 
     @Override
@@ -1532,7 +1518,7 @@ public class SwingGUI extends GUI {
         canvas.updateMapGeneratorOptions();
     }
 
-    // Trivial delegations to MapViewer
+    /** Trivial delegations to MapViewer. */
 
     @Override
     public void centerActiveUnit() {
@@ -1613,7 +1599,7 @@ public class SwingGUI extends GUI {
         mapViewer.toggleViewMode();
     }
 
-    // Forwarding to tileViewer
+    /** Forwarding to tileViewer. */
 
     public static BufferedImage createTileImageWithOverlayAndForest(
             TileType type, Dimension size) {
@@ -1635,5 +1621,4 @@ public class SwingGUI extends GUI {
     public void displayColonyTiles(Graphics2D g, Tile[][] tiles, Colony colony) {
         tileViewer.displayColonyTiles(g, tiles, colony);
     }
-
 }

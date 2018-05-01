@@ -25,12 +25,8 @@ import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
 
-
-/**
- * Utility methods for Look-and-Feel classes.
- */
+/** Utility methods for Look-and-Feel classes. */
 public final class LAFUtilities {
-
     private static final int AA_TEXT_SIZE = 16;
 
     /**

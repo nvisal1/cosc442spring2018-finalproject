@@ -22,12 +22,8 @@ package net.sf.freecol.client.gui.panel;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-
-/**
- * This panel displays the Colopedia.
- */
+/** This panel displays the Colopedia. */
 public interface ColopediaDetailPanel<T> {
-
     /**
      * Adds one or several subtrees for all the objects for which this
      * ColopediaDetailPanel could build a detail panel to the given
@@ -35,7 +31,7 @@ public interface ColopediaDetailPanel<T> {
      *
      * @param root a <code>DefaultMutableTreeNode</code>
      */
-    public void addSubTrees(DefaultMutableTreeNode root);
+    void addSubTrees(DefaultMutableTreeNode root);
 
     /**
      * Builds the details panel for the given identifier.
@@ -43,6 +39,5 @@ public interface ColopediaDetailPanel<T> {
      * @param id The object identifier to display.
      * @param panel the detail panel to build
      */
-    public void buildDetail(String id, JPanel panel);
-
+    void buildDetail(String id, JPanel panel);
 }

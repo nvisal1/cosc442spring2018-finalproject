@@ -30,20 +30,14 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.UnitType;
 import net.sf.freecol.common.option.UnitTypeOption;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.UnitTypeOption} in order to enable
  * values to be both seen and changed.
  */
 public final class UnitTypeOptionUI extends OptionUI<UnitTypeOption>  {
-
     private static class ChoiceRenderer
         extends FreeColComboBoxRenderer<UnitType> {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void setLabelValues(JLabel label, UnitType value) {
             label.setText((value == null) ? Messages.message("none")
@@ -52,7 +46,6 @@ public final class UnitTypeOptionUI extends OptionUI<UnitTypeOption>  {
     }
 
     private final JComboBox<UnitType> box = new JComboBox<>();
-
 
     /**
      * Creates a new <code>UnitTypeOptionUI</code> for the given
@@ -74,28 +67,18 @@ public final class UnitTypeOptionUI extends OptionUI<UnitTypeOption>  {
         initialize();
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JComboBox getComponent() {
         return box;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue((UnitType) box.getSelectedItem());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         box.setSelectedItem(getOption().getValue());

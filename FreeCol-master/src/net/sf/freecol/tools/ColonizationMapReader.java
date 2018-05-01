@@ -22,7 +22,6 @@ package net.sf.freecol.tools;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
-
 /**
  * Just pass the name of a Colonization map file (with extension ".MP").
  *
@@ -53,11 +52,8 @@ import java.util.Arrays;
  * 5: mountain
  * 6: major river
  * 7: mountain + major river (never seen)
- *
- *
  */
 public class ColonizationMapReader {
-
     public static final int WIDTH = 0;
     public static final int HEIGHT = 2;
 
@@ -99,23 +95,23 @@ public class ColonizationMapReader {
         '?', // undefined
     };
 
-
     private static final byte[] header = {
         58, 0, 72, 0, 4, 0
     };
     private static byte[] layer1;
 
     public static void main(String[] args) throws Exception {
-
         if ("--palette".equals(args[0])) {
             RandomAccessFile writer = new RandomAccessFile(args[1], "rw");
             byte width = 58;
             byte height = 72;
             int size = width * height * 3 + header.length;
             layer1 = new byte[size];
-            for (int i = 0; i < header.length; i++) {
-                layer1[i] = header[i];
-            }
+            try {
+				System.arraycopy(header, 0, layer1, 0, header.length);
+			} catch (IndexOutOfBoundsException e) {
+				throw new ArrayIndexOutOfBoundsException(e.getMessage());
+			}
             Arrays.fill(layer1, header.length, header.length + width * height, (byte) 25); // fill with ocean
             int ROWS = 32;
             int COLUMNS = 8;
@@ -164,7 +160,7 @@ public class ColonizationMapReader {
                         break;
                     default:
                         break;
-                    };
+                    }
                     System.out.print(terrain);
                     index++;
                 }
@@ -173,5 +169,4 @@ public class ColonizationMapReader {
             System.out.println("\n");
         }
     }
-
 }

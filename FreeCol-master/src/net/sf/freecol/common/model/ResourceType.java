@@ -24,15 +24,10 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
-/**
- * The types of resources (e.g. fish bonus) found on a tile.
- */
+/** The types of resources (e.g. fish bonus) found on a tile. */
 public final class ResourceType extends FreeColGameObjectType {
-
     /** Maximum and minimum values for this resource type. */
     private int maxValue, minValue;
-
 
     /**
      * Creates a new resource type.
@@ -43,7 +38,6 @@ public final class ResourceType extends FreeColGameObjectType {
     public ResourceType(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Gets the maximum value for this resource.
@@ -62,7 +56,6 @@ public final class ResourceType extends FreeColGameObjectType {
     public int getMinValue() {
         return minValue;
     }
-
 
     /**
      * Get the best goods type to make with this resource type.
@@ -84,16 +77,11 @@ public final class ResourceType extends FreeColGameObjectType {
         return bestType;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String MAXIMUM_VALUE_TAG = "maximum-value";
     private static final String MINIMUM_VALUE_TAG = "minimum-value";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -104,9 +92,6 @@ public final class ResourceType extends FreeColGameObjectType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -115,9 +100,6 @@ public final class ResourceType extends FreeColGameObjectType {
         minValue = xr.getAttribute(MINIMUM_VALUE_TAG, -1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

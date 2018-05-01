@@ -24,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-
 /**
  * A class to allow access to the methods "fooType getFoo()" and
  * "void setFoo(fooType)" conventionally seen in objects.
@@ -32,13 +31,11 @@ import java.lang.reflect.Modifier;
  * case in serialization to/from XML representations.
  */
 public class Introspector {
-
     /** The class whose field we are to operate on. */
     private final Class<?> theClass;
 
     /** The field whose get/set methods we wish to invoke. */
     private final String field;
-
 
     /**
      * Build a new Introspector for the specified class and field name.
@@ -53,7 +50,6 @@ public class Introspector {
         this.theClass = theClass;
         this.field = field;
     }
-
 
     /**
      * Get a get-method for this Introspector.
@@ -284,7 +280,6 @@ public class Introspector {
         }
     }
 
-
     /**
      * Constructs a new instance of an object of a class specified by name,
      * with supplied parameters.
@@ -308,7 +303,9 @@ public class Introspector {
             constructor = messageClass.getDeclaredConstructor(types);
         } catch (NoSuchMethodException | SecurityException e) {
             String p = "Unable to find constructor " + tag + "(";
-            for (Class type : types) p += " " + type;
+            for (Class type : types) {
+				p += " " + type;
+			}
             p += " )";
             throw new IllegalArgumentException(p, e);
         }

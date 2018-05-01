@@ -44,12 +44,8 @@ import net.sf.freecol.common.resources.ResourceManager;
 
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
-/**
- * This panel displays the signing of the Declaration of Independence.
- */
+/** This panel displays the signing of the Declaration of Independence. */
 public final class DeclarationPanel extends FreeColPanel {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(DeclarationPanel.class.getName());
 
@@ -57,10 +53,12 @@ public final class DeclarationPanel extends FreeColPanel {
     
     private final String ANIMATION_STOPPED = "AnimationStopped";
 
-    private final int START_DELAY = 2000; // 2s before signing
-    private final int ANIMATION_DELAY = 50; // 50ms between signature steps
-    private final int FINISH_DELAY = 5000; // 5s before closing
-
+    /** 2s before signing. */
+    private final int START_DELAY = 2000;
+    /** 50ms between signature steps. */
+    private final int ANIMATION_DELAY = 50;
+    /** 5s before closing. */
+    private final int FINISH_DELAY = 5000;
 
     /**
      * Creates a DeclarationPanel.
@@ -102,12 +100,8 @@ public final class DeclarationPanel extends FreeColPanel {
         t.start();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -122,18 +116,13 @@ public final class DeclarationPanel extends FreeColPanel {
         }
     }
 
+    /** Override JComponent. */
 
-    // Override JComponent
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void paintComponent(Graphics g) {
         Image image = ResourceManager.getImage("image.flavor.Declaration");
         g.drawImage(image, 0, 0, null);
     }
-
 
     /**
      * A panel for displaying an animated signature.
@@ -142,7 +131,6 @@ public final class DeclarationPanel extends FreeColPanel {
      * before the animation is {@link #startAnimation() started}.
      */
     private class SignaturePanel extends JPanel {
-
         private final FAFile faFile;
 
         private final ArrayList<ActionListener> actionListeners
@@ -150,8 +138,7 @@ public final class DeclarationPanel extends FreeColPanel {
 
         private Point[] points = null;
 
-        private int counter = 0;
-
+        private int counter;
 
         SignaturePanel() {
             faFile = ResourceManager.getFAFile("animatedfont.signature");
@@ -167,7 +154,9 @@ public final class DeclarationPanel extends FreeColPanel {
          *     <code>DeclarationPanel</code>.
          */
         private String getAbbreviatedName(String name) {
-            if (!isTooLarge(name)) return name;
+            if (!isTooLarge(name)) {
+				return name;
+			}
 
             String[] partNames = name.split(" ");
 
@@ -182,19 +171,27 @@ public final class DeclarationPanel extends FreeColPanel {
                 && isTooLarge(join(" ", partNames))) {
                 String[] newPartNames = new String[partNames.length - 1];
                 newPartNames[0] = partNames[0];
-                for (int i = 1; i < newPartNames.length; i++) {
-                    newPartNames[i] = partNames[i + 1];
-                }
+                try {
+					System.arraycopy(partNames, 2, newPartNames, 1, newPartNames.length);
+				} catch (IndexOutOfBoundsException e) {
+					throw new ArrayIndexOutOfBoundsException(e.getMessage());
+				}
                 partNames = newPartNames;
             }
 
             String first = partNames[0], second = partNames[1];
             String s = join(" ", partNames);
-            if (!isTooLarge(s)) return s;
+            if (!isTooLarge(s)) {
+				return s;
+			}
             s = first.charAt(0) + ". " + second;
-            if (!isTooLarge(s)) return s;
+            if (!isTooLarge(s)) {
+				return s;
+			}
             s = first + " " + second.charAt(0) + ".";
-            if (!isTooLarge(s)) return s;
+            if (!isTooLarge(s)) {
+				return s;
+			}
             return first.charAt(0) + ". " + second.charAt(0) + ".";
         }
 
@@ -208,7 +205,7 @@ public final class DeclarationPanel extends FreeColPanel {
          */
         private boolean isTooLarge(String name) {
             Dimension d = faFile.getDimension(name);
-            return (d.width > DeclarationPanel.this.getWidth() - 10);
+            return d.width > DeclarationPanel.this.getWidth() - 10;
         }
 
         /**
@@ -271,12 +268,8 @@ public final class DeclarationPanel extends FreeColPanel {
             new Timer(ANIMATION_DELAY, taskPerformer).start();
         }
 
-
-        // Override JComponent
+        /** Override JComponent. */
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void paintComponent(Graphics g) {
             if (points == null || points.length == 0) {

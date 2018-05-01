@@ -34,44 +34,39 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.util.LogBuilder;
 import net.sf.freecol.server.FreeColServer;
 
-
-/**
- * High-level debug handling.
- */
+/** High-level debug handling. */
 public class FreeColDebugger {
-
     private static final Logger logger = Logger.getLogger(FreeColDebugger.class.getName());
 
     /** The debug modes, any of which may be active. */
     public static enum DebugMode {
-        COMMS, // Trace print full c-s communications, and verbose
-               // (non-i18n) server errors.
-        DESYNC,// Check frequently for desynchronization
-        MENUS, // Enable the Debug menu, the extra commands in
-               // ColonyPanel and TilePopup, the goods-in-market
-               // tooltip in MarketLabel, the extra modifiers on the
-               // BuildingToolTip, the region and Mission
-               // displays in MapViewer, taking over AI players,
-               // and turn skipping.
-        INIT,  // An initial colony is made, and goods added to all
-               // native settlements.
+        COMMS, /**
+ * Trace print full c-s communications, and verbose
+                * (non-i18n) server errors.
+                */
+        DESYNC,/** Check frequently for desynchronization. */
+        MENUS, /**
+ * Enable the Debug menu, the extra commands in
+                * ColonyPanel and TilePopup, the goods-in-market
+                * tooltip in MarketLabel, the extra modifiers on the
+                * BuildingToolTip, the region and Mission
+                * displays in MapViewer, taking over AI players,
+                * and turn skipping.
+                */
+        INIT,  /** An initial colony is made, and goods added to all native settlements. */
         PATHS  // Display more information on goto paths
     }
     private static int debugMode = 0;
 
-    /**
-     * The number of turns to run without stopping.
-     */
+    /** The number of turns to run without stopping. */
     private static int debugRunTurns = -1;
 
-    /**
-     * The name of a file to save to at the end of a debug run.
-     */
+    /** The name of a file to save to at the end of a debug run. */
     private static String debugRunSave = null;
 
     /**
      * Stores the standard fog of war setting when revealing all the map
-     * Allows restore to previous state when re-enabling normal vision
+     * Allows restore to previous state when re-enabling normal vision.
      */
     private static boolean normalGameFogOfWar = false;
 
@@ -86,7 +81,6 @@ public class FreeColDebugger {
 
     /** Show full mission information? */
     private static boolean showMissionInfo = false;
-
 
     /**
      * Is a debug mode enabled in this game?
@@ -356,13 +350,10 @@ public class FreeColDebugger {
         showMissionInfo = display;
     }
 
-    /**
-     * Handler for log records that include a crash.
-     */
+    /** Handler for log records that include a crash. */
     public static void handleCrash() {
         if (debugRunSave != null) signalEndDebugRun();
     }
-
 
     /**
      * Emergency run time log to use when the normal logging is failing.

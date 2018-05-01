@@ -23,49 +23,44 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * Objects implementing the Consumer interface consume Goods. Examples
  * include units that eat food, buildings that convert Goods into
  * other Goods, or buildings that store Goods.
- *
  */
 public interface Consumer {
-
     /** Compare consumers by descending priority. */
-    public static final Comparator<Consumer> COMPARATOR
+    Comparator<Consumer> COMPARATOR
         = Comparator.comparingInt(Consumer::getPriority).reversed();
 
     /**
      * Default consumption priority for the Colony when producing new
      * colonists (from food).
      */
-    public static final int POPULATION_PRIORITY = 300;
+    int POPULATION_PRIORITY = 300;
 
-    /**
-     * The consumption priority of the colony build queue.
-     */
-    public static final int COLONY_PRIORITY = 500;
+    /** The consumption priority of the colony build queue. */
+    int COLONY_PRIORITY = 500;
 
     /**
      * Default consumption priority for buildings. Individual building
      * types may have different priorities.
      */
-    public static final int BUILDING_PRIORITY = 800;
+    int BUILDING_PRIORITY = 800;
 
     /**
      * Default consumption priority for units. Individual unit types
      * may have different priorities. Slave units, or converts, or
      * petty criminals, for example, might have a lower priority.
      */
-    public static final int UNIT_PRIORITY = 1000;
+    int UNIT_PRIORITY = 1000;
 
     /**
      * Returns a list of GoodsTypes this Consumer consumes.
      *
      * @return a <code>List</code> value
      */
-    public List<AbstractGoods> getConsumedGoods();
+    List<AbstractGoods> getConsumedGoods();
 
     /**
      * The priority of this Consumer. The higher the priority, the
@@ -74,8 +69,7 @@ public interface Consumer {
      *
      * @return an <code>int</code> value
      */
-    public int getPriority();
-
+    int getPriority();
 
     /**
      * Returns whether the consumer has the ability with the given
@@ -87,8 +81,7 @@ public interface Consumer {
      * @param id The object identifier.
      * @return True if the ability is present.
      */
-    public boolean hasAbility(String id);
-
+    boolean hasAbility(String id);
 
     /**
      * Returns the modifier set with the given id. The modifier most
@@ -99,6 +92,5 @@ public interface Consumer {
      * @param id The object identifier.
      * @return The set of <code>Modifier</code>s found.
      */
-    public Set<Modifier> getModifiers(String id);
-
+    Set<Modifier> getModifiers(String id);
 }

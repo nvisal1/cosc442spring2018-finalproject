@@ -40,18 +40,13 @@ import net.sf.freecol.common.option.AudioMixerOption;
 import net.sf.freecol.common.option.AudioMixerOption.MixerWrapper;
 import net.sf.freecol.common.option.PercentageOption;
 
-
-/**
- * Stripped down class for playing sound.
- */
+/** Stripped down class for playing sound. */
 public class SoundPlayer {
-
     private static final Logger logger = Logger.getLogger(SoundPlayer.class.getName());
 
     private Mixer mixer;
     private int volume;
     private final SoundPlayerThread soundPlayerThread;
-
 
     /**
      * Creates a sound player.
@@ -136,7 +131,9 @@ public class SoundPlayer {
      * @param file The <code>File</code> to be played.
      */
     public void playOnce(File file) {
-        if (getMixer() == null) return; // Fail faster.
+        if (getMixer() == null) {
+			return;
+		} // Fail faster.
         try {
             soundPlayerThread.add(getAudioInputStream(file));
             soundPlayerThread.awaken();
@@ -145,19 +142,14 @@ public class SoundPlayer {
         }
     }
 
-    /**
-     * Stops the current sound.
-     */
+    /** Stops the current sound. */
     public void stop() {
         soundPlayerThread.stopPlaying();
         soundPlayerThread.awaken();
     }
 
-    /**
-     * Thread for playing sound files.
-     */
+    /** Thread for playing sound files. */
     private class SoundPlayerThread extends Thread {
-
         private static final int BUFSIZ = 8192;
 
         private final byte[] data = new byte[BUFSIZ];
@@ -165,8 +157,6 @@ public class SoundPlayer {
         private final List<AudioInputStream> playList = new ArrayList<>();
 
         private boolean playDone = true;
-
-
 
         public SoundPlayerThread() {
             super(FreeCol.CLIENT_THREAD + "SoundPlayer");
@@ -207,7 +197,7 @@ public class SoundPlayer {
                     }
                 } else {
                     try (
-                        AudioInputStream in = playList.remove(0);
+                        AudioInputStream in = playList.remove(0)
                     ) {
                         playSound(in);
                     } catch (IOException e) {
@@ -223,9 +213,9 @@ public class SoundPlayer {
 
         private void setVolume(SourceDataLine line, int vol) {
             FloatControl.Type type
-                = (line.isControlSupported(FloatControl.Type.VOLUME))
+                = line.isControlSupported(FloatControl.Type.VOLUME)
                 ? FloatControl.Type.VOLUME
-                : (line.isControlSupported(FloatControl.Type.MASTER_GAIN))
+                : line.isControlSupported(FloatControl.Type.MASTER_GAIN)
                 ? FloatControl.Type.MASTER_GAIN
                 : null;
             if (type == null) {
@@ -238,14 +228,12 @@ public class SoundPlayer {
             } catch (IllegalArgumentException e) {
                 return; // Should not happen
             }
-            //
             // The units of MASTER_GAIN seem to consistently be dB, but
             // in the case of VOLUME this is unclear (there is even a query
             // to that effect in the source).  getUnits() says "pulseaudio
             // units" on my boxen, and the PulseAudio doco talks about dB
             // so for now we are assuming that the controls we are using
             // are both logarithmic:
-            //
             //   gain = A.log_10(k.vol)
             // So scale vol <= 1 to gain_min and vol >= 100 to gain_max
             //   gain_min = A.log_10(k.1)
@@ -255,7 +243,6 @@ public class SoundPlayer {
             //   k = 10^(gain_min/A)
             // =>
             //   gain = gain_min + (gain_max - gain_min)/2 * log_10(vol)
-            //
             float min = control.getMinimum();
             float max = control.getMaximum();
             float gain = (vol <= 0) ? min
@@ -303,7 +290,9 @@ public class SoundPlayer {
             boolean ret = false;
 
             SourceDataLine line = openLine(in.getFormat());
-            if (line == null) return false;
+            if (line == null) {
+				return false;
+			}
             try {
                 startPlaying();
                 int rd;

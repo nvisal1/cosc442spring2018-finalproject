@@ -43,7 +43,6 @@ import java.util.Set;
  * Please feel free to correct any vexillological errors.
  */
 public class Flag {
-
     /**
      * The alignment of stripes or other design elements on the
      * flag. Might be extended to handle diagonal alignment
@@ -53,7 +52,7 @@ public class Flag {
         NONE,
         HORIZONTAL,
         VERTICAL
-    };
+    }
 
     /**
      * The "background layer" of the flag, generally one or several
@@ -81,7 +80,7 @@ public class Flag {
         Background(Alignment alignment) {
             this.alignment = alignment;
         }
-    };
+    }
 
     /**
      * The "middle layer" of the flag, generally a number of vertical,
@@ -106,17 +105,14 @@ public class Flag {
 
         Decoration(UnionPosition... positions) {
             this.unionPositions = EnumSet.of(UnionPosition.NONE);
-            for (UnionPosition position : positions) {
-                unionPositions.add(position);
-            }
+            java.util.Collections.addAll(unionPositions, positions);
         }
 
         Decoration(UnionShape shape, UnionPosition... positions) {
             this(positions);
             this.unionShape = shape;
         }
-
-    };
+    }
 
     /**
      * The shape of the "union", which generally depends on the
@@ -128,7 +124,7 @@ public class Flag {
         CHEVRON,
         BEND,
         RHOMBUS
-    };
+    }
 
     /**
      * The position of the "union", which depends on the alignment of
@@ -152,7 +148,6 @@ public class Flag {
             this.alignment = alignment;
             this.index = index;
         }
-
     }
 
     /**
@@ -162,14 +157,10 @@ public class Flag {
     public static final int WIDTH = 150;
     public static final int HEIGHT = 100;
     public static final double SQRT_3 = Math.sqrt(3);
-    /**
-     * MAGIC NUMBER: the width of decoration elements.
-     */
+    /** MAGIC NUMBER: the width of decoration elements. */
     public static final double DECORATION_SIZE = (double) HEIGHT / 7;
     public static final double CHEVRON_X = SQRT_3 * HEIGHT / 2;
-    /**
-     * MAGIC NUMBER: the size of the stars in the union.
-     */
+    /** MAGIC NUMBER: the size of the stars in the union. */
     public static final double STAR_SIZE = 0.07 * HEIGHT;
     /**
      * MAGIC NUMBER: the horizontal offset of the vertical bar of the
@@ -205,7 +196,6 @@ public class Flag {
                 }
             }
         }
-
     }
 
     /**
@@ -238,7 +228,6 @@ public class Flag {
      * PALES).
      */
     private int stripes = 13;
-
 
     public Flag(Background background, Decoration decoration,
                 UnionPosition unionPosition) {
@@ -578,8 +567,8 @@ public class Flag {
             starShape = getUnionTriangle(true);
             break;
         case BEND:
-            union = getTriangle(unionShape, (decoration == Decoration.BEND)
-                                || (decoration == Decoration.BEND_SINISTER));
+            union = getTriangle(unionShape, decoration == Decoration.BEND
+                                || decoration == Decoration.BEND_SINISTER);
             starShape = getUnionTriangle(false);
             transformBend(union);
             transformBend(starShape);
@@ -597,7 +586,7 @@ public class Flag {
         default:
             break;
         }
-        if (!(union == null || unionColor == null)) {
+        if (union != null && unionColor != null) {
             g.setColor(unionColor);
             g.fill(union);
         }
@@ -618,8 +607,9 @@ public class Flag {
      * @return The union path
      */
     private GeneralPath getUnionRectangle(Rectangle2D.Double union) {
-
-        if (union == null) return null;
+        if (union == null) {
+			return null;
+		}
 
         GeneralPath unionPath;
         if (stars < 14) {
@@ -635,9 +625,9 @@ public class Flag {
     }
 
     private GeneralPath getUnionTriangle(boolean isosceles) {
-        boolean small = (decoration == Decoration.PALL
+        boolean small = decoration == Decoration.PALL
                          || decoration == Decoration.BEND
-                         || decoration == Decoration.BEND_SINISTER);
+                         || decoration == Decoration.BEND_SINISTER;
 
         double x = 0;
         double y = 0;
@@ -700,7 +690,6 @@ public class Flag {
                 center(unionPath, r, r);
             }
         } else {
-
             int sum = 0;
             int rows = 1;
             while (sum < stars) {
@@ -750,8 +739,6 @@ public class Flag {
             if (decoration == Decoration.BEND) {
                 triangle.transform(AffineTransform.getScaleInstance(-1, 1));
                 triangle.transform(AffineTransform.getTranslateInstance(WIDTH, 0));
-            } else if (decoration == Decoration.BEND_SINISTER) {
-                // nothing to do: default is top left
             }
         } else if (unionPosition == UnionPosition.BOTTOM) {
             if (decoration == Decoration.BEND) {
@@ -801,7 +788,9 @@ public class Flag {
             square = count * count;
         }
         int rows = stars / count;
-        if (rows * count < stars) rows++;
+        if (rows * count < stars) {
+			rows++;
+		}
         int starCount = 0;
         double a = WIDTH / 2 - BEND_X;
         double b = HEIGHT / 2 - BEND_Y;
@@ -835,7 +824,6 @@ public class Flag {
 
         return unionPath;
     }
-
 
     /**
      * Calculate the width of stripes on the basis of the given
@@ -1170,26 +1158,29 @@ public class Flag {
     private GeneralPath getCircleOfStars(double radius) {
         double phi = Math.PI * 2 / stars;
         GeneralPath unionPath = new GeneralPath();
-        if (stars == 0) {
-            // nothing to do
-        } else if (stars == 1) {
-            // one double sized star
-            unionPath = getStar(2, 0, 0);
-        } else if (stars == 2) {
-            // two larger stars, on the x axis
-            unionPath.append(getStar(1.5, -radius, 0), false);
-            unionPath.append(getStar(1.5, radius, 0), false);
-        } else {
-            // a general circle of stars
-            for (int i = 0; i < stars; i++) {
-                double x = -radius - radius * Math.sin(i * phi);
-                double y = -radius * Math.cos(i * phi);
-                unionPath.append(getStar(x, y), false);
-            }
-        }
+        if (stars != 0) {
+			switch (stars) {
+			case 1:
+				// one double sized star
+			    unionPath = getStar(2, 0, 0);
+				break;
+			case 2:
+				// two larger stars, on the x axis
+			    unionPath.append(getStar(1.5, -radius, 0), false);
+				unionPath.append(getStar(1.5, radius, 0), false);
+				break;
+			default:
+				// a general circle of stars
+			    for (int i = 0; i < stars; i++) {
+			        double x = -radius - radius * Math.sin(i * phi);
+			        double y = -radius * Math.cos(i * phi);
+			        unionPath.append(getStar(x, y), false);
+			    }
+				break;
+			}
+		}
         return unionPath;
     }
-
 
     public GeneralPath getGridOfStars(Rectangle2D.Double union) {
         int[] bars = new int[2];
@@ -1226,5 +1217,4 @@ public class Flag {
         }
         return grid;
     }
-
 }

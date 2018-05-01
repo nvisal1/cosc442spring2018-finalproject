@@ -23,16 +23,13 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * An action for initiating chatting.
  *
  * @see net.sf.freecol.client.gui.panel.MapControls
  */
 public class ChatAction extends FreeColAction {
-
     public static final String id = "chatAction";
-
 
     /**
      * Creates a new <code>ChatAction</code>.
@@ -43,26 +40,18 @@ public class ChatAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         return super.shouldBeEnabled()
             && !freeColClient.isSinglePlayer()
-            && (!getGUI().isShowingSubPanel() || getGame() != null
-                && !freeColClient.currentPlayerIsMyPlayer());
+            && (!getGUI().isShowingSubPanel() || (getGame() != null
+                && !freeColClient.currentPlayerIsMyPlayer()));
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showChatPanel();

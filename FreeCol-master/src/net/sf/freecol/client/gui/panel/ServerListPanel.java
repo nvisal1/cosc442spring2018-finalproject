@@ -40,12 +40,10 @@ import net.sf.freecol.client.control.ConnectController;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.ServerInfo;
 
-
 /**
  * This panel is used to display the information received from the meta-server.
  */
 public final class ServerListPanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(ServerListPanel.class.getName());
 
     private static final int CONNECT = 0, CANCEL = 1;
@@ -58,8 +56,7 @@ public final class ServerListPanel extends FreeColPanel {
 
     private final JButton connect;
 
-    
-    /**
+        /**
      * Creates a panel to display the meta-server.
      * 
      * @param freeColClient The <code>FreeColClient</code> for the game.
@@ -119,7 +116,6 @@ public final class ServerListPanel extends FreeColPanel {
         setSize(getPreferredSize());
     }
 
-
     @Override
     public void requestFocus() {
         connect.requestFocus();
@@ -170,19 +166,13 @@ public final class ServerListPanel extends FreeColPanel {
         table.setEnabled(enabled);
     }
 
-    /**
-     * Refreshes the table.
-     */
+    /** Refreshes the table. */
     public void refreshTable() {
         tableModel.fireTableDataChanged();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -206,7 +196,6 @@ public final class ServerListPanel extends FreeColPanel {
 }
 
 class ServerListTableModel extends AbstractTableModel {
-
     private static final String[] columnNames = {
         Messages.message("name"),
         Messages.message("host"),
@@ -216,7 +205,6 @@ class ServerListTableModel extends AbstractTableModel {
     };
 
     private List<ServerInfo> items;
-
 
     public ServerListTableModel(List<ServerInfo> items) {
         this.items = items;
@@ -280,7 +268,7 @@ class ServerListTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int row, int column) {
-        if ((row < getRowCount()) && (column < getColumnCount()) && (row >= 0) && (column >= 0)) {
+        if (row < getRowCount() && column < getColumnCount() && row >= 0 && column >= 0) {
             ServerInfo si = items.get(row);
             switch (column) {
             case 0:
@@ -290,10 +278,10 @@ class ServerListTableModel extends AbstractTableModel {
             case 2:
                 return Integer.toString(si.getPort());
             case 3:
-                return Integer.toString(si.getCurrentlyPlaying()) + "/"
-                        + Integer.toString(si.getCurrentlyPlaying() + si.getSlotsAvailable());
+                return si.getCurrentlyPlaying() + "/"
+                        + (si.getCurrentlyPlaying() + si.getSlotsAvailable());
             case 4:
-                return Messages.message("serverListPanel.gameState." + Integer.toString(si.getGameState()));
+                return Messages.message("serverListPanel.gameState." + si.getGameState());
             default:
                 return null;
             }

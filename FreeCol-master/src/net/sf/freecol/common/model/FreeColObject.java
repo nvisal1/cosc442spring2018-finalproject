@@ -64,19 +64,16 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
  * The FreeCol root class.  Maintains an identifier, and an optional link
  * to the specification this object uses.
  */
 public abstract class FreeColObject
     implements Comparable<FreeColObject>, ObjectWithId {
-
     protected static final Logger logger = Logger.getLogger(FreeColObject.class.getName());
 
     public static final int INFINITY = Integer.MAX_VALUE;
     public static final int UNDEFINED = Integer.MIN_VALUE;
-
 
     /** The unique identifier of an object. */
     private String id;
@@ -86,7 +83,6 @@ public abstract class FreeColObject
 
     /** An optional property change container, allocated on demand. */
     private PropertyChangeSupport pcs = null;
-
 
     /**
      * Get the object unique identifier.
@@ -127,7 +123,7 @@ public abstract class FreeColObject
      * @return An identifier.
      */
     public final String getSuffix(String prefix) {
-        return (getId().startsWith(prefix))
+        return getId().startsWith(prefix)
             ? getId().substring(prefix.length())
             : getId();
     }
@@ -162,7 +158,6 @@ public abstract class FreeColObject
     protected void setSpecification(Specification specification) {
         this.specification = specification;
     }
-
 
     // Identifier manipulation
 
@@ -226,8 +221,12 @@ public abstract class FreeColObject
             return 1;
         }
         int cmp = fco1.getIdType().compareTo(fco2.getIdType());
-        if (cmp == 0) cmp = fco1.getIdNumber() - fco2.getIdNumber();
-        if (cmp == 0) cmp = fco1.hashCode() - fco2.hashCode();
+        if (cmp == 0) {
+			cmp = fco1.getIdNumber() - fco2.getIdNumber();
+		}
+        if (cmp == 0) {
+			cmp = fco1.hashCode() - fco2.hashCode();
+		}
         return cmp;
     }
 
@@ -260,7 +259,9 @@ public abstract class FreeColObject
      */
     public static <T extends FreeColObject> void logFreeColObjects(Collection<T> c, LogBuilder lb) {
         lb.add("[");
-        for (T t : c) lb.add(t.getSuffix(), " ");
+        for (T t : c) {
+			lb.add(t.getSuffix(), " ");
+		}
         lb.shrink(" ");
         lb.add("]");
     }
@@ -289,8 +290,7 @@ public abstract class FreeColObject
         return defaultValue;
     }
 
-    
-    // Property change support
+        /** Property change support. */
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         if (pcs == null) {
@@ -349,27 +349,23 @@ public abstract class FreeColObject
     }
 
     public PropertyChangeListener[] getPropertyChangeListeners() {
-        if (pcs == null) {
-            return new PropertyChangeListener[0];
-        } else {
+        if (pcs != null) {
             return pcs.getPropertyChangeListeners();
+        } else {
+            return new PropertyChangeListener[0];
         }
     }
 
     public PropertyChangeListener[] getPropertyChangeListeners(String propertyName) {
-        if (pcs == null) {
-            return new PropertyChangeListener[0];
-        } else {
+        if (pcs != null) {
             return pcs.getPropertyChangeListeners(propertyName);
+        } else {
+            return new PropertyChangeListener[0];
         }
     }
 
     public boolean hasListeners(String propertyName) {
-        if (pcs == null) {
-            return false;
-        } else {
-            return pcs.hasListeners(propertyName);
-        }
+        return pcs != null && pcs.hasListeners(propertyName);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -383,7 +379,6 @@ public abstract class FreeColObject
             pcs.removePropertyChangeListener(propertyName, listener);
         }
     }
-
 
     // Feature container handling.
 
@@ -449,8 +444,7 @@ public abstract class FreeColObject
      * @return A list of abilities.
      */
     public final List<Ability> getSortedAbilities() {
-        List<Ability> abilities = new ArrayList<>();
-        abilities.addAll(getAbilities());
+        List<Ability> abilities = new ArrayList<>(getAbilities());
         Collections.sort(abilities);
         return abilities;
     }
@@ -514,7 +508,7 @@ public abstract class FreeColObject
      */
     public boolean addAbility(Ability ability) {
         FeatureContainer fc = getFeatureContainer();
-        return (fc == null) ? false : fc.addAbility(ability);
+        return fc != null && fc.addAbility(ability);
     }
 
     /**
@@ -535,9 +529,10 @@ public abstract class FreeColObject
      */
     public void removeAbilities(String id) {
         FeatureContainer fc = getFeatureContainer();
-        if (fc != null) fc.removeAbilities(id);
+        if (fc != null) {
+			fc.removeAbilities(id);
+		}
     }
-
 
     /**
      * Is an modifier present in this object?
@@ -583,7 +578,7 @@ public abstract class FreeColObject
      */
     public final boolean containsModifierKey(String key) {
         Set<Modifier> set = getModifiers(key);
-        return (set == null) ? false : !set.isEmpty();
+        return set != null && !set.isEmpty();
     }
 
     /**
@@ -592,8 +587,7 @@ public abstract class FreeColObject
      * @return A list of modifiers.
      */
     public final List<Modifier> getSortedModifiers() {
-        List<Modifier> modifiers = new ArrayList<>();
-        modifiers.addAll(getModifiers());
+        List<Modifier> modifiers = new ArrayList<>(getModifiers());
         Collections.sort(modifiers);
         return modifiers;
     }
@@ -700,8 +694,7 @@ public abstract class FreeColObject
      */
     public boolean addModifier(Modifier modifier) {
         FeatureContainer fc = getFeatureContainer();
-        if (fc == null) return false;
-        return fc.addModifier(modifier);
+        return fc != null && fc.addModifier(modifier);
     }
 
     /**
@@ -712,8 +705,10 @@ public abstract class FreeColObject
      */
     public Modifier removeModifier(Modifier modifier) {
         FeatureContainer fc = getFeatureContainer();
-        if (fc == null) return null;
-        return fc.removeModifier(modifier);
+        if (fc != null) {
+			return fc.removeModifier(modifier);
+		}
+        return null;
     }
 
     /**
@@ -723,9 +718,10 @@ public abstract class FreeColObject
      */
     public void removeModifiers(String id) {
         FeatureContainer fc = getFeatureContainer();
-        if (fc != null) fc.removeModifiers(id);
+        if (fc != null) {
+			fc.removeModifiers(id);
+		}
     }
-
 
     /**
      * Adds all the features in an object to this object.
@@ -734,7 +730,9 @@ public abstract class FreeColObject
      */
     public void addFeatures(FreeColObject fco) {
         FeatureContainer fc = getFeatureContainer();
-        if (fc != null) fc.addFeatures(fco);
+        if (fc != null) {
+			fc.addFeatures(fco);
+		}
     }
 
     /**
@@ -744,7 +742,9 @@ public abstract class FreeColObject
      */
     public void removeFeatures(FreeColObject fco) {
         FeatureContainer fc = getFeatureContainer();
-        if (fc != null) fc.removeFeatures(fco);
+        if (fc != null) {
+			fc.removeFeatures(fco);
+		}
     }
 
     /**
@@ -755,7 +755,6 @@ public abstract class FreeColObject
     public Set<Modifier> getDefenceModifiers() {
         return getModifiers(Modifier.DEFENCE);
     }
-
 
     // DOM handling.  Beware, this needs to go away.
 
@@ -847,10 +846,10 @@ public abstract class FreeColObject
         }
 
         try {
-            if (fields == null) {
-                toXML(xw);
-            } else {
+            if (fields != null) {
                 toXMLPartial(xw, fields);
+            } else {
+                toXML(xw);
             }
             xw.close();
 
@@ -881,7 +880,9 @@ public abstract class FreeColObject
      */
     public static String readId(Element element) {
         String id = element.getAttribute(ID_ATTRIBUTE_TAG);
-        if (id == null) id = element.getAttribute(ID_ATTRIBUTE);
+        if (id == null) {
+			id = element.getAttribute(ID_ATTRIBUTE);
+		}
         return id;
     }
     // end @compat
@@ -901,7 +902,7 @@ public abstract class FreeColObject
                                      new StreamResult(stringWriter));
             String xml = stringWriter.toString();
             try (
-                FreeColXMLReader xr = new FreeColXMLReader(new StringReader(xml));
+                FreeColXMLReader xr = new FreeColXMLReader(new StringReader(xml))
             ) {
                 xr.nextTag();
                 readFromXML(xr);
@@ -913,15 +914,13 @@ public abstract class FreeColObject
         }
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+			return true;
+		}
         if (o instanceof FreeColObject) {
             FreeColObject fco = (FreeColObject)o;
             return Utils.equals(this.id, fco.id);
@@ -929,14 +928,10 @@ public abstract class FreeColObject
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return Utils.hashCode(this.id);
     }
-
 
     // Serialization
 
@@ -953,27 +948,24 @@ public abstract class FreeColObject
 
     /** XML attribute tag to denote partial updates. */
     private static final String PARTIAL_ATTRIBUTE_TAG = "partial";
-    // @compat 0.10.x
+    /** @compat 0.10.x */
     private static final String OLD_PARTIAL_ATTRIBUTE_TAG = "PARTIAL";
     // end @compat
 
     /** XML tag name for value attributes, used in many places. */
     protected static final String VALUE_TAG = "value";
 
-
-    /**
-     * Debugging tool, dump object XML to System.err.
-     */
+    /** Debugging tool, dump object XML to System.err. */
     public void dumpObject() {
         save(System.err, WriteScope.toSave(), false);
     }
 
-    /**
-     * Debugging tool, dump collection XML to System.err.
-     */
+    /** Debugging tool, dump collection XML to System.err. */
     public static <T extends FreeColObject> void dumpCollection(Collection<T> items) {
         System.err.println("[Collection begin ");
-        for (T t : items) t.dumpObject();
+        for (T t : items) {
+			t.dumpObject();
+		}
         System.err.println(" collection end]");
     }
 
@@ -1011,7 +1003,7 @@ public abstract class FreeColObject
      */
     public boolean save(File file, WriteScope scope, boolean pretty) throws FileNotFoundException {
         try (
-            FileOutputStream fos = new FileOutputStream(file);
+            FileOutputStream fos = new FileOutputStream(file)
         ) {
             return save(fos, scope, pretty);
         } catch (IOException ioe) {
@@ -1030,11 +1022,11 @@ public abstract class FreeColObject
      */
     public boolean save(OutputStream out, WriteScope scope, boolean pretty) {
         try (
-            FreeColXMLWriter xw = new FreeColXMLWriter(out, scope, pretty);
+            FreeColXMLWriter xw = new FreeColXMLWriter(out, scope, pretty)
         ) {
             xw.writeStartDocument("UTF-8", "1.0");
 
-            this.toXML(xw);
+            toXML(xw);
 
             xw.writeEndDocument();
 
@@ -1043,7 +1035,6 @@ public abstract class FreeColObject
             return true;
         } catch (XMLStreamException xse) {
             logger.log(Level.WARNING, "Exception writing object.", xse);
-
         } catch (IOException ioe) {
             logger.log(Level.WARNING, "Error creating FreeColXMLWriter.", ioe);
         }
@@ -1062,9 +1053,9 @@ public abstract class FreeColObject
     public String serialize(WriteScope scope) throws XMLStreamException {
         StringWriter sw = new StringWriter();
         try (
-            FreeColXMLWriter xw = new FreeColXMLWriter(sw, scope);
+            FreeColXMLWriter xw = new FreeColXMLWriter(sw, scope)
         ) {
-            this.toXML(xw);
+            toXML(xw);
         } catch (IOException ioe) {
             logger.log(Level.WARNING, "Error creating FreeColXMLWriter,", ioe);
             return null;
@@ -1103,7 +1094,7 @@ public abstract class FreeColObject
     public <T extends FreeColObject> T copy(Game game, Class<T> returnClass) {
         T ret = null;
         try (
-            FreeColXMLReader xr = new FreeColXMLReader(new StringReader(this.serialize()));
+            FreeColXMLReader xr = new FreeColXMLReader(new StringReader(serialize()))
         ) {
             ret = xr.copy(game, returnClass);
         } catch (Exception e) {
@@ -1164,10 +1155,10 @@ public abstract class FreeColObject
      *     to the stream.
      */
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
-        if (getId() == null) {
-            logger.warning("FreeColObject with null identifier: " + this);
-        } else {
+        if (getId() != null) {
             xw.writeAttribute(ID_ATTRIBUTE_TAG, getId());
+        } else {
+            logger.warning("FreeColObject with null identifier: " + this);
         }
     }
 
@@ -1216,13 +1207,11 @@ public abstract class FreeColObject
             }
 
             xw.writeEndElement();
-
         } catch (Exception e) {
             logger.log(Level.WARNING, "Partial write failed for "
                        + theClass.getName(), e);
         }
     }
-
 
     /**
      * Initializes this object from an XML-representation of this object,
@@ -1283,7 +1272,9 @@ public abstract class FreeColObject
                 logger.log(Level.SEVERE, "nextTag failed at " + tag
                     + ", previous=" + next, xse);
             }
-            if (next == XMLStreamConstants.END_ELEMENT) break;
+            if (next == XMLStreamConstants.END_ELEMENT) {
+				break;
+			}
             readChild(xr);
         }
         xr.expectTag(tag);
@@ -1332,12 +1323,13 @@ public abstract class FreeColObject
                 // @compat 0.10.x
                 || ID_ATTRIBUTE.equals(name)
                 // end @compat
-                || PARTIAL_ATTRIBUTE_TAG.equals(name)) continue;
+                || PARTIAL_ATTRIBUTE_TAG.equals(name)) {
+				continue;
+			}
 
             try {
                 Introspector intro = new Introspector(theClass, name);
                 intro.setter(this, xr.getAttributeValue(i));
-
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Could not set field " + name, e);
             }
@@ -1346,10 +1338,6 @@ public abstract class FreeColObject
         xr.closeTag(tag);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getClass().getName() + ":" + getId();

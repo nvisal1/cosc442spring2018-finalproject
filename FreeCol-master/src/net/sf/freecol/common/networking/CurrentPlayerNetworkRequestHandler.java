@@ -27,7 +27,6 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
 /**
  * A network request handler for the current player will automatically
  * return an error (&quot;not your turn&quot;) if called by a
@@ -37,8 +36,6 @@ import org.w3c.dom.Element;
  */
 public abstract class CurrentPlayerNetworkRequestHandler
     extends FreeColServerHolder implements NetworkRequestHandler {
-
-
     /**
      * Create a new current player request handler.
      *
@@ -48,7 +45,6 @@ public abstract class CurrentPlayerNetworkRequestHandler
         super(freeColServer);
     }
 
-
     /**
      * Check if a player is the current player.
      * 
@@ -57,13 +53,9 @@ public abstract class CurrentPlayerNetworkRequestHandler
      */
     private boolean isCurrentPlayer(Player player) {
         Game game = getGame();
-        return (player == null || game == null) ? false
-            : player.equals(game.getCurrentPlayer());
+        return player != null && game != null && player.equals(game.getCurrentPlayer());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final Element handle(Connection conn, Element element) {
         ServerPlayer player = getFreeColServer().getPlayer(conn);

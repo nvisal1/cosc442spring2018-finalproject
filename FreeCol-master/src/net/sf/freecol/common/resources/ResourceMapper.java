@@ -19,11 +19,8 @@
 
 package net.sf.freecol.common.resources;
 
-/**
- * Puts the Resource into the ResourceMapping.
- */
+/** Puts the Resource into the ResourceMapping. */
 public final class ResourceMapper implements ResourceFactory.ResourceSink {
-
     private final ResourceMapping resourceMapping;
     private String key;
 
@@ -35,7 +32,6 @@ public final class ResourceMapper implements ResourceFactory.ResourceSink {
     public void setKey(String key) {
         this.key = key;
     }
-
 
     @Override
     public void add(ColorResource r) {
@@ -76,5 +72,4 @@ public final class ResourceMapper implements ResourceFactory.ResourceSink {
     public void add(ImageResource r) {
         resourceMapping.add(key, r);
     }
-
 }

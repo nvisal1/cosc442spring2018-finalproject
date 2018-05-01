@@ -35,14 +35,9 @@ import net.sf.freecol.common.io.FreeColSavegameFile;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-
-/**
- * Validate a saved game.
- */
+/** Validate a saved game. */
 public class SaveGameValidator {
-
     public static void main(String[] args) throws Exception {
-
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         File schemaLocation = new File("schema/data/data-savedGame.xsd");
         Schema schema = factory.newSchema(schemaLocation);
@@ -54,9 +49,7 @@ public class SaveGameValidator {
             File file = new File(name);
             if (file.exists()) {
                 if (file.isDirectory()) {
-                    for (File fsg : file.listFiles(ff)) {
-                        allFiles.add(fsg);
-                    }
+                    java.util.Collections.addAll(allFiles, file.listFiles(ff));
                 } else if (ff.accept(file)) {
                     allFiles.add(file);
                 }
@@ -78,6 +71,4 @@ public class SaveGameValidator {
             }
         }
     }
-
 }
-

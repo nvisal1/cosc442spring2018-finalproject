@@ -34,12 +34,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * The message sent when querying a settlement for what it has for sale.
- */
+/** The message sent when querying a settlement for what it has for sale. */
 public class GoodsForSaleMessage extends DOMMessage {
-
     /** The identifier of the unit that is trading. */
     private final String unitId;
 
@@ -48,7 +44,6 @@ public class GoodsForSaleMessage extends DOMMessage {
 
     /** The list of goods for sale. */
     private final List<Goods> sellGoods;
-
 
     /**
      * Create a new <code>GoodsForSaleMessage</code> with the
@@ -86,13 +81,11 @@ public class GoodsForSaleMessage extends DOMMessage {
         }
     }
 
-
-    // Public interface
+    /** Public interface. */
 
     public List<Goods> getGoods() {
         return this.sellGoods;
     }
-
 
     /**
      * Handle a "goodsForSale"-message.

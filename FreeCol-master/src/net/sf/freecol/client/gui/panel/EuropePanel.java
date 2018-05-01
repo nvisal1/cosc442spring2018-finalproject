@@ -63,13 +63,11 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.TransactionListener;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * This is a panel for the Europe display.  It shows the ships in Europe and
  * allows the user to send them back.
  */
 public final class EuropePanel extends PortPanel {
-
     private static final Logger logger = Logger.getLogger(EuropePanel.class.getName());
 
     /**
@@ -77,26 +75,18 @@ public final class EuropePanel extends PortPanel {
      * to America or Europe.
      */
     private final class DestinationPanel extends JPanel implements DropTarget {
-
         private Location destination;
 
-
-        /**
-         * Initialize this DestinationPanel.
-         */
+        /** Initialize this DestinationPanel. */
         public void initialize(Location destination) {
             this.destination = destination;
             update();
         }
 
-        /**
-         * Cleans up this DestinationPanel.
-         */
+        /** Cleans up this DestinationPanel. */
         public void cleanup() {}
 
-        /**
-         * Update this DestinationPanel.
-         */
+        /** Update this DestinationPanel. */
         public void update() {
             removeAll();
 
@@ -134,26 +124,19 @@ public final class EuropePanel extends PortPanel {
             revalidate();
         }
 
-
         // Interface DropTarget
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean accepts(Unit unit) {
             return unit.isNaval() && !unit.isDamaged();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean accepts(Goods goods) {
             return false;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Component add(Component comp, boolean editState) {
             if (editState) {
                 if (!(comp instanceof UnitLabel)) {
@@ -162,15 +145,17 @@ public final class EuropePanel extends PortPanel {
                 }
                 final Unit unit = ((UnitLabel)comp).getUnit();
 
-                if (unit.getTradeRoute() != null) {
-                    if (!getGUI().confirmClearTradeRoute(unit)
-                        || !igc().assignTradeRoute(unit, null)) return null;
-                }
+                if (unit.getTradeRoute() != null && (!getGUI().confirmClearTradeRoute(unit)
+				    || !igc().assignTradeRoute(unit, null))) {
+					return null;
+				}
 
                 Location dest = destination;
                 if (unit.isInEurope()) {
                     dest = getGUI().showSelectDestinationDialog(unit);
-                    if (dest == null) return null; // user aborted
+                    if (dest == null) {
+						return null;
+					} // user aborted
                 }
                 
                 final ClientOptions co = getClientOptions();
@@ -184,7 +169,9 @@ public final class EuropePanel extends PortPanel {
                     if (!getGUI().confirm(null, StringTemplate
                             .template("europePanel.leaveColonists")
                             .addStringTemplate("%newWorld%", locName),
-                            unit, "ok", "cancel")) return null;
+                            unit, "ok", "cancel")) {
+						return null;
+					}
                 }
 
                 comp.getParent().remove(comp);
@@ -203,9 +190,7 @@ public final class EuropePanel extends PortPanel {
             return c;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int suggested(GoodsType type) { return -1; } // N/A
     }
 
@@ -214,13 +199,11 @@ public final class EuropePanel extends PortPanel {
      * waiting on the docks in Europe.
      */
     public final class DocksPanel extends UnitPanel implements DropTarget {
-
         public DocksPanel() {
             super(EuropePanel.this, "Europe - docks", true);
 
             setLayout(new MigLayout("wrap 6"));
         }
-
 
         @Override
         public void addPropertyChangeListeners() {
@@ -232,43 +215,28 @@ public final class EuropePanel extends PortPanel {
             europe.removePropertyChangeListener(this);
         }
 
-
         // Interface DropTarget
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean accepts(Unit unit) {
             return !unit.isNaval();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean accepts(Goods goods) {
             return false;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Component add(Component comp, boolean editState) {
             Component c = add(comp);
             update();
             return c;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        public int suggested(GoodsType type) { return -1; } // N/A
+        /** {@inheritDoc} */
+        public int suggested(GoodsType type) { return -1; } /** N/A Override Container. */
 
-
-        // Override Container
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void remove(Component comp) {
             update();
@@ -276,7 +244,6 @@ public final class EuropePanel extends PortPanel {
     }
 
     private static final class EuropeButton extends JButton {
-
         public EuropeButton(String text, int keyEvent, String command,
                             ActionListener listener) {
             setOpaque(true);
@@ -299,34 +266,25 @@ public final class EuropePanel extends PortPanel {
      * are waiting in Europe.
      */
     private final class EuropeInPortPanel extends InPortPanel {
-
         public EuropeInPortPanel() {
             super(EuropePanel.this, "Europe - port", true);
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         protected void addPropertyChangeListeners() {
             europe.addPropertyChangeListener(this);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         protected void removePropertyChangeListeners() {
             europe.removePropertyChangeListener(this);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean accepts(Unit unit) {
-            if (!unit.isNaval()) return false;
+            if (!unit.isNaval()) {
+				return false;
+			}
             switch (unit.getState()) {
             case ACTIVE: case FORTIFIED: case FORTIFYING:
             case SENTRY: case SKIPPED:
@@ -336,11 +294,8 @@ public final class EuropePanel extends PortPanel {
         }
     }
 
-    /**
-     * A panel that shows goods available for purchase in Europe.
-     */
+    /** A panel that shows goods available for purchase in Europe. */
     private final class MarketPanel extends JPanel implements DropTarget {
-
         /**
          * Creates this MarketPanel.
          *
@@ -350,10 +305,7 @@ public final class EuropePanel extends PortPanel {
             super(new GridLayout(2, 8));
         }
 
-
-        /**
-         * Initialize this MarketPanel.
-         */
+        /** Initialize this MarketPanel. */
         public void initialize() {
             removeAll();
 
@@ -364,36 +316,29 @@ public final class EuropePanel extends PortPanel {
                 label.setTransferHandler(defaultTransferHandler);
                 label.addMouseListener(pressListener);
                 MarketData md = market.getMarketData(goodsType);
-                if (md != null) md.addPropertyChangeListener(label);
+                if (md != null) {
+					md.addPropertyChangeListener(label);
+				}
                 add(label);
             }
         }
 
-        /**
-         * Cleans up this MarketPanel.
-         */
+        /** Cleans up this MarketPanel. */
         public void cleanup() {}
-
 
         // Interface DropTarget
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean accepts(Unit unit) {
             return false;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean accepts(Goods goods) {
             return true;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Component add(Component comp, boolean editState) {
             if (editState) {
                 if (!(comp instanceof GoodsLabel)) {
@@ -430,50 +375,34 @@ public final class EuropePanel extends PortPanel {
             return comp;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int suggested(GoodsType type) {
             return -1; // No good choice
         }
 
+        /** Override Container. */
 
-        // Override Container
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void remove(Component comp) {
             // Don't remove market labels.
         }
     }
 
-    /**
-     * To log transactions made in Europe
-     */
+    /** To log transactions made in Europe. */
     private final class TransactionLog extends JTextPane
         implements TransactionListener {
-
-        /**
-         * Creates a transaction log.
-         */
+        /** Creates a transaction log. */
         public TransactionLog() {
             setEditable(false);
         }
 
-
-        /**
-         * Initializes this TransactionLog.
-         */
+        /** Initializes this TransactionLog. */
         public void initialize() {
             getMyPlayer().getMarket().addTransactionListener(this);
             setText("");
         }
 
-        /**
-         * Cleans up this TransactionLog.
-         */
+        /** Cleans up this TransactionLog. */
         public void cleanup() {
             getMyPlayer().getMarket().removeTransactionListener(this);
         }
@@ -486,18 +415,17 @@ public final class EuropePanel extends PortPanel {
         private void add(String text) {
             StyledDocument doc = getStyledDocument();
             try {
-                if (doc.getLength() > 0) text = "\n\n" + text;
+                if (doc.getLength() > 0) {
+					text = "\n\n" + text;
+				}
                 doc.insertString(doc.getLength(), text, null);
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Transaction log update failure", e);
             }
         }
 
-        // Implement TransactionListener
+        /** Implement TransactionListener. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void logPurchase(GoodsType goodsType, int amount, int price) {
             int total = amount * price;
@@ -510,9 +438,6 @@ public final class EuropePanel extends PortPanel {
             add(Messages.message(t1) + "\n" + Messages.message(t2));
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void logSale(GoodsType goodsType, int amount,
                             int price, int tax) {
@@ -536,8 +461,7 @@ public final class EuropePanel extends PortPanel {
         }
     }
 
-
-    public static enum EuropeAction {
+    public enum EuropeAction {
         EXIT,
         RECRUIT,
         PURCHASE,
@@ -560,7 +484,6 @@ public final class EuropePanel extends PortPanel {
                     recruitButton, unloadButton, sailButton;
 
     private final Europe europe;
-
 
     /**
      * The constructor for a EuropePanel.
@@ -718,9 +641,7 @@ public final class EuropePanel extends PortPanel {
         log.initialize();
     }
 
-    /**
-     * Cleans up this EuropePanel.
-     */
+    /** Cleans up this EuropePanel. */
     public void cleanup() {
         log.cleanup();
         docksPanel.cleanup();
@@ -731,17 +652,13 @@ public final class EuropePanel extends PortPanel {
         toAmericaPanel.cleanup();
     }
 
-    /**
-     * What to do when requesting focus.
-     */
+    /** What to do when requesting focus. */
     @Override
     public void requestFocus() {
         exitButton.requestFocus();
     }
 
-    /**
-     * Refreshes this panel.
-     */
+    /** Refreshes this panel. */
     public void refresh() {
         repaint(0, 0, getWidth(), getHeight());
     }
@@ -770,18 +687,14 @@ public final class EuropePanel extends PortPanel {
         inPortPanel.repaint();
     }
 
-    /**
-     * Exits this EuropePanel.
-     */
+    /** Exits this EuropePanel. */
     private void exitAction() {
         cleanup();
         getGUI().removeFromCanvas(this);
         igc().nextModelMessage();
     }
 
-    /**
-     * Unload the contents of the currently selected carrier.
-     */
+    /** Unload the contents of the currently selected carrier. */
     private void unloadAction() {
         Unit unit = getSelectedUnit();
         if (unit != null && unit.isCarrier()) {
@@ -805,9 +718,7 @@ public final class EuropePanel extends PortPanel {
         requestFocus();
     }
 
-    /**
-     * A unit sets sail for the new world.
-     */
+    /** A unit sets sail for the new world. */
     private void sailAction() {
         Unit unit = getSelectedUnit();
         if (unit != null && unit.isNaval()) {
@@ -816,7 +727,6 @@ public final class EuropePanel extends PortPanel {
         }
         requestFocus();
     }
-
 
     // Interface PortPanel
 
@@ -830,12 +740,8 @@ public final class EuropePanel extends PortPanel {
         return europe.getUnitList();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -865,12 +771,8 @@ public final class EuropePanel extends PortPanel {
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

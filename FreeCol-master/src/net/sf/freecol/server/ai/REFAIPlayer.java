@@ -59,14 +59,12 @@ import net.sf.freecol.server.ai.mission.PrivateerMission;
 import net.sf.freecol.server.ai.mission.UnitSeekAndDestroyMission;
 import net.sf.freecol.server.model.ServerPlayer;
 
-
 /**
  * Objects of this class contains AI-information for a single REF player.
  *
  * For now, mostly just the EuropeanAIPlayer, with a few tweaks.
  */
 public class REFAIPlayer extends EuropeanAIPlayer {
-
     private static final Logger logger = Logger.getLogger(REFAIPlayer.class.getName());
 
     /** Limit on the number of REF units chasing a single hostile unit. */
@@ -74,13 +72,11 @@ public class REFAIPlayer extends EuropeanAIPlayer {
 
     /** Container class for REF target colony information. */
     private static class TargetTuple implements Comparable<TargetTuple> {
-
         public final Colony colony;
         public final PathNode path;
         public double score;
         public Tile disembarkTile;
         public Tile entry;
-
 
         public TargetTuple(Colony colony, PathNode path, double score) {
             this.colony = colony;
@@ -99,7 +95,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             }
         }
 
-        // Implement Comparable<TargetTuple>
+        /** Implement Comparable<TargetTuple>. */
 
         @Override
         public int compareTo(TargetTuple other) {
@@ -107,22 +103,16 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             return (cmp < 0.0) ? -1 : (cmp > 0.0) ? 1 : 0;
         }
 
-        // Override Object
+        /** Override Object. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean equals(Object other) {
             if (other instanceof TargetTuple) {
-                return this.compareTo((TargetTuple)other) == 0;
+                return compareTo((TargetTuple)other) == 0;
             }
             return super.equals(other);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int hashCode() {
             int hash = super.hashCode();
@@ -138,7 +128,6 @@ public class REFAIPlayer extends EuropeanAIPlayer {
 
     /** Map of target to count. */
     private final Map<Location, Integer> targetMap = new HashMap<>();
-
 
     /**
      * Creates a new <code>REFAIPlayer</code>.
@@ -167,7 +156,6 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         uninitialized = getPlayer() == null;
     }
 
-
     /**
      * Find suitable colony targets.
      *
@@ -184,9 +172,13 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         final List<TargetTuple> targets = new ArrayList<>();
         for (Player p : player.getRebels()) {
             for (Colony c : p.getColonies()) {
-                if (port && !c.isConnectedPort()) continue;
+                if (port && !c.isConnectedPort()) {
+					continue;
+				}
                 PathNode path = unit.findPath(carrier, c, carrier, null);
-                if (path == null) continue;
+                if (path == null) {
+					continue;
+				}
                 int score = UnitSeekAndDestroyMission.scorePath(aiu, path);
                 targets.add(new TargetTuple(c, path, score));
             }
@@ -204,7 +196,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             t.score *= 0.01 * (101 - Math.min(100, t.colony.getSoL()));
             for (Building b : t.colony.getBuildings()) {
                 if (b.getLevel() > 1) {
-                    if (b.hasAbility(Ability.REPAIR_UNITS)) t.score *= 1.5;
+                    if (b.hasAbility(Ability.REPAIR_UNITS)) {
+						t.score *= 1.5;
+					}
                     for (AbstractGoods ag : b.getOutputs()) {
                         if (ag.getType().isMilitaryGoods()) {
                             t.score *= 2.0;
@@ -215,7 +209,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                     }
                 }
             }
-            int stockade = (!t.colony.hasStockade()) ? 0
+            int stockade = !t.colony.hasStockade() ? 0
                 : t.colony.getStockade().getLevel();
             t.score *= (6 - stockade) / 6.0;
             t.score *= 1.0 + 0.01 * (twiddle[twidx++] - percentTwiddle);
@@ -224,7 +218,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
 
         LogBuilder lb = new LogBuilder(64);
         lb.add("REF found colony targets:");
-        for (TargetTuple t : targets) lb.add(" ", t.colony, "(", t.score, ")");
+        for (TargetTuple t : targets) {
+			lb.add(" ", t.colony, "(", t.score, ")");
+		}
         lb.log(logger, Level.FINE);
         return targets;
     }
@@ -346,7 +342,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 GoalDeciders.getStealthyGoalDecider(rebel));
             for (int i = 0; i < n; i++) {
                 final TargetTuple t = targets.get(i);
-                if (!rebel.canSee(t.entry)) continue;
+                if (!rebel.canSee(t.entry)) {
+					continue;
+				}
                 PathNode path = carrier.search(t.disembarkTile, stealthGD,
                     CostDeciders.avoidSettlementsAndBlockingUnits(),
                     t.path.getTotalTurns() + 1, null);
@@ -368,13 +366,17 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         int used;
         Mission m;
         for (int i = 0; i < n; i++) {
-            if (!auIterator.hasNext()) break;
+            if (!auIterator.hasNext()) {
+				break;
+			}
             final TargetTuple t = targets.get(i);
             lb.add("\n  Attack ", t.colony, " from ", t.entry,
                    " via ", t.disembarkTile, " with ");
             while (auIterator.hasNext()) {
                 AIUnit aiu = auIterator.next();
-                if (!aiu.getUnit().isNaval()) continue;
+                if (!aiu.getUnit().isNaval()) {
+					continue;
+				}
                 Unit ship = aiu.getUnit();
                 if (ship.isEmpty()) {
                     navy.add(aiu);
@@ -391,7 +393,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 for (Unit u : aiu.getUnit().getUnitList()) {
                     AIUnit laiu = aiMain.getAIUnit(u);
                     m = getSeekAndDestroyMission(laiu, t.colony);
-                    if (m != null) lb.add(" ", m);
+                    if (m != null) {
+						lb.add(" ", m);
+					}
                     used++;
                 }
                 m = getTransportMission(aiu);
@@ -420,7 +424,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                         && rebel.owns(tile.getFirstUnit())) {
                         for (Unit u : tile.getUnitList()) {
                             if (u.isOffensiveUnit() && u.isNaval()
-                                && !rebelNavy.contains(u)) rebelNavy.add(u);
+                                && !rebelNavy.contains(u)) {
+								rebelNavy.add(u);
+							}
                         }
                     }
                     return false;
@@ -441,24 +447,23 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         while (!navy.isEmpty()) {
             final AIUnit aiu = navy.remove(0);
             final Unit u = aiu.getUnit();
-            final Unit enemy = (ui.hasNext()) ? ui.next() : null;
+            final Unit enemy = ui.hasNext() ? ui.next() : null;
             Tile start;
             if (enemy == null) {
-                if ((m = getWanderHostileMission(aiu)) != null) {
+                m = getWanderHostileMission(aiu);
+				if (m != null) {
                     start = getRandomMember(logger, "REF patrol entry",
                                             entries, aiRandom);
                     u.setEntryLocation(start);
                     lb.add("\n  Patrol from ", start, " with ", m);
                 }
-            } else {
-                if ((m = getSeekAndDestroyMission(aiu, enemy)) != null) {
-                    start = u.getBestEntryTile(enemy.getTile());
-                    u.setEntryLocation(start);
-                    entries.add(start);
-                    lb.add("\n  Suppress ", enemy, " from ", start,
-                        " with ", m);
-                }
-            }
+            } else if ((m = getSeekAndDestroyMission(aiu, enemy)) != null) {
+			    start = u.getBestEntryTile(enemy.getTile());
+			    u.setEntryLocation(start);
+			    entries.add(start);
+			    lb.add("\n  Suppress ", enemy, " from ", start,
+			        " with ", m);
+			}
         }
         lb.log(logger, Level.FINE);
         return true;
@@ -511,10 +516,13 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 AIUnit aiu = naval.remove(0);
                 int distance = aiu.getMission(PrivateerMission.class)
                     .getDistanceToTarget();
-                if ((m = getTransportMission(aiu)) != null) {
+                m = getTransportMission(aiu);
+				if (m != null) {
                     lb.add(" REQUIRED ", distance, " ", m);
                     result.add(aiu);
-                    if (result.size() + transports.size() >= nt) break;
+                    if (result.size() + transports.size() >= nt) {
+						break;
+					}
                 }
             }
         }
@@ -523,23 +531,17 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Stance determineStance(Player other) {
         final Player player = getPlayer();
         // The REF is always at war with its own rebels.
         return (other.getREFPlayer() == player)
-            ? ((other.isRebel()) ? Stance.WAR : Stance.PEACE)
-            : (other.atWarWith(player)) ? Stance.WAR
-            : (!player.getRebels().isEmpty()) ? Stance.PEACE // Focus!
+            ? (other.isRebel() ? Stance.WAR : Stance.PEACE)
+            : other.atWarWith(player) ? Stance.WAR
+            : !player.getRebels().isEmpty() ? Stance.PEACE // Focus!
             : super.determineStance(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void giveNormalMissions(LogBuilder lb) {
         final Player player = getPlayer();
@@ -557,7 +559,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         targetMap.clear();
         for (AIUnit aiu : getAIUnits()) {
             Unit u = aiu.getUnit();
-            if (u.isDisposed() || !u.hasAbility(Ability.REF_UNIT)) continue;
+            if (u.isDisposed() || !u.hasAbility(Ability.REF_UNIT)) {
+				continue;
+			}
             Mission mission = aiu.getMission();
             if (u.isNaval()) {
                 if (mission == null || !mission.isValid()) {
@@ -567,43 +571,44 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 } else if (mission instanceof PrivateerMission) {
                     privateers.add(aiu);
                     Location loc = mission.getTarget();
-                    if (loc != null) incrementMapCount(targetMap, loc);
+                    if (loc != null) {
+						incrementMapCount(targetMap, loc);
+					}
                 } else {
                     todo.add(aiu);
                 }
-            } else {
-                if (mission == null) {
-                    land.add(aiu);
-                } else if (mission instanceof DefendSettlementMission) {
-                    if (mission.isValid()) {
-                        colony = (Colony)mission.getTarget();
-                        // Bleed off excessive defenders.
-                        if (u.isAtLocation(colony)
-                            && !colony.isBadlyDefended()
-                            && randomInt(logger, "REF defend " + colony.getName(), 
-                                         getAIRandom(), 3) == 0) {
-                            land.add(aiu);
-                        } else {
-                            incrementMapCount(targetMap, mission.getTarget());
-                        }                          
-                    } else {
-                        land.add(aiu);
-                    }                    
-                } else if (mission instanceof UnitSeekAndDestroyMission) {
-                    if (mission.isValid()) {
-                        incrementMapCount(targetMap, mission.getTarget());
-                        continue;
-                    }
-                    land.add(aiu);
-                } else {
-                    land.add(aiu);
-                }
-            }
+            } else if (mission == null) {
+			    land.add(aiu);
+			} else if (mission instanceof DefendSettlementMission) {
+			    if (mission.isValid()) {
+			        colony = (Colony)mission.getTarget();
+			        // Bleed off excessive defenders.
+			        if (u.isAtLocation(colony)
+			            && !colony.isBadlyDefended()
+			            && randomInt(logger, "REF defend " + colony.getName(), 
+			                         getAIRandom(), 3) == 0) {
+			            land.add(aiu);
+			        } else {
+			            incrementMapCount(targetMap, mission.getTarget());
+			        }                          
+			    } else {
+			        land.add(aiu);
+			    }                    
+			} else if (mission instanceof UnitSeekAndDestroyMission) {
+			    if (mission.isValid()) {
+			        incrementMapCount(targetMap, mission.getTarget());
+			        continue;
+			    }
+			    land.add(aiu);
+			} else {
+			    land.add(aiu);
+			}
         }
 
         // Use free naval units as transports.
         for (AIUnit aiu : todo) {
-            if ((m = getTransportMission(aiu)) != null) {
+            m = getTransportMission(aiu);
+			if (m != null) {
                 lb.add(" ", m);
                 transports.add(aiu);
             }
@@ -625,7 +630,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             Location target = UnitSeekAndDestroyMission.findTarget(aiu, 
                 seekAndDestroyRange, false);
             if (target != null) {
-                int count = (targetMap.containsKey(target))
+                int count = targetMap.containsKey(target)
                     ? targetMap.get(target) : 0;
                 if (target instanceof Unit
                     && count < UNIT_USAD_THRESHOLD
@@ -690,14 +695,14 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             Map<Location, List<AIUnit>> ready = new HashMap<>();
             for (AIUnit aiu : transports) {
                 TransportMission tm = aiu.getMission(TransportMission.class);
-                if (!tm.isEmpty()) continue;
+                if (!tm.isEmpty()) {
+					continue;
+				}
                 Unit u = aiu.getUnit();
                 Location key;
-                if (u.isInEurope()
-                    && idlers.containsKey(key = player.getEurope())) {
-                    appendToMapList(ready, key, aiu);
-                } else if ((key = u.getColony()) != null
-                    && idlers.containsKey(key)) {
+                if ((u.isInEurope()
+                    && idlers.containsKey(key = player.getEurope())) || ((key = u.getColony()) != null
+                    && idlers.containsKey(key))) {
                     appendToMapList(ready, key, aiu);
                 } else {
                     todo.add(aiu);
@@ -713,11 +718,15 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             List<AIUnit> aiCarriers = new ArrayList<>();
             int space = 0;
             for (Entry<Location, List<AIUnit>> e : idlers.entrySet()) {
-                if (e.getValue() == null) continue;
+                if (e.getValue() == null) {
+					continue;
+				}
                 aiCarriers.clear();
                 Location key = e.getKey();
                 if (!ready.containsKey(key)
-                    || ready.get(key).isEmpty()) continue; // No carrier here
+                    || ready.get(key).isEmpty()) {
+					continue;
+				} // No carrier here
                 landUnit: for (AIUnit aiu : e.getValue()) {
                     for (AIUnit aiCarrier : ready.get(key)) {
                         Unit carrier = aiCarrier.getUnit();
@@ -730,7 +739,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                         }
                     }
                 }
-                if (aiCarriers.isEmpty()) continue; // Did not load
+                if (aiCarriers.isEmpty()) {
+					continue;
+				} // Did not load
 
                 // Choose a target colony.  Pick a representative unit
                 // to plan with, but if it happens to have a target already
@@ -740,7 +751,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 for (AIUnit aiCarrier : aiCarriers) {
                     for (Unit u : aiCarrier.getUnit().getUnitList()) {
                         if (u.hasAbility(Ability.REF_UNIT)
-                            && (found = getAIUnit(u)) != null) break;
+                            && (found = getAIUnit(u)) != null) {
+							break;
+						}
                     }
                     if (found != null
                         && (m = found.getMission()) != null
@@ -762,7 +775,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                         target = ct.get(0).colony;
                     }
                 }
-                if (target == null) continue; // No target for these idlers
+                if (target == null) {
+					continue;
+				} // No target for these idlers
 
                 // Send them to destroy the target
                 for (AIUnit aiCarrier : aiCarriers) {
@@ -838,13 +853,11 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         super.giveNormalMissions(lb);
     }
 
-
-    // AI Player interface
-    // Inherit everything from EuropeanAIPlayer except the following overrides.
-
     /**
-     * {@inheritDoc}
+     * AI Player interface
+     * Inherit everything from EuropeanAIPlayer except the following overrides.
      */
+
     @Override
     public void startWorking() {
         final Player player = getPlayer();
@@ -864,9 +877,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 if (aiu.hasMission(TransportMission.class)) {
                     transport.add(aiu.getMission(TransportMission.class));
                 }
-            } else {
-                if (u.isInEurope()) land.add(aiu);
-            }
+            } else if (u.isInEurope()) {
+				land.add(aiu);
+			}
         }
         if (!land.isEmpty() && !transport.isEmpty()) {
             LogBuilder lb = new LogBuilder(256);
@@ -875,9 +888,6 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int adjustMission(AIUnit aiUnit, PathNode path, Class type,
                              int value) {
@@ -896,24 +906,21 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                     // Initially, accept no others.
                     if (((Settlement)target).isConnectedPort()) {
                         value += 500;
-                    } else {
-                        if (getPlayer().getNumberOfSettlements() <= 0) {
-                            return Integer.MIN_VALUE;
-                        }
-                    }
+                    } else if (getPlayer().getNumberOfSettlements() <= 0) {
+					    return Integer.MIN_VALUE;
+					}
                 } else if (target instanceof Unit) {
                     // Do not chase units until at least one colony is captured.
-                    if (getPlayer().getNumberOfSettlements() <= 0) {
-                        return Integer.MIN_VALUE;
-                    }
-                    // Do not chase the same unit!
-                    if (any(getAIUnits().stream()
+                    if (getPlayer().getNumberOfSettlements() <= 0 || any(getAIUnits().stream()
                             .filter(aiu -> aiu != aiUnit)
                             .map(aiu -> aiu.getMission(UnitSeekAndDestroyMission.class)),
                             m -> m != null
                                 && m.getTarget() instanceof Unit
-                                && (Unit)m.getTarget() == target))
+                                && (Unit)m.getTarget() == target)) {
                         return Integer.MIN_VALUE;
+                    }
+                    // Do not chase the same unit!
+                    
                     // The REF is more interested in colonies.
                     value /= 2;
                 }

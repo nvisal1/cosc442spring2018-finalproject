@@ -29,13 +29,9 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.RandomChoice;
 
-
-/**
- * The types of tiles.
- */
+/** The types of tiles. */
 public final class TileType extends FreeColGameObjectType {
-
-    public static enum RangeType { HUMIDITY, TEMPERATURE, ALTITUDE };
+    public enum RangeType { HUMIDITY, TEMPERATURE, ALTITUDE }
 
     /**
      * Use these tile types only for "land maps", i.e. maps that only
@@ -85,7 +81,6 @@ public final class TileType extends FreeColGameObjectType {
      */
     private final List<ProductionType> productionTypes = new ArrayList<>();
 
-
     /**
      * Create a new tile type.
      *
@@ -110,7 +105,6 @@ public final class TileType extends FreeColGameObjectType {
 
         this.water = water;
     }
-
 
     /**
      * Is this tile type forested?
@@ -242,7 +236,9 @@ public final class TileType extends FreeColGameObjectType {
      *     present.
      */
     private void addResourceType(ResourceType type, int prob) {
-        if (resourceTypes == null) resourceTypes = new ArrayList<>();
+        if (resourceTypes == null) {
+			resourceTypes = new ArrayList<>();
+		}
         resourceTypes.add(new RandomChoice<>(type, prob));
     }
 
@@ -274,7 +270,9 @@ public final class TileType extends FreeColGameObjectType {
      * @param probability The probability of the disaster.
      */
     private void addDisaster(Disaster disaster, int probability) {
-        if (disasters == null) disasters = new ArrayList<>();
+        if (disasters == null) {
+			disasters = new ArrayList<>();
+		}
         disasters.add(new RandomChoice<>(disaster, probability));
     }
 
@@ -304,16 +302,17 @@ public final class TileType extends FreeColGameObjectType {
         List<ProductionType> good = new ArrayList<>(),
             better = new ArrayList<>();
         for (ProductionType productionType : productionTypes) {
-            if (productionType.getUnattended() != unattended) continue;
+            if (productionType.getUnattended() != unattended) {
+				continue;
+			}
             if (productionType.appliesExactly(level)) {
                 better.add(productionType);
             } else if (productionType.appliesTo(level)) {
                 good.add(productionType);
             }
         }
-        return (!better.isEmpty()) ? better : good;
+        return !better.isEmpty() ? better : good;
     }
-
 
     // Utilities
 
@@ -344,12 +343,16 @@ public final class TileType extends FreeColGameObjectType {
      */
     public int getBaseProduction(ProductionType productionType,
                                  GoodsType goodsType, UnitType unitType) {
-        if (goodsType == null) return 0;
+        if (goodsType == null) {
+			return 0;
+		}
         if (productionType == null) {
             productionType = ProductionType.getBestProductionType(goodsType,
                 getAvailableProductionTypes(unitType == null));
         }
-        if (productionType == null) return 0;
+        if (productionType == null) {
+			return 0;
+		}
         AbstractGoods best = productionType.getOutput(goodsType);
         return (best == null) ? 0 : best.getAmount();
     }
@@ -365,7 +368,9 @@ public final class TileType extends FreeColGameObjectType {
      */
     public int getPotentialProduction(GoodsType goodsType,
                                       UnitType unitType) {
-        if (goodsType == null) return 0;
+        if (goodsType == null) {
+			return 0;
+		}
         int amount = getBaseProduction(null, goodsType, unitType);
         amount = (int)applyModifiers(amount, null, goodsType.getId(),
                                      unitType);
@@ -386,23 +391,20 @@ public final class TileType extends FreeColGameObjectType {
         List<AbstractGoods> production = new ArrayList<>();
         for (ProductionType pt : getAvailableProductionTypes(unattended)) {
             List<AbstractGoods> outputs = pt.getOutputs();
-            if (!outputs.isEmpty()) production.addAll(outputs);
+            if (!outputs.isEmpty()) {
+				production.addAll(outputs);
+			}
         }
         return production;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Kludge to make this public so that MapViewer can see it.
-     */
+    /** {@inheritDoc} Kludge to make this public so that MapViewer can see it. */
     @Override
     public int getIndex() {
         return super.getIndex();
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String ALTITUDE_MIN_TAG = "altitude-minimum";
     private static final String ALTITUDE_MAX_TAG = "altitude-maximum";
@@ -424,24 +426,22 @@ public final class TileType extends FreeColGameObjectType {
     private static final String TEMPERATURE_MIN_TAG = "temperature-minimum";
     private static final String TEMPERATURE_MAX_TAG = "temperature-maximum";
     private static final String TYPE_TAG = "type";
-    // @compat 0.10.x
+    /** @compat 0.10.x */
     private static final String PRIMARY_PRODUCTION_TAG = "primary-production";
     private static final String SECONDARY_PRODUCTION_TAG = "secondary-production";
     private static final String TILE_PRODUCTION_TAG = "tile-production";
-    // end @compat 0.10.x
-    // @compat 0.11.3
+    /**
+     * End @compat 0.10.x
+     * @compat 0.11.3
+     */
     private static final String OLD_ALTITUDE_MIN_TAG = "altitudeMin";
     private static final String OLD_ALTITUDE_MAX_TAG = "altitudeMax";
     private static final String OLD_HUMIDITY_MIN_TAG = "humidityMin";
     private static final String OLD_HUMIDITY_MAX_TAG = "humidityMax";
     private static final String OLD_TEMPERATURE_MIN_TAG = "temperatureMin";
     private static final String OLD_TEMPERATURE_MAX_TAG = "temperatureMax";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -461,9 +461,6 @@ public final class TileType extends FreeColGameObjectType {
         xw.writeAttribute(CAN_SETTLE_TAG, canSettle);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -509,9 +506,6 @@ public final class TileType extends FreeColGameObjectType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -529,12 +523,8 @@ public final class TileType extends FreeColGameObjectType {
         canSettle = xr.getAttribute(CAN_SETTLE_TAG, !water);
 
         connected = xr.getAttribute(IS_CONNECTED_TAG, false);
-
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -547,9 +537,6 @@ public final class TileType extends FreeColGameObjectType {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -562,7 +549,6 @@ public final class TileType extends FreeColGameObjectType {
                 addDisaster(d, xr.getAttribute(PROBABILITY_TAG, 100));
             }
             xr.closeTag(DISASTER_TAG);
-
         } else if (GEN_TAG.equals(tag)) {
             humidity[0] = xr.getAttribute(HUMIDITY_MIN_TAG, 0);
             humidity[1] = xr.getAttribute(HUMIDITY_MAX_TAG, 100);
@@ -591,12 +577,10 @@ public final class TileType extends FreeColGameObjectType {
             }
             // end @compat 0.11.3
             xr.closeTag(GEN_TAG);
-
         } else if (PRODUCTION_TAG.equals(tag)
             && xr.getAttribute(DELETE_TAG, false)) {
             productionTypes.clear();
             xr.closeTag(PRODUCTION_TAG);
-
         } else if (PRODUCTION_TAG.equals(tag)
                    // @compat 0.10.6
                    && xr.getAttribute(GOODS_TYPE_TAG, (String)null) == null
@@ -635,13 +619,11 @@ public final class TileType extends FreeColGameObjectType {
             }
             xr.closeTag(tag);
             // end @compat 0.10.6
-
         } else if (RESOURCE_TAG.equals(tag)) {
             addResourceType(xr.getType(spec, TYPE_TAG, ResourceType.class,
                                        (ResourceType)null),
                             xr.getAttribute(PROBABILITY_TAG, 100));
             xr.closeTag(RESOURCE_TAG);
-
         } else if (Modifier.getXMLElementTagName().equals(tag)) {
             // @compat 0.10.7
             // the tile type no longer contains the base production modifier
@@ -657,9 +639,6 @@ public final class TileType extends FreeColGameObjectType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

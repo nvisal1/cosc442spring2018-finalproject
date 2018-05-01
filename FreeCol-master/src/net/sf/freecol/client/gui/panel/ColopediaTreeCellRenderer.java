@@ -29,24 +29,16 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * This TreeCellRenderer is responsible for rendering tree items in
  * the Colopedia.
  */
 public class ColopediaTreeCellRenderer extends DefaultTreeCellRenderer {
-
-    /**
-     * The constructor makes sure that the backgrounds are transparent.
-     */
+    /** The constructor makes sure that the backgrounds are transparent. */
     public ColopediaTreeCellRenderer() {
         setBackgroundNonSelectionColor(new Color(0,0,0,1));
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value,
         boolean selected, boolean expanded, boolean leaf, int row,
@@ -60,7 +52,7 @@ public class ColopediaTreeCellRenderer extends DefaultTreeCellRenderer {
             setIcon(nodeItem.getIcon());
         } else {
             String key = "image.icon.Colopedia."
-                + ((expanded) ? "open" : "closed") + "Section";
+                + (expanded ? "open" : "closed") + "Section";
             setIcon(new ImageIcon(ResourceManager.getImage(key)));
         }
         return this;

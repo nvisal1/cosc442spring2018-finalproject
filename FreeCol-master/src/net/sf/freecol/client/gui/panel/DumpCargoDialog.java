@@ -35,12 +35,8 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * This panel is used to handle dumping cargo.
- */
+/** This panel is used to handle dumping cargo. */
 public final class DumpCargoDialog extends FreeColDialog<List<Goods>> {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(DumpCargoDialog.class.getName());
 
@@ -49,7 +45,6 @@ public final class DumpCargoDialog extends FreeColDialog<List<Goods>> {
 
     /** Check boxes corresponding to the goods list. */
     private final List<JCheckBox> checkBoxes;
-
 
     /**
      * Creates a dialog for choosing cargo for a unit to dump.
@@ -76,7 +71,9 @@ public final class DumpCargoDialog extends FreeColDialog<List<Goods>> {
 
         MigPanel panel = new MigPanel(new MigLayout("wrap 1", "", ""));
         panel.add(Utility.localizedHeader("dumpCargo", true));
-        for (JCheckBox c : checkBoxes) panel.add(c);
+        for (JCheckBox c : checkBoxes) {
+			panel.add(c);
+		}
         panel.setSize(panel.getPreferredSize());
 
         List<Goods> fake = null;
@@ -89,17 +86,15 @@ public final class DumpCargoDialog extends FreeColDialog<List<Goods>> {
             new ImageIcon(getImageLibrary().getUnitImage(unit)), c);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Goods> getResponse() {
         Object value = getValue();
         List<Goods> gl = new ArrayList<>();
         if (options.get(0).equals(value)) {
             for (int i = 0; i < checkBoxes.size(); i++) {
-                if (checkBoxes.get(i).isSelected()) gl.add(goodsList.get(i));
+                if (checkBoxes.get(i).isSelected()) {
+					gl.add(goodsList.get(i));
+				}
             }
         }
         return gl;

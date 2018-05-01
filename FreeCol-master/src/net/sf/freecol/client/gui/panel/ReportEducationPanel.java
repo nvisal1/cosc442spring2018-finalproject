@@ -32,12 +32,8 @@ import net.sf.freecol.common.model.Unit;
 
 import net.miginfocom.swing.MigLayout;
 
-
-/**
- * This panel displays the Education Report.
- */
+/** This panel displays the Education Report. */
 public final class ReportEducationPanel extends ReportPanel {
-
     /**
      * Creates the education report.
      *

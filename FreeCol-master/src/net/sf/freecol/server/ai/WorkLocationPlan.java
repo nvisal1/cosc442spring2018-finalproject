@@ -26,13 +26,11 @@ import net.sf.freecol.common.model.WorkLocation;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Objects of this class contains AI-information for a single
  * {@link net.sf.freecol.common.model.WorkLocation}.
  */
 public class WorkLocationPlan extends AIObject {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(WorkLocationPlan.class.getName());
 
@@ -41,7 +39,6 @@ public class WorkLocationPlan extends AIObject {
 
     /** The goods to produce. */
     private GoodsType goodsType;
-
 
     /**
      * Creates a new <code>WorkLocationPlan</code>.
@@ -72,7 +69,6 @@ public class WorkLocationPlan extends AIObject {
     public WorkLocationPlan(AIMain aiMain, Element element) {
         super(aiMain, element);
     }
-
 
     /**
      * Gets the <code>WorkLocation</code> this
@@ -116,14 +112,11 @@ public class WorkLocationPlan extends AIObject {
         return goodsType.isFoodType();
     }
 
-
-    // Serialization
-    // WorkLocationPlans are not currently saved so this is a no-op.
-
-
     /**
-     * {@inheritDoc}
+     * Serialization
+     * WorkLocationPlans are not currently saved so this is a no-op.
      */
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
@@ -134,9 +127,6 @@ public class WorkLocationPlan extends AIObject {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

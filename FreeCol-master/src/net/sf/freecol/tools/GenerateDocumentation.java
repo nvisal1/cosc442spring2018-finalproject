@@ -39,12 +39,8 @@ import javax.xml.transform.TransformerFactory;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.StringTemplate;
 
-
-/**
- * Generate some documentation.
- */
+/** Generate some documentation. */
 public class GenerateDocumentation {
-
     private static final File STRING_DIRECTORY =
         new File("data/strings");
     private static final File RULE_DIRECTORY =
@@ -64,9 +60,6 @@ public class GenerateDocumentation {
             }
         });
 
-
-
-
     public static void main(String[] args) throws Exception {
         System.setProperty("jaxp.debug", "1");
         if (args.length > 0) {
@@ -82,7 +75,7 @@ public class GenerateDocumentation {
         File sourceFile = new File(RULE_DIRECTORY, "resources.properties");
         try (
             FileReader fileReader = new FileReader(sourceFile);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            BufferedReader bufferedReader = new BufferedReader(fileReader)
         ) {
             String line = bufferedReader.readLine();
             while (line != null) {
@@ -99,13 +92,10 @@ public class GenerateDocumentation {
         }
     }
 
-
     private static void generateTMX() {
-
         Map<String, Map<String, String>> translations = new HashMap<>();
 
         for (String name : sourceFiles) {
-
             System.out.println("Processing source file: " + name);
 
             String languageCode = name.substring(15, name.length() - 11);
@@ -122,7 +112,7 @@ public class GenerateDocumentation {
 
             try (
                 FileReader fileReader = new FileReader(sourceFile);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                BufferedReader bufferedReader = new BufferedReader(fileReader)
             ) {
                 String line = bufferedReader.readLine();
                 while (line != null) {
@@ -146,7 +136,7 @@ public class GenerateDocumentation {
         }
         File destinationFile = new File(DESTINATION_DIRECTORY, "freecol.tmx");
         try (
-            FileWriter out = new FileWriter(destinationFile);
+            FileWriter out = new FileWriter(destinationFile)
         ) {
             out.write("<?xml version =\"1.0\" encoding=\"UTF-8\"?>\n");
             out.write("<tmx version=\"1.4b\">\n");
@@ -170,7 +160,6 @@ public class GenerateDocumentation {
 
     public static void generateDocumentation(String[] languages) {
         for (String name : sourceFiles) {
-
             String languageCode = name.substring(15, name.length() - 11);
             if (languageCode.isEmpty()) {
                 languageCode = "en";
@@ -230,4 +219,3 @@ public class GenerateDocumentation {
         return Messages.message(stringTemplate);
     }
 }
-

@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * Show history messages in report panel.
- */
+/** Show history messages in report panel. */
 public class ReportHistoryAction extends FreeColAction {
-
     public static final String id = "reportHistoryAction";
-
 
     /**
      * Creates this action.
@@ -41,12 +36,8 @@ public class ReportHistoryAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showReportHistoryPanel();

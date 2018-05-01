@@ -31,14 +31,12 @@ import net.sf.freecol.client.gui.GUI;
 import net.sf.freecol.client.gui.panel.Utility;
 import net.sf.freecol.common.option.FileOption;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.FileOption} in order to enable values
  * to be both seen and changed.
  */
 public final class FileOptionUI extends OptionUI<FileOption>  {
-
     private final JPanel panel = new JPanel();
     private final JTextField fileField;
 
@@ -96,31 +94,21 @@ public final class FileOptionUI extends OptionUI<FileOption>  {
             }
         });
         */
-
     }
 
-    /**
-     * Sets the value of this UI's component.
-     */
+    /** Sets the value of this UI's component. */
     public void setValue(File f) {
         getOption().setValue(f);
         reset();
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JPanel getComponent() {
         return panel;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         File f = (fileField.getText() == null
@@ -129,9 +117,6 @@ public final class FileOptionUI extends OptionUI<FileOption>  {
         getOption().setValue(f);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         File file = getOption().getValue();

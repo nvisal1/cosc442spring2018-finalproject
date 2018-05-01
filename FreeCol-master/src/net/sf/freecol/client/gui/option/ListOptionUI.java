@@ -43,7 +43,6 @@ import net.sf.freecol.common.option.AbstractOption;
 import net.sf.freecol.common.option.ListOption;
 import net.sf.freecol.common.option.Option;
 
-
 /**
  * This class provides visualization for a list of
  * {@link net.sf.freecol.common.option.AbstractOption}s in order to enable
@@ -51,7 +50,6 @@ import net.sf.freecol.common.option.Option;
  */
 public final class ListOptionUI<T> extends OptionUI<ListOption<T>>
     implements ListSelectionListener {
-
     private static final Logger logger = Logger.getLogger(ListOptionUI.class.getName());
 
     private final JPanel panel;
@@ -63,7 +61,6 @@ public final class ListOptionUI<T> extends OptionUI<ListOption<T>>
     private final JButton removeButton = Utility.localizedButton("list.remove");
     private final JButton upButton = Utility.localizedButton("list.up");
     private final JButton downButton = Utility.localizedButton("list.down");
-
 
     /**
      * Creates a new <code>ListOptionUI</code> for the given
@@ -176,36 +173,23 @@ public final class ListOptionUI<T> extends OptionUI<ListOption<T>>
         return result;
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final JLabel getJLabel() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JPanel getComponent() {
         return this.panel;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue(getValue());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         model.clear();
@@ -214,15 +198,12 @@ public final class ListOptionUI<T> extends OptionUI<ListOption<T>>
         }
     }
 
-    // Interface ListSelectionListener
+    /** Interface ListSelectionListener. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting() == false) {
-            boolean enabled = (isEditable() && list.getSelectedValue() != null);
+        if (!e.getValueIsAdjusting()) {
+            boolean enabled = isEditable() && list.getSelectedValue() != null;
             editButton.setEnabled(enabled);
             removeButton.setEnabled(enabled);
             upButton.setEnabled(enabled);

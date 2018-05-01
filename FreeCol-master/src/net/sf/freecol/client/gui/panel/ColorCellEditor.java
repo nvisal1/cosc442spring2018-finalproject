@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.client.gui.panel;
 
 import java.awt.Color;
@@ -34,13 +33,9 @@ import javax.swing.table.TableCellEditor;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.SwingGUI;
 
-
-/**
- * A table cell editor that can be used to edit colors.
- */
+/** A table cell editor that can be used to edit colors. */
 public final class ColorCellEditor extends AbstractCellEditor
     implements TableCellEditor, ActionListener {
-
     private static final Logger logger = Logger.getLogger(ColorCellEditor.class.getName());
 
     private static final String EDIT = "EDIT";
@@ -49,7 +44,6 @@ public final class ColorCellEditor extends AbstractCellEditor
     private final JButton              colorEditButton;
     private ColorChooserPanel          colorChooserPanel = null;
     private Color                      currentColor;
-
 
     /**
      * The constructor to use.
@@ -66,57 +60,48 @@ public final class ColorCellEditor extends AbstractCellEditor
         this.colorEditButton.setBorderPainted(false);
     }
 
+    /** Implement TableCellEditor. */
 
-    // Implement TableCellEditor
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value,
         boolean hasFocus, int row, int column) {
-
         this.currentColor = (Color)value;
         return this.colorEditButton;
     }
 
-    // Override CellEditor
+    /** Override CellEditor. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object getCellEditorValue() {
         return this.currentColor;
     }
 
-    // Interface ActionListener
+    /** Interface ActionListener. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
         SwingGUI gui = (SwingGUI)freeColClient.getGUI();
-        if (null != command) switch (command) {
-            case EDIT:
-                this.colorChooserPanel = gui.showColorChooserPanel(this);
-                break;
-            case FreeColPanel.OK:
-                if (this.colorChooserPanel != null) {
-                    this.currentColor = this.colorChooserPanel.getColor();
-                    gui.removeFromCanvas(this.colorChooserPanel);
-                }   fireEditingStopped();
-                break;
-            case FreeColPanel.CANCEL:
-                if (this.colorChooserPanel != null) {
-                    gui.removeFromCanvas(this.colorChooserPanel);
-                }   fireEditingCanceled();
-                break;
-            default:
-                logger.warning("Bad event: " + command);
-                break;
-        }
+        if (null != command) {
+			switch (command) {
+			    case EDIT:
+			        this.colorChooserPanel = gui.showColorChooserPanel(this);
+			        break;
+			    case FreeColPanel.OK:
+			        if (this.colorChooserPanel != null) {
+			            this.currentColor = this.colorChooserPanel.getColor();
+			            gui.removeFromCanvas(this.colorChooserPanel);
+			        }   fireEditingStopped();
+			        break;
+			    case FreeColPanel.CANCEL:
+			        if (this.colorChooserPanel != null) {
+			            gui.removeFromCanvas(this.colorChooserPanel);
+			        }   fireEditingCanceled();
+			        break;
+			    default:
+			        logger.warning("Bad event: " + command);
+			        break;
+			}
+		}
     }
 }

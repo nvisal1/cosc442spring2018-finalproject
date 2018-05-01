@@ -22,11 +22,8 @@ package net.sf.freecol.server.generator;
 import net.sf.freecol.common.model.Game;
 import net.sf.freecol.common.model.Map.Layer;
 
-/**
- * Generates a map layer.
- */
+/** Generates a map layer. */
 public interface MapLayerGenerator {
-
     /**
      * Generates the layer in the map of the given game. Returns true
      * if the layer was generated, and false otherwise.
@@ -34,13 +31,12 @@ public interface MapLayerGenerator {
      * @param game a <code>Game</code> value
      * @return a <code>boolean</code> value
      */
-    public boolean generateLayer(Game game);
+    boolean generateLayer(Game game);
 
     /**
      * Returns the Layer this MapLayerGenerator is able to generate.
      *
      * @return a <code>Layer</code> value
      */
-    public Layer getLayer();
-
+    Layer getLayer();
 }

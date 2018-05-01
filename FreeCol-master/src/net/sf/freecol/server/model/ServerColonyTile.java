@@ -35,18 +35,11 @@ import net.sf.freecol.common.util.LogBuilder;
 import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-
-/**
- * The server version of a colony tile.
- */
+/** The server version of a colony tile. */
 public class ServerColonyTile extends ColonyTile implements ServerModelObject {
-
     private static final Logger logger = Logger.getLogger(ServerColonyTile.class.getName());
 
-
-    /**
-     * Trivial constructor required for all ServerModelObjects.
-     */
+    /** Trivial constructor required for all ServerModelObjects. */
     public ServerColonyTile(Game game, String id) {
         super(game, id);
     }
@@ -62,7 +55,6 @@ public class ServerColonyTile extends ColonyTile implements ServerModelObject {
     public ServerColonyTile(Game game, Colony colony, Tile workTile) {
         super(game, colony, workTile);
     }
-
 
     /**
      * New turn for this colony tile.
@@ -109,10 +101,14 @@ public class ServerColonyTile extends ColonyTile implements ServerModelObject {
      */
     private Resource expendResource(Tile tile, GoodsType goodsType,
                                     UnitType unitType) {
-        if (!tile.hasResource()) return null;
+        if (!tile.hasResource()) {
+			return null;
+		}
 
         Resource resource = tile.getResource();
-        if (resource.isUnlimited()) return null;
+        if (resource.isUnlimited()) {
+			return null;
+		}
 
         if (resource.useQuantity(goodsType, unitType,
                                  tile.getPotentialProduction(goodsType, unitType)) == 0) {

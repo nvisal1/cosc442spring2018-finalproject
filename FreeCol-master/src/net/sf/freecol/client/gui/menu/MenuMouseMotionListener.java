@@ -26,7 +26,6 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.AbstractCanvasListener;
 import net.sf.freecol.client.gui.Canvas;
 
-
 /**
  * This class is meant to make the autoscrolling work better, so that
  * you don't have to hover the mouse exactly one pixel below the menu
@@ -41,7 +40,6 @@ import net.sf.freecol.client.gui.Canvas;
  */
 public class MenuMouseMotionListener extends AbstractCanvasListener
     implements MouseMotionListener {
-
     /**
      * Trivial constructor.
      *
@@ -51,18 +49,11 @@ public class MenuMouseMotionListener extends AbstractCanvasListener
         super(freeColClient, canvas);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void mouseDragged(MouseEvent e) {
         //Do nothing
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void mouseMoved(MouseEvent e) {
         performAutoScrollIfActive(e);

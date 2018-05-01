@@ -19,21 +19,19 @@
 
 package net.sf.freecol.common.model;
 
-
 /**
  * A wrapper interface for a location that can be on a trade route.
  *
  * @see TradeRoute
  */
 public interface TradeLocation {
-
     /**
      * Get the amount of a given goods type at this trade location.
      *
      * @param goodsType The <code>GoodsType</code> to check.
      * @return The amount of goods present.
      */
-    public int getGoodsCount(GoodsType goodsType);
+    int getGoodsCount(GoodsType goodsType);
 
     /**
      * Gets the amount of a given goods type that can be exported from
@@ -43,7 +41,7 @@ public interface TradeLocation {
      * @param turns The number of turns before the goods is required.
      * @return The amount of goods to export.
      */
-    public int getExportAmount(GoodsType goodsType, int turns);
+    int getExportAmount(GoodsType goodsType, int turns);
 
     /**
      * Gets the amount of a given goods type that can be imported to
@@ -53,5 +51,5 @@ public interface TradeLocation {
      * @param turns The number of turns before the goods will arrive.
      * @return The amount of goods to import.
      */
-    public int getImportAmount(GoodsType goodsType, int turns);
+    int getImportAmount(GoodsType goodsType, int turns);
 }

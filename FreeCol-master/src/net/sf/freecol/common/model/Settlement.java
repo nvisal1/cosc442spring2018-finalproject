@@ -32,14 +32,12 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
 /**
  * The super class of all settlements on the map (that is colonies and
  * indian settlements).
  */
 public abstract class Settlement extends GoodsLocation
     implements Nameable, Ownable {
-
     private static final Logger logger = Logger.getLogger(Settlement.class.getName());
 
     public static final int FOOD_PER_COLONIST = 200;
@@ -61,7 +59,6 @@ public abstract class Settlement extends GoodsLocation
 
     /** Contains the abilities and modifiers of this Settlement. */
     private final FeatureContainer featureContainer = new FeatureContainer();
-
 
     /**
      * Create a new <code>Settlement</code>.
@@ -92,7 +89,6 @@ public abstract class Settlement extends GoodsLocation
     public Settlement(Game game, String id) {
         super(game, id);
     }
-
 
     /**
      * Get the type of this settlement.
@@ -127,9 +123,13 @@ public abstract class Settlement extends GoodsLocation
      * @param newType The new <code>SettlementType</code>.
      */
     private final void changeType(final SettlementType newType) {
-        if (type != null) removeFeatures(type);
+        if (type != null) {
+			removeFeatures(type);
+		}
         setType(newType);
-        if (newType != null) addFeatures(newType);
+        if (newType != null) {
+			addFeatures(newType);
+		}
     }
 
     /**
@@ -168,7 +168,7 @@ public abstract class Settlement extends GoodsLocation
      * @param tile The <code>Tile</code> to add.
      */
     public void addTile(Tile tile) {
-        if (!ownedTiles.contains(tile)) ownedTiles.add(tile);
+        ownedTiles.add(tile);
     }
 
     /**
@@ -312,7 +312,9 @@ public abstract class Settlement extends GoodsLocation
     public int getHighSeasCount() {
         int best = INFINITY;
         for (Tile t : getTile().getSurroundingTiles(1)) {
-            if (t.isLand() || t.getHighSeasCount() < 0) continue;
+            if (t.isLand() || t.getHighSeasCount() < 0) {
+				continue;
+			}
             if (best > t.getHighSeasCount()) {
                 best = t.getHighSeasCount();
             }
@@ -391,8 +393,7 @@ public abstract class Settlement extends GoodsLocation
      * @return True if bombarding is allowed.
      */
     public boolean canBombardEnemyShip() {
-        return (isLandLocked()) ? false
-            : hasAbility(Ability.BOMBARD_SHIPS);
+        return !isLandLocked() && hasAbility(Ability.BOMBARD_SHIPS);
     }
 
     /**
@@ -409,7 +410,9 @@ public abstract class Settlement extends GoodsLocation
         // Get the military roles that are superior to the current role
         List<Role> military = spec.getMilitaryRoles();
         int index = military.indexOf(role);
-        if (index >= 0) military = military.subList(0, index);
+        if (index >= 0) {
+			military = military.subList(0, index);
+		}
 
         // To succeed, there must exist an available role for the unit
         // where the extra equipment for the role is present.
@@ -417,32 +420,21 @@ public abstract class Settlement extends GoodsLocation
             r -> canProvideGoods(unit.getGoodsDifference(r, 1)));
     }
 
+    /** Override FreeColGameObject. */
 
-    // Override FreeColGameObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FreeColGameObject getLinkTarget(Player player) {
         return (player == getOwner()) ? this : getTile();
     }
 
-    // Override FreeColObject
+    /** Override FreeColObject. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FeatureContainer getFeatureContainer() {
         return featureContainer;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * -vis: Visibility changes when the settlement is removed.
-     */
+    /** {@inheritDoc} -vis: Visibility changes when the settlement is removed. */
     @Override
     public void disposeResources() {
         if (owner != null) {
@@ -454,7 +446,6 @@ public abstract class Settlement extends GoodsLocation
         }
         super.disposeResources();
     }
-
 
     // Interface Nameable
 
@@ -480,83 +471,61 @@ public abstract class Settlement extends GoodsLocation
         this.name = newName;
     }
 
+    /** Interface Ownable. */
 
-    // Interface Ownable
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Player getOwner() {
         return owner;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * -vis: Changes visibility.
-     * -til: Changes tile appearance.
-     */
+    /** {@inheritDoc} -vis: Changes visibility. -til: Changes tile appearance. */
     @Override
     public void setOwner(Player player) {
         this.owner = player;
     }
 
-
-    // Interface Location (from GoodsLocation via UnitLocation)
-    // Inherits
-    //   FreeColObject.getId
-    //   UnitLocation.getLocationFor
-    //   GoodsLocation.add
-    //   GoodsLocation.remove
-    //   GoodsLocation.contains
-    //   UnitLocation.canAdd
-    //   UnitLocation.getUnitCount
-    //   UnitLocation.getUnitList
-
     /**
-     * {@inheritDoc}
+     * Interface Location (from GoodsLocation via UnitLocation)
+     * Inherits
+     *   FreeColObject.getId
+     *   UnitLocation.getLocationFor
+     *   GoodsLocation.add
+     *   GoodsLocation.remove
+     *   GoodsLocation.contains
+     *   UnitLocation.canAdd
+     *   UnitLocation.getUnitCount
+     *   UnitLocation.getUnitList
      */
+
     @Override
     public final Tile getTile() {
         return tile;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StringTemplate getLocationLabel() {
         return StringTemplate.name(getName());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final Settlement getSettlement() {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final int getRank() {
         return Location.getRank(getTile());
     }
 
-
-    // Interface UnitLocation
-    // Inherits
-    //   UnitLocation.getSpaceTaken
-    //   UnitLocation.moveToFront
-    //   UnitLocation.clearUnitList
-    //   UnitLocation.getUnitCapacity
-
     /**
-     * {@inheritDoc}
+     * Interface UnitLocation
+     * Inherits
+     *   UnitLocation.getSpaceTaken
+     *   UnitLocation.moveToFront
+     *   UnitLocation.clearUnitList
+     *   UnitLocation.getUnitCapacity
      */
+
     @Override
     public NoAddReason getNoAddReason(Locatable locatable) {
         if (locatable instanceof Unit) {
@@ -573,28 +542,26 @@ public abstract class Settlement extends GoodsLocation
         return super.getNoAddReason(locatable);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int priceGoods(List<AbstractGoods> goods) {
-        return (any(goods,
-                ag -> getGoodsCount(ag.getType()) < ag.getAmount())) ? -1
+        return any(goods,
+                ag -> getGoodsCount(ag.getType()) < ag.getAmount()) ? -1
             : 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equipForRole(Unit unit, Role role, int roleCount) {
-        if (!unit.roleIsAvailable(role)) return false;
+        if (!unit.roleIsAvailable(role)) {
+			return false;
+		}
 
         // Get the change in goods
         List<AbstractGoods> required = unit.getGoodsDifference(role, roleCount);
 
         // Check if the required goods are available
-        if (priceGoods(required) < 0) return false;
+        if (priceGoods(required) < 0) {
+			return false;
+		}
 
         // Make the change
         for (AbstractGoods ag : required) {
@@ -605,14 +572,12 @@ public abstract class Settlement extends GoodsLocation
         return true;
     }
 
-
     // Interface GoodsLocation
     // Inherits
     //   GoodsLocation.addGoods
     //   GoodsLocation.removeGoods
 
     // No need to implement abstract getGoodsCapacity here, yet.
-
 
     // Settlement routines to be implemented by subclasses.
 
@@ -701,19 +666,13 @@ public abstract class Settlement extends GoodsLocation
      */
     public abstract StringTemplate getAlarmLevelLabel(Player player);
 
-    
-
-    // Serialization
+        /** Serialization. */
 
     private static final String NAME_TAG = "name";
     private static final String OWNER_TAG = "owner";
     private static final String SETTLEMENT_TYPE_TAG = "settlementType";
     private static final String TILE_TAG = "tile";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -728,32 +687,31 @@ public abstract class Settlement extends GoodsLocation
         xw.writeAttribute(SETTLEMENT_TYPE_TAG, getType());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         if (xw.validFor(getOwner())) {
-
             // Settlement contents only visible to the owner by default.
             super.writeChildren(xw);
 
             for (Ability ability : getSortedAbilities()) {
-                if (ability.isIndependent()) ability.toXML(xw);
+                if (ability.isIndependent()) {
+					ability.toXML(xw);
+				}
             }
 
             final Turn turn = getGame().getTurn();
             for (Modifier modifier : getSortedModifiers()) {
                 if (modifier.hasIncrement()
-                    && modifier.isOutOfDate(turn)) continue;
-                if (modifier.isIndependent()) modifier.toXML(xw);
+                    && modifier.isOutOfDate(turn)) {
+					continue;
+				}
+                if (modifier.isIndependent()) {
+					modifier.toXML(xw);
+				}
             }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -765,7 +723,9 @@ public abstract class Settlement extends GoodsLocation
         Player oldOwner = owner;
         owner = xr.findFreeColGameObject(game, OWNER_TAG,
                                          Player.class, (Player)null, true);
-        if (xr.shouldIntern()) game.checkOwners(this, oldOwner);
+        if (xr.shouldIntern()) {
+			game.checkOwners(this, oldOwner);
+		}
 
         tile = xr.findFreeColGameObject(game, TILE_TAG,
                                         Tile.class, (Tile)null, true);
@@ -774,9 +734,6 @@ public abstract class Settlement extends GoodsLocation
         type = owner.getNationType().getSettlementType(newType);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -788,9 +745,6 @@ public abstract class Settlement extends GoodsLocation
         addFeatures(type);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -798,12 +752,14 @@ public abstract class Settlement extends GoodsLocation
 
         if (Ability.getXMLElementTagName().equals(tag)) {
             Ability ability = new Ability(xr, spec);
-            if (ability.isIndependent()) addAbility(ability);
-
+            if (ability.isIndependent()) {
+				addAbility(ability);
+			}
         } else if (Modifier.getXMLElementTagName().equals(tag)) {
             Modifier modifier = new Modifier(xr, spec);
-            if (modifier.isIndependent()) addModifier(modifier);
-
+            if (modifier.isIndependent()) {
+				addModifier(modifier);
+			}
         } else {
             super.readChild(xr);
         }

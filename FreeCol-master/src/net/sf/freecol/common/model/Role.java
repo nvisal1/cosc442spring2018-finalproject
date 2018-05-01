@@ -33,15 +33,10 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
-/**
- * The role of a unit.
- */
+/** The role of a unit. */
 public class Role extends BuildableType {
-
     /** Container for valid role changes. */
     public static class RoleChange {
-
         public final String from;
         public final String capture;
 
@@ -57,12 +52,9 @@ public class Role extends BuildableType {
         public Role getCapture(Specification spec) {
             return spec.getRole(capture);
         }
-    };
+    }
 
-    /**
-     * A comparator to order roles by descending total military
-     * effectiveness.
-     */
+    /** A comparator to order roles by descending total military effectiveness. */
     public static final Comparator<Role> militaryComparator
         = Comparator.comparingDouble((Role r) ->
             r.getOffence() + r.getDefence()).reversed();
@@ -89,7 +81,6 @@ public class Role extends BuildableType {
     /** The role changes by capture available for this role. */
     private List<RoleChange> roleChanges = null;
 
-
     /**
      * Creates a new <code>Role</code> instance.
      *
@@ -99,7 +90,6 @@ public class Role extends BuildableType {
     public Role(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Is this the default role?
@@ -126,7 +116,7 @@ public class Role extends BuildableType {
      * @return The role suffix.
      */
     public String getRoleSuffix() {
-        return Role.getRoleSuffix(getId());
+        return getRoleSuffix(getId());
     }
 
     /**
@@ -253,7 +243,9 @@ public class Role extends BuildableType {
      * @param capture The identifier for the role to capture.
      */
     public void addRoleChange(String from, String capture) {
-        if (roleChanges == null) roleChanges = new ArrayList<>();
+        if (roleChanges == null) {
+			roleChanges = new ArrayList<>();
+		}
         roleChanges.add(new RoleChange(from, capture));
     }
 
@@ -311,15 +303,13 @@ public class Role extends BuildableType {
      * @return True if the roles are compatible.
      */
     public static boolean isCompatibleWith(Role role1, Role role2) {
-        if (role1 == null) {
-            return role2 == null;
-        } else if (role2 == null) {
-            return false;
-        } else {
-            return role1 == role2
+        if (role1 != null) {
+            return role2 != null && (role1 == role2
                 || role1.getDowngrade() == role2
-                || role2.getDowngrade() == role1;
-        }
+                || role2.getDowngrade() == role1);
+        } else {
+			return role2 == null;
+		}
     }
 
     /**
@@ -339,7 +329,7 @@ public class Role extends BuildableType {
     public static List<AbstractGoods> getGoodsDifference(Role from,
         int fromCount, Role to, int toCount) {
         List<AbstractGoods> result = new ArrayList<>();
-        if (from != to && !(from == null && to.isDefaultRole())) {
+        if (from != to && (from != null || !to.isDefaultRole())) {
             List<AbstractGoods> fromGoods = (from == null)
                 ? new ArrayList<AbstractGoods>()
                 : from.getRequiredGoods(fromCount);
@@ -400,29 +390,26 @@ public class Role extends BuildableType {
         return sb.toString();
     }
 
-        
-    // Override FreeColObject
+            /** Override FreeColObject. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int compareTo(FreeColObject other) {
         int cmp = 0;
         if (other instanceof Role) {
             Role role = (Role)other;
-            cmp = role.getAbilityIndex() - this.getAbilityIndex();
+            cmp = role.getAbilityIndex() - getAbilityIndex();
             if (cmp == 0) {
                 cmp = role.getRequiredGoods().size()
-                    - this.getRequiredGoods().size();
+                    - getRequiredGoods().size();
             }
         }
-        if (cmp == 0) cmp = super.compareTo(other);
+        if (cmp == 0) {
+			cmp = super.compareTo(other);
+		}
         return cmp;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String CAPTURE_TAG = "capture";
     private static final String DOWNGRADE_TAG = "downgrade";
@@ -430,15 +417,11 @@ public class Role extends BuildableType {
     private static final String EXPERT_UNIT_TAG = "expert-unit";
     private static final String MAXIMUM_COUNT_TAG = "maximum-count";
     private static final String ROLE_CHANGE_TAG = "role-change";
-    // @compat 0.11.3
+    /** @compat 0.11.3 */
     private static final String OLD_EXPERT_UNIT_TAG = "expertUnit";
     private static final String OLD_MAXIMUM_COUNT_TAG = "maximumCount";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -456,9 +439,6 @@ public class Role extends BuildableType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -474,9 +454,6 @@ public class Role extends BuildableType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -490,22 +467,19 @@ public class Role extends BuildableType {
         if (xr.hasAttribute(OLD_EXPERT_UNIT_TAG)) {
             expertUnit = xr.getType(spec, OLD_EXPERT_UNIT_TAG,
                                     UnitType.class, (UnitType)null);
-        } else
-        // end @compat 0.11.3
-            expertUnit = xr.getType(spec, EXPERT_UNIT_TAG,
+        } else {
+			expertUnit = xr.getType(spec, EXPERT_UNIT_TAG,
                                     UnitType.class, (UnitType)null);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MAXIMUM_COUNT_TAG)) {
             maximumCount = xr.getAttribute(OLD_MAXIMUM_COUNT_TAG, 1);
-        } else
-        // end @compat 0.11.3
-            maximumCount = xr.getAttribute(MAXIMUM_COUNT_TAG, 1);
+        } else {
+			maximumCount = xr.getAttribute(MAXIMUM_COUNT_TAG, 1);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -516,9 +490,6 @@ public class Role extends BuildableType {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
@@ -528,15 +499,11 @@ public class Role extends BuildableType {
             String capture = xr.getAttribute(CAPTURE_TAG, (String)null);
             addRoleChange(from, capture);
             xr.closeTag(ROLE_CHANGE_TAG);
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

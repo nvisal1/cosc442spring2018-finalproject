@@ -24,14 +24,9 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.FreeCol;
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for displaying an about box with version numbers.
- */
+/** An action for displaying an about box with version numbers. */
 public class AboutAction extends FreeColAction {
-
     public static final String id = "aboutAction";
-
 
     /**
      * Creates a new <code>AboutAction</code>.
@@ -44,12 +39,8 @@ public class AboutAction extends FreeColAction {
         putValue(NAME, "FreeCol " + FreeCol.getRevision());
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showAboutPanel();

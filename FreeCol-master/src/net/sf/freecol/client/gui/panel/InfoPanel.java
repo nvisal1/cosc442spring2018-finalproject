@@ -59,7 +59,6 @@ import net.sf.freecol.common.resources.ResourceManager;
 
 import static net.sf.freecol.common.util.StringUtils.splitText;
 
-
 /**
  * The InfoPanel is really a wrapper for a collection of useful panels
  * that share the lower right corner.
@@ -73,17 +72,14 @@ import static net.sf.freecol.common.util.StringUtils.splitText;
  * - UnitInfoPanel: shows the current active unit
  */
 public final class InfoPanel extends FreeColPanel {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(InfoPanel.class.getName());
 
-    private static final int SLACK = 5; // Small gap
+    /** Small gap. */
+    private static final int SLACK = 5;
 
-    /**
-     * Panel for ending the turn.
-     */
+    /** Panel for ending the turn. */
     public class EndTurnPanel extends MigPanel {
-
         public EndTurnPanel() {
             super(new MigLayout("wrap 1, center", "[center]", ""));
 
@@ -108,11 +104,8 @@ public final class InfoPanel extends FreeColPanel {
         }
     }
 
-    /**
-     * Panel for displaying <code>Tile</code>-information.
-     */
+    /** Panel for displaying <code>Tile</code>-information. */
     public class TileInfoPanel extends MigPanel {
-
         private static final int PRODUCTION = 4;
         
         private Tile tile;
@@ -120,17 +113,13 @@ public final class InfoPanel extends FreeColPanel {
         // TODO: Find a way of removing the need for an extremely tiny font.
         //private final Font font = new JLabel().getFont().deriveFont(8f);
 
-
-        /**
-         * Create a <code>TileInfoPanel</code>.
-         */
+        /** Create a <code>TileInfoPanel</code>. */
         public TileInfoPanel() {
             super(new MigLayout("fill, wrap " + (PRODUCTION+1) + ", gap 1 1"));
 
             setSize(260, 130);
             setOpaque(false);
         }
-
 
         /**
          * Updates this <code>InfoPanel</code>.
@@ -219,26 +208,19 @@ public final class InfoPanel extends FreeColPanel {
         }
     }
 
-    /**
-     * Panel for displaying <code>Unit</code>-information.
-     */
+    /** Panel for displaying <code>Unit</code>-information. */
     public class UnitInfoPanel extends JPanel
         implements PropertyChangeListener {
-
         /** The unit to display. */
         private Unit unit;
 
-
-        /**
-         * Create a new unit information panel.
-         */
+        /** Create a new unit information panel. */
         public UnitInfoPanel() {
             super(new MigLayout("wrap 5, fill, gap 0 0", "", ""));
 
             setSize(260, 130);
             setOpaque(false);
         }
-
 
         /**
          * Does this panel have a unit to display?
@@ -259,12 +241,16 @@ public final class InfoPanel extends FreeColPanel {
                 if (this.unit != null) {
                     this.unit.removePropertyChangeListener(this);
                     GoodsContainer gc = this.unit.getGoodsContainer();
-                    if (gc != null) gc.removePropertyChangeListener(this);
+                    if (gc != null) {
+						gc.removePropertyChangeListener(this);
+					}
                 }
                 if (unit != null) {
                     unit.addPropertyChangeListener(this);
                     GoodsContainer gc = unit.getGoodsContainer();
-                    if (gc != null) gc.addPropertyChangeListener(this);
+                    if (gc != null) {
+						gc.addPropertyChangeListener(this);
+					}
                 }
                 logger.info("Switching UnitInfoPanel from " +
                     (this.unit == null ? "null" :
@@ -279,9 +265,7 @@ public final class InfoPanel extends FreeColPanel {
             update();
         }
 
-        /**
-         * Unconditionally update this panel.
-         */
+        /** Unconditionally update this panel. */
         public void update() {
             removeAll();
 
@@ -303,7 +287,7 @@ public final class InfoPanel extends FreeColPanel {
                     add(textLabel, "span 5");
                 }
 
-                text = (unit.isInEurope())
+                text = unit.isInEurope()
                     ? Messages.getName(unit.getOwner().getEurope())
                     : Messages.message("infoPanel.moves")
                         + " " + unit.getMovesAsString();
@@ -344,19 +328,15 @@ public final class InfoPanel extends FreeColPanel {
             revalidate();
         }
 
+        /** Interface PropertyChangeListener. */
 
-        // Interface PropertyChangeListener
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void propertyChange(PropertyChangeEvent event) {
             update();
         }
     }
 
-    private static enum InfoPanelMode {
+    private enum InfoPanelMode {
         NONE, END, MAP, TILE, UNIT;
     }
 
@@ -375,7 +355,6 @@ public final class InfoPanel extends FreeColPanel {
     private final UnitInfoPanel unitInfoPanel;
 
     private final Image skin;
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -401,7 +380,7 @@ public final class InfoPanel extends FreeColPanel {
         this.mapEditorPanel.setOpaque(false);
         this.tileInfoPanel = new TileInfoPanel();
         this.unitInfoPanel = new UnitInfoPanel();
-        this.skin = (useSkin) ? ResourceManager.getImage("image.skin.InfoPanel")
+        this.skin = useSkin ? ResourceManager.getImage("image.skin.InfoPanel")
             : null;
 
         setLayout(null);
@@ -433,9 +412,7 @@ public final class InfoPanel extends FreeColPanel {
             });
     }
 
-    /**
-     * Adds a panel to show information
-     */
+    /** Adds a panel to show information. */
     private void add(JPanel panel, int internalTop, int internalHeight) {
         panel.setVisible(false);
         panel.setLocation((getWidth() - panel.getWidth()) / 2, internalTop
@@ -449,11 +426,11 @@ public final class InfoPanel extends FreeColPanel {
      * @return The panel mode.
      */
     private InfoPanelMode getMode() {
-        return (getFreeColClient().isMapEditor())
+        return getFreeColClient().isMapEditor()
             ? InfoPanelMode.MAP
             : (getGUI().getViewMode() == GUI.VIEW_TERRAIN_MODE)
             ? InfoPanelMode.TILE
-            : (unitInfoPanel.hasUnit())
+            : unitInfoPanel.hasUnit()
             ? InfoPanelMode.UNIT
             : (getFreeColClient().getMyPlayer() == null)
             ? InfoPanelMode.NONE
@@ -551,15 +528,13 @@ public final class InfoPanel extends FreeColPanel {
         }
     }
 
+    /** Override JComponent. */
 
-    // Override JComponent
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void paintComponent(Graphics graphics) {
-        if (this.skin != null) graphics.drawImage(this.skin, 0, 0, null);
+        if (this.skin != null) {
+			graphics.drawImage(this.skin, 0, 0, null);
+		}
         super.paintComponent(graphics);
     }
 }

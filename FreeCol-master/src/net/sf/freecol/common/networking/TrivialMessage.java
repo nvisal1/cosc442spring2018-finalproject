@@ -17,24 +17,17 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.networking;
 
 import org.w3c.dom.Element;
 
-
-/**
- * A trivial message.  That is, it contains only simple string
- * attributes.
- */
+/** A trivial message. That is, it contains only simple string attributes. */
 class TrivialMessage extends DOMMessage {
-
     /** The tag for the trivial message. */
     private final String tag;
 
     /** An array of (attribute,value) pairs. */
     private final String[] attributes;
-
 
     public TrivialMessage(String tag, String... attributes) {
         super(tag);
@@ -42,7 +35,6 @@ class TrivialMessage extends DOMMessage {
         this.tag = tag;
         this.attributes = attributes;
     }
-
 
     @Override
     public Element toXMLElement() {

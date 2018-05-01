@@ -33,12 +33,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.Player;
 
-
-/**
- * The panel that allows a choice of goods amount.
- */
+/** The panel that allows a choice of goods amount. */
 public final class SelectAmountDialog extends FreeColInputDialog<Integer> {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(SelectAmountDialog.class.getName());
 
@@ -49,7 +45,6 @@ public final class SelectAmountDialog extends FreeColInputDialog<Integer> {
 
     /** The combo box to input the amount through. */
     private final JComboBox<Integer> comboBox;
-
 
     /**
      * The constructor to use.
@@ -79,10 +74,14 @@ public final class SelectAmountDialog extends FreeColInputDialog<Integer> {
         List<Integer> values = new ArrayList<>();
         for (int index = 0; index < amounts.length; index++) {
             if (amounts[index] < available) {
-                if (amounts[index] == defaultAmount) defaultIndex = index;
+                if (amounts[index] == defaultAmount) {
+					defaultIndex = index;
+				}
                 values.add(amounts[index]);
             } else {
-                if (available == defaultAmount) defaultIndex = index;
+                if (available == defaultAmount) {
+					defaultIndex = index;
+				}
                 values.add(available);
                 break;
             }
@@ -98,7 +97,9 @@ public final class SelectAmountDialog extends FreeColInputDialog<Integer> {
         }
         this.comboBox = new JComboBox<>(values.toArray(new Integer[0]));
         this.comboBox.setEditable(true);
-        if (defaultIndex >= 0) this.comboBox.setSelectedIndex(defaultIndex);
+        if (defaultIndex >= 0) {
+			this.comboBox.setSelectedIndex(defaultIndex);
+		}
 
         MigPanel panel = new MigPanel(new MigLayout("wrap 1", "", ""));
         panel.add(question);
@@ -108,21 +109,14 @@ public final class SelectAmountDialog extends FreeColInputDialog<Integer> {
         initializeInputDialog(frame, true, panel, null, "ok", "cancel");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Integer getInputValue() {
         Object value = this.comboBox.getSelectedItem();
         return (value instanceof Integer) ? (Integer)value : -1;
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void requestFocus() {
         this.comboBox.requestFocus();

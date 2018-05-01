@@ -36,7 +36,6 @@ import net.sf.freecol.common.util.LogBuilder;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.Utils;
 
-
 /**
  * The <code>WorkLocation</code> is a place in a {@link Colony} where
  * <code>Units</code> can work.  The unit capacity of a WorkLocation
@@ -50,7 +49,6 @@ import net.sf.freecol.common.util.Utils;
  */
 public abstract class WorkLocation extends UnitLocation
     implements Ownable {
-
     private static final Logger logger = Logger.getLogger(WorkLocation.class.getName());
 
     public static final List<AbstractGoods> EMPTY_LIST
@@ -58,7 +56,6 @@ public abstract class WorkLocation extends UnitLocation
 
     /** Container class to suggest a better use of a unit. */
     public static class Suggestion {
-
         public static final Comparator<Suggestion> descendingAmountComparator
             = new Comparator<Suggestion>() {
                     @Override
@@ -80,7 +77,6 @@ public abstract class WorkLocation extends UnitLocation
         public final UnitType newType;
         public final GoodsType goodsType;
         public final int amount;
-
 
         /**
          * Suggest that work done by (optional) <code>oldType</code>
@@ -105,14 +101,13 @@ public abstract class WorkLocation extends UnitLocation
             this.goodsType = goodsType;
             this.amount = amount;
         }
-    };
+    }
 
     /** The colony that contains this work location. */
     protected Colony colony;
 
     /** The production type of this WorkLocation. */
     private ProductionType productionType;
-
 
     /**
      * Constructor for ServerWorkLocation.
@@ -135,7 +130,6 @@ public abstract class WorkLocation extends UnitLocation
     public WorkLocation(Game game, String id) {
         super(game, id);
     }
-
 
     /**
      * Gets the owning settlement for this work location.
@@ -208,7 +202,9 @@ public abstract class WorkLocation extends UnitLocation
         int amount = -1;
         for (ProductionType pt : getAvailableProductionTypes(unattended)) {
             for (AbstractGoods output : pt.getOutputs()) {
-                if (workType != null && workType != output.getType()) continue;
+                if (workType != null && workType != output.getType()) {
+					continue;
+				}
                 if (amount < output.getAmount()) {
                     amount = output.getAmount();
                     best = pt;
@@ -229,7 +225,7 @@ public abstract class WorkLocation extends UnitLocation
      *     null if none found.
      */
     public Occupation getOccupation(Unit unit, boolean userMode) {
-        LogBuilder lb = new LogBuilder((colony.getOccupationTrace()) ? 64 : 0);
+        LogBuilder lb = new LogBuilder(colony.getOccupationTrace() ? 64 : 0);
         lb.add(colony.getName(), "/", this, ".getOccupation(", unit, ")");
 
         Occupation best = new Occupation(null, null, null);
@@ -244,7 +240,9 @@ public abstract class WorkLocation extends UnitLocation
                 break;
             }
         }
-        if (best.workType == null) lb.add("\n  FAILED");
+        if (best.workType == null) {
+			lb.add("\n  FAILED");
+		}
         lb.log(logger, Level.WARNING);
         return (best.workType == null) ? null : best;
     }
@@ -263,7 +261,7 @@ public abstract class WorkLocation extends UnitLocation
             unitType = spec.getDefaultUnitType(getOwner().getNationType());
         }
         
-        LogBuilder lb = new LogBuilder((colony.getOccupationTrace()) ? 64 : 0);
+        LogBuilder lb = new LogBuilder(colony.getOccupationTrace() ? 64 : 0);
         lb.add(colony.getName(), "/", this, ".getOccupation(",
                unitType.getSuffix(), ")");
 
@@ -321,7 +319,9 @@ public abstract class WorkLocation extends UnitLocation
         // Check first if there is space.
         if (((unit == null || !contains(unit)) && isFull())
             || productionType == null
-            || goodsType == null) return null;
+            || goodsType == null) {
+			return null;
+		}
 
         final Specification spec = getSpecification();
         final Player owner = getOwner();
@@ -331,7 +331,9 @@ public abstract class WorkLocation extends UnitLocation
         // would actually improve production.
         final UnitType better = (expert != null) ? expert
             : spec.getDefaultUnitType(owner);
-        if (unit != null && better == unit.getType()) return null;
+        if (unit != null && better == unit.getType()) {
+			return null;
+		}
         int delta = getPotentialProduction(goodsType, better);
         if (unit != null) {
             delta -= getPotentialProduction(goodsType, unit.getType());
@@ -341,15 +343,12 @@ public abstract class WorkLocation extends UnitLocation
             // TODO: should really consider in.getAmount
             delta = Math.min(delta, colony.getNetProductionOf(in.getType()));
         }
-        if (delta <= 0) return null;
-
-        // Is the production actually a good idea?  Not if we are independent
-        // and have maximized liberty, or for immigration.
-        if (owner.getPlayerType() == Player.PlayerType.INDEPENDENT
+        if (delta <= 0 || (owner.getPlayerType() == Player.PlayerType.INDEPENDENT
             && ((goodsType.isLibertyType() && colony.getSoL() >= 100)
-                || goodsType.isImmigrationType())) 
-            return null;
-        
+                || goodsType.isImmigrationType()))) {
+			return null;
+		}
+
         // FIXME: OO
         boolean ok = false;
         if (this instanceof ColonyTile) {
@@ -366,16 +365,14 @@ public abstract class WorkLocation extends UnitLocation
                 // Assume work is worth doing if a unit is already
                 // there, or if the building has been upgraded, or if
                 // the goods are required for the current building job.
-                if (bu.getLevel() > 1 || unit != null) {
-                    ok = true;
-                } else if (colony.getTotalProductionOf(goodsType) == 0
+                if (bu.getLevel() > 1 || unit != null || (colony.getTotalProductionOf(goodsType) == 0
                     && (bt = colony.getCurrentlyBuilding()) != null
-                    && AbstractGoods.containsType(goodsType, bt.getRequiredGoods())) {
+                    && AbstractGoods.containsType(goodsType, bt.getRequiredGoods()))) {
                     ok = true;
                 }
             }
         }
-        return (!ok) ? null
+        return !ok ? null
             : new Suggestion(this, (unit == null) ? null : unit.getType(),
                              better, goodsType, delta);
     }
@@ -388,18 +385,24 @@ public abstract class WorkLocation extends UnitLocation
      */
     public java.util.Map<Unit, Suggestion> getSuggestions() {
         java.util.Map<Unit, Suggestion> result = new HashMap<>();
-        if (!canBeWorked() || canTeach()) return result;
+        if (!canBeWorked() || canTeach()) {
+			return result;
+		}
         
         Occupation occ = getOccupation(null);
         GoodsType work;
         Suggestion sug;
         // Check if the existing units can be improved.
         for (Unit u : getUnitList()) {
-            if (u.getTeacher() != null) continue; // Students assumed temporary
-            if ((work = u.getWorkType()) == null) {
-                if (occ != null) work = occ.workType;
-            }
-            if ((sug = getSuggestion(u, getProductionType(), work)) != null) {
+            if (u.getTeacher() != null) {
+				continue;
+			} // Students assumed temporary
+            work = u.getWorkType();
+			if (work == null && occ != null) {
+				work = occ.workType;
+			}
+            sug = getSuggestion(u, getProductionType(), work);
+			if (sug != null) {
                 result.put(u, sug);
             }
         }
@@ -525,11 +528,15 @@ public abstract class WorkLocation extends UnitLocation
      */
     public int getMaximumProductionOf(GoodsType goodsType) {
         ProductionInfo info = getProductionInfo();
-        if (info == null) return 0;
+        if (info == null) {
+			return 0;
+		}
         List<AbstractGoods> production = info.getMaximumProduction();
         if (production != null) {
             AbstractGoods ag = AbstractGoods.findByType(goodsType, production);
-            if (ag != null) return ag.getAmount();
+            if (ag != null) {
+				return ag.getAmount();
+			}
         }
         return getTotalProductionOf(goodsType);
     }
@@ -572,16 +579,22 @@ public abstract class WorkLocation extends UnitLocation
      * @return The maximum return from this unit.
      */
     public int getUnitProduction(Unit unit, GoodsType goodsType) {
-        if (unit == null || unit.getWorkType() != goodsType) return 0;
+        if (unit == null || unit.getWorkType() != goodsType) {
+			return 0;
+		}
         final UnitType unitType = unit.getType();
         final Turn turn = getGame().getTurn();
         int bestAmount = 0;
         for (AbstractGoods output : getOutputs()) {
-            if (output.getType() != goodsType) continue;
+            if (output.getType() != goodsType) {
+				continue;
+			}
             int amount = (int)applyModifiers(getBaseProduction(getProductionType(),
                     goodsType, unitType),
                 turn, getProductionModifiers(goodsType, unitType));
-            if (bestAmount < amount) bestAmount = amount;
+            if (bestAmount < amount) {
+				bestAmount = amount;
+			}
         }
         return bestAmount;
     }
@@ -594,8 +607,10 @@ public abstract class WorkLocation extends UnitLocation
      * @return The production of the given type of goods.
      */
     public int getProductionOf(Unit unit, GoodsType goodsType) {
-        if (unit == null) throw new IllegalArgumentException("Null unit.");
-        return (!produces(goodsType)) ? 0
+        if (unit == null) {
+			throw new IllegalArgumentException("Null unit.");
+		}
+        return !produces(goodsType) ? 0
             : Math.max(0, getPotentialProduction(goodsType, unit.getType()));
     }
 
@@ -624,14 +639,18 @@ public abstract class WorkLocation extends UnitLocation
      */
     public int getPotentialProduction(GoodsType goodsType,
                                       UnitType unitType) {
-        if (!canProduce(goodsType, unitType)) return 0;
+        if (!canProduce(goodsType, unitType)) {
+			return 0;
+		}
 
         if (unitType != null) {
             switch (getNoWorkReason()) {
             case NONE: case ALREADY_PRESENT: case CLAIM_REQUIRED:
                 break;
             case CAPACITY_EXCEEDED:
-                if (getUnitCapacity() > 0) break; // Could work after reorg!
+                if (getUnitCapacity() > 0) {
+					break;
+				} // Could work after reorg!
                 // Fall through
             case WRONG_TYPE: case OWNED_BY_ENEMY: case ANOTHER_COLONY:
             case COLONY_CENTER: case MISSING_ABILITY: case MISSING_SKILL:
@@ -650,37 +669,29 @@ public abstract class WorkLocation extends UnitLocation
         return (amount < 0) ? 0 : amount;
     }
 
-
-    // Interface Location
-    // Inherits:
-    //   FreeColObject.getId
-    //   UnitLocation.getLocationLabel
-    //   UnitLocation.contains
-    //   UnitLocation.canAdd
-    //   UnitLocation.getUnitCount
-    //   final UnitLocation.getUnitIterator
-    //   UnitLocation.getGoodsContainer
-
     /**
-     * {@inheritDoc}
+     * Interface Location
+     * Inherits:
+     *   FreeColObject.getId
+     *   UnitLocation.getLocationLabel
+     *   UnitLocation.contains
+     *   UnitLocation.canAdd
+     *   UnitLocation.getUnitCount
+     *   final UnitLocation.getUnitIterator
+     *   UnitLocation.getGoodsContainer
      */
+
     @Override
     public StringTemplate getLocationLabelFor(Player player) {
         return (getOwner() == player) ? getLocationLabel()
             : getColony().getLocationLabelFor(player);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final Tile getTile() {
         return colony.getTile();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean add(final Locatable locatable) {
         NoAddReason reason = getNoAddReason(locatable);
@@ -694,7 +705,9 @@ public abstract class WorkLocation extends UnitLocation
                 + " to " + this + " because " + reason);
         }
         Unit unit = (Unit)locatable;
-        if (!super.add(unit)) return false;
+        if (!super.add(unit)) {
+			return false;
+		}
 
         unit.setState(Unit.UnitState.IN_COLONY);
         unit.setMovesLeft(0);
@@ -706,63 +719,57 @@ public abstract class WorkLocation extends UnitLocation
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean remove(final Locatable locatable) {
         if (!(locatable instanceof Unit)) {
             throw new IllegalStateException("Not a unit: " + locatable);
         }
         Unit unit = (Unit)locatable;
-        if (!contains(unit)) return true;
-        if (!super.remove(unit)) return false;
+        if (!contains(unit)) {
+			return true;
+		}
+        if (!super.remove(unit)) {
+			return false;
+		}
 
         unit.setState(Unit.UnitState.ACTIVE);
         unit.setMovesLeft(0);
 
         // Switch to unattended production if possible.
-        if (isEmpty()) updateProductionType();
+        if (isEmpty()) {
+			updateProductionType();
+		}
 
         getColony().invalidateCache();
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final Settlement getSettlement() {
         return colony;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final int getRank() {
         return Location.getRank(getTile());
     }
 
-    
-    // Interface UnitLocation
-    // Inherits:
-    //   UnitLocation.getSpaceTaken
-    //   UnitLocation.moveToFront
-    //   UnitLocation.clearUnitList
-    //   UnitLocation.getUnitCapacity
-    //   UnitLocation.equipForRole
-
-    /**
-     * {@inheritDoc}
+        /**
+         * Interface UnitLocation
+     * Inherits:
+     *   UnitLocation.getSpaceTaken
+     *   UnitLocation.moveToFront
+     *   UnitLocation.clearUnitList
+     *   UnitLocation.getUnitCapacity
+     *   UnitLocation.equipForRole
      */
+
     @Override
     public NoAddReason getNoAddReason(Locatable locatable) {
         return (locatable instanceof Unit && ((Unit)locatable).isPerson())
             ? super.getNoAddReason(locatable)
             : NoAddReason.WRONG_TYPE;
     }
-
 
     // Abstract and overrideable routines to be implemented by
     // WorkLocation subclasses.
@@ -878,7 +885,6 @@ public abstract class WorkLocation extends UnitLocation
         return StringTemplate.name("");
     }
 
-
     // Interface Ownable
 
     /**
@@ -907,15 +913,10 @@ public abstract class WorkLocation extends UnitLocation
         throw new UnsupportedOperationException();
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String COLONY_TAG = "colony";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -923,19 +924,15 @@ public abstract class WorkLocation extends UnitLocation
         xw.writeAttribute(COLONY_TAG, colony);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
-        if (productionType != null) productionType.toXML(xw);
+        if (productionType != null) {
+			productionType.toXML(xw);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -944,20 +941,13 @@ public abstract class WorkLocation extends UnitLocation
                                           Colony.class, (Colony)null, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
-
         super.readChildren(xr);
 
         updateProductionType();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -965,7 +955,6 @@ public abstract class WorkLocation extends UnitLocation
 
         if (ProductionType.getXMLElementTagName().equals(tag)) {
             productionType = new ProductionType(xr, spec);
-
         } else {
             super.readChild(xr);
         }

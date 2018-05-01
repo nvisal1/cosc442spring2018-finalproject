@@ -35,19 +35,12 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.StringTemplate;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * Contains information on buildable types.
- */
+/** Contains information on buildable types. */
 public abstract class BuildableType extends FreeColGameObjectType {
-
     /** The required population for an ordinary buildable. */
     private static final int DEFAULT_REQUIRED_POPULATION = 1;
 
-    /**
-     * The minimum population that a Colony needs in order to build
-     * this type.
-     */
+    /** The minimum population that a Colony needs in order to build this type. */
     private int requiredPopulation = DEFAULT_REQUIRED_POPULATION;
 
     /** Stores the abilities required by this Type. */
@@ -59,7 +52,6 @@ public abstract class BuildableType extends FreeColGameObjectType {
     /** Limits on the production of this type. */
     private List<Limit> limits = null;
 
-
     /**
      * Creates a new buildable type.
      *
@@ -69,7 +61,6 @@ public abstract class BuildableType extends FreeColGameObjectType {
     public BuildableType(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Get the population required to build this buildable type.
@@ -101,9 +92,7 @@ public abstract class BuildableType extends FreeColGameObjectType {
     }
 
     public boolean requiresAbility(String key) {
-        return (requiredAbilities == null) ? false
-            : (!requiredAbilities.containsKey(key)) ? false
-            : requiredAbilities.get(key);
+        return (requiredAbilities == null || requiredAbilities.containsKey(key)) && requiredAbilities.get(key);
     }
 
     /**
@@ -135,9 +124,8 @@ public abstract class BuildableType extends FreeColGameObjectType {
      * @return True if the buildable is available.
      */
     public boolean isAvailableTo(FreeColObject... fco) {
-        return (requiredAbilities == null) ? true
-            : all(requiredAbilities.entrySet(),
-                e -> e.getValue() == any(fco, o -> o.hasAbility(e.getKey())));
+        return requiredAbilities == null || all(requiredAbilities.entrySet(),
+		    e -> e.getValue() == any(fco, o -> o.hasAbility(e.getKey())));
     }
 
     /**
@@ -149,7 +137,9 @@ public abstract class BuildableType extends FreeColGameObjectType {
      * @return A deep copy of the list of required goods.
      */
     public List<AbstractGoods> getRequiredGoods() {
-        if (requiredGoods == null) return Collections.<AbstractGoods>emptyList();
+        if (requiredGoods == null) {
+			return Collections.<AbstractGoods>emptyList();
+		}
         List<AbstractGoods> result = new ArrayList<>();
         for (AbstractGoods ag : requiredGoods) {
             result.add(new AbstractGoods(ag.getType(), ag.getAmount()));
@@ -174,7 +164,9 @@ public abstract class BuildableType extends FreeColGameObjectType {
      * @param ag The required <code>AbstractGoods</code> to add.
      */
     private void addRequiredGoods(AbstractGoods ag) {
-        if (requiredGoods == null) requiredGoods = new ArrayList<>();
+        if (requiredGoods == null) {
+			requiredGoods = new ArrayList<>();
+		}
         requiredGoods.add(ag);
     }
 
@@ -212,7 +204,9 @@ public abstract class BuildableType extends FreeColGameObjectType {
      * @param limit The <code>Limit</code> to add.
      */
     private void addLimit(Limit limit) {
-        if (limits == null) limits = new ArrayList<>();
+        if (limits == null) {
+			limits = new ArrayList<>();
+		}
         limits.add(limit);
     }
 
@@ -226,18 +220,13 @@ public abstract class BuildableType extends FreeColGameObjectType {
             .addNamed("%buildable%", this);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String REQUIRED_ABILITY_TAG = "required-ability";
     private static final String REQUIRED_GOODS_TAG = "required-goods";
-    // Subclasses need to check this.
+    /** Subclasses need to check this. */
     public static final String REQUIRED_POPULATION_TAG = "required-population";
 
-
-   /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -247,15 +236,12 @@ public abstract class BuildableType extends FreeColGameObjectType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
         if (requiredAbilities != null) {
-            for (Map.Entry<String, Boolean> entry
+            for (Entry<String, Boolean> entry
                      : requiredAbilities.entrySet()) {
                 xw.writeStartElement(REQUIRED_ABILITY_TAG);
 
@@ -277,12 +263,11 @@ public abstract class BuildableType extends FreeColGameObjectType {
             xw.writeEndElement();
         }
 
-        for (Limit limit : getLimits()) limit.toXML(xw);
+        for (Limit limit : getLimits()) {
+			limit.toXML(xw);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -291,9 +276,6 @@ public abstract class BuildableType extends FreeColGameObjectType {
                                              DEFAULT_REQUIRED_POPULATION);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         if (xr.shouldClearContainers()) {
@@ -305,9 +287,6 @@ public abstract class BuildableType extends FreeColGameObjectType {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -318,21 +297,18 @@ public abstract class BuildableType extends FreeColGameObjectType {
             addRequiredAbility(id, xr.getAttribute(VALUE_TAG, true));
             spec.addAbility(id);
             xr.closeTag(REQUIRED_ABILITY_TAG);
-
         } else if (REQUIRED_GOODS_TAG.equals(tag)) {
             GoodsType type = xr.getType(spec, ID_ATTRIBUTE_TAG,
                                         GoodsType.class, (GoodsType)null);
             int amount = xr.getAttribute(VALUE_TAG, 0);
             addRequiredGoods(new AbstractGoods(type, amount));
             xr.closeTag(REQUIRED_GOODS_TAG);
-
         } else if (Limit.getXMLElementTagName().equals(tag)) {
             Limit limit = new Limit(xr, spec);
             if (limit.getLeftHandSide().getType() == null) {
                 limit.getLeftHandSide().setType(getId());
             }
             addLimit(limit);
-
         } else {
             super.readChild(xr);
         }

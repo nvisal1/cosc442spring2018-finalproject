@@ -28,14 +28,9 @@ import net.sf.freecol.common.model.GoodsContainer;
 import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * An action for filling the holds of the currently selected unit.
- */
+/** An action for filling the holds of the currently selected unit. */
 public class LoadAction extends MapboardAction {
-
     public static final String id = "loadAction";
-
 
     /**
      * Creates this action.
@@ -46,12 +41,8 @@ public class LoadAction extends MapboardAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         final Unit carrier = getGUI().getActiveUnit();
@@ -61,19 +52,19 @@ public class LoadAction extends MapboardAction {
             && carrier.hasSpaceLeft();
     }    
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final Unit unit = getGUI().getActiveUnit();
-        if (unit == null) return;
+        if (unit == null) {
+			return;
+		}
 
         final Colony colony = unit.getColony();
-        if (colony == null) return;
+        if (colony == null) {
+			return;
+		}
 
         for (Goods goods : unit.getCompactGoodsList()) {
             final GoodsType type = goods.getType();

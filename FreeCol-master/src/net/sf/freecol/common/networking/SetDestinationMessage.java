@@ -27,18 +27,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when the client requests setting a unit destination.
- */
+/** The message sent when the client requests setting a unit destination. */
 public class SetDestinationMessage extends DOMMessage {
-
     /** The object identifier of the unit whose destination is to be set. */
     private final String unitId;
 
     /** The object identifier of the unit destination or null. */
     private final String destinationId;
-
 
     /**
      * Create a new <code>SetDestinationMessage</code> with the supplied unit
@@ -65,11 +60,10 @@ public class SetDestinationMessage extends DOMMessage {
         super(getXMLElementTagName());
 
         this.unitId = element.getAttribute("unit");
-        this.destinationId = (element.hasAttribute("destination"))
+        this.destinationId = element.hasAttribute("destination")
             ? element.getAttribute("destination")
             : null;
     }
-
 
     /**
      * Handle a "setDestination"-message.

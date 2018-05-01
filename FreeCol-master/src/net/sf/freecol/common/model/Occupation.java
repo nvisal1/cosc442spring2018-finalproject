@@ -25,16 +25,11 @@ import java.util.List;
 
 import net.sf.freecol.common.util.LogBuilder;
 
-
-/** 
- * Simple container to define where and what a unit is working on.
- */
+/** Simple container to define where and what a unit is working on. */
 public class Occupation {
-
     public WorkLocation workLocation;
     public ProductionType productionType;
     public GoodsType workType;
-
 
     /**
      * Create an Occupation.
@@ -60,7 +55,9 @@ public class Occupation {
      * @return True if the unit is installed.
      */
     public boolean install(Unit unit) {
-        if (!unit.setLocation(workLocation)) return false;
+        if (!unit.setLocation(workLocation)) {
+			return false;
+		}
         if (productionType != workLocation.getProductionType()) {
             workLocation.setProductionType(productionType);
         }
@@ -86,7 +83,6 @@ public class Occupation {
      */
     private int improve(UnitType unitType, WorkLocation wl, int bestAmount,
         Collection<GoodsType> workTypes, boolean alone, LogBuilder lb) {
-
         lb.add(" alone=", alone);
         List<ProductionType> productionTypes = new ArrayList<>();
         if (alone) {
@@ -101,7 +97,9 @@ public class Occupation {
             lb.add("\n      try=", pt);
             if (pt != null) {
                 for (GoodsType gt : workTypes) {
-                    if (pt.getOutput(gt) == null) continue;
+                    if (pt.getOutput(gt) == null) {
+						continue;
+					}
                     int minInput = FreeColObject.INFINITY;
                     List<AbstractGoods> inputs = pt.getInputs();
                     for (AbstractGoods ag : inputs) {
@@ -112,7 +110,7 @@ public class Occupation {
                     int potential = wl.getPotentialProduction(gt, unitType);
                     int amount = Math.min(minInput, potential);
                     lb.add(" ", gt.getSuffix(), "=", amount, "/", minInput,
-                        "/", potential, ((bestAmount < amount) ? "!" : ""));
+                        "/", potential, (bestAmount < amount) ? "!" : "");
                     if (bestAmount < amount) {
                         bestAmount = amount;
                         this.workLocation = wl;
@@ -142,8 +140,10 @@ public class Occupation {
         // Can the unit work at the wl?
         boolean present = unit.getLocation() == wl;
         lb.add("\n    ", wl,
-            ((!present && !wl.canAdd(unit)) ? " no-add" : ""));
-        if (!present && !wl.canAdd(unit)) return bestAmount;
+            (!present && !wl.canAdd(unit)) ? " no-add" : "");
+        if (!present && !wl.canAdd(unit)) {
+			return bestAmount;
+		}
 
         // Can the unit determine the production type at this WL?
         // This will be true if the unit is going to be alone or if
@@ -172,16 +172,14 @@ public class Occupation {
         return improve(unitType, wl, bestAmount, workTypes, wl.isEmpty(), lb);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
         sb.append("[Occupation ").append(workLocation);
             //.append(" ").append(productionType)
-        if (workType != null) sb.append(" ").append(workType.getSuffix());
+        if (workType != null) {
+			sb.append(" ").append(workType.getSuffix());
+		}
         sb.append("]");
         return sb.toString();
     }

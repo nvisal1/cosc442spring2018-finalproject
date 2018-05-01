@@ -69,7 +69,6 @@ import net.sf.freecol.common.model.Unit;
 
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
 /**
  * MapViewer is a private helper class of Canvas and SwingGUI.
  * 
@@ -79,13 +78,11 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * is currently handled by this class.
  */
 public final class MapViewer {
-
     private static final Logger logger = Logger.getLogger(MapViewer.class.getName());
 
-    private static enum BorderType { COUNTRY, REGION }
+    private enum BorderType { COUNTRY, REGION }
 
     private static class TextSpecification {
-
         public final String text;
         public final Font font;
 
@@ -94,7 +91,6 @@ public final class MapViewer {
             font = newFont;
         }
     }
-
 
     private final FreeColClient freeColClient;
 
@@ -114,53 +110,59 @@ public final class MapViewer {
     private Unit activeUnit;
 
     /** The view mode in use. */
-    private int viewMode = 0;
+    private int viewMode;
 
     /** A path to be displayed on the map. */
     private PathNode currentPath;
 
     /** A path for a current goto order. */
     private PathNode gotoPath = null;
-    private boolean gotoStarted = false;
+    private boolean gotoStarted;
 
-    // Helper variables for displaying the map.
+    /** Helper variables for displaying the map. */
     private int tileHeight, tileWidth, halfHeight, halfWidth,
-        topSpace, topRows, /*bottomSpace,*/ bottomRows, leftSpace, rightSpace;
+        topSpace, topRows, /* bottomSpace, */ bottomRows, leftSpace, rightSpace;
 
-    // The y-coordinate of the Tiles that will be drawn at the bottom
+    /** The y-coordinate of the Tiles that will be drawn at the bottom. */
     private int bottomRow = -1;
 
-    // The y-coordinate of the Tiles that will be drawn at the top
+    /** The y-coordinate of the Tiles that will be drawn at the top. */
     private int topRow;
 
-    // The y-coordinate on the screen (in pixels) of the images of the
-    // Tiles that will be drawn at the bottom
+    /**
+     * The y-coordinate on the screen (in pixels) of the images of the
+     * Tiles that will be drawn at the bottom.
+     */
     private int bottomRowY;
 
-    // The y-coordinate on the screen (in pixels) of the images of the
-    // Tiles that will be drawn at the top
+    /**
+     * The y-coordinate on the screen (in pixels) of the images of the
+     * Tiles that will be drawn at the top.
+     */
     private int topRowY;
 
-    // The x-coordinate of the Tiles that will be drawn at the left side
+    /** The x-coordinate of the Tiles that will be drawn at the left side. */
     private int leftColumn;
 
-    // The x-coordinate of the Tiles that will be drawn at the right side
+    /** The x-coordinate of the Tiles that will be drawn at the right side. */
     private int rightColumn;
 
-    // The x-coordinate on the screen (in pixels) of the images of the
-    // Tiles that will be drawn at the left (can be less than 0)
+    /**
+     * The x-coordinate on the screen (in pixels) of the images of the
+     * Tiles that will be drawn at the left (can be less than 0).
+     */
     private int leftColumnX;
 
-    // Whether the map is currently aligned with the edge.
-    private boolean alignedTop = false, alignedBottom = false,
-        alignedLeft = false, alignedRight = false;
+    /** Whether the map is currently aligned with the edge. */
+    private boolean alignedTop, alignedBottom,
+        alignedLeft, alignedRight;
 
-    // How the map can be scaled
+    /** How the map can be scaled. */
     private static final float MAP_SCALE_MIN = 0.25f;
     private static final float MAP_SCALE_MAX = 2.0f;
     private static final float MAP_SCALE_STEP = 0.25f;
 
-    // The height offset to paint a Unit at (in pixels).
+    /** The height offset to paint a Unit at (in pixels). */
     private static final int UNIT_OFFSET = 20,
         OTHER_UNITS_OFFSET_X = -5, // Relative to the state indicator.
         OTHER_UNITS_OFFSET_Y = 1,
@@ -170,7 +172,7 @@ public final class MapViewer {
     private final java.util.Map<Unit, Integer> unitsOutForAnimation;
     private final java.util.Map<Unit, JLabel> unitsOutForAnimationLabels;
 
-    // borders
+    /** Borders. */
     private final EnumMap<Direction, Point2D.Float> borderPoints =
         new EnumMap<>(Direction.class);
 
@@ -180,7 +182,6 @@ public final class MapViewer {
     private Stroke borderStroke = new BasicStroke(4);
 
     private Stroke gridStroke = new BasicStroke(1);
-
 
     /**
      * The constructor to use.
@@ -201,7 +202,6 @@ public final class MapViewer {
         unitsOutForAnimationLabels = new HashMap<>();
     }
 
-
     /**
      * Gets the contained <code>ImageLibrary</code>.
      * 
@@ -220,9 +220,7 @@ public final class MapViewer {
         return viewMode;
     }
 
-    /**
-     * Toggle the current view mode.
-     */
+    /** Toggle the current view mode. */
     void toggleViewMode() {
         changeViewMode(1 - viewMode);
     }
@@ -237,25 +235,27 @@ public final class MapViewer {
             logger.fine("Changed to " + ((newViewMode == GUI.MOVE_UNITS_MODE)
                     ? "Move Units" : "View Terrain") + " mode");
             viewMode = newViewMode;
-            if(viewMode == GUI.MOVE_UNITS_MODE)
-                restartBlinking();
-            else
-                stopBlinking();
+            if(viewMode == GUI.MOVE_UNITS_MODE) {
+				restartBlinking();
+			} else {
+				stopBlinking();
+			}
             if(activeUnit != null) {
                 Tile tile = activeUnit.getTile();
-                if(isTileVisible(tile))
-                    gui.refreshTile(tile);
-                if(selectedTile != tile && isTileVisible(selectedTile))
-                    gui.refreshTile(selectedTile);
-            } else if(isTileVisible(selectedTile))
-                gui.refreshTile(selectedTile);
+                if(isTileVisible(tile)) {
+					gui.refreshTile(tile);
+				}
+                if(selectedTile != tile && isTileVisible(selectedTile)) {
+					gui.refreshTile(selectedTile);
+				}
+            } else if(isTileVisible(selectedTile)) {
+				gui.refreshTile(selectedTile);
+			}
             gui.updateMapControls();
         }
     }
 
-    /**
-     * Centers the map on the selected unit.
-     */
+    /** Centers the map on the selected unit. */
     void centerActiveUnit() {
         if (activeUnit != null && activeUnit.getTile() != null) {
             gui.setFocus(activeUnit.getTile());
@@ -272,7 +272,9 @@ public final class MapViewer {
      */
     Tile convertToMapTile(int x, int y) {
         final Game game = freeColClient.getGame();
-        if (game == null || game.getMap() == null) return null;
+        if (game == null || game.getMap() == null) {
+			return null;
+		}
 
         int leftOffset;
         if (focus.getX() < getLeftColumns()) {
@@ -282,30 +284,28 @@ public final class MapViewer {
             } else {
                 leftOffset = tileWidth * (focus.getX() + 1);
             }
-        } else if (focus.getX() >= (game.getMap().getWidth() - getRightColumns())) {
+        } else if (focus.getX() >= game.getMap().getWidth() - getRightColumns()) {
             // we are at the right side of the map
             if ((focus.getY() & 1) == 0) {
                 leftOffset = size.width - (game.getMap().getWidth() - focus.getX()) * tileWidth;
             } else {
                 leftOffset = size.width - (game.getMap().getWidth() - focus.getX() - 1) * tileWidth - halfWidth;
             }
-        } else {
-            if ((focus.getY() & 1) == 0) {
-                leftOffset = (size.width / 2);
-            } else {
-                leftOffset = (size.width / 2) + halfWidth;
-            }
-        }
+        } else if ((focus.getY() & 1) == 0) {
+		    leftOffset = size.width / 2;
+		} else {
+		    leftOffset = size.width / 2 + halfWidth;
+		}
 
         int topOffset;
         if (focus.getY() < topRows) {
             // we are at the top of the map
-            topOffset = (focus.getY() + 1) * (halfHeight);
-        } else if (focus.getY() >= (game.getMap().getHeight() - bottomRows)) {
+            topOffset = (focus.getY() + 1) * halfHeight;
+        } else if (focus.getY() >= game.getMap().getHeight() - bottomRows) {
             // we are at the bottom of the map
-            topOffset = size.height - (game.getMap().getHeight() - focus.getY()) * (halfHeight);
+            topOffset = size.height - (game.getMap().getHeight() - focus.getY()) * halfHeight;
         } else {
-            topOffset = (size.height / 2);
+            topOffset = size.height / 2;
         }
 
         // At this point (leftOffset, topOffset) is the center pixel
@@ -334,30 +334,23 @@ public final class MapViewer {
             // right half of the rectangle
             if (y > py) {
                 // bottom right
-                if ((y - py) > halfHeight - (x - px)/2) {
+                if (y - py > halfHeight - (x - px)/2) {
                     direction = Direction.SE;
                 }
-            } else {
-                // top right
-                if ((y - py) < (x - px)/2 - halfHeight) {
-                    direction = Direction.NE;
-                }
-
-            }
-        } else {
-            // left half of the rectangle
-            if (y > py) {
-                // bottom left
-                if ((y - py) > (x - px)/2 + halfHeight) {
-                    direction = Direction.SW;
-                }
-            } else {
-                // top left
-                if ((y - py) < (px - x)/2 - halfHeight) {
-                    direction = Direction.NW;
-                }
-            }
-        }
+            } else // top right
+			if (y - py < (x - px)/2 - halfHeight) {
+			    direction = Direction.NE;
+			}
+        } else // left half of the rectangle
+		if (y > py) {
+		    // bottom left
+		    if (y - py > (x - px)/2 + halfHeight) {
+		        direction = Direction.SW;
+		    }
+		} else // top left
+		if (y - py < (px - x)/2 - halfHeight) {
+		    direction = Direction.NW;
+		}
         int col = newCol;
         int row = newRow;
         if (direction != null) {
@@ -368,7 +361,6 @@ public final class MapViewer {
         logger.finest("Direction is " + direction
                       + ", new focus is " + col + ", " + row);
         return freeColClient.getGame().getMap().getTile(col, row);
-
     }
 
     /**
@@ -477,8 +469,8 @@ public final class MapViewer {
     Rectangle calculateTileBounds(Tile tile) {
         Rectangle result = new Rectangle(0, 0, size.width, size.height);
         if (isTileVisible(tile)) {
-            result.x = ((tile.getX() - leftColumn) * tileWidth) + leftColumnX;
-            result.y = ((tile.getY() - topRow) * halfHeight) + topRowY - tileHeight;
+            result.x = (tile.getX() - leftColumn) * tileWidth + leftColumnX;
+            result.y = (tile.getY() - topRow) * halfHeight + topRowY - tileHeight;
             if ((tile.getY() & 1) != 0) {
                 result.x += halfWidth;
             }
@@ -499,11 +491,15 @@ public final class MapViewer {
      */
     Point calculateTilePosition(Tile t) {
         repositionMapIfNeeded();
-        if (!isTileVisible(t)) return null;
+        if (!isTileVisible(t)) {
+			return null;
+		}
 
-        int x = ((t.getX() - leftColumn) * tileWidth) + leftColumnX;
-        int y = ((t.getY() - topRow) * halfHeight) + topRowY;
-        if ((t.getY() & 1) != 0) x += halfWidth;
+        int x = (t.getX() - leftColumn) * tileWidth + leftColumnX;
+        int y = (t.getY() - topRow) * halfHeight + topRowY;
+        if ((t.getY() & 1) != 0) {
+			x += halfWidth;
+		}
         return new Point(x, y);
     }
 
@@ -544,7 +540,9 @@ public final class MapViewer {
      *     <i>false</i> otherwise.
      */
     boolean onScreen(Tile tileToCheck) {
-        if (tileToCheck == null) return false;
+        if (tileToCheck == null) {
+			return false;
+		}
         repositionMapIfNeeded();
         return (tileToCheck.getY() - 2 > topRow || alignedTop)
             && (tileToCheck.getY() + 4 < bottomRow || alignedBottom)
@@ -552,9 +550,7 @@ public final class MapViewer {
             && (tileToCheck.getX() + 2 < rightColumn || alignedRight);
     }
 
-    /**
-     * Starts the unit-selection-cursor blinking animation.
-     */
+    /** Starts the unit-selection-cursor blinking animation. */
     void startCursorBlinking() {
         cursor = new TerrainCursor();
         cursor.addActionListener((ActionEvent ae) -> {
@@ -610,7 +606,9 @@ public final class MapViewer {
      * @see #getFocus
      */
     int setOffsetFocus(Tile tile) {
-        if (tile == null) return 0;
+        if (tile == null) {
+			return 0;
+		}
         int where;
         final Map map = freeColClient.getGame().getMap();
         final int tx = tile.getX(), ty = tile.getY(),
@@ -648,15 +646,15 @@ public final class MapViewer {
         return where;
     }
 
-    /**
-     * Force the next screen repaint to reposition the tiles on the window.
-     */
+    /** Force the next screen repaint to reposition the tiles on the window. */
     void forceReposition() {
         bottomRow = -1;
     }
 
     private void repositionMapIfNeeded() {
-        if (bottomRow < 0 && focus != null) positionMap(focus);
+        if (bottomRow < 0 && focus != null) {
+			positionMap(focus);
+		}
     }
 
     /**
@@ -683,32 +681,32 @@ public final class MapViewer {
         if (y < topRows) {
             alignedTop = true;
             // We are at the top of the map
-            bottomRow = (size.height / (halfHeight)) - 1;
-            if ((size.height % (halfHeight)) != 0) {
+            bottomRow = size.height / halfHeight - 1;
+            if (size.height % halfHeight != 0) {
                 bottomRow++;
             }
             topRow = 0;
-            bottomRowY = bottomRow * (halfHeight);
+            bottomRowY = bottomRow * halfHeight;
             topRowY = 0;
-        } else if (y >= (game.getMap().getHeight() - bottomRows)) {
+        } else if (y >= game.getMap().getHeight() - bottomRows) {
             alignedBottom = true;
             // We are at the bottom of the map
             bottomRow = game.getMap().getHeight() - 1;
 
-            topRow = size.height / (halfHeight);
-            if ((size.height % (halfHeight)) > 0) {
+            topRow = size.height / halfHeight;
+            if (size.height % halfHeight > 0) {
                 topRow++;
             }
             topRow = game.getMap().getHeight() - topRow;
 
             bottomRowY = size.height - tileHeight;
-            topRowY = bottomRowY - (bottomRow - topRow) * (halfHeight);
+            topRowY = bottomRowY - (bottomRow - topRow) * halfHeight;
         } else {
             // We are not at the top of the map and not at the bottom
             bottomRow = y + bottomRows - 1;
             topRow = y - topRows;
-            bottomRowY = topSpace + (halfHeight) * bottomRows;
-            topRowY = topSpace - topRows * (halfHeight);
+            bottomRowY = topSpace + halfHeight * bottomRows;
+            topRowY = topSpace - topRows * halfHeight;
         }
 
         /*
@@ -729,18 +727,18 @@ public final class MapViewer {
             leftColumn = 0;
 
             rightColumn = size.width / tileWidth - 1;
-            if ((size.width % tileWidth) > 0) {
+            if (size.width % tileWidth > 0) {
                 rightColumn++;
             }
 
             leftColumnX = 0;
             alignedLeft = true;
-        } else if (x >= (game.getMap().getWidth() - rightColumns)) {
+        } else if (x >= game.getMap().getWidth() - rightColumns) {
             // We are at the right side of the map
             rightColumn = game.getMap().getWidth() - 1;
 
             leftColumn = size.width / tileWidth;
-            if ((size.width % tileWidth) > 0) {
+            if (size.width % tileWidth > 0) {
                 leftColumn++;
             }
 
@@ -765,9 +763,14 @@ public final class MapViewer {
      */
     boolean scrollMap(Direction direction) {
         Tile t = focus;
-        if (t == null) return false;
+        if (t == null) {
+			return false;
+		}
         int fx = t.getX(), fy = t.getY();
-        if ((t = t.getNeighbourOrNull(direction)) == null) return false;
+        t = t.getNeighbourOrNull(direction);
+		if (t == null) {
+			return false;
+		}
         int tx = t.getX(), ty = t.getY();
         int x, y;
 
@@ -790,7 +793,9 @@ public final class MapViewer {
             x = tx;
         }
 
-        if (x == fx && y == fy) return false;
+        if (x == fx && y == fy) {
+			return false;
+		}
         gui.setFocus(freeColClient.getGame().getMap().getTile(x,y));
         return true;
     }
@@ -851,14 +856,12 @@ public final class MapViewer {
         int leftColumns = leftSpace / tileWidth + 1;
 
         if ((y & 1) == 0) {
-            if ((leftSpace % tileWidth) > 32) {
+            if (leftSpace % tileWidth > 32) {
                 leftColumns++;
             }
-        } else {
-            if ((leftSpace % tileWidth) == 0) {
-                leftColumns--;
-            }
-        }
+        } else if ((leftSpace % tileWidth) == 0) {
+		    leftColumns--;
+		}
 
         return leftColumns;
     }
@@ -889,11 +892,9 @@ public final class MapViewer {
             if ((rightSpace % tileWidth) == 0) {
                 rightColumns--;
             }
-        } else {
-            if ((rightSpace % tileWidth) > 32) {
-                rightColumns++;
-            }
-        }
+        } else if (rightSpace % tileWidth > 32) {
+		    rightColumns++;
+		}
 
         return rightColumns;
     }
@@ -909,8 +910,7 @@ public final class MapViewer {
     }
 
     private boolean isTileVisible(Tile tile) {
-        if (tile == null) return false;
-        return tile.getY() >= topRow && tile.getY() <= bottomRow
+        return tile != null && tile.getY() >= topRow && tile.getY() <= bottomRow
             && tile.getX() >= leftColumn && tile.getX() <= rightColumn;
     }
 
@@ -947,19 +947,17 @@ public final class MapViewer {
         boolean ret = false;
         selectedTile = newTile;
 
-        if (viewMode == GUI.MOVE_UNITS_MODE) {
-            if (activeUnit == null || activeUnit.getTile() != newTile) {
-                // select a unit on the selected tile
-                Unit unitInFront = findUnitInFront(newTile);
-                if (unitInFront != null) {
-                    ret = gui.setActiveUnit(unitInFront);
-                    updateCurrentPathForActiveUnit();
-                } else {
-                    gui.setFocus(newTile);
-                    ret = true;
-                }
-            }
-        }
+        if (viewMode == GUI.MOVE_UNITS_MODE && (activeUnit == null || activeUnit.getTile() != newTile)) {
+		    // select a unit on the selected tile
+		    Unit unitInFront = findUnitInFront(newTile);
+		    if (unitInFront != null) {
+		        ret = gui.setActiveUnit(unitInFront);
+		        updateCurrentPathForActiveUnit();
+		    } else {
+		        gui.setFocus(newTile);
+		        ret = true;
+		    }
+		}
 
         // Check for refocus
         if (!onScreen(newTile)
@@ -989,16 +987,12 @@ public final class MapViewer {
 
         if (unitTile == null || unitTile.isEmpty()) {
             result = null;
-
         } else if (activeUnit != null && activeUnit.getTile() == unitTile) {
             result = activeUnit;
-
         } else if (unitTile.hasSettlement()) {
             result = null;
-
         } else if (activeUnit != null && activeUnit.isOffensiveUnit()) {
             result = unitTile.getDefendingUnit(activeUnit);
-
         } else {
             // Find the unit with the most moves left, preferring
             // active units.
@@ -1144,9 +1138,7 @@ public final class MapViewer {
         forceReposition();
     }
 
-    /**
-     * Sets the path of the active unit to display it.
-     */
+    /** Sets the path of the active unit to display it. */
     void updateCurrentPathForActiveUnit() {
         PathNode path;
         if (activeUnit == null
@@ -1181,9 +1173,7 @@ public final class MapViewer {
         updateMapDisplayVariables();
     }
 
-    /**
-     * Reset the scale of the map to the default.
-     */
+    /** Reset the scale of the map to the default. */
     void resetMapScale() {
         setImageLibraryAndUpdateData(new ImageLibrary());
         updateMapDisplayVariables();
@@ -1199,16 +1189,18 @@ public final class MapViewer {
 
     void increaseMapScale() {
         float newScale = lib.getScaleFactor() + MAP_SCALE_STEP;
-        if (newScale >= MAP_SCALE_MAX)
-            newScale = MAP_SCALE_MAX;
+        if (newScale >= MAP_SCALE_MAX) {
+			newScale = MAP_SCALE_MAX;
+		}
         setImageLibraryAndUpdateData(new ImageLibrary(newScale));
         updateMapDisplayVariables();
     }
 
     void decreaseMapScale() {
         float newScale = lib.getScaleFactor() - MAP_SCALE_STEP;
-        if (newScale <= MAP_SCALE_MIN)
-            newScale = MAP_SCALE_MIN;
+        if (newScale <= MAP_SCALE_MIN) {
+			newScale = MAP_SCALE_MIN;
+		}
         setImageLibraryAndUpdateData(new ImageLibrary(newScale));
         updateMapDisplayVariables();
     }
@@ -1217,10 +1209,10 @@ public final class MapViewer {
         // Calculate the amount of rows that will be drawn above the
         // central Tile
         topSpace = (size.height - tileHeight) / 2;
-        if ((topSpace % (halfHeight)) != 0) {
-            topRows = topSpace / (halfHeight) + 2;
+        if (topSpace % halfHeight != 0) {
+            topRows = topSpace / halfHeight + 2;
         } else {
-            topRows = topSpace / (halfHeight) + 1;
+            topRows = topSpace / halfHeight + 1;
         }
         bottomRows = topRows;
         leftSpace = (size.width - tileWidth) / 2;
@@ -1290,8 +1282,8 @@ public final class MapViewer {
         repositionMapIfNeeded();
 
         // Determine which tiles need to be redrawn
-        int firstRow = (clipBounds.y - topRowY) / (halfHeight) - 1;
-        int clipTopY = topRowY + firstRow * (halfHeight);
+        int firstRow = (clipBounds.y - topRowY) / halfHeight - 1;
+        int clipTopY = topRowY + firstRow * halfHeight;
         firstRow = topRow + firstRow;
 
         int firstColumn = (clipBounds.x - leftColumnX) / tileWidth - 1;
@@ -1299,7 +1291,7 @@ public final class MapViewer {
         firstColumn = leftColumn + firstColumn;
 
         int lastRow = (clipBounds.y + clipBounds.height - topRowY)
-            / (halfHeight);
+            / halfHeight;
         lastRow = topRow + lastRow;
 
         int lastColumn = (clipBounds.x + clipBounds.width - leftColumnX)
@@ -1342,10 +1334,10 @@ public final class MapViewer {
             gridPath.moveTo(0, 0);
             int nextX = halfWidth;
             int nextY = -halfHeight;
-            for (int i = 0; i <= ((lastColumn - firstColumn) * 2 + 1); i++) {
+            for (int i = 0; i <= (lastColumn - firstColumn) * 2 + 1; i++) {
                 gridPath.lineTo(nextX, nextY);
                 nextX += halfWidth;
-                nextY = (nextY == 0 ? -halfHeight : 0);
+                nextY = nextY == 0 ? -halfHeight : 0;
             }
 
             // Display the grid
@@ -1455,12 +1447,14 @@ public final class MapViewer {
         switch (viewMode) {
             case GUI.MOVE_UNITS_MODE:
                 if (activeUnit != null &&
-                        (cursor.isActive() || activeUnit.getMovesLeft() <= 0))
-                    cursorTile = activeUnit.getTile();
+                        (cursor.isActive() || activeUnit.getMovesLeft() <= 0)) {
+					cursorTile = activeUnit.getTile();
+				}
                 break;
             case GUI.VIEW_TERRAIN_MODE:
-                if (selectedTile != null)
-                    cursorTile = selectedTile;
+                if (selectedTile != null) {
+					cursorTile = selectedTile;
+				}
         }
         if (cursorTile != null) {
             final int x = cursorTile.getX();
@@ -1580,10 +1574,14 @@ public final class MapViewer {
             return;
         }
         String name = Messages.message(settlement.getLocationLabelFor(player));
-        if (name == null) return;
+        if (name == null) {
+			return;
+		}
 
         Color backgroundColor = settlement.getOwner().getNationColor();
-        if (backgroundColor == null) backgroundColor = Color.WHITE;
+        if (backgroundColor == null) {
+			backgroundColor = Color.WHITE;
+		}
         // int yOffset = lib.getSettlementImage(settlement).getHeight() + 1;
         int yOffset = tileHeight;
         switch (colonyLabels) {
@@ -1622,8 +1620,8 @@ public final class MapViewer {
                     String string = Integer.toString(
                         colony.getDisplayUnitCount());
                     leftImage = createLabel(g, string,
-                        ((colony.getPreferredSizeChange() > 0)
-                            ? italicFont : font),
+                        (colony.getPreferredSizeChange() > 0)
+                            ? italicFont : font,
                         backgroundColor);
                     if (player.owns(settlement)) {
                         int bonusProduction = colony.getProductionBonus();
@@ -1658,28 +1656,28 @@ public final class MapViewer {
                     }
                 }
 
-                int width = (int)((nameImage.getWidth()
-                        * lib.getScaleFactor())
+                int width = (int)(nameImage.getWidth()
+                        * lib.getScaleFactor()
                     + ((leftImage != null)
-                        ? (leftImage.getWidth()
-                            * lib.getScaleFactor()) + spacing
+                        ? leftImage.getWidth()
+                            * lib.getScaleFactor() + spacing
                         : 0)
                     + ((rightImage != null)
-                        ? (rightImage.getWidth()
-                            * lib.getScaleFactor()) + spacing
+                        ? rightImage.getWidth()
+                            * lib.getScaleFactor() + spacing
                         : 0));
                 int labelOffset = (tileWidth - width)/2;
                 yOffset -= (nameImage.getHeight()
                     * lib.getScaleFactor())/2;
                 if (leftImage != null) {
                     g.drawImage(leftImage, labelOffset, yOffset, null);
-                    labelOffset += (leftImage.getWidth()
-                        * lib.getScaleFactor()) + spacing;
+                    labelOffset += leftImage.getWidth()
+                        * lib.getScaleFactor() + spacing;
                 }
                 g.drawImage(nameImage, labelOffset, yOffset, null);
                 if (rightImage != null) {
-                    labelOffset += (nameImage.getWidth()
-                        * lib.getScaleFactor()) + spacing;
+                    labelOffset += nameImage.getWidth()
+                        * lib.getScaleFactor() + spacing;
                     g.drawImage(rightImage, labelOffset, yOffset, null);
                 }
                 break;
@@ -1687,9 +1685,7 @@ public final class MapViewer {
         }
     }
 
-    /**
-     * Draws the pentagram indicating a native capital.
-     */
+    /** Draws the pentagram indicating a native capital. */
     private static BufferedImage createCapitalLabel(int extent, int padding,
                                                     Color backgroundColor) {
         // create path
@@ -1768,7 +1764,9 @@ public final class MapViewer {
             labels[i] = label;
             Rectangle textRectangle = label.getPixelBounds(null, 0, 0);
             width = Math.max(width, textRectangle.width + hPadding);
-            if (i > 0) height += linePadding;
+            if (i > 0) {
+				height += linePadding;
+			}
             height += (int) (label.getAscent() + label.getDescent());
         }
 
@@ -1844,7 +1842,6 @@ public final class MapViewer {
         return bi;
     }
 
-
     /**
      * Display a path.
      *
@@ -1859,11 +1856,15 @@ public final class MapViewer {
 
         for (PathNode p = path; p != null; p = p.next) {
             Tile tile = p.getTile();
-            if (tile == null) continue;
+            if (tile == null) {
+				continue;
+			}
             Point point = calculateTilePosition(tile);
-            if (point == null) continue;
+            if (point == null) {
+				continue;
+			}
 
-            BufferedImage image = (p.isOnCarrier())
+            BufferedImage image = p.isOnCarrier()
                 ? ImageLibrary.getPathImage(ImageLibrary.PathType.NAVAL)
                 : (activeUnit != null)
                 ? ImageLibrary.getPathImage(activeUnit)
@@ -1878,8 +1879,8 @@ public final class MapViewer {
                 if (activeUnit != null) {
                     image = ImageLibrary.getPathNextTurnImage(activeUnit);
                 }
-                turns = lib.getStringImage(g, Integer.toString(p.getTurns())
-                    + "/" + Integer.toString(p.getMovesLeft()),
+                turns = lib.getStringImage(g, p.getTurns()
+                    + "/" + p.getMovesLeft(),
                     Color.WHITE, font);
             }
 
@@ -1910,7 +1911,7 @@ public final class MapViewer {
 
         // Draw the unit.
         // If unit is sentry, draw in grayscale
-        boolean fade = (unit.getState() == Unit.UnitState.SENTRY)
+        boolean fade = unit.getState() == Unit.UnitState.SENTRY
             || (unit.hasTile()
                 && player != null && !player.canSee(unit.getTile()));
         BufferedImage image = lib.getUnitImage(unit, fade);
@@ -1956,7 +1957,7 @@ public final class MapViewer {
                 .getAIUnit(unit)) != null) {
             if (FreeColDebugger.debugShowMission()) {
                 g.setColor(Color.WHITE);
-                g.drawString((!au.hasMission()) ? "No mission"
+                g.drawString(!au.hasMission() ? "No mission"
                     : lastPart(au.getMission().getClass().toString(), "."),
                     0, 0);
             }
@@ -2004,12 +2005,14 @@ public final class MapViewer {
             g.setStroke(borderStroke);
             Color oldColor = g.getColor();
             Color c = null;
-            if (type == BorderType.COUNTRY)
-                c = owner.getNationColor();
-            if (c == null)
-                c = Color.WHITE;
+            if (type == BorderType.COUNTRY) {
+				c = owner.getNationColor();
+			}
+            if (c == null) {
+				c = Color.WHITE;
+			}
             Color newColor = new Color(c.getRed(), c.getGreen(), c.getBlue(),
-                                 (opaque) ? 255 : 100);
+                                 opaque ? 255 : 100);
             g.setColor(newColor);
             GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
             path.moveTo(borderPoints.get(Direction.longSides.get(0)).x,
@@ -2079,5 +2082,4 @@ public final class MapViewer {
             g.setStroke(oldStroke);
         }
     }
-
 }

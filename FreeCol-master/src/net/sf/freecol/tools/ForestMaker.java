@@ -35,12 +35,8 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-
-/**
- * Generate forest tiles.
- */
+/** Generate forest tiles. */
 public class ForestMaker {
-
     private static final String DESTDIR = "data/rules/classic/resources/images/forest";
 
     private static final int BASE_WIDTH = 128;
@@ -64,17 +60,13 @@ public class ForestMaker {
     private static final int[] POWERS_OF_TWO
         = { 1, 2, 4, 8 };
 
-
     private static final boolean drawBorders = true;
     private static final boolean drawTrees = true;
 
-
     private static class ImageLocation implements Comparable<ImageLocation> {
-
         final BufferedImage image;
         final int x;
         final int y;
-
 
         public ImageLocation(BufferedImage image, int x, int y) {
             this.image = image;
@@ -82,7 +74,7 @@ public class ForestMaker {
             this.y = y;
         }
 
-        // Implement Comparable<ImageLocation>
+        /** Implement Comparable<ImageLocation>. */
 
         @Override
         public int compareTo(ImageLocation other) {
@@ -90,22 +82,16 @@ public class ForestMaker {
             return (dy == 0) ? other.x - this.x : dy;
         }
 
-        // Override Object
+        /** Override Object. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean equals(Object other) {
             if (other instanceof ImageLocation) {
-                return this.compareTo((ImageLocation)other) == 0;
+                return compareTo((ImageLocation)other) == 0;
             }
             return super.equals(other);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int hashCode() {
             int hash = super.hashCode();
@@ -115,12 +101,8 @@ public class ForestMaker {
         }
     }
 
-
-    /**
-     * Pass the source directory as first argument.
-     */
+    /** Pass the source directory as first argument. */
     public static void main(String[] args) throws Exception {
-
         if (args.length == 0) {
             System.out.println("Usage: ForestMaker <directory>...");
             System.out.println("Directory name should match a directory in");
@@ -176,7 +158,7 @@ public class ForestMaker {
             int numberOfImages = images.size();
             Random random = new Random(1492);
 
-            /**
+            /*
              * In order to ensure that trees do not occlude the rivers
              * on other tiles, we must move the rivers to the top NE
              * and NW edges of the tile.
@@ -223,90 +205,75 @@ public class ForestMaker {
                     treeCount++;
                 }
 
-                if (drawBorders) {
-                    int dx = right.x + left.x;
-                    int dy = right.y + left.y;
-                    g.setColor(Color.RED);
-                    g.drawLine(0, 0, right.x, right.y);
-                    g.drawLine(right.x, right.y, dx, dy);
-                    g.drawLine(dx, dy, left.x, left.y);
-                    g.drawLine(left.x, left.y, 0, 0);
-                }
+                int dx = right.x + left.x;
+				int dy = right.y + left.y;
+				g.setColor(Color.RED);
+				g.drawLine(0, 0, right.x, right.y);
+				g.drawLine(right.x, right.y, dx, dy);
+				g.drawLine(dx, dy, left.x, left.y);
+				g.drawLine(left.x, left.y, 0, 0);
 
-                if (drawTrees) {
-                    List<ImageLocation> trees = new ArrayList<>(TREES);
-                    // reduce number of trees if river branches are present
-                    int numberOfTrees = (6 - treeCount) * TREES / 6;
+                List<ImageLocation> trees = new ArrayList<>(TREES);
+				// reduce number of trees if river branches are present
+				int numberOfTrees = (6 - treeCount) * TREES / 6;
 
-                    int count = 0;
-                    while (count < numberOfTrees) {
-                        BufferedImage image = images.get(random.nextInt(numberOfImages));
-                        int width = image.getWidth();
-                        int height = image.getHeight();
-                        int halfWidth = width / 2;
-                        /**
-                         * Find a point for the root of the tree, that
-                         * is the center of the lower edge of the tree
-                         * image.
-                         */
-                        float a = random.nextFloat();
-                        float b = random.nextFloat();
-                        int x = (int) (a * right.x + b * left.x);
-                        int y = (int) (a * right.y + b * left.y);
-                        /**
-                         * Additional constraint: the left and right
-                         * edges of the tree image must be within the
-                         * tile bounds (this will fail if the tree
-                         * image is too large).
-                         */
-                        if (x - halfWidth < - HALF_WIDTH) {
-                            x = -HALF_WIDTH + halfWidth; // left
-                        }
-                        if (x + halfWidth > HALF_WIDTH) {
-                            x = HALF_WIDTH - halfWidth; // right
-                        }
-                        /**
-                         * Additional constraint: the top edge of the
-                         * tree image must be within the tile bounds.
-                         */
-                        int crown = Math.max(y - height, -(BASE_HEIGHT + MARGIN));
-                        /**
-                         * Additional constraint: if there is a river
-                         * along the top right edge of the diamond,
-                         * the top right corner of the tree most not be
-                         * "above" the line defined by that edge.
-                         */
-                        if ((branches[1] || branches[3])
-                            && crown < -BASE_HEIGHT + RIVER_HEIGHT + (x + halfWidth) / 2) {
-                            continue;
-                        }
-                        /**
-                         * Additional constraint: if there is a river
-                         * along the top left edge of the diamond,
-                         * the top left corner of the tree most not be
-                         * "above" the line defined by that edge.
-                         */
-                        if ((branches[0] || branches[2])
-                            && crown < -BASE_HEIGHT + RIVER_HEIGHT - (x - halfWidth) / 2) {
-                            continue;
-                        }
-                        //System.out.println("x=" + x + ", y=" + (y - height));
-                        trees.add(new ImageLocation(image, x - halfWidth, crown));
-                        count++;
-                    }
+				int count = 0;
+				while (count < numberOfTrees) {
+				    BufferedImage image = images.get(random.nextInt(numberOfImages));
+				    int width = image.getWidth();
+				    int height = image.getHeight();
+				    int halfWidth = width / 2;
+				    /*
+				     * Find a point for the root of the tree, that
+				     * is the center of the lower edge of the tree
+				     * image.
+				     */
+				    float a = random.nextFloat();
+				    float b = random.nextFloat();
+				    int x = (int) (a * right.x + b * left.x);
+				    int y = (int) (a * right.y + b * left.y);
+				    /*
+				     * Additional constraint: the left and right
+				     * edges of the tree image must be within the
+				     * tile bounds (this will fail if the tree
+				     * image is too large).
+				     */
+				    if (x - halfWidth < - HALF_WIDTH) {
+				        x = -HALF_WIDTH + halfWidth; // left
+				    }
+				    if (x + halfWidth > HALF_WIDTH) {
+				        x = HALF_WIDTH - halfWidth; // right
+				    }
+				    /*
+				     * Additional constraint: the top edge of the
+				     * tree image must be within the tile bounds.
+				     */
+				    int crown = Math.max(y - height, -(BASE_HEIGHT + MARGIN));
+				    /*
+				     * Additional constraint: if there is a river
+				     * along the top right edge of the diamond,
+				     * the top right corner of the tree most not be
+				     * "above" the line defined by that edge.
+				     */
+				    if (((branches[1] || branches[3])
+				        && crown < -BASE_HEIGHT + RIVER_HEIGHT + (x + halfWidth) / 2) || ((branches[0] || branches[2])
+				        && crown < -BASE_HEIGHT + RIVER_HEIGHT - (x - halfWidth) / 2)) {
+					continue;
+   }
+				    //System.out.println("x=" + x + ", y=" + (y - height));
+				    trees.add(new ImageLocation(image, x - halfWidth, crown));
+				    count++;
+				}
 
-                    // sort by y, x coordinate
-                    Collections.sort(trees);
-                    for (ImageLocation imageLocation : trees) {
-                        g.drawImage(imageLocation.image, imageLocation.x, imageLocation.y, null);
-                    }
-
-                }
+				// sort by y, x coordinate
+				Collections.sort(trees);
+				for (ImageLocation imageLocation : trees) {
+				    g.drawImage(imageLocation.image, imageLocation.x, imageLocation.y, null);
+				}
                 g.dispose();
 
                 ImageIO.write(base, "png", new File(destinationDirectory,
                                                     sourceDirectory.getName() + counter + ".png"));
-
             }
         }
     }
@@ -319,7 +286,4 @@ public class ForestMaker {
         int height = HALF_HEIGHT - Math.abs(x) / 2;
         return (height == 0) ? 0 : random.nextInt(2 * height) - height;
     }
-
-
 }
-

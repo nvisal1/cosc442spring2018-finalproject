@@ -27,12 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when making first contact between players.
- */
+/** The message sent when making first contact between players. */
 public class FirstContactMessage extends DOMMessage {
-
     /** The identifier for the player making contact. */
     private final String playerId;
 
@@ -51,7 +47,6 @@ public class FirstContactMessage extends DOMMessage {
     /** The result of the contact. */
     private String result;
 
-
     /**
      * Create a new <code>FirstContactMessage</code>.
      *
@@ -65,7 +60,7 @@ public class FirstContactMessage extends DOMMessage {
         this.playerId = player.getId();
         this.otherId = other.getId();
         this.tileId = (tile == null) ? null : tile.getId();
-        this.settlementCount = (other.isEuropean()) ? null
+        this.settlementCount = other.isEuropean() ? null
             : Integer.toString(other.getNumberOfSettlements());
         this.result = null;
     }
@@ -82,16 +77,15 @@ public class FirstContactMessage extends DOMMessage {
 
         this.playerId = element.getAttribute("player");
         this.otherId = element.getAttribute("other");
-        this.tileId = (!element.hasAttribute("tile")) ? null
+        this.tileId = !element.hasAttribute("tile") ? null
             : element.getAttribute("tile");
-        this.settlementCount = (!element.hasAttribute("camps")) ? null
+        this.settlementCount = !element.hasAttribute("camps") ? null
             : element.getAttribute("camps");
-        this.result = (!element.hasAttribute("result")) ? null
+        this.result = !element.hasAttribute("result") ? null
             : element.getAttribute("result");
     }
 
-
-    // Public interface
+    /** Public interface. */
 
     public Player getPlayer(Game game) {
         return game.getFreeColGameObject(playerId, Player.class);
@@ -121,7 +115,6 @@ public class FirstContactMessage extends DOMMessage {
         return this;
     }
 
-
     /**
      * Handle a "firstContact"-message.
      *
@@ -137,9 +130,7 @@ public class FirstContactMessage extends DOMMessage {
         Player first = getPlayer(game);
         if (first == null) {
             return DOMMessage.clientError("Invalid player: " + playerId);
-        } else if (serverPlayer.getId().equals(playerId)) {
-            ; // OK
-        } else {
+        } else if (!serverPlayer.getId().equals(playerId)) {
             return DOMMessage.clientError("Not our player: " + playerId);
         }
 

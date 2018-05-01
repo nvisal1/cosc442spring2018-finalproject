@@ -43,10 +43,7 @@ import net.sf.freecol.client.gui.panel.Flag.Decoration;
 import net.sf.freecol.client.gui.panel.Flag.UnionPosition;
 import net.sf.freecol.client.gui.panel.Flag.UnionShape;
 
-
 public class FlagTest extends JFrame implements ActionListener, ItemListener {
-
-
     private final Flag[] FLAGS = {
         ConfirmDeclarationDialog.ENGLISH_FLAG,
         ConfirmDeclarationDialog.SPANISH_FLAG,
@@ -98,7 +95,6 @@ public class FlagTest extends JFrame implements ActionListener, ItemListener {
     };
 
     final JLabel label = new JLabel();
-
 
     public FlagTest() {
         super("FlagTest");
@@ -250,7 +246,6 @@ public class FlagTest extends JFrame implements ActionListener, ItemListener {
             component.setEnabled(value);
         }
     }
-
 
     public static void main(String[] args) {
         FlagTest frame = new FlagTest();

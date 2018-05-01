@@ -47,7 +47,6 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.StringTemplate.TemplateType;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
 /**
  * Represents a collection of messages in a particular locale.
  *
@@ -86,7 +85,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * really has a problem)
  */
 public class Messages {
-
     private static final Logger logger = Logger.getLogger(Messages.class.getName());
 
     public static final String MESSAGE_FILE_PREFIX = "FreeColMessages";
@@ -111,12 +109,8 @@ public class Messages {
      */
     private static final Map<String, String> messageBundle = new HashMap<>();
 
-    /**
-     * A map with Selector values and the tag keys used in choice
-     * formats.
-     */
+    /** A map with Selector values and the tag keys used in choice formats. */
     private static final Map<String, Selector> tagMap = new HashMap<>();
-
 
     // Message bundle initialization
 
@@ -181,8 +175,8 @@ public class Messages {
             // attempt to read grammatical rules
             File cldr = new File(i18nDirectory, "plurals.xml");
             if (cldr.exists()) {
-                try {
-                    try (FileInputStream in = new FileInputStream(cldr)) {
+                try (FileInputStream in = new FileInputStream(cldr)) {
+                    {
                         NumberRules.load(in);
                     }
                 } catch (IOException e) {
@@ -195,13 +189,15 @@ public class Messages {
             }
         }
 
-        Locale loc = (AUTOMATIC.equalsIgnoreCase(locale.getLanguage()))
+        Locale loc = AUTOMATIC.equalsIgnoreCase(locale.getLanguage())
             ? Locale.getDefault() : locale;
         setGrammaticalNumber(NumberRules.getNumberForLanguage(loc.getLanguage()));
 
         for (String name : getMessageFileNames(locale)) {
             File file = new File(i18nDirectory, name);
-            if (!file.exists()) continue; // Expected
+            if (!file.exists()) {
+				continue;
+			} // Expected
             try {
                 loadMessages(new FileInputStream(file));
             } catch (IOException e) {
@@ -232,7 +228,9 @@ public class Messages {
         while((line = in.readLine()) != null) {
             line = line.trim();
             int index = line.indexOf('#');
-            if (index == 0) continue;
+            if (index == 0) {
+				continue;
+			}
             index = line.indexOf('=');
             if (index > 0) {
                 String key = line.substring(0, index).trim();
@@ -259,8 +257,7 @@ public class Messages {
      * @param locale The <code>Locale</code> to load resources for.
      */
     public static void loadModMessageBundle(Locale locale) {
-        List<FreeColModFile> allMods = new ArrayList<>();
-        allMods.addAll(Mods.getAllMods());
+        List<FreeColModFile> allMods = new ArrayList<>(Mods.getAllMods());
         allMods.addAll(Mods.getRuleSets());
 
         List<String> filenames = getMessageFileNames(locale);
@@ -327,8 +324,7 @@ public class Messages {
         return new Locale(language, country, variant);
     }
 
-
-    // Shortcut message accessors
+    /** Shortcut message accessors. */
 
     public static String nameKey(String id) {
         return id + NAME_SUFFIX;
@@ -362,7 +358,6 @@ public class Messages {
         return message(descriptionKey(object));
     }
 
-
     public static String shortDescriptionKey(String id) {
         return id + SHORT_DESCRIPTION_SUFFIX;
     }
@@ -374,7 +369,6 @@ public class Messages {
     public static String getShortDescription(ObjectWithId object) {
         return getShortDescription(object.getId());
     }
-
 
     public static String rulerKey(String id) {
         return id + RULER_SUFFIX;
@@ -447,18 +441,21 @@ public class Messages {
         if (id != null && id.endsWith(NAME_SUFFIX)) { // Temporary hack
             id = id.substring(0, id.length() - NAME_SUFFIX.length());
         }
-        String name = (containsKey(nameKey(id))) ? getName(id) : null;
+        String name = containsKey(nameKey(id)) ? getName(id) : null;
         String desc = null;
         if (name == null) {
-            name = (containsKey(id)) ? message(id) : null;
-            if (name == null) name = id;
+            name = containsKey(id) ? message(id) : null;
+            if (name == null) {
+				name = id;
+			}
         } else {
             desc = getBestDescription(id);
-            if (id.equals(desc)) desc = null;
+            if (id.equals(desc)) {
+				desc = null;
+			}
         }
         return new String[] { name, desc };
     }
-
 
     // Special purpose unit labelling
 
@@ -491,183 +488,168 @@ public class Messages {
         } else {
             type = StringTemplate.template(nameKey(typeId))
                 .addAmount("%number%", number);
-            roleKey = (Role.isDefaultRoleId(roleId)) ? null : roleId;
+            roleKey = Role.isDefaultRoleId(roleId) ? null : roleId;
         }
 
         StringTemplate ret;
         if (name == null) {
             if (nationId == null) {
                 if (roleKey == null) {
-                    if (extra == null) {
+                    if (extra != null) {
                         // %type% | "Free Colonist"
-                        ret = type;
+                        ret = StringTemplate.label("")
+                            .addStringTemplate(type)
+                            .addName(" (")
+                            .addStringTemplate(extra)
+                            .addName(")");
                     } else {
                         // %type% (%extra%) | "Treasure Train (5000 gold)"
-                        ret = StringTemplate.label("")
-                            .addStringTemplate(type)
-                            .addName(" (")
-                            .addStringTemplate(extra)
-                            .addName(")");
+                        ret = type;
                     }
-                } else {
-                    if (extra == null) {
-                        // %role% (%type%) | "Soldier (Free Colonist)"
-                        ret = StringTemplate.label("")
-                            .add(nameKey(roleKey))
-                            .addName(" (")
-                            .addStringTemplate(type)
-                            .addName(")");
-                    } else {
-                        // %role% (%type%/%extra%) | "Soldier (Free Colonist/50 muskets)"
-                        ret = StringTemplate.label("")
-                            .add(nameKey(roleKey))
-                            .addName(" (")
-                            .addStringTemplate(type)
-                            .addName("/")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                }
-            } else {
-                if (roleKey == null) {
-                    if (extra == null) {
-                        // %nation% %type% | "Dutch Free Colonist"
-                        ret = StringTemplate.label("")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .addStringTemplate(type);
-                    } else {
-                        // %nation% %type% (%extra%) | "Dutch Treasure Train (5000 gold)"
-                        ret = StringTemplate.label("")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .addStringTemplate(type)
-                            .addName(" (")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                } else {
-                    if (extra == null) {
-                        // %nation% %role% (%type%) | "Dutch Soldier (Free Colonist)"
-                        ret = StringTemplate.label("")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .add(nameKey(roleKey))
-                            .addName(" (")
-                            .addStringTemplate(type)
-                            .addName(")");
-                    } else {
-                        // %nation% %role% (%type%/%extra%) | "Dutch Soldier (Free Colonist/50 muskets)"
-                        ret = StringTemplate.label("")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .add(nameKey(roleKey))
-                            .addName(" (")
-                            .addStringTemplate(type)
-                            .addName("/")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                }
-            }
-        } else {
-            if (nationId == null) {
-                if (roleKey == null) {
-                    if (extra == null) {
-                        // %name% (%type%) | "Bob (Free Colonist)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .addStringTemplate(type)
-                            .addName(")");
-                    } else {
-                        // %name% (%type%/%extra%) | "Moolah (Treasure Train/5000 gold)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .addStringTemplate(type)
-                            .addName("/")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                } else {
-                    if (extra == null) {
-                        // %name% (%role%/%type%) | "Bob (Soldier/Free Colonist)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .add(nameKey(roleKey))
-                            .addName("/")
-                            .addStringTemplate(type)
-                            .addName(")");
-                    } else {
-                        // %name% (%role%/%type%/%extra%) | "Bob (Soldier/Free Colonist/50 muskets)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .add(nameKey(roleKey))
-                            .addName("/")
-                            .addStringTemplate(type)
-                            .addName("/")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                }
-            } else {
-                if (roleKey == null) {
-                    if (extra == null) {
-                        // %name% (%nation% %type%) | "Bob (Dutch Free Colonist)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .addStringTemplate(type)
-                            .addName(")");
-                    } else {
-                        // %name% (%nation% %type%/%extra%) | "Moolah (Dutch Treasure Train/5000 gold)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .addStringTemplate(type)
-                            .addName("/")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                } else {
-                    if (extra == null) {
-                        // %name% (%nation% %role%/%type%) | "Bob (Dutch Soldier/Free Colonist)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .add(nameKey(roleKey))
-                            .addName("/")
-                            .addStringTemplate(type)
-                            .addName(")");
-                    } else {
-                        // %name% (%nation% %role%/%type%/%extra%) | "Bob (Dutch Soldier/Free Colonist/50 muskets)"
-                        ret = StringTemplate.label("")
-                            .addName(name)
-                            .addName(" (")
-                            .add(nameKey(nationId))
-                            .addName(" ")
-                            .add(nameKey(roleKey))
-                            .addName("/")
-                            .addStringTemplate(type)
-                            .addName("/")
-                            .addStringTemplate(extra)
-                            .addName(")");
-                    }
-                }
-            }
-        }
+                } else if (extra != null) {
+				    // %role% (%type%) | "Soldier (Free Colonist)"
+				    ret = StringTemplate.label("")
+				        .add(nameKey(roleKey))
+				        .addName(" (")
+				        .addStringTemplate(type)
+				        .addName("/")
+				        .addStringTemplate(extra)
+				        .addName(")");
+				} else {
+				    // %role% (%type%/%extra%) | "Soldier (Free Colonist/50 muskets)"
+				    ret = StringTemplate.label("")
+				        .add(nameKey(roleKey))
+				        .addName(" (")
+				        .addStringTemplate(type)
+				        .addName(")");
+				}
+            } else if (roleKey == null) {
+			    if (extra != null) {
+			        // %nation% %type% | "Dutch Free Colonist"
+			        ret = StringTemplate.label("")
+			            .add(nameKey(nationId))
+			            .addName(" ")
+			            .addStringTemplate(type)
+			            .addName(" (")
+			            .addStringTemplate(extra)
+			            .addName(")");
+			    } else {
+			        // %nation% %type% (%extra%) | "Dutch Treasure Train (5000 gold)"
+			        ret = StringTemplate.label("")
+			            .add(nameKey(nationId))
+			            .addName(" ")
+			            .addStringTemplate(type);
+			    }
+			} else if (extra != null) {
+			    // %nation% %role% (%type%) | "Dutch Soldier (Free Colonist)"
+			    ret = StringTemplate.label("")
+			        .add(nameKey(nationId))
+			        .addName(" ")
+			        .add(nameKey(roleKey))
+			        .addName(" (")
+			        .addStringTemplate(type)
+			        .addName("/")
+			        .addStringTemplate(extra)
+			        .addName(")");
+			} else {
+			    // %nation% %role% (%type%/%extra%) | "Dutch Soldier (Free Colonist/50 muskets)"
+			    ret = StringTemplate.label("")
+			        .add(nameKey(nationId))
+			        .addName(" ")
+			        .add(nameKey(roleKey))
+			        .addName(" (")
+			        .addStringTemplate(type)
+			        .addName(")");
+			}
+        } else if (nationId == null) {
+		    if (roleKey == null) {
+		        if (extra != null) {
+		            // %name% (%type%) | "Bob (Free Colonist)"
+		            ret = StringTemplate.label("")
+		                .addName(name)
+		                .addName(" (")
+		                .addStringTemplate(type)
+		                .addName("/")
+		                .addStringTemplate(extra)
+		                .addName(")");
+		        } else {
+		            // %name% (%type%/%extra%) | "Moolah (Treasure Train/5000 gold)"
+		            ret = StringTemplate.label("")
+		                .addName(name)
+		                .addName(" (")
+		                .addStringTemplate(type)
+		                .addName(")");
+		        }
+		    } else if (extra != null) {
+			    // %name% (%role%/%type%) | "Bob (Soldier/Free Colonist)"
+			    ret = StringTemplate.label("")
+			        .addName(name)
+			        .addName(" (")
+			        .add(nameKey(roleKey))
+			        .addName("/")
+			        .addStringTemplate(type)
+			        .addName("/")
+			        .addStringTemplate(extra)
+			        .addName(")");
+			} else {
+			    // %name% (%role%/%type%/%extra%) | "Bob (Soldier/Free Colonist/50 muskets)"
+			    ret = StringTemplate.label("")
+			        .addName(name)
+			        .addName(" (")
+			        .add(nameKey(roleKey))
+			        .addName("/")
+			        .addStringTemplate(type)
+			        .addName(")");
+			}
+		} else if (roleKey == null) {
+		    if (extra != null) {
+		        // %name% (%nation% %type%) | "Bob (Dutch Free Colonist)"
+		        ret = StringTemplate.label("")
+		            .addName(name)
+		            .addName(" (")
+		            .add(nameKey(nationId))
+		            .addName(" ")
+		            .addStringTemplate(type)
+		            .addName("/")
+		            .addStringTemplate(extra)
+		            .addName(")");
+		    } else {
+		        // %name% (%nation% %type%/%extra%) | "Moolah (Dutch Treasure Train/5000 gold)"
+		        ret = StringTemplate.label("")
+		            .addName(name)
+		            .addName(" (")
+		            .add(nameKey(nationId))
+		            .addName(" ")
+		            .addStringTemplate(type)
+		            .addName(")");
+		    }
+		} else if (extra != null) {
+		    // %name% (%nation% %role%/%type%) | "Bob (Dutch Soldier/Free Colonist)"
+		    ret = StringTemplate.label("")
+		        .addName(name)
+		        .addName(" (")
+		        .add(nameKey(nationId))
+		        .addName(" ")
+		        .add(nameKey(roleKey))
+		        .addName("/")
+		        .addStringTemplate(type)
+		        .addName("/")
+		        .addStringTemplate(extra)
+		        .addName(")");
+		} else {
+		    // %name% (%nation% %role%/%type%/%extra%) | "Bob (Dutch Soldier/Free Colonist/50 muskets)"
+		    ret = StringTemplate.label("")
+		        .addName(name)
+		        .addName(" (")
+		        .add(nameKey(nationId))
+		        .addName(" ")
+		        .add(nameKey(roleKey))
+		        .addName("/")
+		        .addStringTemplate(type)
+		        .addName(")");
+		}
         return ret;
     }
-
 
     // message().  The fundamental i18n routine, and its support.
 
@@ -687,7 +669,9 @@ public class Messages {
 
         // return key as value if there is no mapping found
         String message = messageBundle.get(messageId);
-        if (message == null) return messageId;
+        if (message == null) {
+			return messageId;
+		}
 
         // otherwise replace variables in the text
         message = replaceChoices(message, null);
@@ -701,7 +685,9 @@ public class Messages {
      * @return The localized string.
      */
     public static String message(StringTemplate template) {
-        if (template == null) return null;
+        if (template == null) {
+			return null;
+		}
         String result = "";
         switch (template.getTemplateType()) {
         case LABEL:
@@ -767,7 +753,7 @@ public class Messages {
         int highWaterMark = 0;
         StringBuilder result = new StringBuilder();
         while ((openChoice = input.indexOf("{{", highWaterMark)) >= 0) {
-            result.append(input.substring(highWaterMark, openChoice));
+            result.append(input, highWaterMark, openChoice);
             closeChoice = findMatchingBracket(input, openChoice + 2);
             if (closeChoice < 0) {
                 // no closing brackets found

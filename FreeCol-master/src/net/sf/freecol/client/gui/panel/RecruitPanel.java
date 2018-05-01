@@ -35,20 +35,15 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * The panel that allows a user to recruit people in Europe.
- */
+/** The panel that allows a user to recruit people in Europe. */
 public final class RecruitPanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(RecruitPanel.class.getName());
 
     /** The array of recruitable units. */
     private final JButton[] person;
 
     /** Is there at least one recruitable unit? */
-    private boolean shouldEnable = false;
-
+    private boolean shouldEnable;
 
     /**
      * The constructor to use.
@@ -68,7 +63,6 @@ public final class RecruitPanel extends FreeColPanel {
         update();
     }
 
-
     /**
      * Updates this panel's labels so that the information it displays
      * is up to date.
@@ -85,7 +79,9 @@ public final class RecruitPanel extends FreeColPanel {
             int immigrationRequired = player.getImmigrationRequired()
                 - player.getImmigration();
             turns = immigrationRequired / production;
-            if (immigrationRequired % production > 0) turns++;
+            if (immigrationRequired % production > 0) {
+				turns++;
+			}
         }
         int recruitPrice = player.getRecruitPrice();
         add(Utility.localizedTextArea(StringTemplate
@@ -113,12 +109,8 @@ public final class RecruitPanel extends FreeColPanel {
         revalidate();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -130,7 +122,9 @@ public final class RecruitPanel extends FreeColPanel {
                 if (Europe.MigrationType.validMigrantIndex(index)) {
                     igc().recruitUnitInEurope(index);
                     getGUI().updateEuropeanSubpanels();
-                    if (!shouldEnable) getGUI().removeFromCanvas(this);
+                    if (!shouldEnable) {
+						getGUI().removeFromCanvas(this);
+					}
                     return;
                 }
             } catch (NumberFormatException e) {}
@@ -138,12 +132,8 @@ public final class RecruitPanel extends FreeColPanel {
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

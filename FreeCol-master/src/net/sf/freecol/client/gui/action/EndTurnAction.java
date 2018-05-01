@@ -23,16 +23,13 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * An action for ending the turn.
  *
  * @see net.sf.freecol.client.gui.panel.MapControls
  */
 public class EndTurnAction extends MapboardAction {
-
     public static final String id = "endTurnAction";
-
 
     /**
      * Creates a new <code>EndTurnAction</code>.
@@ -43,12 +40,8 @@ public class EndTurnAction extends MapboardAction {
         super(freeColClient, id);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         igc().endTurn(true);

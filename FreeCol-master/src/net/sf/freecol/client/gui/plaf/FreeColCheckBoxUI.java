@@ -25,16 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicCheckBoxUI;
 
-
-/**
- * Sets the default opaque attribute to <i>false</i>.
- */
+/** Sets the default opaque attribute to <i>false</i>. */
 public class FreeColCheckBoxUI extends BasicCheckBoxUI {
-
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return new FreeColCheckBoxUI();
     }
-
 
     @Override
     public void installUI(JComponent c) {

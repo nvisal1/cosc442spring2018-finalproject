@@ -36,12 +36,10 @@ import net.sf.freecol.common.model.Europe;
 import net.sf.freecol.common.model.LostCityRumour;
 import net.sf.freecol.common.model.UnitType;
 
-
 /**
  * The panel that allows a user to choose which unit will emigrate from Europe.
  */
 public final class EmigrationDialog extends FreeColChoiceDialog<Integer> {
-
     /**
      * The constructor to use.
      *

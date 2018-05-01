@@ -31,18 +31,13 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.util.Utils;
 
-
-/**
- * Represents an option that can be an arbitrary string.
- */
+/** Represents an option that can be an arbitrary string. */
 public class ModOption extends AbstractOption<FreeColModFile> {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(ModOption.class.getName());
 
     /** The value of this option. */
     private FreeColModFile value = null;
-
 
     /**
      * Creates a new <code>ModOption</code>.
@@ -53,7 +48,6 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         super(specification);
     }
 
-
     /**
      * Get the choices available for this option.
      *
@@ -63,16 +57,12 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         return new ArrayList<>(Mods.getAllMods());
     }
 
+    /** Interface Option. */
 
-    // Interface Option
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModOption clone() {
         ModOption result = new ModOption(getSpecification());
-        result.setId(this.getId());
+        result.setId(getId());
         result.value = this.value;
         return result;
     }
@@ -103,12 +93,8 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         isDefined = true;
     }
 
+    /** Override AbstractOption. */
 
-    // Override AbstractOption
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setValue(String valueString, String defaultValueString) throws XMLStreamException {
         String id = (valueString != null) ? valueString : defaultValueString;
@@ -119,23 +105,18 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         setValue(fcmf);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isNullValueOK() {
         return true;
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+			return true;
+		}
         if (o instanceof ModOption) {
             ModOption mod = (ModOption)o;
             return this.value == mod.value
@@ -144,22 +125,14 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
         return 31 * hash + Utils.hashCode(this.value);
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -169,9 +142,6 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
@@ -179,9 +149,6 @@ public class ModOption extends AbstractOption<FreeColModFile> {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

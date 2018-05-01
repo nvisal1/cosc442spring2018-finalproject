@@ -27,14 +27,12 @@ import java.util.logging.Logger;
 import net.sf.freecol.common.model.TradeRoute;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * This class provides common functionality for sub-panels of a
  * PortPanel that display UnitLabels.
  */
 public abstract class UnitPanel extends MigPanel
     implements PropertyChangeListener {
-
     private static final Logger logger = Logger.getLogger(UnitPanel.class.getName());
 
     /** The panel containing the units to display. */
@@ -42,7 +40,6 @@ public abstract class UnitPanel extends MigPanel
 
     /** Whether this panel is editable. */
     private final boolean editable;
-
 
     /**
      * Create a unit panel.
@@ -52,54 +49,49 @@ public abstract class UnitPanel extends MigPanel
      * @param editable True if the panel can be edited.
      */
     public UnitPanel(PortPanel portPanel, String name, boolean editable) {
-        if (portPanel == null) throw new RuntimeException("Null port panel.");
+        if (portPanel == null) {
+			throw new RuntimeException("Null port panel.");
+		}
         this.portPanel = portPanel;
         this.editable = editable;
         setName(name);
     }
 
-
-    /**
-     * Initialize this unit panel.
-     */
+    /** Initialize this unit panel. */
     public void initialize() {
         cleanup();
         addPropertyChangeListeners();
         update();
         Unit active = portPanel.getGUI().getActiveUnit();
-        if (active != null && active.isCarrier()) setSelectedUnit(active);
+        if (active != null && active.isCarrier()) {
+			setSelectedUnit(active);
+		}
     }
 
-    /**
-     * Clean up this unit panel.
-     */
+    /** Clean up this unit panel. */
     public void cleanup() {
         removePropertyChangeListeners();
     }
 
-    /**
-     * Add any property change listeners.
-     */
+    /** Add any property change listeners. */
     protected void addPropertyChangeListeners() {
         // do nothing
     }
 
-    /**
-     * Remove any property change listeners.
-     */
+    /** Remove any property change listeners. */
     protected void removePropertyChangeListeners() {
         // do nothing
     }
 
-    /**
-     * Update this unit panel.
-     */
+    /** Update this unit panel. */
     public void update() {
         removeAll();
 
         if (portPanel != null) {
             for (Unit unit : portPanel.getUnitList()) {
-                if (!accepts(unit)) continue;
+                if (!accepts(unit)) {
+					continue;
+				}
                     
                 UnitLabel unitLabel
                     = new UnitLabel(portPanel.getFreeColClient(), unit);
@@ -121,7 +113,6 @@ public abstract class UnitPanel extends MigPanel
         revalidate();
         repaint();
     }
-
 
     /**
      * Get the port panel that supplies units to this panel.
@@ -149,9 +140,7 @@ public abstract class UnitPanel extends MigPanel
      */
     public abstract boolean accepts(Unit unit);
 
-    /**
-     * Select a UnitLabel based on some criterion.
-     */
+    /** Select a UnitLabel based on some criterion. */
     public void selectLabel() {
         // Default to doing nothing
     }
@@ -175,12 +164,8 @@ public abstract class UnitPanel extends MigPanel
         return false;
     }
         
+    /** Interface PropertyChangeListener. */
 
-    // Interface PropertyChangeListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         logger.finest(getName() + " change " + event.getPropertyName()
@@ -189,12 +174,8 @@ public abstract class UnitPanel extends MigPanel
         update();
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

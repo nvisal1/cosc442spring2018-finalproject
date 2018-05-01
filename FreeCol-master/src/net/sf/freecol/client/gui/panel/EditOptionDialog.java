@@ -27,14 +27,9 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.option.OptionUI;
 import net.sf.freecol.common.option.Option;
 
-
-/**
- * Dialog to edit options with.
- */
+/** Dialog to edit options with. */
 public class EditOptionDialog extends FreeColConfirmDialog {
-
     private final OptionUI ui;
-
 
     /**
      * Create an EditOptionDialog.
@@ -49,16 +44,14 @@ public class EditOptionDialog extends FreeColConfirmDialog {
         ui = OptionUI.getOptionUI(getGUI(), option, true);
 
         MigPanel panel = new MigPanel(new MigLayout());
-        if (ui.getJLabel() == null) panel.add(ui.getJLabel(), "split 2");
+        if (ui.getJLabel() == null) {
+			panel.add(ui.getJLabel(), "split 2");
+		}
         panel.add(ui.getComponent());
 
         initializeConfirmDialog(frame, true, panel, null, "ok", "cancel");
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Boolean getResponse() {
         Boolean result = super.getResponse();

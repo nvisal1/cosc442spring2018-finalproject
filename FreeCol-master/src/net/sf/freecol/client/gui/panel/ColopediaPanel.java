@@ -43,13 +43,9 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.FreeColObject;
 
-
-/**
- * This panel displays the Colopedia.
- */
+/** This panel displays the Colopedia. */
 public final class ColopediaPanel extends FreeColPanel
     implements HyperlinkListener, TreeSelectionListener {
-
     private static final Logger logger = Logger.getLogger(ColopediaPanel.class.getName());
 
     private JPanel listPanel;
@@ -59,7 +55,6 @@ public final class ColopediaPanel extends FreeColPanel
     private JTree tree;
 
     private Map<String, DefaultMutableTreeNode> nodeMap = new HashMap<>();
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -112,7 +107,6 @@ public final class ColopediaPanel extends FreeColPanel
     public ColopediaPanel(FreeColClient freeColClient) {
         super(freeColClient);
     }
-
 
     /**
      * Builds the JTree which represents the navigation menu and then returns it
@@ -205,23 +199,22 @@ public final class ColopediaPanel extends FreeColPanel
         HyperlinkEvent.EventType type = e.getEventType();
         if (type == HyperlinkEvent.EventType.ACTIVATED) {
             String[] path = e.getURL().getPath().split("/");
-            if (null != path[1]) switch (path[1]) {
-                case FreeColObject.ID_ATTRIBUTE_TAG:
-                    select(path[2]);
-                    break;
-                case "action":
-                    getFreeColClient().getActionManager().getFreeColAction(path[2])
-                            .actionPerformed(null);
-                    break;
-            }
+            if (null != path[1]) {
+				switch (path[1]) {
+				    case FreeColObject.ID_ATTRIBUTE_TAG:
+				        select(path[2]);
+				        break;
+				    case "action":
+				        getFreeColClient().getActionManager().getFreeColAction(path[2])
+				                .actionPerformed(null);
+				        break;
+				}
+			}
         }
     }
 
-    // Interface ActionListener
+    /** Interface ActionListener. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -232,12 +225,8 @@ public final class ColopediaPanel extends FreeColPanel
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

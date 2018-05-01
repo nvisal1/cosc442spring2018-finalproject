@@ -80,14 +80,9 @@ import net.sf.freecol.common.networking.WorkMessage;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * Wrapper class for AI message handling.
- */
+/** Wrapper class for AI message handling. */
 public class AIMessage {
-
     private static final Logger logger = Logger.getLogger(AIMessage.class.getName());
-
 
     /**
      * Ask the server a question.
@@ -139,8 +134,12 @@ public class AIMessage {
     private static boolean askHandling(Connection conn, Element request) {
         while (request != null) {
             Element reply = ask(conn, request);
-            if (reply == null) break;
-            if (checkError(reply, request.getTagName())) return false;
+            if (reply == null) {
+				break;
+			}
+            if (checkError(reply, request.getTagName())) {
+				return false;
+			}
             try {
                 request = conn.handle(reply);
             } catch (FreeColException fce) {
@@ -163,7 +162,9 @@ public class AIMessage {
                                         String expect) {
         Element reply = ask(conn, request);
         if (checkError(reply, request.getTagName())
-            || reply == null) return null;
+            || reply == null) {
+			return null;
+		}
        
         final String tag = reply.getTagName();
         if ("multiple".equals(tag)) {
@@ -179,17 +180,23 @@ public class AIMessage {
                 }
                 try {
                     Element e = conn.handle((Element)nodes.item(i));
-                    if (e != null) replies.add(e);
+                    if (e != null) {
+						replies.add(e);
+					}
                 } catch (FreeColException fce) {
                     logger.log(Level.WARNING, "AI handler failed: " + reply, fce);
                 }
             }
             if (!askHandling(conn, DOMMessage.collapseElements(replies))
-                || result == null) return null;
+                || result == null) {
+				return null;
+			}
             reply = result;
         }
 
-        if (expect.equals(reply.getTagName())) return reply;
+        if (expect.equals(reply.getTagName())) {
+			return reply;
+		}
         logger.log(Level.WARNING, "AI handler expected " + expect
             + ", recieved " + tag);
         return null;
@@ -219,9 +226,7 @@ public class AIMessage {
      */
     private static boolean sendMessage(Connection connection,
                                        DOMMessage message) {
-        return (connection != null && message != null)
-            ? sendMessage(connection, message.toXMLElement())
-            : false;
+        return connection != null && message != null && sendMessage(connection, message.toXMLElement());
     }
 
     /**
@@ -251,7 +256,6 @@ public class AIMessage {
         return DOMMessage.createMessage(tag, attributes);
     }
 
-
     /**
      * An AIUnit attacks in the given direction.
      *
@@ -263,7 +267,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new AttackMessage(aiUnit.getUnit(), direction));
     }
-
 
     /**
      * An AIUnit builds a colony.
@@ -277,7 +280,6 @@ public class AIMessage {
                            new BuildColonyMessage(name, aiUnit.getUnit()));
     }
 
-
     /**
      * An AIUnit cashes in.
      *
@@ -288,7 +290,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new CashInTreasureTrainMessage(aiUnit.getUnit()));
     }
-
 
     /**
      * An AIUnit changes state.
@@ -302,7 +303,6 @@ public class AIMessage {
                            new ChangeStateMessage(aiUnit.getUnit(), state));
     }
 
-
     /**
      * An AIUnit changes its work type.
      *
@@ -314,7 +314,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new ChangeWorkTypeMessage(aiUnit.getUnit(), type));
     }
-
 
    /**
      * An AIUnit changes its work improvement type.
@@ -328,7 +327,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
             new ChangeWorkImprovementTypeMessage(aiUnit.getUnit(), type));
     }
-
 
     /**
      * Claims a tile for a colony.
@@ -357,7 +355,6 @@ public class AIMessage {
             .getConnection(), new ClaimLandMessage(tile, fcgo, price));
     }
 
-
     /**
      * Clears the speciality of a unit.
      *
@@ -368,7 +365,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new ClearSpecialityMessage(aiUnit.getUnit()));
     }
-
 
     /**
      * An AIUnit closes a transaction.
@@ -383,7 +379,6 @@ public class AIMessage {
                            new CloseTransactionMessage(aiUnit.getUnit(),
                                                        settlement));
     }
-
 
     /**
      * An AIUnit delivers a gift.
@@ -400,7 +395,6 @@ public class AIMessage {
                                                   settlement, goods));
     }
 
-
     /**
      * An AIUnit disbands.
      *
@@ -412,7 +406,6 @@ public class AIMessage {
                            new DisbandUnitMessage(aiUnit.getUnit()));
     }
 
-
     /**
      * An AIUnit disembarks.
      *
@@ -423,7 +416,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new DisembarkMessage(aiUnit.getUnit()));
     }
-
 
     /**
      * An AIUnit embarks.
@@ -440,7 +432,6 @@ public class AIMessage {
                                              direction));
     }
 
-
     /**
      * A unit in Europe emigrates.
      *
@@ -453,7 +444,6 @@ public class AIMessage {
                            new EmigrateUnitMessage(slot));
     }
 
-
     /**
      * Ends the player turn.
      *
@@ -463,7 +453,6 @@ public class AIMessage {
     public static boolean askEndTurn(AIPlayer aiPlayer) {
         return sendTrivial(aiPlayer.getConnection(), "endTurn");
     }
-
 
     /**
      * Change the role of a unit.
@@ -478,7 +467,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
             new EquipForRoleMessage(aiUnit.getUnit(), role, roleCount));
     }
-
 
     /**
      * Establishes a mission in the given direction.
@@ -496,7 +484,6 @@ public class AIMessage {
                                                  denounce));
     }
 
-
     /**
      * Gets a nation summary for a player.
      *
@@ -513,7 +500,6 @@ public class AIMessage {
         return new GetNationSummaryMessage(reply).getNationSummary();
     }
 
-
     /**
      * An AIUnit gets a transaction.
      *
@@ -527,7 +513,6 @@ public class AIMessage {
                            new GetTransactionMessage(aiUnit.getUnit(),
                                                      settlement));
     }
-
 
     /**
      * Makes demands to a colony.  One and only one of goods or gold is valid.
@@ -548,7 +533,6 @@ public class AIMessage {
         return new IndianDemandMessage(colony.getGame(), reply).getResult();
     }
 
-
     /**
      * An AI unit loads some cargo.
      *
@@ -563,7 +547,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
             new LoadGoodsMessage(loc, type, amount, aiUnit.getUnit()));
     }
-
 
     /**
      * An AI unit loots some cargo.
@@ -580,7 +563,6 @@ public class AIMessage {
                                                 goods));
     }
 
-
     /**
      * Moves an AIUnit in the given direction.
      *
@@ -592,7 +574,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new MoveMessage(aiUnit.getUnit(), direction));
     }
-
 
     /**
      * Moves an AIUnit across the high seas.
@@ -606,7 +587,6 @@ public class AIMessage {
                            new MoveToMessage(aiUnit.getUnit(), destination));
     }
 
-
     /**
      * An AIUnit is put outside a colony.
      *
@@ -617,7 +597,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
                            new PutOutsideColonyMessage(aiUnit.getUnit()));
     }
-
 
     /**
      * Rearrange an AI colony.
@@ -638,16 +617,16 @@ public class AIMessage {
             if (u.getLocation().getId().equals(su.getLocation().getId())
                 && u.getWorkType() == su.getWorkType()
                 && u.getRole() == su.getRole()
-                && u.getRoleCount() == su.getRoleCount()) continue;
+                && u.getRoleCount() == su.getRoleCount()) {
+				continue;
+			}
             message.addChange(u,
                 (Location)colony.getCorresponding((FreeColObject)su.getLocation()),
                 su.getWorkType(), su.getRole(), su.getRoleCount());
         }
-        return (message.isEmpty()) ? false
-            : sendMessage(aiColony.getAIOwner().getConnection(), message);
+        return !message.isEmpty() && sendMessage(aiColony.getAIOwner().getConnection(), message);
     }
         
-
     /**
      * An AI unit scouts a native settlement.
      *
@@ -661,7 +640,6 @@ public class AIMessage {
                            new ScoutSpeakToChiefMessage(aiUnit.getUnit(), 
                                                         direction));
     }
-
 
     /**
      * Set the build queue in a colony.
@@ -677,7 +655,6 @@ public class AIMessage {
                                                     queue));
     }
 
-
     /**
      * Train unit in Europe.
      *
@@ -690,7 +667,6 @@ public class AIMessage {
         return sendMessage(aiPlayer.getConnection(),
                            new TrainUnitInEuropeMessage(type));
     }
-
 
     /**
      * An AI unit unloads some cargo.
@@ -705,7 +681,6 @@ public class AIMessage {
         return sendMessage(aiUnit.getAIOwner().getConnection(),
             new UnloadGoodsMessage(type, amount, aiUnit.getUnit()));
     }
-
 
     /**
      * Set a unit to work in a work location.

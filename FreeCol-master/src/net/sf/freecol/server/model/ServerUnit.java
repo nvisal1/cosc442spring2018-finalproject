@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.server.model;
 
 import java.util.ArrayList;
@@ -77,18 +76,11 @@ import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.ChangePriority;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-
-/**
- * Server version of a unit.
- */
+/** Server version of a unit. */
 public class ServerUnit extends Unit implements ServerModelObject {
-
     private static final Logger logger = Logger.getLogger(ServerUnit.class.getName());
 
-
-    /**
-     * Trivial constructor required for all ServerModelObjects.
-     */
+    /** Trivial constructor required for all ServerModelObjects. */
     public ServerUnit(Game game, String id) {
         super(game, id);
     }
@@ -205,7 +197,6 @@ public class ServerUnit extends Unit implements ServerModelObject {
         owner.addUnit(this);
     }
 
-
     /**
      * New turn for this unit.
      *
@@ -236,7 +227,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
                 cs.add(See.perhaps(), (Tile)loc);
                 cs.addRemove(See.perhaps().always(owner), loc, 
                              this);//-vis(owner)
-                this.dispose();
+                dispose();
                 owner.invalidateCanSeeTiles();//+vis(owner)
                 lb.add(", ");
                 return;
@@ -294,16 +285,20 @@ public class ServerUnit extends Unit implements ServerModelObject {
                     setWorkLeft(-1);
                 } else {
                     // Otherwise do work
-                    int amount = (getType().hasAbility(Ability.EXPERT_PIONEER))
+                    int amount = getType().hasAbility(Ability.EXPERT_PIONEER)
                         ? 2 : 1;
-                    int turns = ti.getTurnsToComplete();
-                    if ((turns -= amount) < 0) turns = 0;
+                    int turns = amount;
+                    if (turns < 0) {
+						turns = 0;
+					}
                     ti.setTurnsToComplete(turns);
                     setWorkLeft(turns);
                     if (ti.isRoad() && ti.isComplete()) {
                         ti.updateRoadConnections(true);
                         for (Tile t : loc.getTile().getSurroundingTiles(1)) {
-                            if (t.hasRoad()) cs.add(See.perhaps(), t);
+                            if (t.hasRoad()) {
+								cs.add(See.perhaps(), t);
+							}
                         }
                         locDirty = true;
                     }
@@ -354,7 +349,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
                     lb.add(" arrives in America at ", tile);
                     if (dst != null) {
                         lb.add(" sailing for ", dst);
-                        if (dst instanceof Map) setDestination(null);
+                        if (dst instanceof Map) {
+							setDestination(null);
+						}
                     }
                     csMove(tile, random, cs);
                     locDirty = unitDirty = false; // loc update present
@@ -407,7 +404,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
         if (deliver != null) { // Deliver goods if any
             final Turn turn = getGame().getTurn();
             int amount = deliver.getAmount();
-            amount = (int)this.applyModifiers(amount, turn,
+            amount = (int)applyModifiers(amount, turn,
                 Modifier.TILE_TYPE_CHANGE_PRODUCTION, deliver.getType());
             Settlement settlement = tile.getOwningSettlement();
             if (settlement != null && owner.owns(settlement)) {
@@ -430,22 +427,20 @@ public class ServerUnit extends Unit implements ServerModelObject {
         // Does a resource get exposed?
         TileImprovementType tileImprovementType = ti.getType();
         int exposeResource = tileImprovementType.getExposeResourcePercent();
-        if (exposeResource > 0 && !tile.hasResource()) {
-            if (randomInt(logger, "Expose resource", random, 100)
-                < exposeResource) {
-                ResourceType resType = RandomChoice
-                    .getWeightedRandom(logger, "Resource type",
-                                       tile.getType().getWeightedResources(),
-                                       random);
-                int minValue = resType.getMinValue();
-                int maxValue = resType.getMaxValue();
-                int value = minValue + ((minValue == maxValue) ? 0
-                    : randomInt(logger, "Resource quantity",
-                                random, maxValue - minValue + 1));
-                tile.addResource(new Resource(getGame(), tile,
-                                              resType, value));//-til
-            }
-        }
+        if (exposeResource > 0 && !tile.hasResource() && randomInt(logger, "Expose resource", random, 100)
+		    < exposeResource) {
+		ResourceType resType = RandomChoice
+		    .getWeightedRandom(logger, "Resource type",
+		                       tile.getType().getWeightedResources(),
+		                       random);
+		int minValue = resType.getMinValue();
+		int maxValue = resType.getMaxValue();
+		int value = minValue + ((minValue == maxValue) ? 0
+		    : randomInt(logger, "Resource quantity",
+		                random, maxValue - minValue + 1));
+		tile.addResource(new Resource(getGame(), tile,
+		                              resType, value));//-til
+         }
 
         // Expend equipment.
         if (changeRoleCount(-ti.getType().getExpendedAmount())) {
@@ -490,7 +485,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
         Location oldLocation = getLocation();
         Colony colony = (oldLocation instanceof WorkLocation) ? getColony()
             : null;
-        if (colony != null) oldLocation.getTile().cacheUnseen();//+til
+        if (colony != null) {
+			oldLocation.getTile().cacheUnseen();
+		}//+til
         setLocation(carrier);//-vis: only if on a different tile
                              //-til if moving from colony
         setMovesLeft(0);
@@ -546,7 +543,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
         Unit attacker = null;
         double attackPower = 0, totalAttackPower = 0;
 
-        if (!isNaval() || getMovesLeft() <= 0) return null;
+        if (!isNaval() || getMovesLeft() <= 0) {
+			return null;
+		}
         for (Tile tile : newTile.getSurroundingTiles(1)) {
             // Ships in settlements do not slow enemy ships, but:
             // FIXME: should a fortress slow a ship?
@@ -554,7 +553,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
             if (tile.isLand()
                 || tile.getColony() != null
                 || tile.getFirstUnit() == null
-                || (enemy = tile.getFirstUnit().getOwner()) == player) continue;
+                || (enemy = tile.getFirstUnit().getOwner()) == player) {
+				continue;
+			}
             for (Unit enemyUnit : tile.getUnitList()) {
                 if ((pirate || enemyUnit.hasAbility(Ability.PIRACY)
                      || (enemyUnit.isOffensiveUnit() && player.atWarWith(enemy)))
@@ -576,7 +577,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
                 int moves = Math.min(9, 3 + diff / 3);
                 setMovesLeft(getMovesLeft() - moves);
                 logger.info(getId() + " slowed by " + attacker.getId()
-                    + " by " + Integer.toString(moves) + " moves.");
+                    + " by " + moves + " moves.");
             } else {
                 attacker = null;
             }
@@ -614,7 +615,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
         ServerPlayer serverPlayer = (ServerPlayer) getOwner();
         Tile tile = getTile();
         LostCityRumour lostCity = tile.getLostCityRumour();
-        if (lostCity == null) return true;
+        if (lostCity == null) {
+			return true;
+		}
 
         Game game = getGame();
         Specification spec = game.getSpecification();
@@ -670,7 +673,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
                     // protect against a burial ground at the same
                     // time as a ruins find!
                     if (randomInt(logger, "Ruins+Burial", random, 100)
-                        >= spec.getInteger(GameOptions.BAD_RUMOUR)) break;
+                        >= spec.getInteger(GameOptions.BAD_RUMOUR)) {
+						break;
+					}
                     // Fall through
                 case BURIAL_GROUND:
                     if (tile.getOwner() != null
@@ -722,7 +727,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
             cs.addPartial(See.only(serverPlayer), serverPlayer, "gold", "score");
             cs.addMessage(See.only(serverPlayer),
                 new ModelMessage(ModelMessage.MessageType.LOST_CITY_RUMOUR,
-                    ((mounds) ? rumour.getAlternateDescriptionKey("mounds")
+                    (mounds ? rumour.getAlternateDescriptionKey("mounds")
                         : key),
                     serverPlayer, this)
                 .addAmount("%money%", chiefAmount));
@@ -779,7 +784,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
             }
             cs.addMessage(See.only(serverPlayer),
                 new ModelMessage(ModelMessage.MessageType.LOST_CITY_RUMOUR,
-                    ((mounds) ? rumour.getAlternateDescriptionKey("mounds")
+                    (mounds ? rumour.getAlternateDescriptionKey("mounds")
                         : key),
                     serverPlayer, ((newUnit != null) ? newUnit : this))
                     .addAmount("%money%", ruinsAmount));
@@ -801,7 +806,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
                     // Remember, and ask player to select
                     serverPlayer.setRemainingEmigrants(dx);
                     cs.addTrivial(See.only(serverPlayer), "fountainOfYouth",
-                                  ChangeSet.ChangePriority.CHANGE_LATE,
+                                  ChangePriority.CHANGE_LATE,
                                   "migrants", Integer.toString(dx));
                 }
                 cs.addMessage(See.only(serverPlayer),
@@ -870,21 +875,21 @@ public class ServerUnit extends Unit implements ServerModelObject {
         // Update unit state.
         setState(UnitState.ACTIVE);
         setStateToAllChildren(UnitState.SENTRY);
-        if (oldLocation instanceof HighSeas) {
-            ; // Do not try to calculate move cost from Europe!
-        } else if (oldLocation instanceof Unit) {
-            setMovesLeft(0); // Disembark always consumes all moves.
-        } else {
-            if (getMoveCost(newTile) <= 0) {
-                logger.warning("Move of unit: " + getId()
-                    + " from: " + ((oldLocation == null) ? "null"
-                        : oldLocation.getTile().getId())
-                    + " to: " + newTile.getId()
-                    + " has bogus cost: " + getMoveCost(newTile));
-                setMovesLeft(0);
-            }
-            setMovesLeft(getMovesLeft() - getMoveCost(newTile));
-        }
+        if (!(oldLocation instanceof HighSeas)) {
+			if (oldLocation instanceof Unit) {
+			    setMovesLeft(0); // Disembark always consumes all moves.
+			} else {
+			    if (getMoveCost(newTile) <= 0) {
+			        logger.warning("Move of unit: " + getId()
+			            + " from: " + ((oldLocation == null) ? "null"
+			                : oldLocation.getTile().getId())
+			            + " to: " + newTile.getId()
+			            + " has bogus cost: " + getMoveCost(newTile));
+			        setMovesLeft(0);
+			    }
+			    setMovesLeft(getMovesLeft() - getMoveCost(newTile));
+			}
+		}
 
         // Do the move and explore a rumour if needed.
         if (oldLocation instanceof WorkLocation) {
@@ -895,16 +900,20 @@ public class ServerUnit extends Unit implements ServerModelObject {
             && !csExploreLostCityRumour(random, cs)) {
             cs.addRemove(See.perhaps().always(serverPlayer), oldLocation,
                          this);//-vis(serverPlayer)
-            this.dispose();
+            dispose();
         }
         serverPlayer.invalidateCanSeeTiles();//+vis(serverPlayer)
 
         // Update tiles that are now invisible.
         Iterator<Tile> it = oldTiles.iterator();
         while (it.hasNext()) {
-            if (serverPlayer.canSee(it.next())) it.remove();
+            if (serverPlayer.canSee(it.next())) {
+				it.remove();
+			}
         }
-        if (!oldTiles.isEmpty()) cs.add(See.only(serverPlayer), oldTiles);
+        if (!oldTiles.isEmpty()) {
+			cs.add(See.only(serverPlayer), oldTiles);
+		}
         // Unless moving in from off-map, update the old location and
         // make sure the move is always visible even if the unit
         // dies (including the animation).  However, dead units
@@ -918,7 +927,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
             cs.add(See.only(serverPlayer), (FreeColGameObject)oldLocation);
         }
         cs.add(See.perhaps().always(serverPlayer), newTile);
-        if (isDisposed()) return;
+        if (isDisposed()) {
+			return;
+		}
         serverPlayer.csSeeNewTiles(newTiles, cs);
 
         if (newTile.isLand()) {
@@ -932,8 +943,8 @@ public class ServerUnit extends Unit implements ServerModelObject {
                 && serverPlayer.isIndian()
                 && (settlement = getHomeIndianSettlement()) != null
                 && ((d = newTile.getDistanceTo(settlement.getTile()))
-                    < (settlement.getRadius()
-                        + settlement.getType().getExtraClaimableRadius()))
+                    < settlement.getRadius()
+                        + settlement.getType().getExtraClaimableRadius())
                 && randomInt(logger, "Claim tribal land", random, d + 1) == 0) {
                 newTile.cacheUnseen();//+til
                 newTile.changeOwnership(serverPlayer, settlement);//-til
@@ -968,7 +979,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
                     : null;
                 if (other == null
                     || other == serverPlayer
-                    || pending.contains(other)) continue; // No contact
+                    || pending.contains(other)) {
+					continue;
+				} // No contact
                 if (serverPlayer.csContact(other, cs)) {
                     // First contact.  Note contact pending because
                     // European first contact now requires a diplomacy
@@ -985,13 +998,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
                             serverPlayer.csEuropeanFirstContact(this,
                                 settlement, unit, cs);
                         }
-                    } else {
-                        if (other.isIndian()) {
-                            ; // Do nothing
-                        } else {
-                            other.csNativeFirstContact(serverPlayer, null, cs);
-                        }
-                    }
+                    } else if (!other.isIndian()) {
+					    other.csNativeFirstContact(serverPlayer, null, cs);
+					}
                 }
 
                 // Initialize alarm for native settlements or units and
@@ -1034,7 +1043,9 @@ public class ServerUnit extends Unit implements ServerModelObject {
                     continue;
                 }
                 if (t.getFirstUnit().getOwner()
-                    != serverPlayer) csActivateSentries(t, cs);
+                    != serverPlayer) {
+					csActivateSentries(t, cs);
+				}
             }
         }
 
@@ -1069,7 +1080,6 @@ public class ServerUnit extends Unit implements ServerModelObject {
             region.setDiscoverer(getId());
         }
     }
-
 
     // Serialization
 

@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.model;
 
 /**
@@ -25,13 +24,12 @@ package net.sf.freecol.common.model;
  * power.
  */
 public interface Movable {
-
     /**
      * Returns the amount of moves this Movable has left.
      *
      * @return The amount of moves this Movable has left.
      */
-    public int getMovesLeft();
+    int getMovesLeft();
 
     /**
      * Gets the amount of moves this Movable has at the beginning of
@@ -40,5 +38,5 @@ public interface Movable {
      * @return The amount of moves this Movable has at the beginning
      * of each turn.
      */
-    public int getInitialMovesLeft();
+    int getInitialMovesLeft();
 }

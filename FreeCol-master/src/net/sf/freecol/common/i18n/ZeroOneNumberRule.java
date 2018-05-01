@@ -19,13 +19,11 @@
 
 package net.sf.freecol.common.i18n;
 
-
 /**
  * Number optimized for languages that place the numbers 0 and 1 in
  * category one, and all others in category other.
  */
 public class ZeroOneNumberRule extends Number {
-
     @Override
     public Category getCategory(double input) {
         if (input == 0 || input == 1) {
@@ -34,5 +32,4 @@ public class ZeroOneNumberRule extends Number {
             return Category.other;
         }
     }
-
 }

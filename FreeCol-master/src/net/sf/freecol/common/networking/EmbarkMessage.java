@@ -31,12 +31,8 @@ import net.sf.freecol.server.model.ServerUnit;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when embarking.
- */
+/** The message sent when embarking. */
 public class EmbarkMessage extends DOMMessage {
-
     /** The identifier of the unit embarking. */
     private final String unitId;
 
@@ -45,7 +41,6 @@ public class EmbarkMessage extends DOMMessage {
 
     /** An optional direction for the unit to move to find the carrier. */
     private final String directionString;
-
 
     /**
      * Create a new <code>EmbarkMessage</code> with the
@@ -76,10 +71,9 @@ public class EmbarkMessage extends DOMMessage {
 
         this.unitId = element.getAttribute("unit");
         this.carrierId = element.getAttribute("carrier");
-        this.directionString = (!element.hasAttribute("direction")) ? null
+        this.directionString = !element.hasAttribute("direction") ? null
             : element.getAttribute("direction");
     }
-
 
     /**
      * Handle a "embark"-message.

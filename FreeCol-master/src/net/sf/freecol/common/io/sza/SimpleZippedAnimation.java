@@ -41,12 +41,8 @@ import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
-
-/**
- * An animation made from images stored in a zip-file.
- */
+/** An animation made from images stored in a zip-file. */
 public final class SimpleZippedAnimation implements Iterable<AnimationEvent> {
-
     private static final String ANIMATION_DESCRIPTOR_FILE = "animation.txt";
     
     private final List<AnimationEvent> events;

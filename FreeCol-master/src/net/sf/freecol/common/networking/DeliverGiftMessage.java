@@ -29,12 +29,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when delivering a gift to a Settlement.
- */
+/** The message sent when delivering a gift to a Settlement. */
 public class DeliverGiftMessage extends DOMMessage {
-
     /** The object identifier of the unit that is delivering the gift. */
     private final String unitId;
 
@@ -43,7 +39,6 @@ public class DeliverGiftMessage extends DOMMessage {
 
     /** The goods to be delivered. */
     private final Goods goods;
-
 
     /**
      * Create a new <code>DeliverGiftMessage</code>.
@@ -75,7 +70,6 @@ public class DeliverGiftMessage extends DOMMessage {
         this.goods = new Goods(game,
             DOMMessage.getChildElement(element, Goods.getXMLElementTagName()));
     }
-
 
     // Public interface
 
@@ -112,7 +106,6 @@ public class DeliverGiftMessage extends DOMMessage {
     public Goods getGoods() {
         return goods;
     }
-
 
     /**
      * Handle a "deliverGift"-message.

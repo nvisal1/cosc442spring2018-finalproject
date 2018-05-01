@@ -24,16 +24,13 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * An action for making a unit move to a specific location.  This
  * action first displays a panel from which the player can choose a
  * location the unit should move towards.
  */
 public class GotoAction extends UnitAction {
-
     public static final String id = "gotoAction";
-
 
     /**
      * Creates this action.
@@ -44,23 +41,15 @@ public class GotoAction extends UnitAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         return super.shouldBeEnabled() && !getGUI().isShowingSubPanel();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         Unit unit = getGUI().getActiveUnit();

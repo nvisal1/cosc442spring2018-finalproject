@@ -27,15 +27,10 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when training a unit in Europe.
- */
+/** The message sent when training a unit in Europe. */
 public class TrainUnitInEuropeMessage extends DOMMessage {
-
     /** The identifier of the unit type. */
     private final String typeId;
-
 
     /**
      * Create a new <code>TrainUnitInEuropeMessage</code> with the
@@ -62,7 +57,6 @@ public class TrainUnitInEuropeMessage extends DOMMessage {
         this.typeId = element.getAttribute("unitType");
     }
 
-
     /**
      * Handle a "trainUnitInEurope"-message.
      *
@@ -78,13 +72,13 @@ public class TrainUnitInEuropeMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
         UnitType type = server.getSpecification().getUnitType(typeId);
-        if (type == null) {
-            return DOMMessage.clientError("Not a unit type: " + typeId);
+        if (type != null) {
+            return server.getInGameController()
+			    .trainUnitInEurope(serverPlayer, type);
         }
 
         // Proceed to train a unit.
-        return server.getInGameController()
-            .trainUnitInEurope(serverPlayer, type);
+        return DOMMessage.clientError("Not a unit type: " + typeId);
     }
 
     /**

@@ -31,7 +31,6 @@ import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.client.gui.ImageLibrary;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * A panel for adjusting the river style.
  *
@@ -39,14 +38,12 @@ import net.sf.freecol.common.resources.ResourceManager;
  * {@link net.sf.freecol.client.FreeColClient#isMapEditor()} map editor mode.
  */
 public final class RiverStyleDialog extends FreeColChoiceDialog<String> {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(RiverStyleDialog.class.getName());
 
     public static final String DELETE = "DELETE";
 
     private static final String PREFIX = "image.tile.model.improvement.river";
-
 
     /**
      * Creates a dialog to choose a river style.

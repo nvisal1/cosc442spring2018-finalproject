@@ -17,21 +17,18 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.networking;
-
 
 /**
  * Contains the network constants. These constants are used by the
  * controllers and input handlers when they are communicating.
  */
 public interface NetworkConstants {
-
     /** Claiming land by stealing it. */
-    public static final int STEAL_LAND = -1;
+    int STEAL_LAND = -1;
 
     /** Trading type. */
-    public static final int NO_TRADE_GOODS = 0,
+    int NO_TRADE_GOODS = 0,
                             NO_TRADE = -1,
                             NO_TRADE_HAGGLE = -2,
                             NO_TRADE_HOSTILE = -3;

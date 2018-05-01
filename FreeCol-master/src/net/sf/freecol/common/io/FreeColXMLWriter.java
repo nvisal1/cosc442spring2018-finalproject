@@ -47,7 +47,6 @@ import net.sf.freecol.common.model.FreeColObject;
 import net.sf.freecol.common.model.Location;
 import net.sf.freecol.common.model.Player;
 
-
 /**
  * A wrapper for <code>XMLStreamWriter</code> and potentially an
  * underlying stream.  Adds on many useful utilities for writing
@@ -61,7 +60,6 @@ import net.sf.freecol.common.model.Player;
  * all the delegation functions.
  */
 public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
-
     private static final Logger logger = Logger.getLogger(FreeColXMLWriter.class.getName());
 
     /** Magic properties to indent files if supported. */
@@ -71,13 +69,12 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
     };
 
     /** The scope of a FreeCol object write. */
-    public static enum WriteScope {
-        CLIENT,  // Only the client-visible information
-        SERVER,  // Full server-visible information
-        SAVE;    // Absolutely everything needed to save the game state
+    public enum WriteScope {
+        CLIENT,  /** Only the client-visible information. */
+        SERVER,  /** Full server-visible information. */
+        SAVE;    /** Absolutely everything needed to save the game state. */
 
-        private Player player = null; // The player to write to.
-
+        private Player player = null; /** The player to write to. */
 
         public static WriteScope toClient(Player player) {
             if (player == null) {
@@ -113,7 +110,6 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
         }
     }
 
-
     /** The stream to write to. */
     private final XMLStreamWriter xmlStreamWriter;
 
@@ -124,7 +120,6 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
 
     /** A write scope to use for FreeCol object writes. */
     private WriteScope writeScope;
-
 
     /**
      * Creates a new <code>FreeColXMLWriter</code>.
@@ -182,7 +177,6 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
         }
         this.writeScope = scope;
     }
-
 
     /**
      * Get the <code>XMLOutputFactory</code> to create the output stream with.
@@ -253,7 +247,6 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
             }
         }
     }
-
 
     /**
      * Write a boolean attribute to the stream.
@@ -369,15 +362,17 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
         writeEndElement();
     }
 
-    // Delegations to the WriteScope.
+    /** Delegations to the WriteScope. */
 
     public Player getClientPlayer() {
         return writeScope.getClient();
     }
 
-    //public boolean isValid() {
-    //    return (this == WriteScope.CLIENT) == (player != null);
-    //}
+    /**
+     *Public boolean isValid() {
+     *    return (this == WriteScope.CLIENT) == (player != null);
+     *}
+     */
 
     public boolean validForSave() {
         return writeScope.validForSave();
@@ -387,8 +382,10 @@ public class FreeColXMLWriter implements Closeable, XMLStreamWriter {
         return writeScope.validFor(player);
     }
 
-    // Simple delegations to the XMLStreamWriter.  All should be
-    // present here except close which is supplied above.
+    /**
+     * Simple delegations to the XMLStreamWriter.  All should be
+     * present here except close which is supplied above.
+     */
 
     @Override
     public void flush() throws XMLStreamException {

@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for displaying a Colony Report.
- */
+/** An action for displaying a Colony Report. */
 public class ReportColonyAction extends FreeColAction {
-
     public static final String id = "reportColonyAction";
-
 
     /**
      * Creates this action.
@@ -41,12 +36,8 @@ public class ReportColonyAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showReportColonyPanel();

@@ -46,13 +46,11 @@ import net.sf.freecol.common.io.FreeColDirectories;
 import net.sf.freecol.common.option.MapGeneratorOptions;
 import net.sf.freecol.common.option.OptionGroup;
 
-
 /**
  * The panel where you choose your nation and color and connected players are
  * shown.
  */
 public final class StartGamePanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(StartGamePanel.class.getName());
 
     private static final int START = 0, CANCEL = 1,
@@ -70,7 +68,6 @@ public final class StartGamePanel extends FreeColPanel {
 
     private PlayersTable table;
 
-
     /**
      * Create the panel from which to start a game.
      *
@@ -79,7 +76,6 @@ public final class StartGamePanel extends FreeColPanel {
     public StartGamePanel(FreeColClient freeColClient) {
         super(freeColClient, new MigLayout("fill, wrap 2"));
     }
-
 
     public void initialize(boolean singlePlayer) {
         removeAll();
@@ -91,7 +87,7 @@ public final class StartGamePanel extends FreeColPanel {
             String gtag = GameOptions.getXMLElementTagName();
             File gof = FreeColDirectories
                 .getOptionsFile(FreeColDirectories.GAME_OPTIONS_FILE_NAME);
-            OptionGroup gog = (gof.exists()) ? spec.loadOptionsFile(gtag, gof)
+            OptionGroup gog = gof.exists() ? spec.loadOptionsFile(gtag, gof)
                 : null;
             gog = (gog != null) ? spec.mergeGroup(gog)
                 : spec.getOptionGroup(gtag);
@@ -100,7 +96,7 @@ public final class StartGamePanel extends FreeColPanel {
             String mtag = MapGeneratorOptions.getXMLElementTagName();
             File mof = FreeColDirectories
                 .getOptionsFile(FreeColDirectories.MAP_GENERATOR_OPTIONS_FILE_NAME);
-            OptionGroup mog = (mof.exists()) ? spec.loadOptionsFile(mtag, mof)
+            OptionGroup mog = mof.exists() ? spec.loadOptionsFile(mtag, mof)
                 : null;
             mog = (mog != null) ? spec.mergeGroup(mog)
                 : spec.getOptionGroup(mtag);
@@ -188,9 +184,7 @@ public final class StartGamePanel extends FreeColPanel {
         start.requestFocus();
     }
 
-    /**
-     * Updates the map generator options displayed on this panel.
-     */
+    /** Updates the map generator options displayed on this panel. */
     public void updateMapGeneratorOptions() {
         getFreeColClient().getGame().getMapGeneratorOptions()
             .getOption(MapGeneratorOptions.MAP_WIDTH);
@@ -198,9 +192,7 @@ public final class StartGamePanel extends FreeColPanel {
             .getOption(MapGeneratorOptions.MAP_HEIGHT);
     }
 
-    /**
-     * Updates the game options displayed on this panel.
-     */
+    /** Updates the game options displayed on this panel. */
     public void updateGameOptions() {
         // Nothing yet.
     }
@@ -248,7 +240,9 @@ public final class StartGamePanel extends FreeColPanel {
                      : getGame().getNationOptions().getNations().entrySet()) {
                 if (e.getKey().getType().isEuropean()
                     && !e.getKey().isUnknownEnemy()
-                    && e.getValue() != NationState.NOT_AVAILABLE) n++;
+                    && e.getValue() != NationState.NOT_AVAILABLE) {
+					n++;
+				}
             }
             if (n == 0) {
                 getGUI().showInformationMessage("info.noEuropeans");
@@ -286,12 +280,8 @@ public final class StartGamePanel extends FreeColPanel {
         }
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -305,7 +295,9 @@ public final class StartGamePanel extends FreeColPanel {
                 if (row > -1 && col > -1){
                     table.getCellEditor(row, col).stopCellEditing();
                 }
-                if (!checkVictoryConditions()) break;
+                if (!checkVictoryConditions()) {
+					break;
+				}
 
                 // The ready flag was set to false for single player
                 // mode in order to allow the player to change
@@ -355,12 +347,8 @@ public final class StartGamePanel extends FreeColPanel {
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         // Do not propagate to superclass.  This panel is reused so
@@ -371,6 +359,8 @@ public final class StartGamePanel extends FreeColPanel {
         readyBox.removeActionListener(this);
         gameOptions.removeActionListener(this);
         mapGeneratorOptions.removeActionListener(this);
-        if (chat != null) chat.removeActionListener(this);
+        if (chat != null) {
+			chat.removeActionListener(this);
+		}
     }
 }

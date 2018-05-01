@@ -39,20 +39,18 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.AbstractGoods;
 import net.sf.freecol.common.model.GoodsType;
 
-
 /**
  * The ProductionLabel represents Goods that are produced in a
  * WorkLocation or Settlement. It is similar to the GoodsLabel.
  */
 public final class ProductionLabel extends AbstractGoodsLabel {
-
     private static final Logger logger = Logger.getLogger(ProductionLabel.class.getName());
 
     /** The maximum number of goodsIcons to display. */
     private int maxIcons = 7;
 
     /** Whether to display positive integers with a "+" sign. */
-    private boolean drawPlus = false;
+    private boolean drawPlus;
 
     /** Whether the ProductionLabel should be centered. */
     private boolean centered = true;
@@ -77,7 +75,6 @@ public final class ProductionLabel extends AbstractGoodsLabel {
 
     /** The image to display. */
     private Image stringImage = null;
-
 
     /**
      * Creates a new production label.
@@ -181,9 +178,13 @@ public final class ProductionLabel extends AbstractGoodsLabel {
                 number = String.valueOf(stockNumber);
                 drawPlus = true;
             }
-            if (amount >= 0 && drawPlus) number += "+";
+            if (amount >= 0 && drawPlus) {
+				number += "+";
+			}
             number += String.valueOf(amount);
-            if (showMax) number += "/" + String.valueOf(maximumProduction);
+            if (showMax) {
+				number += "/" + maximumProduction;
+			}
             
             BufferedImage dummy = new BufferedImage(1, 1,
                 BufferedImage.TYPE_INT_ARGB);
@@ -196,18 +197,16 @@ public final class ProductionLabel extends AbstractGoodsLabel {
         }
     }
 
+    /** Override JComponent. */
 
-    // Override JComponent
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void paintComponent(Graphics g) {
         int stringWidth = (this.stringImage == null) ? 0
             : stringImage.getWidth(null);
         int drawImageCount = Math.min(Math.abs(getAmount()), this.maxIcons);
-        if (drawImageCount == 0) drawImageCount = 1;
+        if (drawImageCount == 0) {
+			drawImageCount = 1;
+		}
         int iconWidth = this.goodsIcon.getIconWidth();
         int pixelsPerIcon = iconWidth / 2;
         if (pixelsPerIcon - iconWidth < 0) {
@@ -218,11 +217,15 @@ public final class ProductionLabel extends AbstractGoodsLabel {
         // FIXME: Tune this: all icons are the same width, but many do
         // not take up the whole width, eg. bells
         boolean iconsTooFarApart = pixelsPerIcon > maxSpacing;
-        if (iconsTooFarApart) pixelsPerIcon = maxSpacing;
+        if (iconsTooFarApart) {
+			pixelsPerIcon = maxSpacing;
+		}
         int coverage = pixelsPerIcon * (drawImageCount - 1) + iconWidth;
         int leftOffset = 0;
         int width = Math.max(getWidth(), Math.max(stringWidth, coverage));
-        if (centered && coverage < width) leftOffset = (width - coverage)/2;
+        if (centered && coverage < width) {
+			leftOffset = (width - coverage)/2;
+		}
         int height = Math.max(getHeight(),
                               this.goodsIcon.getImage().getHeight(null));
         setSize(new Dimension(width, height));
@@ -242,15 +245,13 @@ public final class ProductionLabel extends AbstractGoodsLabel {
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Dimension getPreferredSize() {
-        if (this.goodsIcon == null) return new Dimension(0, 0);
+        if (this.goodsIcon == null) {
+			return new Dimension(0, 0);
+		}
        
         int drawImageCount = Math.max(1, Math.min(Math.abs(getAmount()),
                                                   this.maxIcons));
@@ -264,7 +265,9 @@ public final class ProductionLabel extends AbstractGoodsLabel {
         // FIXME: Tune this: all icons are the same width, but many do
         // not take up the whole width, eg. bells
         boolean iconsTooFarApart = pixelsPerIcon > maxSpacing;
-        if (iconsTooFarApart) pixelsPerIcon = maxSpacing;
+        if (iconsTooFarApart) {
+			pixelsPerIcon = maxSpacing;
+		}
         int width = pixelsPerIcon * (drawImageCount - 1) + iconWidth;
         if (this.stringImage != null) {
             width = Math.max(this.stringImage.getWidth(null), width);

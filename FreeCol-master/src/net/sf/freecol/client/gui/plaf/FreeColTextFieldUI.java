@@ -27,15 +27,12 @@ import javax.swing.plaf.basic.BasicTextFieldUI;
 
 import net.sf.freecol.client.gui.ImageLibrary;
 
-
 /**
  * Provides a tiled background image "image.background.FreeColTextField" to
  * text fields.
  */
 public class FreeColTextFieldUI extends BasicTextFieldUI {
-
     private final JComponent c;
-
 
     public FreeColTextFieldUI(JComponent c) {
         this.c = c;
@@ -52,12 +49,11 @@ public class FreeColTextFieldUI extends BasicTextFieldUI {
     }
 
     @Override
-    public void paintBackground(java.awt.Graphics g) {
+    public void paintBackground(Graphics g) {
         JComponent c = getComponent();
 
         if (c.isOpaque()) {
             ImageLibrary.drawTiledImage("image.background.FreeColTextField", g, c, null);
         }
     }
-
 }

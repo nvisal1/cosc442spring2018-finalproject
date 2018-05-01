@@ -53,26 +53,26 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
-
-/**
- * Changes to be sent to the client.
- */
+/** Changes to be sent to the client. */
 public class ChangeSet {
-
     /** Compare changes by ascending priority. */
     private static final Comparator<Change> changeComparator
         = Comparator.comparingInt(Change::getPriority);
 
-    // Convenient way to specify the relative priorities of the fixed
-    // change types in one place.
-    public static enum ChangePriority {
-        CHANGE_ATTRIBUTE(-1), // N/A
-        CHANGE_ANIMATION(0),  // Do animations first
-        CHANGE_REMOVE(100),   // Do removes last
-        CHANGE_STANCE(5),     // Do stance before updates
-        CHANGE_OWNED(20),     // Do owned changes after updates
-        CHANGE_UPDATE(10),    // There are a lot of updates
-        // Symbolic priorities used by various non-fixed types
+    /**
+     * Convenient way to specify the relative priorities of the fixed
+     * change types in one place.
+     */
+    public enum ChangePriority {
+        CHANGE_ATTRIBUTE(-1), /** N/A. */
+        CHANGE_ANIMATION(0),  /** Do animations first. */
+        CHANGE_REMOVE(100),   /** Do removes last. */
+        CHANGE_STANCE(5),     /** Do stance before updates. */
+        CHANGE_OWNED(20),     /** Do owned changes after updates. */
+        CHANGE_UPDATE(10),    /**
+ * There are a lot of updates
+         * Symbolic priorities used by various non-fixed types.
+         */
         CHANGE_EARLY(1),
         CHANGE_NORMAL(15),
         CHANGE_LATE(90);
@@ -90,10 +90,7 @@ public class ChangeSet {
 
     private final ArrayList<Change> changes;
 
-
-    /**
-     * Class to control the visibility of a change.
-     */
+    /** Class to control the visibility of a change. */
     public static class See {
         private static final int ALL = 1;
         private static final int PERHAPS = 0;
@@ -116,12 +113,8 @@ public class ChangeSet {
          * @return True if the player satisfies the visibility test.
          */
         public boolean check(ServerPlayer player, boolean perhapsResult) {
-            return (seeNever == player) ? false
-                : (seeAlways == player) ? true
-                : (seePerhaps == player) ? perhapsResult
-                : (type == ONLY) ? false
-                : (type == ALL) ? true
-                : perhapsResult;
+            return (seeNever != player && seeAlways == player) || seePerhaps == player ? perhapsResult
+			: (type != ONLY && type == ALL) || perhapsResult;
         }
 
         // Use these public constructor-like functions to define the
@@ -192,9 +185,6 @@ public class ChangeSet {
             return this;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(64);
@@ -213,24 +203,15 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Abstract template for all types of Change.
-     */
-    private abstract static class Change {
-
-        /**
-         * The visibility of the change.
-         */
+    /** Abstract template for all types of Change. */
+    private static abstract class Change {
+        /** The visibility of the change. */
         protected final See see;
 
-
-        /**
-         * Make a new Change.
-         */
+        /** Make a new Change. */
         public Change(See see) {
             this.see = see;
         }
-
 
         /**
          * Does this Change operate on the given object?
@@ -242,10 +223,7 @@ public class ChangeSet {
             return false;
         }
 
-        /**
-         * Gets the sort priority of a change, to be used by the
-         * changeComparator.
-         */
+        /** Gets the sort priority of a change, to be used by the changeComparator. */
         public abstract int getPriority();
 
         /**
@@ -312,16 +290,12 @@ public class ChangeSet {
         public abstract void attachToElement(Element element);
     }
 
-    /**
-     * Encapsulate an attack.
-     */
+    /** Encapsulate an attack. */
     private static class AttackChange extends Change {
-
         private final Unit attacker;
         private final Unit defender;
         private final boolean success;
         private final boolean defenderInSettlement;
-
 
         /**
          * Build a new AttackChange.
@@ -416,15 +390,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(64);
@@ -441,9 +409,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate an attribute change.
-     */
+    /** Encapsulate an attribute change. */
     private static class AttributeChange extends Change {
         private final String key;
         private final String value;
@@ -504,9 +470,6 @@ public class ChangeSet {
             element.setAttribute(key, value);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -520,9 +483,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate a Message.
-     */
+    /** Encapsulate a Message. */
     private static class MessageChange extends Change {
         private final ChangePriority priority;
         private final DOMMessage message;
@@ -564,15 +525,9 @@ public class ChangeSet {
             return (Element) doc.importNode(element, true);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -585,9 +540,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate a move.
-     */
+    /** Encapsulate a move. */
     private static class MoveChange extends Change {
         private final Unit unit;
         private final Location oldLocation;
@@ -605,7 +558,6 @@ public class ChangeSet {
         private boolean seeNew(ServerPlayer serverPlayer) {
             return canSeeUnit(serverPlayer, unit);
         }
-
 
         /**
          * Build a new MoveChange.
@@ -690,15 +642,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -713,9 +659,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate a FreeColGameObject update.
-     */
+    /** Encapsulate a FreeColGameObject update. */
     private static class ObjectChange extends Change {
         protected final FreeColGameObject fcgo;
 
@@ -730,10 +674,6 @@ public class ChangeSet {
             this.fcgo = fcgo;
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean matches(FreeColGameObject fcgo) {
             return this.fcgo == fcgo;
@@ -797,15 +737,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -818,9 +752,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate a partial update of a FreeColGameObject.
-     */
+    /** Encapsulate a partial update of a FreeColGameObject. */
     private static class PartialObjectChange extends ObjectChange {
         private final String[] fields;
 
@@ -836,7 +768,6 @@ public class ChangeSet {
             super(see, fcgo);
             this.fields = fields;
         }
-
 
         /**
          * Should a player perhaps be notified of this update?
@@ -863,9 +794,6 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -873,15 +801,15 @@ public class ChangeSet {
                 .append(" ").append(see)
                 .append(" #").append(getPriority())
                 .append(" ").append(fcgo.getId());
-            for (String f : fields) sb.append(" ").append(f);
+            for (String f : fields) {
+				sb.append(" ").append(f);
+			}
             sb.append("]");
             return sb.toString();
         }
     }
 
-    /**
-     * Encapsulate a new player change.
-     */
+    /** Encapsulate a new player change. */
     private static class PlayerChange extends Change {
         private final ServerPlayer player;
 
@@ -906,17 +834,11 @@ public class ChangeSet {
             return ChangePriority.CHANGE_EARLY.getPriority();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean isNotifiable(ServerPlayer serverPlayer) {
             return true;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Element toElement(ServerPlayer serverPlayer, Document doc) {
             final Game game = serverPlayer.getGame();
@@ -925,15 +847,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -1022,22 +938,16 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
             sb.append("[").append(getClass().getName())
                 .append(" ").append(see)
                 .append(" #").append(getPriority())
-                .append(" ").append(((tile == null) ? "<null>" : tile.getId()));
+                .append(" ").append((tile == null) ? "<null>" : tile.getId());
             for (FreeColGameObject f : contents) {
                 sb.append(" ").append(f.getId());
             }
@@ -1046,9 +956,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate an owned object change.
-     */
+    /** Encapsulate an owned object change. */
     private static class OwnedChange extends Change {
         private final FreeColObject fco;
 
@@ -1090,15 +998,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -1111,9 +1013,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate a feature change.
-     */
+    /** Encapsulate a feature change. */
     private static class FeatureChange extends Change {
         private final FreeColGameObject object;
         private final Feature feature;
@@ -1163,33 +1063,25 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
             sb.append("[").append(getClass().getName())
                 .append(" ").append(see)
                 .append(" #").append(getPriority())
-                .append(" ").append((add) ? "add" : "remove")
+                .append(" ").append(add ? "add" : "remove")
                 .append(" ").append(feature)
-                .append(" ").append((add) ? "to" : "from")
+                .append(" ").append(add ? "to" : "from")
                 .append(" ").append(object.getId())
                 .append("]");
             return sb.toString();
         }
     }
 
-    /**
-     * Encapsulates a spying action.
-     */
+    /** Encapsulates a spying action. */
     private static class SpyChange extends Change {
         private final Tile tile;
 
@@ -1233,15 +1125,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -1254,9 +1140,7 @@ public class ChangeSet {
         }
     }
 
-    /**
-     * Encapsulate a stance change.
-     */
+    /** Encapsulate a stance change. */
     private static class StanceChange extends Change {
         private final Player first;
         private final Stance stance;
@@ -1304,15 +1188,9 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void attachToElement(Element element) {} // Noop
+        public void attachToElement(Element element) {} /** Noop. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
@@ -1380,28 +1258,23 @@ public class ChangeSet {
             return element;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void attachToElement(Element element) {} // Noop
 
-        /**
-         * Debug helper.
-         */
+        /** Debug helper. */
         @Override
         public String toString() {
             String ret = "[" + getClass().getName() + " " + see
                 + " #" + getPriority()
                 + " " + name;
-            for (String a : attributes) ret += " " + a;
+            for (String a : attributes) {
+				ret += " " + a;
+			}
             return ret + "]";
         }
     }
 
-    /**
-     * Simple constructor.
-     */
+    /** Simple constructor. */
     public ChangeSet() {
         changes = new ArrayList<>();
     }
@@ -1415,7 +1288,6 @@ public class ChangeSet {
         changes = new ArrayList<>(other.changes);
     }
 
-
     // Helper routines that should be used to construct a change set.
 
     /**
@@ -1428,7 +1300,9 @@ public class ChangeSet {
         Iterator<Change> ci = changes.iterator();
         while (ci.hasNext()) {
             Change c = ci.next();
-            if (c.matches(fcgo)) ci.remove();
+            if (c.matches(fcgo)) {
+				ci.remove();
+			}
         }
     }
 
@@ -1788,12 +1662,7 @@ public class ChangeSet {
      */
     private static boolean canSeeUnit(ServerPlayer serverPlayer, Unit unit) {
         Tile tile;
-        return (serverPlayer.owns(unit)) ? true
-            : ((tile = unit.getTile()) == null) ? false
-            : (!serverPlayer.canSee(tile)) ? false
-            : (tile.hasSettlement()) ? false
-            : (unit.isOnCarrier()) ? false
-            : true;
+        return ((serverPlayer.owns(unit) || ((tile = unit.getTile()) == null) || serverPlayer.canSee(tile)) && tile.hasSettlement()) || !unit.isOnCarrier();
     }
 
     /**
@@ -1817,18 +1686,16 @@ public class ChangeSet {
      * @return True if they can be collapsed.
      */
     private static boolean collapseOK(Element e1, Element e2) {
-        if (!e1.getTagName().equals(e2.getTagName())) return false;
+        if (!e1.getTagName().equals(e2.getTagName())) {
+			return false;
+		}
         NamedNodeMap nnm1 = e1.getAttributes();
         NamedNodeMap nnm2 = e2.getAttributes();
-        if (nnm1.getLength() != nnm2.getLength()) return false;
+        if (nnm1.getLength() != nnm2.getLength()) {
+			return false;
+		}
         for (int i = 0; i < nnm1.getLength(); i++) {
-            if (nnm1.item(i).getNodeType() != nnm2.item(i).getNodeType()) {
-                return false;
-            }
-            if (!nnm1.item(i).getNodeName().equals(nnm2.item(i).getNodeName())) {
-                return false;
-            }
-            if (!nnm1.item(i).getNodeValue().equals(nnm2.item(i).getNodeValue())) {
+            if (nnm1.item(i).getNodeType() != nnm2.item(i).getNodeType() || !nnm1.item(i).getNodeName().equals(nnm2.item(i).getNodeName()) || !nnm1.item(i).getNodeValue().equals(nnm2.item(i).getNodeValue())) {
                 return false;
             }
         }
@@ -1900,7 +1767,9 @@ public class ChangeSet {
         Element result;
         switch (elements.size()) {
         case 0:
-            if (diverted.isEmpty()) return null;
+            if (diverted.isEmpty()) {
+				return null;
+			}
             result = doc.createElement("update");
             break;
         case 1:
@@ -1908,22 +1777,25 @@ public class ChangeSet {
             break;
         default:
             result = doc.createElement("multiple");
-            for (Element e : elements) result.appendChild(e);
+            for (Element e : elements) {
+				result.appendChild(e);
+			}
             break;
         }
         doc.appendChild(result);
-        for (Change change : diverted) change.attachToElement(result);
+        for (Change change : diverted) {
+			change.attachToElement(result);
+		}
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         Collections.sort(changes, changeComparator);
-        for (Change c : changes) sb.append(c).append("\n");
+        for (Change c : changes) {
+			sb.append(c).append("\n");
+		}
         return sb.toString();
     }
 }

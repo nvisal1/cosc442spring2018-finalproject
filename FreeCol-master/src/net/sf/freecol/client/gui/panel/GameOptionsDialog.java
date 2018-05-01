@@ -27,13 +27,8 @@ import net.sf.freecol.common.io.FreeColDirectories;
 import net.sf.freecol.common.model.GameOptions;
 import net.sf.freecol.common.option.OptionGroup;
 
-
-/**
- * Dialog for changing the {@link net.sf.freecol.common.model.GameOptions}.
- */
+/** Dialog for changing the {@link net.sf.freecol.common.model.GameOptions}. */
 public final class GameOptionsDialog extends OptionsDialog {
-
-
     /**
      * Creates a game options dialog.
      *
@@ -50,7 +45,9 @@ public final class GameOptionsDialog extends OptionsDialog {
             FreeColDirectories.GAME_OPTIONS_FILE_NAME,
             GameOptions.getXMLElementTagName());
 
-        if (isEditable()) loadDefaultOptions();
+        if (isEditable()) {
+			loadDefaultOptions();
+		}
 
         // Set special cases
         // Disable victory option "All humans defeated"
@@ -67,18 +64,14 @@ public final class GameOptionsDialog extends OptionsDialog {
         initialize(frame);
     }
 
+    /** Override OptionsDialog. */
 
-    // Override OptionsDialog
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public OptionGroup getResponse() {
         OptionGroup value = super.getResponse();
-        if (value != null) {
-            if (isEditable()) saveDefaultOptions();
-        }
+        if (value != null && isEditable()) {
+			saveDefaultOptions();
+		}
         return value;
     }
 }

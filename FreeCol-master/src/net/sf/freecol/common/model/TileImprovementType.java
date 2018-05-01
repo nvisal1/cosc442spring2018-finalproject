@@ -35,12 +35,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.RandomChoice;
 
-
-/**
- * An improvement to make to a tile.
- */
+/** An improvement to make to a tile. */
 public final class TileImprovementType extends FreeColGameObjectType {
-
     /** Is this improvement natural or man-made? */
     private boolean natural;
 
@@ -99,7 +95,6 @@ public final class TileImprovementType extends FreeColGameObjectType {
      */
     private List<Scope> scopes = null;
 
-
     /**
      * Create a new tile improvement type.
      *
@@ -109,7 +104,6 @@ public final class TileImprovementType extends FreeColGameObjectType {
     public TileImprovementType(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Is this tile improvement type natural?
@@ -192,7 +186,9 @@ public final class TileImprovementType extends FreeColGameObjectType {
      * @param scope The <code>Scope</code> to add.
      */
     private void addScope(Scope scope) {
-        if (scopes == null) scopes = new ArrayList<>();
+        if (scopes == null) {
+			scopes = new ArrayList<>();
+		}
         scopes.add(scope);
     }
 
@@ -215,7 +211,9 @@ public final class TileImprovementType extends FreeColGameObjectType {
      * @param probability The probability of the disaster.
      */
     private void addDisaster(Disaster disaster, int probability) {
-        if (disasters == null) disasters = new ArrayList<>();
+        if (disasters == null) {
+			disasters = new ArrayList<>();
+		}
         disasters.add(new RandomChoice<>(disaster, probability));
     }
 
@@ -290,10 +288,10 @@ public final class TileImprovementType extends FreeColGameObjectType {
 
     public int getBonus(GoodsType goodsType) {
         Modifier result = getProductionModifier(goodsType);
-        if (result == null) {
-            return 0;
-        } else {
+        if (result != null) {
             return (int) result.getValue();
+        } else {
+            return 0;
         }
     }
 
@@ -327,7 +325,9 @@ public final class TileImprovementType extends FreeColGameObjectType {
      * @return The <code>AbstractGoods</code> produced.
      */
     public AbstractGoods getProduction(TileType from) {
-        if (tileTypeChanges == null) return null;
+        if (tileTypeChanges == null) {
+			return null;
+		}
         TileTypeChange change = tileTypeChanges.get(from);
         return (change == null) ? null : change.getProduction();
     }
@@ -339,7 +339,9 @@ public final class TileImprovementType extends FreeColGameObjectType {
      * @return The resulting <code>TileType</code>.
      */
     public TileType getChange(TileType tileType) {
-        if (tileTypeChanges == null) return null;
+        if (tileTypeChanges == null) {
+			return null;
+		}
         TileTypeChange change = tileTypeChanges.get(tileType);
         return (change == null) ? null : change.getTo();
     }
@@ -352,9 +354,8 @@ public final class TileImprovementType extends FreeColGameObjectType {
      * @return True if the required <code>TileType</code> can be changed to.
      */
     public boolean changeContainsTarget(TileType tileType) {
-        return (tileTypeChanges == null) ? false
-            : any(tileTypeChanges.values(),
-                change -> change.getTo() == tileType);
+        return tileTypeChanges != null && any(tileTypeChanges.values(),
+		    change -> change.getTo() == tileType);
     }
 
     /**
@@ -363,7 +364,9 @@ public final class TileImprovementType extends FreeColGameObjectType {
      * @param change The <code>TileTypeChange</code> to add.
      */
     private void addChange(TileTypeChange change) {
-        if (tileTypeChanges == null) tileTypeChanges = new HashMap<>();
+        if (tileTypeChanges == null) {
+			tileTypeChanges = new HashMap<>();
+		}
         tileTypeChanges.put(change.getFrom(), change);
     }
 
@@ -416,8 +419,7 @@ public final class TileImprovementType extends FreeColGameObjectType {
         return value;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String ADD_WORK_TURNS_TAG = "add-work-turns";
     private static final String CHANGE_TAG = "change";
@@ -436,18 +438,16 @@ public final class TileImprovementType extends FreeColGameObjectType {
     private static final String TO_TAG = "to";
     private static final String WORKER_TAG = "worker";
     private static final String ZINDEX_TAG = "zIndex";
-    // @compat 0.10.x
+    /** @compat 0.10.x */
     private static final String EXPENDED_EQUIPMENT_TYPE_TAG = "expended-equipment-type";
-    // end @compat 0.10.x
-    // @compat 0.11.3
+    /**
+     * End @compat 0.10.x
+     * @compat 0.11.3
+     */
     private static final String OLD_EXPOSE_RESOURCE_PERCENT_TAG = "exposeResourcePercent";
 
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -478,14 +478,13 @@ public final class TileImprovementType extends FreeColGameObjectType {
         xw.writeAttribute(EXPOSE_RESOURCE_PERCENT_TAG, exposeResourcePercent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
-        for (Scope scope : getScopes()) scope.toXML(xw);
+        for (Scope scope : getScopes()) {
+			scope.toXML(xw);
+		}
 
         if (allowedWorkers != null) {
             for (String id : allowedWorkers) {
@@ -515,9 +514,6 @@ public final class TileImprovementType extends FreeColGameObjectType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -557,14 +553,11 @@ public final class TileImprovementType extends FreeColGameObjectType {
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_EXPOSE_RESOURCE_PERCENT_TAG)) {
             exposeResourcePercent = xr.getAttribute(OLD_EXPOSE_RESOURCE_PERCENT_TAG, 0);
-        } else
-        // end @compat 0.11.3
-            exposeResourcePercent = xr.getAttribute(EXPOSE_RESOURCE_PERCENT_TAG, 0);
+        } else {
+			exposeResourcePercent = xr.getAttribute(EXPOSE_RESOURCE_PERCENT_TAG, 0);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -578,9 +571,6 @@ public final class TileImprovementType extends FreeColGameObjectType {
         super.readChildren(xr);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -604,29 +594,22 @@ public final class TileImprovementType extends FreeColGameObjectType {
                 // end @compat
             }
             addChange(change);
-
         } else if (DISASTER_TAG.equals(tag)) {
             Disaster disaster = xr.getType(spec, ID_ATTRIBUTE_TAG,
                                            Disaster.class, (Disaster)null);
             int probability = xr.getAttribute(PROBABILITY_TAG, 100);
             addDisaster(disaster, probability);
             xr.closeTag(DISASTER_TAG);
-
         } else if (WORKER_TAG.equals(tag)) {
             addAllowedWorker(xr.readId());
             xr.closeTag(WORKER_TAG);
-
         } else if (Scope.getXMLElementTagName().equals(tag)) {
             addScope(new Scope(xr));
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

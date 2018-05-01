@@ -80,7 +80,6 @@ import net.sf.freecol.server.model.ServerColony;
 import net.sf.freecol.server.model.ServerPlayer;
 import net.sf.freecol.server.model.ServerUnit;
 
-
 /**
  * Utilities for in game debug support.
  *
@@ -97,9 +96,7 @@ import net.sf.freecol.server.model.ServerUnit;
  *   - The tile popup menu
  */
 public class DebugUtils {
-
     private static final Logger logger = Logger.getLogger(DebugUtils.class.getName());
-
 
     /**
      * Debug action to add buildings to the user colonies.
@@ -124,7 +121,9 @@ public class DebugUtils {
                         return new ChoiceItem<BuildingType>(msg, bt);
                     })
                 .sorted().collect(Collectors.toList()));
-        if (buildingType == null) return;
+        if (buildingType == null) {
+			return;
+		}
 
         final Game sGame = server.getGame();
         final BuildingType sBuildingType = server.getSpecification()
@@ -206,7 +205,9 @@ public class DebugUtils {
         String response = gui.getInput(null,
             StringTemplate.template("prompt.selectGold"),
             Integer.toString(1000), "ok", "cancel");
-        if (response == null || response.isEmpty()) return;
+        if (response == null || response.isEmpty()) {
+			return;
+		}
         int gold;
         try {
             gold = Integer.parseInt(response);
@@ -235,7 +236,9 @@ public class DebugUtils {
         String response = gui.getInput(null,
             StringTemplate.template("prompt.selectImmigration"),
             Integer.toString(100), "ok", "cancel");
-        if (response == null || response.isEmpty()) return;
+        if (response == null || response.isEmpty()) {
+			return;
+		}
         int crosses;
         try {
             crosses = Integer.parseInt(response);
@@ -262,7 +265,9 @@ public class DebugUtils {
         String response = gui.getInput(null,
             StringTemplate.template("prompt.selectLiberty"),
             Integer.toString(100), "ok", "cancel");
-        if (response == null || response.isEmpty()) return;
+        if (response == null || response.isEmpty()) {
+			return;
+		}
         int liberty;
         try {
             liberty = Integer.parseInt(response);
@@ -287,7 +292,9 @@ public class DebugUtils {
     public static void addSkipChangeListener(final FreeColClient freeColClient,
                                              JMenu menu, final JMenuItem item) {
         final FreeColServer server = freeColClient.getFreeColServer();
-        if (server == null) return;
+        if (server == null) {
+			return;
+		}
 
         menu.addChangeListener((ChangeEvent e) -> {
                 boolean skipping = server.getInGameController()
@@ -325,7 +332,9 @@ public class DebugUtils {
                         return new ChoiceItem<UnitType>(msg, ut);
                     })
                 .sorted().collect(Collectors.toList()));
-        if (unitChoice == null) return;
+        if (unitChoice == null) {
+			return;
+		}
 
         Unit carrier = null, sCarrier = null;
         if (!sTile.isLand() && !unitChoice.isNaval()) {
@@ -367,7 +376,9 @@ public class DebugUtils {
 
         List<ChoiceItem<GoodsType>> gtl = new ArrayList<>();
         for (GoodsType t : sSpec.getGoodsTypeList()) {
-            if (t.isFoodType() && t != sSpec.getPrimaryFoodType()) continue;
+            if (t.isFoodType() && t != sSpec.getPrimaryFoodType()) {
+				continue;
+			}
             String msg = Messages.getName(t);
             gtl.add(new ChoiceItem<>(msg, t));
         }
@@ -382,12 +393,16 @@ public class DebugUtils {
                     return new ChoiceItem<GoodsType>(msg, gt);
                 })
             .sorted().collect(Collectors.toList()));
-        if (goodsType == null) return;
+        if (goodsType == null) {
+			return;
+		}
 
         String amount = gui.getInput(null,
             StringTemplate.template("prompt.selectGoodsAmount"),
             "20", "ok", "cancel");
-        if (amount == null) return;
+        if (amount == null) {
+			return;
+		}
 
         int a;
         try {
@@ -430,7 +445,9 @@ public class DebugUtils {
                         return new ChoiceItem<Disaster>(label, rc.getObject());
                     })
                 .sorted().collect(Collectors.toList()));
-        if (disaster == null) return;
+        if (disaster == null) {
+			return;
+		}
 
         final FreeColServer server = freeColClient.getFreeColServer();
         final Game sGame = server.getGame();
@@ -473,7 +490,9 @@ public class DebugUtils {
                         return new ChoiceItem<Player>(msg, p);
                     })
                 .sorted().collect(Collectors.toList()));
-        if (player == null) return;
+        if (player == null) {
+			return;
+		}
 
         ServerPlayer sPlayer = sGame.getFreeColGameObject(player.getId(),
                                                           ServerPlayer.class);
@@ -511,7 +530,9 @@ public class DebugUtils {
                     return new ChoiceItem<Player>(msg, p);
                 })
             .sorted().collect(Collectors.toList()));
-        if (player == null || unit.getOwner() == player) return;
+        if (player == null || unit.getOwner() == player) {
+			return;
+		}
 
         final Game sGame = server.getGame();
         ServerUnit sUnit = sGame.getFreeColGameObject(unit.getId(), 
@@ -550,7 +571,9 @@ public class DebugUtils {
             sGame.getSpecification().getRoles().stream()
                 .map(r -> new ChoiceItem<Role>(r.getId(), r))
                 .sorted().collect(Collectors.toList()));
-        if (roleChoice == null) return;
+        if (roleChoice == null) {
+			return;
+		}
 
         sUnit.changeRole(roleChoice, roleChoice.getMaximumCount());
         freeColClient.getConnectController().reconnect();
@@ -579,10 +602,14 @@ public class DebugUtils {
         LogBuilder lb = new LogBuilder(256);
         lb.add("Desynchronization detected\n");
         for (Tile t : sMap.getAllTiles()) {
-            if (!sPlayer.canSee(t)) continue;
+            if (!sPlayer.canSee(t)) {
+				continue;
+			}
             for (Unit u : t.getUnitList()) {
                 if (!sPlayer.owns(u)
-                    && (t.hasSettlement() || u.isOnCarrier())) continue;
+                    && (t.hasSettlement() || u.isOnCarrier())) {
+					continue;
+				}
                 if (game.getFreeColGameObject(u.getId(), Unit.class) == null) {
                     lb.add("Unit missing on client-side.\n", "  Server: ",
                            u.getDescription(Unit.UnitLabelType.NATIONAL),
@@ -614,24 +641,18 @@ public class DebugUtils {
             Settlement sSettlement = t.getSettlement();
             Settlement cSettlement = ct.getSettlement();
             if (sSettlement == null) {
-                if (cSettlement == null) {
-                    ;// OK
-                } else {
+                if (cSettlement != null) {
                     lb.add("Settlement still present in client: ", cSettlement);
                     problemDetected = true;
                 }
-            } else {
-                if (cSettlement == null) {
-                    lb.add("Settlement not present in client: ", sSettlement);
-                    problemDetected = true;
-                } else if (sSettlement.getId().equals(cSettlement.getId())) {
-                    ;// OK
-                } else {
-                    lb.add("Settlements differ.\n  Server: ",
-                        sSettlement.toString(), "\n  Client: ", 
-                        cSettlement.toString(), "\n");
-                }
-            }
+            } else if (cSettlement == null) {
+			    lb.add("Settlement not present in client: ", sSettlement);
+			    problemDetected = true;
+			} else if (!sSettlement.getId().equals(cSettlement.getId())) {
+			    lb.add("Settlements differ.\n  Server: ",
+			        sSettlement.toString(), "\n  Client: ", 
+			        cSettlement.toString(), "\n");
+			}
         }
 
         boolean goodsProblemDetected = false;
@@ -672,13 +693,13 @@ public class DebugUtils {
         final FreeColServer server = freeColClient.getFreeColServer();
         final AIMain aiMain = server.getAIMain();
         final AIColony aiColony = aiMain.getAIColony(colony);
-        if (aiColony == null) {
+        if (aiColony != null) {
+            freeColClient.getGUI().showInformationMessage(aiColony.planToString());
+        } else {
+            // TODO: Missing i18n
             freeColClient.getGUI().showErrorMessage(StringTemplate
                 .template("error.notAIColony")
                 .addName("%colony%", colony.getName()));
-        } else {
-            // TODO: Missing i18n
-            freeColClient.getGUI().showInformationMessage(aiColony.planToString());
         }
     }
 
@@ -694,7 +715,9 @@ public class DebugUtils {
      */
     public static String getColonyValue(Tile tile) {
         Player player = FreeColDebugger.debugDisplayColonyValuePlayer();
-        if (player == null) return null;
+        if (player == null) {
+			return null;
+		}
         int value = player.getColonyValue(tile);
         if (value < 0) {
             return Player.NoValueType.fromValue(value).toString();
@@ -721,7 +744,9 @@ public class DebugUtils {
         HashMap<String,List<Unit>> units = new HashMap<>();
         for (Player tp : sGame.getLiveEuropeanPlayers(null)) {
             Player p = sGame.getFreeColGameObject(tp.getId(), Player.class);
-            if (p.getEurope() == null) continue;
+            if (p.getEurope() == null) {
+				continue;
+			}
             inEurope.clear();
             toEurope.clear();
             toAmerica.clear();
@@ -746,7 +771,9 @@ public class DebugUtils {
             for (Entry<String, List<Unit>> entry : units.entrySet()) {
                 final String label = entry.getKey();
                 final List<Unit> list = entry.getValue();
-                if (list.isEmpty()) continue;
+                if (list.isEmpty()) {
+					continue;
+				}
                 lb.add("\n->", label, "\n");
                 for (Unit u : list) {
                     lb.add("\n", u.getDescription(Unit.UnitLabelType.NATIONAL));
@@ -944,13 +971,17 @@ public class DebugUtils {
                         return new ChoiceItem<GoodsType>(msg, gt);
                     })
                 .sorted().collect(Collectors.toList()));
-        if (goodsType == null) return;
+        if (goodsType == null) {
+			return;
+		}
 
         String response = freeColClient.getGUI().getInput(null,
                 StringTemplate.template("prompt.selectGoodsAmount"),
                 Integer.toString(colony.getGoodsCount(goodsType)),
                 "ok", "cancel");
-        if (response == null || response.isEmpty()) return;
+        if (response == null || response.isEmpty()) {
+			return;
+		}
         int a;
         try {
             a = Integer.parseInt(response);
@@ -991,7 +1022,9 @@ public class DebugUtils {
             Arrays.stream(MonarchAction.values())
                 .map(a -> new ChoiceItem<MonarchAction>(a))
                 .sorted().collect(Collectors.toList()));
-        if (action == null) return;
+        if (action == null) {
+			return;
+		}
         
         server.getInGameController().setMonarchAction(sPlayer, action);
     }
@@ -1018,7 +1051,9 @@ public class DebugUtils {
                 .filter(r -> r != RumourType.NO_SUCH_RUMOUR)
                 .map(r -> new ChoiceItem<RumourType>(r.toString(), r))
                 .sorted().collect(Collectors.toList()));
-        if (rumourChoice == null) return;
+        if (rumourChoice == null) {
+			return;
+		}
 
         tile.getTileItemContainer().getLostCityRumour().setType(rumourChoice);
         sTile.getTileItemContainer().getLostCityRumour()
@@ -1038,14 +1073,18 @@ public class DebugUtils {
         String response = freeColClient.getGUI().getInput(null,
             StringTemplate.key("prompt.selectTurnsToSkip"),
             Integer.toString(10), "ok", "cancel");
-        if (response == null || response.isEmpty()) return;
+        if (response == null || response.isEmpty()) {
+			return;
+		}
         int skip;
         try {
             skip = Integer.parseInt(response);
         } catch (NumberFormatException nfe) {
             skip = -1;
         }
-        if (skip > 0) freeColClient.skipTurns(skip);
+        if (skip > 0) {
+			freeColClient.skipTurns(skip);
+		}
     }
 
     /**
@@ -1094,9 +1133,9 @@ public class DebugUtils {
         for (Player p : sGame.getLiveEuropeanPlayers(null)) {
             Tension tension = sis.getAlarm(p);
             lb.add(Messages.message(p.getNationLabel()),
-                   " ", ((tension == null) ? "(none)"
-                       : Integer.toString(tension.getValue())),
-                   ((mostHated == p) ? " (most hated)" : ""),
+                   " ", (tension == null) ? "(none)"
+                       : Integer.toString(tension.getValue()),
+                   (mostHated == p) ? " (most hated)" : "",
                    " ", Messages.message(sis.getAlarmLevelKey(p)),
                    " ", sis.getContactLevel(p), "\n");
         }
@@ -1119,14 +1158,16 @@ public class DebugUtils {
         for (GoodsType type : sSpec.getStorableGoodsTypeList()) {
             int i;
             for (i = wanted.length - 1; i >= 0; i--) {
-                if (type == wanted[i]) break;
+                if (type == wanted[i]) {
+					break;
+				}
             }
             lb.add(Messages.getName(type),
                    ": ", sis.getPriceToBuy(type, 1),
                    "/", sis.getPriceToBuy(type, 100),
                    " / ", sis.getPriceToSell(type, 1),
                    "/", sis.getPriceToSell(type, 100),
-                   ((i < 0) ? "" : " wanted[" + Integer.toString(i) + "]"),
+                   (i < 0) ? "" : " wanted[" + i + "]",
                    "\n");
         }
 
@@ -1150,7 +1191,9 @@ public class DebugUtils {
         }
 
         lb.add("\nTiles\n");
-        for (Tile t : sis.getOwnedTiles()) lb.add(t, "\n");
+        for (Tile t : sis.getOwnedTiles()) {
+			lb.add(t, "\n");
+		}
 
         lb.add("\nConvert Progress = ", sis.getConvertProgress());
         lb.add("\nLast Tribute = ", sis.getLastTribute());

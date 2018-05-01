@@ -32,7 +32,6 @@ import net.sf.freecol.common.model.TileImprovementType;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Represents a plan to improve a <code>Tile</code> in some way.
  * For instance by plowing or by building a road.
@@ -40,7 +39,6 @@ import org.w3c.dom.Element;
  * @see Tile
  */
 public class TileImprovementPlan extends ValuedAIObject {
-
     private static final Logger logger = Logger.getLogger(TileImprovementPlan.class.getName());
 
     /** The type of improvement, from TileImprovementTypes. */
@@ -54,7 +52,6 @@ public class TileImprovementPlan extends ValuedAIObject {
      * <code>Unit</code> has been assigned).
      */
     private AIUnit pioneer = null;
-
 
     /**
      * Creates a new uninitialized <code>TileImprovementPlan</code>
@@ -124,7 +121,6 @@ public class TileImprovementPlan extends ValuedAIObject {
 
         uninitialized = getType() == null || getTarget() == null;
     }
-
 
     /**
      * Gets the pioneer who have been assigned to making the
@@ -224,7 +220,9 @@ public class TileImprovementPlan extends ValuedAIObject {
      */
     public boolean update(GoodsType goodsType) {
         TileImprovementType type = getBestTileImprovementType(target, goodsType);
-        if (type == null) return false;
+        if (type == null) {
+			return false;
+		}
         setType(type);
         setValue(type.getImprovementValue(target, goodsType));
         return true;
@@ -264,7 +262,6 @@ public class TileImprovementPlan extends ValuedAIObject {
         return true;
     }
 
-
     // Override AIObject
 
     /**
@@ -292,29 +289,25 @@ public class TileImprovementPlan extends ValuedAIObject {
         if (pioneer != null) {
             result = Math.min(result, pioneer.checkIntegrity(fix));
         }
-        if (type == null || target == null) result = -1;
+        if (type == null || target == null) {
+			result = -1;
+		}
         return result;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String PIONEER_TAG = "pioneer";
     private static final String TARGET_TAG = "target";
     private static final String TYPE_TAG = "type";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void toXML(FreeColXMLWriter xw) throws XMLStreamException {
-        if (validate()) toXML(xw, getXMLTagName());
+        if (validate()) {
+			toXML(xw, getXMLTagName());
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -328,9 +321,6 @@ public class TileImprovementPlan extends ValuedAIObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -341,7 +331,7 @@ public class TileImprovementPlan extends ValuedAIObject {
         type = xr.getType(spec, TYPE_TAG, 
                           TileImprovementType.class, (TileImprovementType)null);
 
-        pioneer = (xr.hasAttribute(PIONEER_TAG))
+        pioneer = xr.hasAttribute(PIONEER_TAG)
             ? xr.makeAIObject(aiMain, PIONEER_TAG,
                               AIUnit.class, (AIUnit)null, true)
             : null;
@@ -350,19 +340,15 @@ public class TileImprovementPlan extends ValuedAIObject {
                                  Tile.class, (Tile)null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         super.readChildren(xr);
 
-        if (type != null && target != null) uninitialized = false;
+        if (type != null && target != null) {
+			uninitialized = false;
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
@@ -375,9 +361,6 @@ public class TileImprovementPlan extends ValuedAIObject {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -26,16 +26,13 @@ import net.sf.freecol.client.gui.plaf.FreeColComboBoxRenderer;
 import net.sf.freecol.common.option.LanguageOption;
 import net.sf.freecol.common.option.LanguageOption.Language;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.LanguageOption} in order to enable
  * values to be both seen and changed.
  */
 public final class LanguageOptionUI extends OptionUI<LanguageOption>  {
-
     private final JComboBox<Language> box = new JComboBox<>();
-
 
     /**
      * Creates a new <code>LanguageOptionUI</code> for the given
@@ -56,28 +53,18 @@ public final class LanguageOptionUI extends OptionUI<LanguageOption>  {
         initialize();
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JComboBox getComponent() {
         return box;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue((Language)box.getSelectedItem());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         box.setSelectedItem(getOption().getValue());

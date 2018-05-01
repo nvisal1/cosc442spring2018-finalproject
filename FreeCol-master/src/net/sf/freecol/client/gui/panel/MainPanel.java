@@ -42,14 +42,11 @@ import net.sf.freecol.client.gui.action.QuitAction;
 import net.sf.freecol.common.io.FreeColDirectories;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * The initial panel where the user chooses from the main modes of operation.
  */
 public final class MainPanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(MainPanel.class.getName());
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -71,7 +68,7 @@ public final class MainPanel extends FreeColPanel {
         JButton quitButton = new JButton(am.getFreeColAction(QuitAction.id));
 
         setCancelComponent(quitButton);
-        okButton.setAction(am.getFreeColAction((canContinue)
+        okButton.setAction(am.getFreeColAction(canContinue
                 ? ContinueAction.id
                 : NewAction.id));
 
@@ -82,7 +79,9 @@ public final class MainPanel extends FreeColPanel {
         add(logoLabel);
 
         add(okButton, "newline 20, width 70%");
-        if (canContinue) add(newButton, "width 70%");
+        if (canContinue) {
+			add(newButton, "width 70%");
+		}
         add(openButton, "width 70%");
         add(mapEditorButton, "width 70%");
         add(optionsButton, "width 70%");
@@ -91,12 +90,8 @@ public final class MainPanel extends FreeColPanel {
         setSize(getPreferredSize());
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         // The actions are handled implicitly by the JButton/FreeColActions

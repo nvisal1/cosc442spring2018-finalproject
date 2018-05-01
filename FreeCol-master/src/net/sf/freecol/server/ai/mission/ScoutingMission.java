@@ -45,12 +45,8 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
-
-/**
- * Mission for controlling a scout.
- */
+/** Mission for controlling a scout. */
 public class ScoutingMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(ScoutingMission.class.getName());
 
     /** The tag for this mission. */
@@ -64,7 +60,6 @@ public class ScoutingMission extends Mission {
      * - An unexplored tile
      */
     private Location target;
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -93,7 +88,6 @@ public class ScoutingMission extends Mission {
         readFromXML(xr);
     }
 
-
     /**
      * Does a supplied unit have horses?
      *
@@ -114,7 +108,9 @@ public class ScoutingMission extends Mission {
      * @return A target for this mission, or null if none found.
      */
     public static Location extractTarget(AIUnit aiUnit, PathNode path) {
-        if (path == null) return null;
+        if (path == null) {
+			return null;
+		}
         final Location loc = path.getLastNode().getLocation();
         return (loc == null) ? null
             : (invalidSettlementReason(aiUnit, loc.getSettlement()) == null)
@@ -139,7 +135,7 @@ public class ScoutingMission extends Mission {
             : (loc instanceof IndianSettlement)
             ? 2000 / (path.getTotalTurns() + 1)
             : (loc instanceof Tile)
-            ? ((((Tile)loc).hasLostCityRumour())
+            ? (((Tile)loc).hasLostCityRumour()
                 ? 1000 / (path.getTotalTurns() + 1)
                 : 50 / (path.getTotalTurns() + 1))
             : Integer.MIN_VALUE;
@@ -178,7 +174,7 @@ public class ScoutingMission extends Mission {
                     return false;
                 }
             };
-        return (deferOK) ? GoalDeciders.getComposedGoalDecider(false, gd,
+        return deferOK ? GoalDeciders.getComposedGoalDecider(false, gd,
             GoalDeciders.getOurClosestSettlementGoalDecider())
             : gd;
     }
@@ -193,7 +189,9 @@ public class ScoutingMission extends Mission {
      */
     public static PathNode findTargetPath(AIUnit aiUnit, int range,
                                           boolean deferOK) {
-        if (invalidAIUnitReason(aiUnit) != null) return null;
+        if (invalidAIUnitReason(aiUnit) != null) {
+			return null;
+		}
         final Unit unit = aiUnit.getUnit();
         final Location start = unit.getPathStartLocation();
         final Unit carrier = unit.getCarrier();
@@ -250,7 +248,7 @@ public class ScoutingMission extends Mission {
     private static String invalidMissionReason(AIUnit aiUnit) {
         String reason = invalidAIUnitReason(aiUnit);
         return (reason != null) ? reason
-            : (!canScoutNatives(aiUnit)) ? "unit-not-a-SCOUT"
+            : !canScoutNatives(aiUnit) ? "unit-not-a-SCOUT"
             : null;
     }
 
@@ -279,7 +277,7 @@ public class ScoutingMission extends Mission {
         Tension tension;
         String reason = invalidTargetReason(is);
         return (reason != null) ? reason
-            : (is.hasScouted(owner))
+            : is.hasScouted(owner)
             ? "settlement-scouted"
             : ((tension = is.getAlarm(owner)) != null
                 && tension.getValue() >= Tension.Level.HATEFUL.getLimit())
@@ -313,8 +311,8 @@ public class ScoutingMission extends Mission {
      */
     private static String invalidTileReason(AIUnit aiUnit, Tile tile) {
         return (tile == null) ? "tile-null"
-            : (tile.hasLostCityRumour()) ? null
-            : (!tile.isExploredBy(aiUnit.getUnit().getOwner())) ? null
+            : tile.hasLostCityRumour() ? null
+            : !tile.isExploredBy(aiUnit.getUnit().getOwner()) ? null
             : "explored-tile-lacks-rumour";
     }
 
@@ -346,29 +344,18 @@ public class ScoutingMission extends Mission {
             : Mission.TARGETINVALID;
     }
 
+    /** Implement Mission Inherit dispose, getTransportDestination, isOneTime. */
 
-    // Implement Mission
-    //   Inherit dispose, getTransportDestination, isOneTime
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getBaseTransportPriority() {
         return NORMAL_TRANSPORT_PRIORITY;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTarget() {
         return this.target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {
         if (target == null
@@ -377,25 +364,16 @@ public class ScoutingMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return findTarget(getAIUnit(), 20, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return invalidReason(getAIUnit(), getTarget());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
@@ -458,7 +436,9 @@ public class ScoutingMission extends Mission {
         default:
             return lbMove(lb, mt);
         }
-        if (unit.isDisposed()) return this;
+        if (unit.isDisposed()) {
+			return this;
+		}
 
         // Retarget on failure or complete, but do not retarget from
         // one colony to another, just drop equipment and invalidate
@@ -477,15 +457,10 @@ public class ScoutingMission extends Mission {
         return lbRetarget(lb);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TARGET_TAG = "target";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -495,9 +470,6 @@ public class ScoutingMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -505,9 +477,6 @@ public class ScoutingMission extends Mission {
         target = xr.getLocationAttribute(getGame(), TARGET_TAG, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

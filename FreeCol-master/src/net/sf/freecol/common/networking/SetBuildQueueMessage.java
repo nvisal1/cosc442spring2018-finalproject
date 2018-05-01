@@ -32,18 +32,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when setting the build queue.
- */
+/** The message sent when setting the build queue. */
 public class SetBuildQueueMessage extends DOMMessage {
-
     /** The identifier of the colony containing the queue. */
     private final String colonyId;
 
     /** The items in the build queue. */
     private final String[] queue;
-
 
     /**
      * Create a new <code>SetBuildQueueMessage</code> for the
@@ -82,13 +77,12 @@ public class SetBuildQueueMessage extends DOMMessage {
         if (size >= 0) {
             this.queue = new String[size];
             for (int i = 0; i < size; i++) {
-                this.queue[i] = element.getAttribute("x" + Integer.toString(i));
+                this.queue[i] = element.getAttribute("x" + i);
             }
         } else {
             this.queue = null;
         }
     }
-
 
     /**
      * Handle a "setBuildQueue"-message.
@@ -142,7 +136,7 @@ public class SetBuildQueueMessage extends DOMMessage {
             "colony", colonyId,
             "size", Integer.toString(queue.length));
         for (int i = 0; i < queue.length; i++) {
-            result.setAttribute("x" + Integer.toString(i), queue[i]);
+            result.setAttribute("x" + i, queue[i]);
         }
         return result;
     }

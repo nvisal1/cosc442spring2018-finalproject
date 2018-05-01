@@ -24,7 +24,6 @@ import net.sf.freecol.common.model.Location;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * Class for determining the cost of a single move.
  * 
@@ -34,13 +33,11 @@ import net.sf.freecol.common.model.Unit;
  * if no other <code>CostDecider</code> has been specified.
  */
 class BaseCostDecider implements CostDecider {
-
     /** The number of moves left following a proposed move. */
     protected int movesLeft;
 
     /** The number of turns consumed by the proposed move. */
     protected int newTurns;
-
 
     /**
      * Determines the cost of a single move.
@@ -64,23 +61,23 @@ class BaseCostDecider implements CostDecider {
             if (newLocation instanceof Europe
                 || newTile == null
                 || !newTile.isDirectlyHighSeasConnected()
-                || !unit.getType().canMoveToHighSeas()) return ILLEGAL_MOVE;
+                || !unit.getType().canMoveToHighSeas()) {
+				return ILLEGAL_MOVE;
+			}
             newTurns = unit.getSailTurns();
             movesLeft = unit.getInitialMovesLeft();
             cost = newTurns * unit.getInitialMovesLeft();
-
         } else if (oldTile == null) {
             return ILLEGAL_MOVE;
-
         } else if (newLocation instanceof Europe) { // Going to Europe
-            if (!unit.getType().canMoveToHighSeas()) return ILLEGAL_MOVE;
+            if (!unit.getType().canMoveToHighSeas()) {
+				return ILLEGAL_MOVE;
+			}
             newTurns = unit.getSailTurns();
             movesLeft = unit.getInitialMovesLeft();
             cost = newTurns * unit.getInitialMovesLeft();
-
         } else if (newTile == null || !newTile.isExplored()) {
             return ILLEGAL_MOVE;
-
         } else { // Moving between tiles
             // Disallow illegal moves.
             // Special moves and moving off a carrier consume a whole turn.
@@ -92,7 +89,9 @@ class BaseCostDecider implements CostDecider {
                 // Ignore hostile units in the base case, treating attacks
                 // as moves.
             case MOVE:
-                if (!unit.isOnCarrier()) break; // Fall through if disembarking.
+                if (!unit.isOnCarrier()) {
+					break;
+				} // Fall through if disembarking.
             case ATTACK_SETTLEMENT:
             case EXPLORE_LOST_CITY_RUMOUR:
             case EMBARK:

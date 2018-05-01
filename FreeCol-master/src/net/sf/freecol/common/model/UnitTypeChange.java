@@ -31,13 +31,9 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * The possible changes of a unit type.
- */
+/** The possible changes of a unit type. */
 public class UnitTypeChange extends FreeColObject {
-
-    public static enum ChangeType {
+    public enum ChangeType {
         EDUCATION,
         NATIVES,
         EXPERIENCE,
@@ -85,7 +81,7 @@ public class UnitTypeChange extends FreeColObject {
     private UnitType newUnitType = null;
 
     /** The number of turns the changes takes, if applicable. */
-    protected int turnsToLearn = 0;
+    protected int turnsToLearn;
 
     /** A map of change type to probability. */
     protected final Map<ChangeType, Integer> changeTypes
@@ -94,10 +90,7 @@ public class UnitTypeChange extends FreeColObject {
     /** A list of Scopes limiting the applicability of this Feature. */
     private List<Scope> scopes = null;
 
-
-    /**
-     * Deliberately empty constructor.
-     */
+    /** Deliberately empty constructor. */
     public UnitTypeChange() {}
 
     /**
@@ -112,7 +105,6 @@ public class UnitTypeChange extends FreeColObject {
         setSpecification(specification);
         readFromXML(xr);
     }
-
 
     /**
      * Gets the unit type to change to.
@@ -219,7 +211,9 @@ public class UnitTypeChange extends FreeColObject {
      * @param scope The <code>Scope</code> to add.
      */
     private void addScope(Scope scope) {
-        if (scopes == null) scopes = new ArrayList<>();
+        if (scopes == null) {
+			scopes = new ArrayList<>();
+		}
         scopes.add(scope);
     }
 
@@ -231,23 +225,17 @@ public class UnitTypeChange extends FreeColObject {
      */
     public boolean appliesTo(Player player) {
         List<Scope> scopeList = getScopes();
-        return (scopeList.isEmpty()) ? true
-            : any(scopeList, s -> s.appliesTo(player));
+        return scopeList.isEmpty() || any(scopeList, s -> s.appliesTo(player));
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TURNS_TO_LEARN_TAG = "turns-to-learn";
     private static final String UNIT_TAG = "unit";
-    // @compat 0.11.3
+    /** @compat 0.11.3 */
     private static final String OLD_TURNS_TO_LEARN_TAG = "turnsToLearn";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         // UnitTypeChange do not have ids, no super.writeAttributes().
@@ -267,19 +255,15 @@ public class UnitTypeChange extends FreeColObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
-        for (Scope scope : getScopes()) scope.toXML(xw);
+        for (Scope scope : getScopes()) {
+			scope.toXML(xw);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         // UnitTypeChange do not have ids, no super.readAttributes().
@@ -294,9 +278,9 @@ public class UnitTypeChange extends FreeColObject {
             // @compat 0.11.3
             if (xr.hasAttribute(OLD_TURNS_TO_LEARN_TAG)) {
                 turnsToLearn = xr.getAttribute(OLD_TURNS_TO_LEARN_TAG, UNDEFINED);
-            } else
-            // end @compat 0.11.3
-                turnsToLearn = xr.getAttribute(TURNS_TO_LEARN_TAG, UNDEFINED);
+            } else {
+				turnsToLearn = xr.getAttribute(TURNS_TO_LEARN_TAG, UNDEFINED);
+			}
             if (turnsToLearn > 0) {
                 changeTypes.put(ChangeType.EDUCATION, 100);
             }
@@ -306,7 +290,9 @@ public class UnitTypeChange extends FreeColObject {
                 // @compat 0.11.3
                 if (value < 0) {
                     String x = compatTags.get(type);
-                    if (x != null) value = xr.getAttribute(x, -1);
+                    if (x != null) {
+						value = xr.getAttribute(x, -1);
+					}
                 }
                 // end @compat 0.11.3
                 if (value >= 0) {
@@ -316,9 +302,6 @@ public class UnitTypeChange extends FreeColObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -327,29 +310,21 @@ public class UnitTypeChange extends FreeColObject {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
 
         if (Scope.getXMLElementTagName().equals(tag)) {
             addScope(new Scope(xr));
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
-        sb.append("[").append(newUnitType)
-            .append(" ").append(Integer.toString(turnsToLearn));
+        sb.append("[").append(newUnitType).append(" ").append(turnsToLearn);
         for (Map.Entry<ChangeType, Integer> entry : changeTypes.entrySet()) {
             sb.append(" ").append(tags.get(entry.getKey()))
                 .append("/").append(entry.getValue());
@@ -358,9 +333,6 @@ public class UnitTypeChange extends FreeColObject {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -33,7 +33,6 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
 /**
  * The control object that is responsible for setting parameters
  * and starting a new game. {@link PreGameInputHandler} is used
@@ -46,7 +45,6 @@ import org.w3c.dom.Element;
  * @see InGameInputHandler
  */
 public final class PreGameController extends Controller {
-
     private static final Logger logger = Logger.getLogger(PreGameController.class.getName());
 
     /**
@@ -79,7 +77,9 @@ public final class PreGameController extends Controller {
 
         // Inform the clients.
         for (Player player : game.getLivePlayers(null)) {
-            if (player.isAI()) continue;
+            if (player.isAI()) {
+				continue;
+			}
 
             player.invalidateCanSeeTiles();//Send clean copy of the game
             Connection conn = ((ServerPlayer)player).getConnection();

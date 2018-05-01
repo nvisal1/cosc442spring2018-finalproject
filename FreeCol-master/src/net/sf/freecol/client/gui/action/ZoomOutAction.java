@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for zooming out on the main map.
- */
+/** An action for zooming out on the main map. */
 public class ZoomOutAction extends FreeColAction {
-
     public static final String id = "zoomOutAction";
-
 
     /**
      * Creates a new <code>ZoomOutAction</code>.
@@ -41,27 +36,15 @@ public class ZoomOutAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
-        if (!super.shouldBeEnabled()) return false;
-
-        if (!getGUI().isMapboardActionsEnabled()) return false;
-
-        return getGUI().canZoomOutMap();
+        return super.shouldBeEnabled() && getGUI().isMapboardActionsEnabled() && getGUI().canZoomOutMap();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().zoomOutMap();

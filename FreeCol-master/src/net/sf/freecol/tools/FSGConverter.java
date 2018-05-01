@@ -32,30 +32,24 @@ import java.util.zip.GZIPInputStream;
 
 import net.sf.freecol.FreeCol;
 
-
 /**
  * Class for converting FreeCol Savegames (fsg-files).
  * 
  * @see #getFSGConverter()
  */
 public class FSGConverter {
-
     /**
      * A singleton object of this class.
      * @see #getFSGConverter()
      */
     private static FSGConverter singleton;
     
-    
-    /**
-     * Creates an instance of <code>FSGConverter</code>
-     */
+        /** Creates an instance of <code>FSGConverter</code>. */
     private FSGConverter() {
         // Nothing to initialize;
     }
     
-    
-    /**
+        /**
      * Gets an object for converting FreeCol Savegames.
      * @return The singleton object.
      */
@@ -67,8 +61,7 @@ public class FSGConverter {
         return singleton;
     }
 
-    
-    /**
+        /**
      * Converts the given input file to an uncompressed and
      * indented XML-file.
      * 
@@ -87,7 +80,7 @@ public class FSGConverter {
     public void convertToXML(File in, File out) throws FileNotFoundException, IOException {
         try (
             FileInputStream fis = new FileInputStream(in);
-            FileOutputStream fos = new FileOutputStream(out);
+            FileOutputStream fos = new FileOutputStream(out)
         ) {
             convertToXML(fis, fos);
         }
@@ -128,49 +121,52 @@ public class FSGConverter {
             int i;      
             while ((i = in.read()) != -1) {
                 char c = (char) i;
-                if (c == '<') {
-                    i = in.read();
-                    char b = (char) i;
-                    if (b == '/') {
+                switch (c) {
+				case '<':
+					i = in.read();
+					char b = (char) i;
+					if (b == '/') {
                         indent -= 4;
                     }
-                    for (int h=0; h<indent; h++) {
+					for (int h=0; h<indent; h++) {
                         out.write(' ');
                     }
-                    out.write(c);
-                    if (b != '\n' && b != '\r') {
+					out.write(c);
+					if (b != '\n' && b != '\r') {
                         out.write(b);
                     }
-                    if (b != '/' && b != '?') {
+					if (b != '/' && b != '?') {
                         indent += 4;
                     }
-                } else if (c == '/') {
-                    out.write(c);
-                    i = in.read();
-                    c = (char) i;
-                    if (c == '>') {
+					break;
+				case '/':
+					out.write(c);
+					i = in.read();
+					c = (char) i;
+					if (c == '>') {
                         indent -= 4;
                         out.write(c);
                         out.write('\n');
                     }
-                } else if (c == '>') {
-                    out.write(c);
-                    out.write('\n');
-                } else if (c != '\n' && c != '\r') {
-                    out.write(c);
-                }           
+					break;
+				case '>':
+					out.write(c);
+					out.write('\n');
+					break;
+				default:
+					if (c != '\n' && c != '\r') {
+					    out.write(c);
+					}
+					break;
+				}           
             }
-
         } finally {
             in.close();
             out.close();
         }
     }
     
-    
-    /**
-     * Prints the usage of this program to standard out.
-     */
+        /** Prints the usage of this program to standard out. */
     private static void printUsage() {
         System.out.println("A program for converting FreeCol Savegames.");
         System.out.println();
@@ -205,7 +201,7 @@ public class FSGConverter {
                 out = new File(filename);
             }
             try {
-                FSGConverter fsgc = FSGConverter.getFSGConverter();
+                FSGConverter fsgc = getFSGConverter();
                 fsgc.convertToXML(in, out);
             } catch (IOException e) {
                 System.out.println("An error occured while converting the file.");

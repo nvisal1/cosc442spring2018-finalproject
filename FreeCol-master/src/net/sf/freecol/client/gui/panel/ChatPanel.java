@@ -28,20 +28,17 @@ import javax.swing.JTextField;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * This is the panel that pops up when the user wants to send a
  * message to the other players. There is no close button because it
  * closes as soon as the user presses enter in the textfield.
  */
 public final class ChatPanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(ChatPanel.class.getName());
 
     public static final int CHAT = 1;
 
     private final JTextField field;
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -67,10 +64,7 @@ public final class ChatPanel extends FreeColPanel {
         setSize(getPreferredSize());
     }
 
-
-    /**
-     * Requests that the chat textfield in this chat panel gets the focus.
-     */
+    /** Requests that the chat textfield in this chat panel gets the focus. */
     @Override
     public void requestFocus() {
         field.requestFocus();
@@ -88,12 +82,8 @@ public final class ChatPanel extends FreeColPanel {
         return message;
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();

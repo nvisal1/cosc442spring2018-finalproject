@@ -25,14 +25,12 @@ import java.util.logging.Logger;
 
 import net.sf.freecol.FreeCol;
 
-
 /**
  * The Worker Thread executes jobs one after another.  The thread
  * manages a queue where new jobs can be enqueued.  The jobs are
  * processed synchronously by the worker.
  */
 public final class Worker extends Thread {
-
     private final LinkedBlockingQueue<Runnable> jobList;
 
     private volatile boolean stopRunning;
@@ -71,11 +69,9 @@ public final class Worker extends Thread {
         jobList.add(job);
     }
 
-    /**
-     * Makes the worker thread stop running.
-     */
+    /** Makes the worker thread stop running. */
     public void askToStop() {
         stopRunning = true;
-        this.interrupt();
+        interrupt();
     }
 }

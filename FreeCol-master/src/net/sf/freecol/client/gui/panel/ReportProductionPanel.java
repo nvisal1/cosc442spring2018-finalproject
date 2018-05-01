@@ -38,12 +38,8 @@ import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.TypeCountMap;
 
-
-/**
- * This panel displays the ContinentalCongress Report.
- */
+/** This panel displays the ContinentalCongress Report. */
 public final class ReportProductionPanel extends ReportPanel {
-
     /** The number of selection boxes. */
     private static final int NUMBER_OF_GOODS = 4;
 
@@ -52,7 +48,6 @@ public final class ReportProductionPanel extends ReportPanel {
 
     /** The boxes with which to select goods types for display. */
     private final List<JComboBox<String>> boxes = new ArrayList<>();
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -84,7 +79,6 @@ public final class ReportProductionPanel extends ReportPanel {
         reportPanel.setLayout(new MigLayout("gap 0 0", "[fill]", "[fill]"));
         update();
     }
-
 
     private void update() {
         reportPanel.removeAll();
@@ -180,7 +174,6 @@ public final class ReportProductionPanel extends ReportPanel {
                     }
                 }
             }
-
         }
         revalidate();
         repaint();

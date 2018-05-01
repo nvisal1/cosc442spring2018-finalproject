@@ -33,15 +33,10 @@ import static net.sf.freecol.common.util.StringUtils.*;
 
 import org.w3c.dom.Element;
 
-
-/**
- * Contains a message about a change in the model.
- */
+/** Contains a message about a change in the model. */
 public class ModelMessage extends StringTemplate {
-
     /** Constants describing the type of message. */
-    public static enum MessageType implements Named {
-
+    public enum MessageType implements Named {
         DEFAULT(""),
         WARNING("model.option.guiShowWarning"),
         SONS_OF_LIBERTY("model.option.guiShowSonsOfLiberty"),
@@ -54,10 +49,10 @@ public class ModelMessage extends StringTemplate {
         BUILDING_COMPLETED("model.option.guiShowBuildingCompleted"),
         FOREIGN_DIPLOMACY("model.option.guiShowForeignDiplomacy"),
         MARKET_PRICES("model.option.guiShowMarketPrices"),
-        LOST_CITY_RUMOUR(null), // Displayed during the turn
+        LOST_CITY_RUMOUR(null), /** Displayed during the turn. */
         MISSING_GOODS("model.option.guiShowMissingGoods"),
         TUTORIAL("model.option.guiShowTutorial"),
-        COMBAT_RESULT(null), // No option, always display
+        COMBAT_RESULT(null), /** No option, always display. */
         GIFT_GOODS("model.option.guiShowGifts"),
         DEMANDS("model.option.guiShowDemands"),
         GOODS_MOVEMENT("model.option.guiShowGoodsMovement");
@@ -83,9 +78,7 @@ public class ModelMessage extends StringTemplate {
 
         // Implement Named
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getNameKey() {
             return Messages.nameKey("model." + getKey());
         }
@@ -94,8 +87,7 @@ public class ModelMessage extends StringTemplate {
     private String sourceId;
     private String displayId;
     private MessageType messageType;
-    private boolean beenDisplayed = false;
-
+    private boolean beenDisplayed;
 
     /**
      * Creates a new <code>ModelMessage</code>.
@@ -189,7 +181,6 @@ public class ModelMessage extends StringTemplate {
      * @exception XMLStreamException if there is a problem reading the stream.
      */
     public ModelMessage(FreeColXMLReader xr) throws XMLStreamException {
-
         readFromXML(xr);
     }
 
@@ -201,7 +192,6 @@ public class ModelMessage extends StringTemplate {
     public ModelMessage(Element element) {
         readFromXMLElement(element);
     }
-
 
     /**
      * Gets the source of the message.
@@ -246,7 +236,9 @@ public class ModelMessage extends StringTemplate {
      * @param newSource A new source.
      */
     public void divert(FreeColGameObject newSource) {
-        if (Utils.equals(displayId, sourceId)) displayId = newSource.getId();
+        if (Utils.equals(displayId, sourceId)) {
+			displayId = newSource.getId();
+		}
         sourceId = newSource.getId();
     }
 
@@ -286,7 +278,6 @@ public class ModelMessage extends StringTemplate {
         this.beenDisplayed = beenDisplayed;
     }
 
-
     /**
      * Gets the default display object for the given type.
      *
@@ -294,7 +285,7 @@ public class ModelMessage extends StringTemplate {
      * @param source The source object
      * @return An object to be displayed for the message.
      */
-    static private FreeColObject getDefaultDisplay(MessageType messageType,
+    private static FreeColObject getDefaultDisplay(MessageType messageType,
                                                    FreeColGameObject source) {
         FreeColObject o = null;
         switch (messageType) {
@@ -324,7 +315,9 @@ public class ModelMessage extends StringTemplate {
         case TUTORIAL:
         case GIFT_GOODS:
         default:
-            if (source instanceof Player) o = source;
+            if (source instanceof Player) {
+				o = source;
+			}
             break;
         }
         return o;
@@ -375,7 +368,9 @@ public class ModelMessage extends StringTemplate {
             // If not, ignore it.
             String val = Messages.message(getReplacement(key));
             Object b = Utility.getMessageButton(key, val, player, source);
-            if (b == null) continue;
+            if (b == null) {
+				continue;
+			}
 
             // ...if so, find all instances of the replacement of the key
             // in the object list texts, and replace them with buttons.
@@ -401,90 +396,60 @@ public class ModelMessage extends StringTemplate {
         return result;
     }
 
-        
-    // Quasi-override StringTemplate routines to return ModelMessages
+            /** Quasi-override StringTemplate routines to return ModelMessages. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage add(String key, String value) {
         return (ModelMessage)super.add(key, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage add(String value) {
         return (ModelMessage)super.add(value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addName(String key, String value) {
         return (ModelMessage)super.addName(key, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addName(String value) {
         return (ModelMessage)super.addName(value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addName(String key, FreeColObject object) {
         return (ModelMessage)super.addName(key, object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addNamed(String key, Named named) {
         return (ModelMessage)super.addNamed(key, named);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addAmount(String key, Number amount) {
         return (ModelMessage)super.addAmount(key, amount);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addStringTemplate(String key, StringTemplate template) {
         return (ModelMessage)super.addStringTemplate(key, template);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ModelMessage addStringTemplate(StringTemplate template) {
         return (ModelMessage)super.addStringTemplate(template);
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+			return true;
+		}
         if (o instanceof ModelMessage) {
             ModelMessage m = (ModelMessage)o;
             return sourceId.equals(m.sourceId)
@@ -494,9 +459,6 @@ public class ModelMessage extends StringTemplate {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -504,34 +466,28 @@ public class ModelMessage extends StringTemplate {
         return 37 * hash + messageType.ordinal();
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String DISPLAY_TAG = "display";
     private static final String HAS_BEEN_DISPLAYED_TAG = "hasBeenDisplayed";
     private static final String MESSAGE_TYPE_TAG = "messageType";
     private static final String SOURCE_TAG = "source";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
 
         xw.writeAttribute(SOURCE_TAG, sourceId);
 
-        if (displayId != null) xw.writeAttribute(DISPLAY_TAG, displayId);
+        if (displayId != null) {
+			xw.writeAttribute(DISPLAY_TAG, displayId);
+		}
 
         xw.writeAttribute(MESSAGE_TYPE_TAG, messageType);
 
         xw.writeAttribute(HAS_BEEN_DISPLAYED_TAG, beenDisplayed);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -546,9 +502,6 @@ public class ModelMessage extends StringTemplate {
         beenDisplayed = xr.getAttribute(HAS_BEEN_DISPLAYED_TAG, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
@@ -561,9 +514,6 @@ public class ModelMessage extends StringTemplate {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

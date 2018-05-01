@@ -49,21 +49,14 @@ import net.sf.freecol.server.ai.AIUnit;
 import net.sf.freecol.server.ai.EuropeanAIPlayer;
 import net.sf.freecol.server.ai.TileImprovementPlan;
 
-
-/**
- * Mission for controlling a pioneer.
- */
+/** Mission for controlling a pioneer. */
 public class PioneeringMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(PioneeringMission.class.getName());
 
     /** The tag for this mission. */
     private static final String tag = "AI pioneer";
 
-
-    /**
-     * Default distance in turns to a threatening unit.
-     */
+    /** Default distance in turns to a threatening unit. */
     private static final int DEFAULT_THREAT_TURNS = 3;
 
     /** The improvement this pioneer is to work on. */
@@ -76,7 +69,6 @@ public class PioneeringMission extends Mission {
      *   - just an initial colony to retarget from
      */
     private Location target;
-
 
     /**
      * Creates a pioneering mission for the given <code>AIUnit</code>.
@@ -109,7 +101,6 @@ public class PioneeringMission extends Mission {
 
         readFromXML(xr);
     }
-
 
     /**
      * Get the best improvement associated with a tile.
@@ -161,9 +152,7 @@ public class PioneeringMission extends Mission {
         }
     }
 
-    /**
-     * Abandons the current plan if any.
-     */
+    /** Abandons the current plan if any. */
     private void abandonTileImprovementPlan() {
         if (tileImprovementPlan != null) {
             if (tileImprovementPlan.getPioneer() == getAIUnit()) {
@@ -173,9 +162,7 @@ public class PioneeringMission extends Mission {
         }
     }
 
-    /**
-     * Disposes of this pioneering mission.
-     */
+    /** Disposes of this pioneering mission. */
     @Override
     public void dispose() {
         abandonTileImprovementPlan();
@@ -209,10 +196,12 @@ public class PioneeringMission extends Mission {
      * @return A target for this mission, or null if none found.
      */
     public static Location extractTarget(AIUnit aiUnit, PathNode path) {
-        if (path == null) return null;
+        if (path == null) {
+			return null;
+		}
         final Location loc = path.getLastNode().getLocation();
         return (loc == null) ? null
-            : ((hasTools(aiUnit))
+            : (hasTools(aiUnit)
                 ? ((invalidReason(aiUnit, loc.getTile()) != null) ? null
                     : loc.getTile())
                 : ((invalidReason(aiUnit, loc.getColony()) != null) ? null
@@ -235,11 +224,9 @@ public class PioneeringMission extends Mission {
                 && (tip = getBestPlan(aiUnit, (Tile)loc)) != null) {
                 return 1000 * tip.getValue() / (path.getTotalTurns() + 1);
             }
-        } else {
-            if (loc instanceof Colony) {
-                return 1000 / (path.getTotalTurns() + 1);
-            }
-        }
+        } else if (loc instanceof Colony) {
+		    return 1000 / (path.getTotalTurns() + 1);
+		}
         return Integer.MIN_VALUE;
     }
 
@@ -272,7 +259,7 @@ public class PioneeringMission extends Mission {
                     return false;
                 }
             };
-        return (deferOK) ? GoalDeciders.getComposedGoalDecider(false, gd,
+        return deferOK ? GoalDeciders.getComposedGoalDecider(false, gd,
             GoalDeciders.getOurClosestSettlementGoalDecider())
             : gd;
     }
@@ -287,7 +274,9 @@ public class PioneeringMission extends Mission {
      */
     public static PathNode findTargetPath(AIUnit aiUnit, int range,
                                           boolean deferOK) {
-        if (invalidAIUnitReason(aiUnit) != null) return null;
+        if (invalidAIUnitReason(aiUnit) != null) {
+			return null;
+		}
         final Unit unit = aiUnit.getUnit();
         final Location start = unit.getPathStartLocation();
         final Unit carrier = unit.getCarrier();
@@ -316,9 +305,13 @@ public class PioneeringMission extends Mission {
                 bestColony = aic;
             }
         }
-        if (bestColony == null) return null;
+        if (bestColony == null) {
+			return null;
+		}
         Colony colony = bestColony.getColony();
-        if (colony.isConnectedPort()) return colony;
+        if (colony.isConnectedPort()) {
+			return colony;
+		}
         PathNode path = aiUnit.getUnit().findOurNearestPort();
         return (path == null) ? colony
             : path.getLastNode().getLocation().getColony();
@@ -336,11 +329,15 @@ public class PioneeringMission extends Mission {
     public static Location findTarget(AIUnit aiUnit, int range,
                                       boolean deferOK) {
         PathNode path = findTargetPath(aiUnit, range, false);
-        if (path != null) return extractTarget(aiUnit, path);
-        if (deferOK) return getBestPioneeringColony(aiUnit);
+        if (path != null) {
+			return extractTarget(aiUnit, path);
+		}
+        if (deferOK) {
+			return getBestPioneeringColony(aiUnit);
+		}
         Location loc = findCircleTarget(aiUnit, getGoalDecider(aiUnit, false),
                                         range*3, false);
-        return (hasTools(aiUnit)) ? loc : Location.upLoc(loc);
+        return hasTools(aiUnit) ? loc : Location.upLoc(loc);
     }
 
     /**
@@ -352,7 +349,9 @@ public class PioneeringMission extends Mission {
      */
     public static String prepare(AIUnit aiUnit) {
         String reason = invalidReason(aiUnit);
-        if (reason != null) return reason;
+        if (reason != null) {
+			return reason;
+		}
         final Unit unit = aiUnit.getUnit();
         if (!hasTools(aiUnit)
             && !aiUnit.equipForRole(unit.getSpecification().getPioneerRole())) {
@@ -373,7 +372,7 @@ public class PioneeringMission extends Mission {
     private static String invalidMissionReason(AIUnit aiUnit) {
         String reason = invalidAIUnitReason(aiUnit);
         return (reason != null) ? reason
-            : (!aiUnit.getUnit().isPerson()) ? Mission.UNITNOTAPERSON
+            : !aiUnit.getUnit().isPerson() ? Mission.UNITNOTAPERSON
             : null;
     }
 
@@ -423,7 +422,7 @@ public class PioneeringMission extends Mission {
     private static String invalidTileReason(AIUnit aiUnit, Tile tile) {
         return (tile == null)
             ? Mission.TARGETINVALID
-            : (!hasTools(aiUnit))
+            : !hasTools(aiUnit)
             ? "unit-needs-tools"
             : (getPlan(aiUnit, tile) == null
                 && getBestPlan(aiUnit, tile) == null)
@@ -464,29 +463,18 @@ public class PioneeringMission extends Mission {
             : Mission.TARGETINVALID;
     }
 
+    /** Implement Mission Inherit dispose, getTransportDestination, isOneTime. */
 
-    // Implement Mission
-    //   Inherit dispose, getTransportDestination, isOneTime
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getBaseTransportPriority() {
         return NORMAL_TRANSPORT_PRIORITY;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTarget() {
         return target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {
         if (target == null
@@ -498,17 +486,11 @@ public class PioneeringMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return findTarget(getAIUnit(), 10, true);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         // Prevent invalidation for improvements that are just completing.
@@ -516,14 +498,13 @@ public class PioneeringMission extends Mission {
             if (tileImprovementPlan.isDisposed()) {
                 return "target-plan-disposed";
             }
-            if (tileImprovementPlan.isComplete()) return null;
+            if (tileImprovementPlan.isComplete()) {
+				return null;
+			}
         }
         return invalidReason(getAIUnit(), getTarget());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Mission lbFail(LogBuilder lb, boolean cont, Object... reasons) {
         if (hasTools() && getUnit().getColony() != null) {
@@ -532,9 +513,6 @@ public class PioneeringMission extends Mission {
         return super.lbFail(lb, false, reasons);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
@@ -686,7 +664,9 @@ public class PioneeringMission extends Mission {
                 // unit at the target.  Move randomly and retry if
                 // adjacent.
                 Direction d = unit.getTile().getDirection(tile);
-                if (d != null) moveRandomly(tag, d);
+                if (d != null) {
+					moveRandomly(tag, d);
+				}
                 continue;
 
             default:
@@ -715,7 +695,8 @@ public class PioneeringMission extends Mission {
                 aiPlayer.removeTileImprovementPlan(tileImprovementPlan);
                 tileImprovementPlan.dispose();
                 lb.add(", land claim failed at ", tile);
-                if ((newTarget = findTarget(aiUnit, 10, false)) == null) {
+                newTarget = findTarget(aiUnit, 10, false);
+				if (newTarget == null) {
                     return lbFail(lb, false, "no alternate target");
                 }
                 setTarget(newTarget);
@@ -740,15 +721,10 @@ public class PioneeringMission extends Mission {
         return lbWait(lb, ", waiting to improve at ", tile);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TARGET_TAG = "target";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -763,9 +739,6 @@ public class PioneeringMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -775,15 +748,12 @@ public class PioneeringMission extends Mission {
         // Do not use setTarget in serialization
         target = xr.getLocationAttribute(getGame(), TARGET_TAG, false);
 
-        tileImprovementPlan = (xr.hasAttribute(TileImprovementPlan.getXMLElementTagName()))
+        tileImprovementPlan = xr.hasAttribute(TileImprovementPlan.getXMLElementTagName())
             ? xr.makeAIObject(aiMain, TileImprovementPlan.getXMLElementTagName(),
                 TileImprovementPlan.class, (TileImprovementPlan)null, true)
             : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

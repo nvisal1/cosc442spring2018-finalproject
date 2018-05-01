@@ -42,19 +42,16 @@ import net.sf.freecol.client.gui.action.SelectableAction;
 import net.sf.freecol.client.gui.panel.FreeColImageBorder;
 import net.sf.freecol.client.gui.panel.Utility;
 
-
 /**
  * The menu bar that is displayed on the top left corner of the
  * <code>Canvas</code>.
  */
 public abstract class FreeColMenuBar extends JMenuBar {
-
     private static final Logger logger = Logger.getLogger(FreeColMenuBar.class.getName());
 
     protected final FreeColClient freeColClient;
 
     protected final ActionManager am;
-
 
     /**
      * Creates a new <code>FreeColMenuBar</code>. This menu bar will include
@@ -74,12 +71,9 @@ public abstract class FreeColMenuBar extends JMenuBar {
         // ActionManger. So DebugMenu needs to be refactored to remove
         // inner classes so that this MenuBar can lose its unnecessary
         // reference to the main controller.  See FreeColMenuTest.
-        //
         // Okay, I lied.. the update() and paintComponent() methods in
         // this MenuBar use freeColClient, too. But so what.  Move
         // those to another class too. :)
-        super();
-
         setOpaque(false);
 
         this.freeColClient = f;
@@ -88,7 +82,6 @@ public abstract class FreeColMenuBar extends JMenuBar {
 
         setBorder(FreeColImageBorder.imageBorder);
     }
-
 
     /**
      * Resets this menu bar.
@@ -152,7 +145,6 @@ public abstract class FreeColMenuBar extends JMenuBar {
      * @return The menu item.
      */
     protected JCheckBoxMenuItem getCheckBoxMenuItem(String actionId) {
-
         JCheckBoxMenuItem rtn = null;
         FreeColAction action = am.getFreeColAction(actionId);
 
@@ -162,9 +154,10 @@ public abstract class FreeColMenuBar extends JMenuBar {
             rtn.setOpaque(false);
 
             rtn.setSelected(((SelectableAction)am.getFreeColAction(actionId)).isSelected());
-        } else
-            logger.finest("Could not create menu item. [" + actionId
+        } else {
+			logger.finest("Could not create menu item. [" + actionId
                 + "] not found.");
+		}
 
         return rtn;
     }
@@ -196,10 +189,7 @@ public abstract class FreeColMenuBar extends JMenuBar {
         return rtn;
     }
 
-
-    /**
-     * Updates this <code>FreeColMenuBar</code>.
-     */
+    /** Updates this <code>FreeColMenuBar</code>. */
     public void update() {
         repaint();
     }
@@ -231,9 +221,7 @@ public abstract class FreeColMenuBar extends JMenuBar {
         add(menu);
     }
 
-    /**
-     * Paints the background and borders of the menubar.
-     */
+    /** Paints the background and borders of the menubar. */
     @Override
     public void paintComponent(Graphics g) {
         if (isOpaque()) {

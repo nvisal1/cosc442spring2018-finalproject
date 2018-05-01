@@ -28,15 +28,10 @@ import net.sf.freecol.server.model.ServerUnit;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when disembarking.
- */
+/** The message sent when disembarking. */
 public class DisembarkMessage extends DOMMessage {
-
     /** The identifier of the object disembarking. */
     private final String unitId;
-
 
     /**
      * Create a new <code>DisembarkMessage</code> with the
@@ -62,7 +57,6 @@ public class DisembarkMessage extends DOMMessage {
 
         this.unitId = element.getAttribute("unit");
     }
-
 
     /**
      * Handle a "disembark"-message.

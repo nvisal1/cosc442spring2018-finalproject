@@ -52,21 +52,15 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.StringTemplate;
 
-
-/**
- * A dialog used to confirm the declaration of independence.
- */
+/** A dialog used to confirm the declaration of independence. */
 public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
     implements ActionListener, ItemListener {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(ConfirmDeclarationDialog.class.getName());
 
-    /** A button for a colour.  Public for FlagTest. */
+    /** A button for a colour. Public for FlagTest. */
     public static class ColorButton extends JButton {
-
         private Color color = null;
-
 
         public ColorButton(Color color) {
             setColor(color);
@@ -82,10 +76,6 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
             setText(color == null ? "X" : null);
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String getUIClassID() {
             return "ColorButtonUI";
@@ -94,27 +84,19 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
 
     /** Simple renderer for Messages with a prefix. */
     private static class EnumRenderer<T> extends FreeColComboBoxRenderer<T> {
-
         private final String prefix;
-
 
         public EnumRenderer(String prefix) {
             this.prefix = prefix;
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void setLabelValues(JLabel c, T value) {
-            c.setText(Messages.message(prefix + value.toString()));
+            c.setText(Messages.message(prefix + value));
         }
     }
 
-
-    // based on the flag of Venezuela (Colombia and Ecuador are
-    // similar)
+    /** Based on the flag of Venezuela (Colombia and Ecuador are similar). */
     public static final Flag SPANISH_FLAG
         = new Flag(Background.FESSES, Decoration.NONE, UnionPosition.MIDDLE)
         .setStripes(3)
@@ -123,25 +105,31 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
                              new Color(0, 0x24, 0x7d),
                              new Color(255, 204, 0));
 
-    // based on the flag of Brazil, particularly the Provisional
-    // Flag of Republic of the United States of Brazil (November
-    // 15–19, 1889)
+    /**
+     * Based on the flag of Brazil, particularly the Provisional
+     * Flag of Republic of the United States of Brazil (November
+     * 15–19, 1889).
+     */
     public static final Flag PORTUGUESE_FLAG
         = new Flag(Background.FESSES, Decoration.NONE, UnionPosition.CANTON)
         .setUnionColor(new Color(62, 64, 149))
         .setBackgroundColors(new Color(0, 168, 89),
                              new Color(255, 204, 41));
 
-    // based on the current flag of the United States and its
-    // various predecessors
+    /**
+     * Based on the current flag of the United States and its
+     * various predecessors.
+     */
     public static final Flag ENGLISH_FLAG
         = new Flag(Background.FESSES, Decoration.NONE, UnionPosition.CANTON)
         .setUnionColor(new Color(.234f, .233f, .430f))
         .setBackgroundColors(new Color(.698f, .132f, .203f),
                              Color.WHITE);
 
-    // based on the flag of Louisiana in 1861 and other similar
-    // French colonial flags
+    /**
+     * Based on the flag of Louisiana in 1861 and other similar
+     * French colonial flags.
+     */
     public static final Flag FRENCH_FLAG
         = new Flag(Background.PALES, Decoration.NONE, UnionPosition.LEFT)
         .setStripes(3)
@@ -150,7 +138,7 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
                              Color.WHITE,
                              new Color(0xed, 0x29, 0x39));
 
-    // Dutch flag
+    /** Dutch flag. */
     public static final Flag DUTCH_FLAG
         = new Flag(Background.FESSES, Decoration.NONE, UnionPosition.TOP)
         .setStripes(3)
@@ -159,21 +147,21 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
                              Color.WHITE,
                              new Color(0x21, 0x46, 0x6b));
 
-    // Swedish flag
+    /** Swedish flag. */
     public static final Flag SWEDISH_FLAG
         = new Flag(Background.QUARTERLY, Decoration.SCANDINAVIAN_CROSS, UnionPosition.CANTON)
         .setUnionColor(null)
         .setDecorationColor(new Color(0xFE, 0xCB, 0))
         .setBackgroundColors(new Color(0, 0x52, 0x93));
 
-    // Danish flag
+    /** Danish flag. */
     public static final Flag DANISH_FLAG
         = new Flag(Background.QUARTERLY, Decoration.SCANDINAVIAN_CROSS, UnionPosition.CANTON)
         .setUnionColor(null)
         .setDecorationColor(Color.WHITE)
         .setBackgroundColors(new Color(0xC6, 0x0C, 0x30));
 
-    // Russian flag
+    /** Russian flag. */
     public static final Flag RUSSIAN_FLAG
         = new Flag(Background.FESSES, Decoration.NONE, UnionPosition.MIDDLE)
         .setStripes(3)
@@ -246,7 +234,6 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
         new ColorButton(null), new ColorButton(null), new ColorButton(null)
     };
 
-
     /**
      * The constructor that will add the items to this panel.
      *
@@ -258,7 +245,9 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
 
         final Player player = freeColClient.getMyPlayer();
         this.flag = defaultFlags.get(player.getNationId());
-        if (this.flag == null) this.flag = ENGLISH_FLAG; // default to USA-style
+        if (this.flag == null) {
+			this.flag = ENGLISH_FLAG;
+		} // default to USA-style
 
         StringTemplate sure = StringTemplate
             .template("confirmDeclarationDialog.areYouSure.text")
@@ -328,7 +317,9 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
         panel.add(Utility.localizedLabel("flag.backgroundColors.label"));
         for (int index = 0; index < this.backgroundColors.length; index++) {
             ColorButton button = this.backgroundColors[index];
-            if (index < colors) button.setColor(flagColors.get(index));
+            if (index < colors) {
+				button.setColor(flagColors.get(index));
+			}
             button.addActionListener(this);
             if (index == 0) {
                 panel.add(button, "split 3, sg colorButton");
@@ -352,7 +343,6 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
                 fake).cancelOption().defaultOption());
         initializeDialog(frame, DialogType.QUESTION, true, panel, icon, c);
     }
-
 
     private <T> void addComboBox(JPanel panel, JComboBox<T> box,
                                  String prefix, T value) {
@@ -385,12 +375,8 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
         return result;
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         ColorButton button = (ColorButton)ae.getSource();
@@ -401,12 +387,8 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
         this.label.setIcon(new ImageIcon(this.flag.getImage()));
     }
 
+    /** Interface ItemListener. */
 
-    // Interface ItemListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void itemStateChanged(ItemEvent e) {
         Background newBackground
@@ -425,12 +407,8 @@ public class ConfirmDeclarationDialog extends FreeColDialog<List<String>>
         this.label.setIcon(new ImageIcon(this.flag.getImage()));
     }
 
+    /** Override FreeColDialog. */
 
-    // Override FreeColDialog
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<String> getResponse() {
         Object value = getValue();

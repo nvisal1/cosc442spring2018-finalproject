@@ -55,17 +55,15 @@ import net.sf.freecol.server.ai.AIUnit;
 import net.sf.freecol.server.ai.EuropeanAIPlayer;
 import net.sf.freecol.server.ai.TransportableAIObject;
 
-
 /**
  * A mission describes what a unit should do; attack, build colony,
  * wander etc.  Every {@link AIUnit} should have a mission. By
  * extending this class, you create different missions.
  */
 public abstract class Mission extends AIObject {
-
     private static final Logger logger = Logger.getLogger(Mission.class.getName());
 
-    /** A transport can be used.*/
+    /** A transport can be used. */
     protected static final int MINIMUM_TRANSPORT_PRIORITY = 60;
 
     /** Transport is required. */
@@ -74,7 +72,7 @@ public abstract class Mission extends AIObject {
     protected static final int NO_PATH_TO_TARGET = -2,
                                NO_MORE_MOVES_LEFT = -1;
 
-    // Common mission invalidity reasons.
+    /** Common mission invalidity reasons. */
     protected static final String AIUNITNULL = "aiUnit-null";
     protected static final String TARGETNULL = "target-null";
     protected static final String TARGETINVALID = "target-invalid";
@@ -86,7 +84,6 @@ public abstract class Mission extends AIObject {
 
     /** The unit to undertake the mission. */
     private final AIUnit aiUnit;
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -122,7 +119,6 @@ public abstract class Mission extends AIObject {
             aiUnit.changeMission(this);
         }
     }
-
 
     /**
      * Gets the AI-unit this mission has been created for.
@@ -209,9 +205,9 @@ public abstract class Mission extends AIObject {
      */
     public static String invalidUnitReason(Unit unit) {
         return (unit == null) ? "unit-null"
-            : (unit.isUninitialized()) ? "unit-uninitialized"
-            : (unit.isDisposed()) ? "unit-disposed"
-            : (unit.isDamaged()) ? "unit-under-repair"
+            : unit.isUninitialized() ? "unit-uninitialized"
+            : unit.isDisposed() ? "unit-disposed"
+            : unit.isDamaged() ? "unit-under-repair"
             : null;
     }
 
@@ -250,8 +246,8 @@ public abstract class Mission extends AIObject {
      * @return A reason for the target to be invalid, or null if none found.
      */
     public static String invalidTargetReason(Location target) {
-        return (target == null) ? Mission.TARGETNULL
-            : (((FreeColGameObject)target).isDisposed()) ? "target-disposed"
+        return (target == null) ? TARGETNULL
+            : ((FreeColGameObject)target).isDisposed() ? "target-disposed"
             : null;
     }
 
@@ -268,9 +264,9 @@ public abstract class Mission extends AIObject {
         return (reason != null)
             ? reason
             : (target instanceof Europe && !owner.owns((Europe)target))
-            ? Mission.TARGETOWNERSHIP
+            ? TARGETOWNERSHIP
             : (target instanceof Settlement && !owner.owns((Settlement)target))
-            ? Mission.TARGETOWNERSHIP
+            ? TARGETOWNERSHIP
             : null;
     }
 
@@ -282,12 +278,16 @@ public abstract class Mission extends AIObject {
      *     none found.
      */
     public static String invalidTransportableReason(TransportableAIObject t) {
-        if (t == null) return "null-transportable";
+        if (t == null) {
+			return "null-transportable";
+		}
         final Locatable l = t.getTransportLocatable();
-        if (l == null) return "null-locatable";
+        if (l == null) {
+			return "null-locatable";
+		}
 
         final Unit carrier = (l.getLocation() instanceof Unit)
-            ? (Unit)(l.getLocation()) : null;
+            ? (Unit)l.getLocation() : null;
         final AIUnit transport = t.getTransport();
         Player owner;
         Location loc;
@@ -300,7 +300,8 @@ public abstract class Mission extends AIObject {
 
         if (checkSrc) {
             Settlement s;
-            if ((loc = t.getTransportSource()) == null) {
+            loc = t.getTransportSource();
+			if (loc == null) {
                 return "transportable-source-missing-" + t;
             } else if (((FreeColGameObject)loc).isDisposed()) {
                 return "transportable-source-disposed";
@@ -329,15 +330,13 @@ public abstract class Mission extends AIObject {
         final Unit unit = aiUnit.getUnit();
         final Player player = unit.getOwner();
         return (player == other)
-            ? Mission.TARGETOWNERSHIP
+            ? TARGETOWNERSHIP
             : (player.isIndian()
                 && player.getTension(other).getLevel()
                 .compareTo(Tension.Level.CONTENT) <= 0)
             ? "target-native-tension-too-low"
             : (player.isEuropean()
-                && !(player.getStance(other) == Stance.WAR
-                    || (unit.hasAbility(Ability.PIRACY)
-                        && player.getStance(other) != Stance.ALLIANCE)))
+                && player.getStance(other) != Stance.WAR && (!unit.hasAbility(Ability.PIRACY) || player.getStance(other) == Stance.ALLIANCE))
             ? "target-european-war-absent"
             : null;
     }
@@ -382,7 +381,6 @@ public abstract class Mission extends AIObject {
         String reason = invalidAIUnitReason(aiUnit);
         return (reason != null) ? reason : invalidTargetReason(loc);
     }
-
 
     // Mission logging support
 
@@ -436,7 +434,7 @@ public abstract class Mission extends AIObject {
      */
     protected Mission lbDone(LogBuilder lb, boolean cont, Object... reasons) {
         lb.add(", COMPLETED: ", reasons);
-        return (cont) ? aiUnit.getMission() : lbDrop(lb);
+        return cont ? aiUnit.getMission() : lbDrop(lb);
     }
 
     /**
@@ -464,7 +462,7 @@ public abstract class Mission extends AIObject {
      */
     protected Mission lbFail(LogBuilder lb, boolean cont, Object... reasons) {
         lb.add(", FAILED: ", reasons);
-        return (cont) ? aiUnit.getMission() : lbDrop(lb);
+        return cont ? aiUnit.getMission() : lbDrop(lb);
     }
 
     /**
@@ -474,7 +472,7 @@ public abstract class Mission extends AIObject {
      * @param mt The bad <code>MoveType</code>.
      * @return This <code>Mission</code>.
      */     
-    protected Mission lbMove(LogBuilder lb, Unit.MoveType mt) {
+    protected Mission lbMove(LogBuilder lb, MoveType mt) {
         lb.add(", bad move type at ", getUnit().getLocation(), ": ", mt);
         return this;
     }
@@ -503,7 +501,6 @@ public abstract class Mission extends AIObject {
         return this;
     }
 
-
     /**
      * Finds a target for a unit without considering its movement
      * abilities.  This is used by missions when the current unit
@@ -523,7 +520,9 @@ public abstract class Mission extends AIObject {
         final Unit unit = aiUnit.getUnit();
         final Tile start = unit.getTile();
         if (start == null) {
-            if (!deferOK) return null;
+            if (!deferOK) {
+				return null;
+			}
             Settlement settlement = unit.getOwner().getClosestPortForEurope();
             return (settlement == null) ? null : settlement;
         }
@@ -548,7 +547,9 @@ public abstract class Mission extends AIObject {
             Location blocker = (settlement != null) ? settlement
                 : tile.getDefendingUnit(unit);
             if (UnitSeekAndDestroyMission.invalidReason(aiUnit, blocker)
-                == null) return blocker;
+                == null) {
+				return blocker;
+			}
         }
         return null;
     }
@@ -562,8 +563,12 @@ public abstract class Mission extends AIObject {
      */
     protected Direction moveRandomly(String logMe, Direction direction) {
         final Unit unit = getUnit();
-        if (unit.getMovesLeft() <= 0 || !unit.hasTile()) return null;
-        if (logMe == null) logMe = "moveRandomly";
+        if (unit.getMovesLeft() <= 0 || !unit.hasTile()) {
+			return null;
+		}
+        if (logMe == null) {
+			logMe = "moveRandomly";
+		}
 
         Random aiRandom = getAIRandom();
         if (direction == null) {
@@ -576,7 +581,9 @@ public abstract class Mission extends AIObject {
             Tile moveTo = unit.getTile().getNeighbourOrNull(d);
             if (moveTo != null
                     && unit.getMoveType(d) == MoveType.MOVE
-                    && aiUnit.move(d)) return d;
+                    && aiUnit.move(d)) {
+				return d;
+			}
         }
         return null; // Stuck!
     }
@@ -588,7 +595,8 @@ public abstract class Mission extends AIObject {
      */
     protected void moveRandomlyTurn(String logMe) {
         Direction direction = null;
-        while ((direction = moveRandomly(logMe, direction)) != null);
+        while ((direction = moveRandomly(logMe, direction)) != null) {
+		}
         getUnit().setMovesLeft(0);
     }
 
@@ -608,7 +616,7 @@ public abstract class Mission extends AIObject {
                 + settlement.getTile().getUnitCount();
             if (settlement instanceof Colony) {
                 Colony colony = (Colony)settlement;
-                value += ((colony.isConnectedPort()) ? 10 : 0) // Favour coastal
+                value += (colony.isConnectedPort() ? 10 : 0) // Favour coastal
                     + colony.getAvailableWorkLocations().size();
             }
             if (value > bestValue) {
@@ -656,7 +664,9 @@ public abstract class Mission extends AIObject {
      */
     protected MoveType travelToTarget(Location target, CostDecider costDecider,
                                       LogBuilder lb) {
-        if (target == null) return MoveType.MOVE_ILLEGAL;
+        if (target == null) {
+			return MoveType.MOVE_ILLEGAL;
+		}
         final Tile targetTile = target.getTile();
         if (!(target instanceof Europe) && targetTile == null) {
             throw new IllegalStateException("Target neither Europe nor Tile");
@@ -674,17 +684,14 @@ public abstract class Mission extends AIObject {
             // Wait for carrier to arrive on the map or in Europe.
             lb.add(", at sea");
             return MoveType.MOVE_HIGH_SEAS;
-
         } else if (unit.isOnCarrier()) {
             // Transport mission will disembark the unit when it
             // arrives at the drop point.
             lb.add(", on carrier");
             return MoveType.MOVE_NO_ACCESS_EMBARK;
-
         } else if (unit.isAtLocation(target)) {
             // Arrived!
             return MoveType.MOVE;
-
         } else if (unit.isInEurope()) {
             // Leave, or require transport.
             if (!unit.getOwner().canMoveToEurope()) {
@@ -702,41 +709,32 @@ public abstract class Mission extends AIObject {
                 }
             }
             useTransport = true;
-
         } else if (!unit.hasTile()) {
             // Fail!
             return MoveType.MOVE_ILLEGAL;
-
-        } else {
-            // On map.  Either find a path or decide to use transport.
-            if (target instanceof Europe) {
-                // Going to Europe.
-                if (!unit.getOwner().canMoveToEurope()) {
-                    lb.add(", impossible move to Europe");
-                    return MoveType.MOVE_ILLEGAL;
-                }
-                if (!unit.getType().canMoveToHighSeas()
-                    || aiCarrier != null) {
-                    useTransport = true;
-                } else {
-                    path = unit.findPath(unit.getLocation(), target,
-                                         null, costDecider);
-                }
-            } else if (aiCarrier != null) {
-                // Transport already allocated.
-                useTransport = true;
-
-            } else if (!unit.getType().canMoveToHighSeas()
-                && !Map.isSameContiguity(target, unit.getLocation())) {
-                // Transport necessary.
-                useTransport = true;
-
-            } else {
-                // Should not need transport within the same contiguity.
-                path = unit.findPath(unit.getLocation(), target,
-                                     null, costDecider);
-            }
-        }
+        } else // On map.  Either find a path or decide to use transport.
+		if (target instanceof Europe) {
+		    // Going to Europe.
+		    if (!unit.getOwner().canMoveToEurope()) {
+		        lb.add(", impossible move to Europe");
+		        return MoveType.MOVE_ILLEGAL;
+		    }
+		    if (!unit.getType().canMoveToHighSeas()
+		        || aiCarrier != null) {
+		        useTransport = true;
+		    } else {
+		        path = unit.findPath(unit.getLocation(), target,
+		                             null, costDecider);
+		    }
+		} else if (aiCarrier != null || (!unit.getType().canMoveToHighSeas()
+		    && !Map.isSameContiguity(target, unit.getLocation()))) {
+		    // Transport already allocated.
+		    useTransport = true;
+		} else {
+		    // Should not need transport within the same contiguity.
+		    path = unit.findPath(unit.getLocation(), target,
+		                         null, costDecider);
+		}
 
         if (useTransport) {
             if (aiCarrier != null) {
@@ -748,14 +746,14 @@ public abstract class Mission extends AIObject {
                 PathNode ownPath;
                 int pathTurns, ownTurns;
 
-                if ((tm = aiCarrier.getMission(TransportMission.class)) == null) {
+                tm = aiCarrier.getMission(TransportMission.class);
+				if (tm == null) {
                     // Carrier has no transport mission?!?  Bogus.
                     lb.add(", had bogus carrier ", aiCarrier.getUnit());
                     logger.warning(unit + " has transport " + aiCarrier
                         + " without transport mission");
                     aiUnit.dropTransport();
                     aiCarrier = null;
-
                 } else if ((pick = tm.getTransportTarget(aiUnit)) == null) {
                     // No collection point for this unit?  Bogus.
                     lb.add(", had bogus transport on ", aiCarrier.getUnit());
@@ -764,11 +762,9 @@ public abstract class Mission extends AIObject {
                         + tm.toFullString());
                     aiUnit.dropTransport();
                     aiCarrier = null;
-
                 } else if (Map.isSameLocation(pick, unit.getLocation())) {
                     // Waiting for the carrier at the collection point.
                     waiting = true;
-
                 } else if ((path = unit.findPath(unit.getLocation(), pick,
                                                  null, costDecider)) == null) {
                     // No path to the collection point.
@@ -788,7 +784,6 @@ public abstract class Mission extends AIObject {
                     aiUnit.dropTransport();
                     aiCarrier = null;
                     useTransport = false;
-
                 } else if ((ownPath = unit.findPath(unit.getLocation(), 
                             target, null, costDecider)) == null
                     || (ownTurns = ownPath.getTotalTurns())
@@ -799,9 +794,10 @@ public abstract class Mission extends AIObject {
                     // possible to travel to the collection point, it
                     // is also the best plan.
                     MoveType ret = followMapPath(path.next, lb);
-                    if (ret != MoveType.MOVE) return ret;
+                    if (ret != MoveType.MOVE) {
+						return ret;
+					}
                     waiting = true; // Arrived for collection.
-
                 } else {
                     // It is quicker to cancel the transport and go to
                     // the target directly.
@@ -922,14 +918,11 @@ public abstract class Mission extends AIObject {
         return lbDrop(lb);
     }
 
-
     // Mission interface to be implemented/overridden by descendants.
     // TransportableAIObject delegates some functionality here when
     // a mission is available.
  
-    /**
-     * Disposes this mission by removing any references to it.
-     */
+    /** Disposes this mission by removing any references to it. */
     @Override
     public void dispose() {
         // Nothing to do yet.
@@ -957,9 +950,9 @@ public abstract class Mission extends AIObject {
      */
     public Location getTransportDestination() {
         Location loc;
-        return (!isValid()) ? null
+        return !isValid() ? null
             : ((loc = getTarget()) == null) ? null
-            : (!getUnit().shouldTakeTransportTo(loc)) ? null
+            : !getUnit().shouldTakeTransportTo(loc) ? null
             : loc;
     }
 
@@ -1021,20 +1014,15 @@ public abstract class Mission extends AIObject {
      */
     public abstract Mission doMission(LogBuilder lb);
 
+    /** Serialization. */
 
-    // Serialization
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final void toXML(FreeColXMLWriter xw) throws XMLStreamException {
-        if (isValid()) toXML(xw, getXMLTagName());
+        if (isValid()) {
+			toXML(xw, getXMLTagName());
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         // This routine might look redundant, but if you let it
@@ -1044,9 +1032,6 @@ public abstract class Mission extends AIObject {
         // identifiers.
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         // This routine might look redundant, but if you let it
@@ -1055,9 +1040,6 @@ public abstract class Mission extends AIObject {
         // attribute.  Missions do not have ids.
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         LogBuilder lb = new LogBuilder(64);

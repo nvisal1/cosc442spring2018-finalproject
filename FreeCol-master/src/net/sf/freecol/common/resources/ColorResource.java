@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * A <code>Resource</code> wrapping a <code>Color</code>.
  * 
@@ -33,7 +32,6 @@ import java.util.logging.Logger;
  * @see Color
  */
 public class ColorResource extends Resource {
-
     private static final Logger logger = Logger.getLogger(ColorResource.class.getName());
 
     public static final Color REPLACEMENT_COLOR = Color.MAGENTA;
@@ -41,7 +39,6 @@ public class ColorResource extends Resource {
     public static final String SCHEME = "color:";
 
     private final Color color;
-
 
     public ColorResource(Color color) {
         this.color = color;
@@ -61,7 +58,6 @@ public class ColorResource extends Resource {
         this.color = getColor(colorName);
     }
 
-
     /**
      * Gets the <code>Color</code> represented by this resource.
      *
@@ -73,8 +69,10 @@ public class ColorResource extends Resource {
 
     private static boolean isHexString(String str) {
         if (str == null
-            || !(str.startsWith("0x") || str.startsWith("0X"))
-            || str.length() <= 2) return false;
+            || (!str.startsWith("0x") && !str.startsWith("0X"))
+            || str.length() <= 2) {
+			return false;
+		}
         for (int i = 2; i < str.length(); i++) {
             if (!"0123456789ABCDEFabcdef".contains(str.substring(i, i + 1))) {
                 return false;

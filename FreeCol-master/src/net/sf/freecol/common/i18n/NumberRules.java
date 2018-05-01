@@ -31,19 +31,15 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.i18n.Number.Category;
 import net.sf.freecol.common.io.FreeColXMLReader;
 
-
 /**
  * See the
  * <a href="http://cldr.unicode.org/index/cldr-spec/plural-rules">
  * Common Locale Data Repository</a>.
  */
 public class NumberRules {
-
     private static final Logger logger = Logger.getLogger(NumberRules.class.getName());
 
-    /**
-     * A rule that always returns category "other".
-     */
+    /** A rule that always returns category "other". */
     public static final Number OTHER_NUMBER_RULE = new OtherNumberRule();
 
     /**
@@ -64,9 +60,7 @@ public class NumberRules {
      */
     public static final Number ZERO_ONE_NUMBER_RULE = new ZeroOneNumberRule();
 
-
     private static final Map<String, Number> numberMap = new HashMap<>();
-
 
     /**
      * Creates a new <code>NumberRules</code> instance from the given
@@ -78,7 +72,6 @@ public class NumberRules {
     public NumberRules(InputStream in) {
         load(in);
     }
-
 
     /**
      * Returns a rule appropriate for the given language, or the
@@ -96,10 +89,9 @@ public class NumberRules {
         return !numberMap.isEmpty();
     }
 
-
     public static void load(InputStream in) {
         try (
-            FreeColXMLReader xr = new FreeColXMLReader(in);
+            FreeColXMLReader xr = new FreeColXMLReader(in)
         ) {
             readFromXML(xr);
         } catch (Exception e) {
@@ -108,8 +100,7 @@ public class NumberRules {
         }
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String COUNT_TAG = "count";
     private static final String GENERATION_TAG = "generation";
@@ -119,25 +110,24 @@ public class NumberRules {
     private static final String PLURAL_RULES_TAG = "pluralRules";
     private static final String VERSION_TAG = "version";
 
-
     private static void readFromXML(FreeColXMLReader xr) throws XMLStreamException {
         while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
             String tag = xr.getLocalName();
-            if (null != tag) switch (tag) {
-                case VERSION_TAG:
-                    xr.nextTag();
-                    break;
-                case GENERATION_TAG:
-                    xr.nextTag();
-                    break;
-                case PLURALS_TAG:
-                    while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
-                        tag = xr.getLocalName();
-                        if (PLURAL_RULES_TAG.equals(tag)) {
-                            readChild(xr);
-                        }
-                    }   break;
-            }
+            if (null != tag) {
+				switch (tag) {
+				    case VERSION_TAG:
+				case GENERATION_TAG:
+					xr.nextTag();
+				        break;
+				case PLURALS_TAG:
+				        while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
+				            tag = xr.getLocalName();
+				            if (PLURAL_RULES_TAG.equals(tag)) {
+				                readChild(xr);
+				            }
+				        }   break;
+				}
+			}
         }
     }
 
@@ -161,8 +151,8 @@ public class NumberRules {
                 break;
             case 1:
                 Rule rule = numberRule.getRule(Category.one);
-                if (rule != null) {
-                    if (null != rule.toString()) switch (rule.toString()) {
+                if (rule != null && null != rule.toString()) {
+					switch (rule.toString()) {
                     case "n is 1":
                         number = PLURAL_NUMBER_RULE;
                         break;
@@ -170,7 +160,7 @@ public class NumberRules {
                         number = ZERO_ONE_NUMBER_RULE;
                         break;
                 }
-                }
+				}
                 break;
             case 2:
                 Rule oneRule = numberRule.getRule(Category.one);

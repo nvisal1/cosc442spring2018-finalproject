@@ -21,18 +21,15 @@ package net.sf.freecol.common.model;
 
 import java.util.logging.Logger;
 
-
 /**
  * Helper container to remember the Europe state prior to some
  * change, and fire off any consequent property changes.
  */
 public class EuropeWas {
-
     private static final Logger logger = Logger.getLogger(EuropeWas.class.getName());
 
     private final Europe europe;
     private final int unitCount;
-
 
     public EuropeWas(Europe europe) {
         this.europe = europe;
@@ -48,13 +45,17 @@ public class EuropeWas {
      * @return A new unit.
      */
     public Unit getNewUnit() {
-        if (europe.getUnitCount() < unitCount+1) return null;
+        if (europe.getUnitCount() < unitCount+1) {
+			return null;
+		}
         Unit newUnit = null;
         int idMax = 0;
         final String unitPrefix = Unit.getXMLElementTagName() + ":";
         for (Unit u : europe.getUnitList()) {
             String uid = u.getId();
-            if (!uid.startsWith(unitPrefix)) continue;
+            if (!uid.startsWith(unitPrefix)) {
+				continue;
+			}
             try {
                 int id = Integer.parseInt(uid.substring(unitPrefix.length()));
                 if (idMax < id) {

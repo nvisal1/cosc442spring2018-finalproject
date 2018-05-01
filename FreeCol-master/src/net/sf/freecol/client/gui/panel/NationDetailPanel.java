@@ -37,13 +37,8 @@ import net.sf.freecol.common.model.Nation;
 import net.sf.freecol.common.model.NationType;
 import net.sf.freecol.common.model.Player;
 
-
-/**
- * This panel displays details of nations in the Colopedia.
- */
+/** This panel displays details of nations in the Colopedia. */
 public class NationDetailPanel extends ColopediaGameObjectTypePanel<Nation> {
-
-
     /**
      * Creates a new instance of this ColopediaDetailPanel.
      *
@@ -55,26 +50,20 @@ public class NationDetailPanel extends ColopediaGameObjectTypePanel<Nation> {
         super(freeColClient, colopediaPanel, PanelType.NATIONS.getKey());
     }
 
-
-    // Implement ColopediaDetailPanel
+    /** Implement ColopediaDetailPanel. */
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void addSubTrees(DefaultMutableTreeNode root) {
-        List<Nation> nations = new ArrayList<>();
-        nations.addAll(getSpecification().getEuropeanNations());
+        List<Nation> nations = new ArrayList<>(getSpecification().getEuropeanNations());
         nations.addAll(getSpecification().getIndianNations());
         super.addSubTrees(root, nations);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void buildDetail(String id, JPanel panel) {
-        if (getId().equals(id)) return;
+        if (getId().equals(id)) {
+			return;
+		}
 
         Nation nation = getSpecification().getNation(id);
         NationType currentNationType = nation.getType();

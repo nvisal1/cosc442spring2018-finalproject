@@ -32,16 +32,11 @@ import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.Market;
 import net.sf.freecol.common.model.Player;
 
-
-/**
- * This label represents a cargo type on the European market.
- */
+/** This label represents a cargo type on the European market. */
 public final class MarketLabel extends AbstractGoodsLabel
     implements Draggable, PropertyChangeListener {
-
     /** The enclosing market. */
     private final Market market;
-
 
     /**
      * Initializes this JLabel with the given goods type.
@@ -52,11 +47,12 @@ public final class MarketLabel extends AbstractGoodsLabel
     public MarketLabel(ImageLibrary lib, GoodsType type, Market market) {
         super(lib, new AbstractGoods(type, GoodsContainer.CARGO_SIZE));
 
-        if (market == null) throw new IllegalArgumentException("Null market");
+        if (market == null) {
+			throw new IllegalArgumentException("Null market");
+		}
         this.market = market;
         update();
     }
-
 
     /**
      * Wrap the label with a border.
@@ -70,9 +66,7 @@ public final class MarketLabel extends AbstractGoodsLabel
         return this;
     }
 
-    /**
-     * Update this label.
-     */
+    /** Update this label. */
     public void update() {
         final GoodsType type = getType();
         final Player player = market.getOwner();
@@ -109,7 +103,6 @@ public final class MarketLabel extends AbstractGoodsLabel
         setAmount(GoodsContainer.CARGO_SIZE);
     }
 
-
     // Implement Draggable
 
     /**
@@ -122,12 +115,8 @@ public final class MarketLabel extends AbstractGoodsLabel
         return false;
     }
 
+    /** Interface PropertyChangeListener. */
 
-    // Interface PropertyChangeListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         update(); // Just update the text and tool tip.

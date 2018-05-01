@@ -35,12 +35,8 @@ import net.sf.freecol.common.model.HighScore;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Turn;
 
-
-/**
- * This panel displays the high scores.
- */
+/** This panel displays the high scores. */
 public final class ReportHighScoresPanel extends ReportPanel {
-
     /**
      * Creates the high scores report.
      *

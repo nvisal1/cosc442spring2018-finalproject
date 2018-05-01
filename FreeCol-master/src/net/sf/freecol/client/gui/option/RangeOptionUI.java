@@ -29,14 +29,12 @@ import javax.swing.JSlider;
 import net.sf.freecol.client.gui.panel.Utility;
 import net.sf.freecol.common.option.RangeOption;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.RangeOption} in order to enable
  * values to be both seen and changed.
  */
 public final class RangeOptionUI extends SliderOptionUI<RangeOption>  {
-
     /**
      * Creates a new <code>RangeOptionUI</code> for the given
      * <code>RangeOption</code>.
@@ -70,20 +68,13 @@ public final class RangeOptionUI extends SliderOptionUI<RangeOption>  {
         slider.setSnapToTicks(true);
     }
 
+    /** Implement OptionUpdater. */
 
-    // Implement OptionUpdater
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValueRank(getComponent().getValue());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         getComponent().setValue(getOption().getValueRank());

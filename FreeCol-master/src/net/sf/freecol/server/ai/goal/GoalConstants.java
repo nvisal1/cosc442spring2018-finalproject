@@ -17,17 +17,13 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.server.ai.goal;
-
 
 /**
 * Contains constants used by the Goal classes.
 * These constants are affecting AI behaviour.
 */
 public interface GoalConstants {
-
-    //Maximum allowed radius for (omniscient) searches
-    public static final int MAX_SEARCH_RADIUS = 8;
-    
+    /** Maximum allowed radius for (omniscient) searches. */
+    int MAX_SEARCH_RADIUS = 8;
 }

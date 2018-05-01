@@ -25,16 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicScrollPaneUI;
 
-
-/**
- * UI-class for scroll panes.
- */
+/** UI-class for scroll panes. */
 public class FreeColScrollPaneUI extends BasicScrollPaneUI {
-
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return new FreeColScrollPaneUI();
     }
-
 
     @Override
     public void installUI(JComponent c) {

@@ -39,12 +39,8 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * The panel that allows a user to pay for a new unit in Europe.
- */
+/** The panel that allows a user to pay for a new unit in Europe. */
 public class NewUnitPanel extends FreeColPanel {
-
     /** The main label for the panel. */
     private final JLabel question;
 
@@ -58,8 +54,7 @@ public class NewUnitPanel extends FreeColPanel {
     private final Comparator<UnitType> priceComparator;
 
     /** Is there at least one available unit? */
-    private boolean shouldEnable = false;
-
+    private boolean shouldEnable;
 
     /**
      * The constructor to use.
@@ -130,12 +125,8 @@ public class NewUnitPanel extends FreeColPanel {
         shouldEnable = player.checkGold(europe.getUnitPrice(units.get(0)));
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand();
@@ -146,23 +137,23 @@ public class NewUnitPanel extends FreeColPanel {
             igc().trainUnitInEurope(unitType);
             // Close early if there is nothing affordable remaining.
             getGUI().updateEuropeanSubpanels();
-            if (!shouldEnable) getGUI().removeFromCanvas(this);            
+            if (!shouldEnable) {
+				getGUI().removeFromCanvas(this);
+			}            
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();
         
         removeAll();
         for (JButton jb : buttons) {
-            if (jb != null) jb.setLayout(null);
+            if (jb != null) {
+				jb.setLayout(null);
+			}
         }
         buttons.clear();            
     }

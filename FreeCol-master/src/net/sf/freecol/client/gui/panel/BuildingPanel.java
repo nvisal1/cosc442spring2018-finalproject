@@ -48,12 +48,8 @@ import net.sf.freecol.common.model.GameOptions;
 import net.sf.freecol.common.model.ProductionInfo;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * This panel represents a single building in a Colony.
- */
+/** This panel represents a single building in a Colony. */
 public class BuildingPanel extends MigPanel implements PropertyChangeListener {
-
     private static final Logger logger = Logger.getLogger(BuildingPanel.class.getName());
 
     /** The enclosing client. */
@@ -64,7 +60,6 @@ public class BuildingPanel extends MigPanel implements PropertyChangeListener {
 
     /** Labels for any units present. */
     private final List<UnitLabel> unitLabels = new ArrayList<>();
-
 
     /**
      * Creates this BuildingPanel.
@@ -81,46 +76,35 @@ public class BuildingPanel extends MigPanel implements PropertyChangeListener {
         setToolTipText(" ");
     }
 
-
-    /**
-     * Initialize this building panel.
-     */
+    /** Initialize this building panel. */
     public void initialize() {
         cleanup();
         addPropertyChangeListeners();
         update();
     }
 
-    /**
-     * Clean up this building panel.
-     */
+    /** Clean up this building panel. */
     public void cleanup() {
         unitLabels.clear();
         removePropertyChangeListeners();
         removeAll();
     }
 
-    /**
-     * Add any property change listeners.
-     */
+    /** Add any property change listeners. */
     protected void addPropertyChangeListeners() {
         if (building != null) {
             building.addPropertyChangeListener(this);
         }
     }
 
-    /**
-     * Remove any property change listeners.
-     */
+    /** Remove any property change listeners. */
     protected void removePropertyChangeListeners() {
         if (building != null) {
             building.removePropertyChangeListener(this);
         }
     }
 
-    /**
-     * Update up this building panel.
-     */
+    /** Update up this building panel. */
     public void update() {
         removeAll();
         unitLabels.clear();
@@ -175,7 +159,6 @@ public class BuildingPanel extends MigPanel implements PropertyChangeListener {
         repaint();
     }
 
-
     /**
      * Get the building this panel displays.
      *
@@ -194,12 +177,8 @@ public class BuildingPanel extends MigPanel implements PropertyChangeListener {
         return unitLabels;
     }
 
+    /** Interface PropertyChangeListener. */
 
-    // Interface PropertyChangeListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         String property = event.getPropertyName();
@@ -209,32 +188,21 @@ public class BuildingPanel extends MigPanel implements PropertyChangeListener {
         update();
     }
 
+    /** Override JComponent. */
 
-    // Override JComponent
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JToolTip createToolTip() {
         return new BuildingToolTip(freeColClient, building);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void paintComponent(Graphics g) {
         ImageLibrary lib = freeColClient.getGUI().getImageLibrary();
         g.drawImage(lib.getBuildingImage(building), 0, 0, this);
     }
 
-
-    /**
-     * A special label to display the building upkeep required.
-     */
+    /** A special label to display the building upkeep required. */
     public class UpkeepLabel extends JLabel {
-
         /** The base image to display. */
         private final int number;
 
@@ -249,9 +217,6 @@ public class BuildingPanel extends MigPanel implements PropertyChangeListener {
             this.number = number;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void paintComponent(Graphics g) {
             getIcon().paintIcon(null, g, 0, 0);

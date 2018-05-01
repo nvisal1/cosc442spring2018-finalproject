@@ -37,7 +37,6 @@ import net.sf.freecol.common.model.UnitType;
 import static net.sf.freecol.common.util.RandomUtils.*;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
 /**
  * A cache of proper names of various types.
  *
@@ -48,14 +47,13 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * allow the the collection to be serialized.
  */
 public class NameCache {
-
     private static final Logger logger = Logger.getLogger(NameCache.class.getName());
 
     /** Default season names to use if nameCache.season.* not found. */
     private static final String[] DEFAULT_SEASON_IDS
         = { "model.season.spring.name", "model.season.autumn.name" };
     
-    private final static String CIBOLA_PREFIX
+    private static final String CIBOLA_PREFIX
         = "nameCache.lostCityRumour.cityName.";
 
     /** Cities of Cibola. */
@@ -79,7 +77,7 @@ public class NameCache {
     /** Season names. */
     private static List<String> seasonNames = null;
     private static final Object seasonNamesLock = new Object();
-    private static int seasonNumber = 0;
+    private static int seasonNumber;
     
     /** Settlement names. */
     private static final Map<Player, String> capitalNames
@@ -91,7 +89,6 @@ public class NameCache {
     /** Ship names. */
     private static final Map<Player, List<String>> shipNames = new HashMap<>();
     private static final Object shipNameLock = new Object();
-
 
     /**
      * Collects all the names with a given prefix.
@@ -107,7 +104,7 @@ public class NameCache {
             names.add(Messages.message(name));
         }
         int i = 1;
-        while (Messages.containsKey(name = prefix + Integer.toString(i))) {
+        while (Messages.containsKey(name = prefix + i)) {
             names.add(Messages.message(name));
             i++;
         }
@@ -136,9 +133,7 @@ public class NameCache {
         }
     }
 
-    /**
-     * Initialize the mercenary leaders collection.
-     */
+    /** Initialize the mercenary leaders collection. */
     private static void requireMercenaryLeaders() {
         synchronized (mercenaryLock) {
             if (mercenaryLeaders == null) {
@@ -171,18 +166,18 @@ public class NameCache {
             final String prefix = makeRegionKey(player, type);
             List<String> names = regionNames.get(prefix);
             if (names == null) {
-                names = new ArrayList<String>();
+                names = new ArrayList<>();
                 collectNames(prefix, names);
                 regionNames.put(prefix, names);
             }
             Integer index = regionIndex.get(prefix);
-            if (index == null) regionIndex.put(prefix, names.size()+1);
+            if (index == null) {
+				regionIndex.put(prefix, names.size()+1);
+			}
         }
     }
 
-    /**
-     * Initialize the riverNames collection.
-     */
+    /** Initialize the riverNames collection. */
     private static void requireRiverNames() {
         synchronized (riverNameLock) {
             if (riverNames == null) {
@@ -225,7 +220,9 @@ public class NameCache {
      */
     public static String getSeasonName(int index) {
         requireSeasonNames();
-        if (index >= 0 && index < seasonNumber) return seasonNames.get(index);
+        if (index >= 0 && index < seasonNumber) {
+			return seasonNames.get(index);
+		}
         return Messages.message(StringTemplate
             .template("nameCache.season.default")
             .addAmount("%number%", index+1));
@@ -283,7 +280,7 @@ public class NameCache {
             List<String> names = shipNames.get(player);
             if (names == null) {
                 final String prefix = player.getNationId() + ".ship.";
-                names = new ArrayList<String>();
+                names = new ArrayList<>();
                 collectNames(prefix, names);
                 if (random != null) {
                     randomShuffle(logger, "Ship names", names, random);
@@ -293,7 +290,6 @@ public class NameCache {
         }
     }
     
-
     /**
      * Get the next name for a city of Cibola, removing it from the
      * list of available names.
@@ -319,12 +315,12 @@ public class NameCache {
         }
     }
 
-    /**
-     * Clear the city of Cibola cache.
-     */
+    /** Clear the city of Cibola cache. */
     public static void clearCitiesOfCibola() {
         synchronized (cibolaLock) {
-            if (cibolaKeys != null) cibolaKeys.clear();
+            if (cibolaKeys != null) {
+				cibolaKeys.clear();
+			}
         }
     }
 
@@ -335,7 +331,9 @@ public class NameCache {
      */
     public static void addCityOfCibola(String key) {
         synchronized (cibolaLock) {
-            if (cibolaKeys == null) cibolaKeys = new ArrayList<>();
+            if (cibolaKeys == null) {
+				cibolaKeys = new ArrayList<>();
+			}
             cibolaKeys.add(key);
         }
     }
@@ -403,18 +401,22 @@ public class NameCache {
             List<String> names = regionNames.get(prefix);
             while (!names.isEmpty()) {
                 name = names.remove(0);
-                if (map.getRegionByName(name) == null) return name;
+                if (map.getRegionByName(name) == null) {
+					return name;
+				}
             }
         }
             
         // There are a bunch of extra rivers not attached to a specific
         // nation at model.other.region.river.*.
-        if (region.getType() == Region.RegionType.RIVER) {
+        if (region.getType() == RegionType.RIVER) {
             requireRiverNames();
             synchronized (riverNameLock) {
                 while (!riverNames.isEmpty()) {
                     name = riverNames.remove(0);
-                    if (map.getRegionByName(name) == null) return name;
+                    if (map.getRegionByName(name) == null) {
+						return name;
+					}
                 }
             }
         }
@@ -445,7 +447,7 @@ public class NameCache {
      * @return A unique fallback settlement name for the player.
      */
     private static String getFallbackSettlementName(Player player) {
-        return Messages.message((player.isEuropean())
+        return Messages.message(player.isEuropean()
             ? "nameCache.base.colony"
             : "nameCache.base.settlement") + "-";
     }
@@ -478,7 +480,9 @@ public class NameCache {
             List<String> names = settlementNames.get(player);
             while (!names.isEmpty()) {
                 String name = names.remove(0);
-                if (game.getSettlementByName(name) == null) return name;
+                if (game.getSettlementByName(name) == null) {
+					return name;
+				}
             }
         }
 
@@ -486,7 +490,8 @@ public class NameCache {
         final String base = getFallbackSettlementName(player);
         int i = player.getSettlements().size() + 1;
         String name = null;
-        while (game.getSettlementByName(name = base + i++) != null);
+        while (game.getSettlementByName(name = base + i++) != null) {
+		}
         return name;
     }           
 
@@ -514,10 +519,13 @@ public class NameCache {
      */
     public static String getTradeRouteName(Player player) {
         String base = Messages.message("nameCache.base.tradeRoute");
-        if (player.getTradeRouteByName(base) == null) return base;
+        if (player.getTradeRouteByName(base) == null) {
+			return base;
+		}
         String name;
         int i = 1;
-        while (player.getTradeRouteByName(name = base + i++) != null);
+        while (player.getTradeRouteByName(name = base + i++) != null) {
+		}
         return name;
     }
 
@@ -534,7 +542,9 @@ public class NameCache {
      */
     public static String getUnitName(Player player, UnitType type,
                                      Random random) {
-        if (!type.isNaval()) return null;
+        if (!type.isNaval()) {
+			return null;
+		}
         String name;
 
         // Find a new name in the installed ship names if possible.
@@ -543,14 +553,17 @@ public class NameCache {
             List<String> names = shipNames.get(player);
             while (!names.isEmpty()) {
                 name = names.remove(0);
-                if (player.getUnitByName(name) == null) return name;
+                if (player.getUnitByName(name) == null) {
+					return name;
+				}
             }
         }
 
         // Get a fallback ship name
         final String base = Messages.message("nameCache.base.ship") + "-";
         int i = 1;
-        while (player.getUnitByName(name = base + i++) != null);
+        while (player.getUnitByName(name = base + i++) != null) {
+		}
         return name;
     }
 }

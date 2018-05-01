@@ -25,16 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicRadioButtonUI;
 
-
-/**
- * Sets the default opaque attribute to <i>false</i>.
- */
+/** Sets the default opaque attribute to <i>false</i>. */
 public class FreeColRadioButtonUI extends BasicRadioButtonUI {
-
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return new FreeColRadioButtonUI();
     }
-
 
     @Override
     public void installUI(JComponent c) {

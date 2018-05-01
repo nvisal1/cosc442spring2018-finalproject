@@ -28,13 +28,11 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Objects of this class hold the market data for a particular type of
  * goods.
  */
 public class MarketData extends FreeColGameObject {
-
     private static final Logger logger = Logger.getLogger(MarketData.class.getName());
 
     /** Inclusive lower bound on goods price. */
@@ -79,7 +77,6 @@ public class MarketData extends FreeColGameObject {
     /** Has this good been traded? */
     private boolean traded;
 
-
     /**
      * Creates a new <code>MarketData</code> instance.
      *
@@ -113,7 +110,6 @@ public class MarketData extends FreeColGameObject {
     public MarketData(Game game, String id) {
         super(game, id);
     }
-
 
     /**
      * Get the type of goods of this <code>MarketData</code>.
@@ -290,7 +286,7 @@ public class MarketData extends FreeColGameObject {
      * Has there been trading in this <code>MarketData</code>?
      *
      * @return True if trading has occurred.
-     **/
+     */
     public final boolean getTraded() {
         return traded;
     }
@@ -299,11 +295,10 @@ public class MarketData extends FreeColGameObject {
      * Set the trading status of this <code>MarketData</code>.
      *
      * @param traded The trade status to set.
-     **/
+     */
     public void setTraded(boolean traded) {
         this.traded = traded;
     }
-
 
     /**
      * Adjust the prices.
@@ -316,7 +311,9 @@ public class MarketData extends FreeColGameObject {
      * @return True if the price changes.
      */
     public boolean price() {
-        if (!goodsType.isStorable()) return false;
+        if (!goodsType.isStorable()) {
+			return false;
+		}
         int diff = goodsType.getPriceDifference();
         float amountPrice = initialPrice * (goodsType.getInitialAmount()
             / (float) amountInMarket);
@@ -335,7 +332,6 @@ public class MarketData extends FreeColGameObject {
 
         // Another hack to prevent price changing too fast in one hit.
         // Push the amount in market back as well to keep this stable.
-        //
         // Prices that change by more than the buy/sell difference
         // allow big traders to exploit the market and extract free
         // money... not sure I want to be fighting economic reality
@@ -381,16 +377,13 @@ public class MarketData extends FreeColGameObject {
         return costToBuy != oldCostToBuy || paidForSale != oldPaidForSale;
     }
 
-    /**
-     * Update the pricing of this datum, ignoring the price change clamp.
-     */
+    /** Update the pricing of this datum, ignoring the price change clamp. */
     public void update() {
         costToBuy = -1; // Disable price change clamping
         price();
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String AMOUNT_TAG = "amount";
     private static final String ARREARS_TAG = "arrears";
@@ -401,10 +394,6 @@ public class MarketData extends FreeColGameObject {
     private static final String SALES_TAG = "sales";
     private static final String TRADED_TAG = "traded";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -426,9 +415,6 @@ public class MarketData extends FreeColGameObject {
         xw.writeAttribute(TRADED_TAG, traded);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -456,9 +442,6 @@ public class MarketData extends FreeColGameObject {
         oldPrice = costToBuy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
@@ -478,9 +461,6 @@ public class MarketData extends FreeColGameObject {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

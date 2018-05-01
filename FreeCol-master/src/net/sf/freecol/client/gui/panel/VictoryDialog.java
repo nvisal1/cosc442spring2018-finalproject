@@ -31,12 +31,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * This dialog is displayed to a player who has won the game.
- */
+/** This dialog is displayed to a player who has won the game. */
 public final class VictoryDialog extends FreeColConfirmDialog {
-
     /**
      * Create a Victory dialog.
      * 

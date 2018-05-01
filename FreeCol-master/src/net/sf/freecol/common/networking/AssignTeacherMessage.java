@@ -27,18 +27,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when assigning a teacher.
- */
+/** The message sent when assigning a teacher. */
 public class AssignTeacherMessage extends DOMMessage {
-
     /** The identifier of the student. */
     private final String studentId;
 
     /** The identifier of the teacher. */
     private final String teacherId;
-
 
     /**
      * Create a new <code>AssignTeacherMessage</code> with the
@@ -67,7 +62,6 @@ public class AssignTeacherMessage extends DOMMessage {
         this.studentId = element.getAttribute("student");
         this.teacherId = element.getAttribute("teacher");
     }
-
 
     /**
      * Handle a "assignTeacher"-message.

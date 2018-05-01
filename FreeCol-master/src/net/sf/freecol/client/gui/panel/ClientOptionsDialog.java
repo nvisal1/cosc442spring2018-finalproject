@@ -26,12 +26,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.io.FreeColDirectories;
 import net.sf.freecol.common.option.OptionGroup;
 
-
-/**
- * Dialog for changing the {@link net.sf.freecol.client.ClientOptions}.
- */
+/** Dialog for changing the {@link net.sf.freecol.client.ClientOptions}. */
 public final class ClientOptionsDialog extends OptionsDialog  {
-
     /**
      * The constructor that will add the items to this panel.
      *
@@ -49,12 +45,8 @@ public final class ClientOptionsDialog extends OptionsDialog  {
         initialize(frame);
     }
 
+    /** Override OptionsDialog. */
 
-    // Override OptionsDialog
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public OptionGroup getResponse() {
         OptionGroup value = super.getResponse();

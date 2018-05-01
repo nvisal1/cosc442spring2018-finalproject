@@ -48,7 +48,6 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-
 /**
  * A network connection.
  * Responsible for both sending and receiving network messages.
@@ -58,7 +57,6 @@ import org.xml.sax.SAXException;
  * @see #ask(Element)
  */
 public class Connection implements Closeable {
-
     private static final Logger logger = Logger.getLogger(Connection.class.getName());
 
     public static final String DISCONNECT_TAG = "disconnect";
@@ -68,7 +66,8 @@ public class Connection implements Closeable {
     public static final String SEND_SUFFIX = "-send\n";
     public static final String REPLY_SUFFIX = "-reply\n";
 
-    private static final int TIMEOUT = 5000; // 5s
+    /** 5s. */
+    private static final int TIMEOUT = 5000;
 
     private InputStream in;
 
@@ -84,10 +83,9 @@ public class Connection implements Closeable {
 
     private String name;
 
-    // Logging variables.
+    /** Logging variables. */
     private final StreamResult logResult;
     private final Writer logWriter;
-
 
     /**
      * Trivial constructor.
@@ -229,9 +227,7 @@ public class Connection implements Closeable {
         return this.out;
     }
 
-    /**
-     * Close and clear the output stream.
-     */
+    /** Close and clear the output stream. */
     private synchronized void closeOutputStream() {
         if (this.out != null) {
             try {
@@ -261,11 +257,11 @@ public class Connection implements Closeable {
         }
     }
 
-    /**
-     * Really closes this connection.
-     */
+    /** Really closes this connection. */
     public void reallyClose() {
-        if (this.thread != null) thread.askToStop();
+        if (this.thread != null) {
+			thread.askToStop();
+		}
 
         closeOutputStream();
         if (this.in != null) {
@@ -319,7 +315,6 @@ public class Connection implements Closeable {
                 this.logWriter.write('\n');
                 this.logWriter.flush();
             } catch (IOException|TransformerException e) {
-                ; // Ignore logging failure
             }
         }
     }
@@ -375,10 +370,8 @@ public class Connection implements Closeable {
             : response.getDocument().getDocumentElement();
         log(reply, false);
 
-        Element child = (reply==null) ? null : (Element)reply.getFirstChild();
-        return child;
+        return (reply==null) ? null : (Element)reply.getFirstChild();
     }
-
 
     /**
      * Main public routine to send a message over this connection.
@@ -433,7 +426,6 @@ public class Connection implements Closeable {
      */
     public void handleAndSendReply(final BufferedInputStream in) 
         throws IOException {
-
         in.mark(200); // Peek at the reply identifier and tag.
 
         // Extract the reply id and check if this is a question.
@@ -446,7 +438,6 @@ public class Connection implements Closeable {
             question = QUESTION_TAG.equals(xr.getLocalName());
             networkReplyId = xr.getAttribute(NETWORK_REPLY_ID_TAG,
                                              (String)null);
-
         } catch (XMLStreamException xse) {
             logger.log(Level.WARNING, "XML stream failure", xse);
             return;
@@ -461,7 +452,9 @@ public class Connection implements Closeable {
             logger.log(Level.WARNING, "Unable to read message.", e);
             return;
         } finally {
-            if (xr != null) xr.close();
+            if (xr != null) {
+				xr.close();
+			}
         }
 
         // Process the message in its own thread.
@@ -489,7 +482,9 @@ public class Connection implements Closeable {
                         } else {
                             reply = conn.handle(element);
                         }
-                        if (reply != null) conn.send(reply);
+                        if (reply != null) {
+							conn.send(reply);
+						}
                     } catch (Exception e) {
                         logger.log(Level.WARNING, "Handler failed: "
                             + element, e);
@@ -511,10 +506,6 @@ public class Connection implements Closeable {
         return messageHandler.handle(this, request);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "[Connection " + name + " (" + socket + ")]";

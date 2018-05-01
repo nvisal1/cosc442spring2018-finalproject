@@ -26,15 +26,10 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.Utils;
 
-
-/**
- * A trade item consisting of some goods.
- */
+/** A trade item consisting of some goods. */
 public class GoodsTradeItem extends TradeItem {
-    
     /** The goods to change hands. */
     private Goods goods;
-
 
     /**
      * Creates a new <code>GoodsTradeItem</code> instance.
@@ -62,55 +57,37 @@ public class GoodsTradeItem extends TradeItem {
         super(game, xr);
     }
 
+    /** Interface TradeItem. */
 
-    // Interface TradeItem
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isValid() {
         return goods != null && goods.getType() != null
             && goods.getAmount() > 0
-            && (goods.getLocation() instanceof Ownable)
+            && goods.getLocation() instanceof Ownable
             && getSource().owns((Ownable)goods.getLocation());
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isUnique() {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StringTemplate getLabel() {
         return goods.getLabel(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Goods getGoods() {
         return goods;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setGoods(Goods goods) {
         this.goods = goods;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int evaluateFor(Player player) {
         final Market market = player.getMarket();
         final Goods goods = getGoods();
@@ -119,48 +96,35 @@ public class GoodsTradeItem extends TradeItem {
             return Integer.MIN_VALUE;
         } else if (market == null) {
             value = 2 * goods.getAmount();
-            if (getSource() == player) value = -value;
-        } else {
             if (getSource() == player) {
-                value = -market.getBidPrice(goods.getType(), goods.getAmount());
-            } else {
-                value = market.getSalePrice(goods.getType(), goods.getAmount());
-                value = (int)Math.round(value
-                    * (1.0 - player.getTax() / 100.0));
-            }
-        }
+				value = -value;
+			}
+        } else if (getSource() == player) {
+		    value = -market.getBidPrice(goods.getType(), goods.getAmount());
+		} else {
+		    value = market.getSalePrice(goods.getType(), goods.getAmount());
+		    value = (int)Math.round(value
+		        * (1.0 - player.getTax() / 100.0));
+		}
         return value;
     }
 
-    // Override Object
+    /** Override Object. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof GoodsTradeItem) {
-            return Utils.equals(this.goods, ((GoodsTradeItem)other).goods)
-                && super.equals(other);
-        }
-        return false;
+        return other instanceof GoodsTradeItem && Utils.equals(this.goods, ((GoodsTradeItem)other).goods)
+		    && super.equals(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
         return 37 * hash + Utils.hashCode(this.goods);
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -168,9 +132,6 @@ public class GoodsTradeItem extends TradeItem {
         goods.toXML(xw);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -179,9 +140,6 @@ public class GoodsTradeItem extends TradeItem {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Game game = getGame();
@@ -189,15 +147,11 @@ public class GoodsTradeItem extends TradeItem {
 
         if (Goods.getXMLElementTagName().equals(tag)) {
             goods = new Goods(game, xr);
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -207,9 +161,6 @@ public class GoodsTradeItem extends TradeItem {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

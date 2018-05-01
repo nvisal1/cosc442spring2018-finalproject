@@ -27,15 +27,10 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when paying tax arrears.
- */
+/** The message sent when paying tax arrears. */
 public class PayArrearsMessage extends DOMMessage {
-
     /** The identifier of the GoodsType to pay arrears for. */
     private final String goodsTypeId;
-
 
     /**
      * Create a new <code>PayArrearsMessage</code> with the
@@ -61,7 +56,6 @@ public class PayArrearsMessage extends DOMMessage {
 
         this.goodsTypeId = element.getAttribute("goodsType");
     }
-
 
     /**
      * Handle a "payArrears"-message.

@@ -46,19 +46,15 @@ import net.sf.freecol.common.model.Game;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Specification;
 
-
-/**
- * Superclass for all panels in FreeCol.
- */
+/** Superclass for all panels in FreeCol. */
 public abstract class FreeColPanel extends MigPanel implements ActionListener {
-
     private static final Logger logger = Logger.getLogger(FreeColPanel.class.getName());
 
     protected static final String CANCEL = "CANCEL";
     protected static final String OK = "OK";
     protected static final String HELP = "HELP";
 
-    // The margin to use.
+    /** The margin to use. */
     protected static final int MARGIN = 3;
 
     private final FreeColClient freeColClient;
@@ -66,7 +62,6 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
     protected boolean editable = true;
 
     protected JButton okButton = Utility.localizedButton("ok");
-
 
     /**
      * Constructor.
@@ -94,7 +89,6 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
         okButton.addActionListener(this);
         setCancelComponent(okButton);
     }
-
 
     /**
      * Get the FreeColClient.
@@ -197,7 +191,9 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
      * @param cancelButton an <code>AbstractButton</code> value
      */
     public final void setCancelComponent(AbstractButton cancelButton) {
-        if (cancelButton == null) throw new NullPointerException();
+        if (cancelButton == null) {
+			throw new NullPointerException();
+		}
 
         InputMap inputMap
             = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -227,11 +223,8 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
             });
     }
 
-    // Interface ActionListener
+    /** Interface ActionListener. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -242,12 +235,8 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();
@@ -256,7 +245,9 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
         // more, that is the best opportunity available for JPanels
         // to be given a chance to remove leak generating references.
 
-        if (okButton == null) return; // Been here before
+        if (okButton == null) {
+			return;
+		} // Been here before
 
         // We need to make sure the layout is cleared because some
         // versions of MigLayout are leaky.
@@ -270,12 +261,11 @@ public abstract class FreeColPanel extends MigPanel implements ActionListener {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void requestFocus() {
         // The OK button requests focus if it exists.
-        if (okButton != null) okButton.requestFocus();
+        if (okButton != null) {
+			okButton.requestFocus();
+		}
     }
 }

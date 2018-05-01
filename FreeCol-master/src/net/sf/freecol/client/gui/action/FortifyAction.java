@@ -24,14 +24,9 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * An action for fortifying the active unit.
- */
+/** An action for fortifying the active unit. */
 public class FortifyAction extends UnitAction {
-
     public static final String id = "fortifyAction";
-
 
     /**
      * Creates this action.
@@ -44,24 +39,16 @@ public class FortifyAction extends UnitAction {
         addImageIcons("fortify");
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         return super.shouldBeEnabled() && getGUI().getActiveUnit()
             .checkSetState(Unit.UnitState.FORTIFYING);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         igc().changeState(getGUI().getActiveUnit(),

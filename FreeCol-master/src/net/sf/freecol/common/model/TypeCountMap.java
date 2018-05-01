@@ -24,14 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-
-/**
- * A map that incorporates a count.
- *
- * FIXME: implement entire Map interface
- */
+/** A map that incorporates a count. FIXME: implement entire Map interface */
 public class TypeCountMap<T extends FreeColGameObjectType> {
-
     private final Map<T, Integer> values = new HashMap<>();
 
     public Map<T, Integer> getValues() {
@@ -89,10 +83,6 @@ public class TypeCountMap<T extends FreeColGameObjectType> {
         values.putAll(other.values);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(64);

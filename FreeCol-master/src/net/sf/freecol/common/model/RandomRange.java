@@ -33,29 +33,26 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-
 /**
  * A range of numbers, and support routines to make a random choice therefrom.
  */
 public class RandomRange {
-
     private static final Logger logger = Logger.getLogger(RandomRange.class.getName());
 
     /** Percentage probability that the result is not zero. */
-    private int probability = 0;
+    private int probability;
 
     /** The inclusive lower bound of the range. */
-    private int minimum = 0;
+    private int minimum;
 
     /** The inclusive upper bound of the range. */
-    private int maximum = 0;
+    private int maximum;
 
     /** Factor to multiply the final value with. */
     private int factor = 1;
 
     /** A list of Scopes limiting the applicability of this Feature. */
     private List<Scope> scopes = null;
-
 
     /**
      * Creates a new <code>RandomRange</code> instance.
@@ -90,7 +87,6 @@ public class RandomRange {
     public RandomRange(FreeColXMLReader xr) throws XMLStreamException {
         readFromXML(xr);
     }
-
 
     /**
      * Get the result probability.
@@ -144,7 +140,9 @@ public class RandomRange {
      * @param scope The <code>Scope</code> to add.
      */
     private void addScope(Scope scope) {
-        if (scopes == null) scopes = new ArrayList<>();
+        if (scopes == null) {
+			scopes = new ArrayList<>();
+		}
         scopes.add(scope);
     }
 
@@ -187,15 +185,13 @@ public class RandomRange {
         return 0;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String FACTOR_TAG = "factor";
     private static final String MAXIMUM_TAG = "maximum";
     private static final String MINIMUM_TAG = "minimum";
     private static final String PROBABILITY_TAG = "probability";
     private static final String SCOPE_TAG = "scope";
-
 
     /**
      * This method writes an XML-representation of this object to
@@ -216,7 +212,9 @@ public class RandomRange {
 
         xw.writeAttribute(FACTOR_TAG, factor);
 
-        for (Scope scope : getScopes()) scope.toXML(xw);
+        for (Scope scope : getScopes()) {
+			scope.toXML(xw);
+		}
 
         xw.writeEndElement();
     }
@@ -238,14 +236,15 @@ public class RandomRange {
         factor = xr.getAttribute(FACTOR_TAG, 0);
 
         // Clear containers
-        if (scopes != null) scopes.clear();
+        if (scopes != null) {
+			scopes.clear();
+		}
 
         while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
             final String tag = xr.getLocalName();
 
             if (SCOPE_TAG.equals(tag)) {
                 addScope(new Scope(xr));
-
             } else {
                 throw new XMLStreamException("Bogus RandomRange tag: " + tag);
             }

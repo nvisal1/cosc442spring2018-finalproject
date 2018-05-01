@@ -33,12 +33,8 @@ import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Specification;
 
-
-/**
- * This panel displays the Religious Report.
- */
+/** This panel displays the Religious Report. */
 public final class ReportReligiousPanel extends ReportPanel {
-
     /**
      * The constructor that will add the items to this panel.
      *

@@ -17,12 +17,10 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.model.pathfinding;
 
 import net.sf.freecol.common.model.PathNode;
 import net.sf.freecol.common.model.Unit;
-
 
 /**
  * Used by {@link net.sf.freecol.common.model.Map#search} in order to
@@ -42,14 +40,13 @@ import net.sf.freecol.common.model.Unit;
  * The method {@link #getGoal()} will get called after this.
  */
 public interface GoalDecider {
-
     /**
      * Gets the <code>PathNode</code> containing the goal.
      *
      * @return The <code>PathNode</code> where the <code>Tile</code>
      *     returned by <code>pathNode.getTile()</code> is the goal.
      */
-    public PathNode getGoal();
+    PathNode getGoal();
     
     /**
      * Determines whether this <code>GoalDecider</code> has any
@@ -58,7 +55,7 @@ public interface GoalDecider {
      * @return <code>true</code> if there are any sub goals
      *     and <code>false</code> otherwise.
      */
-    public boolean hasSubGoals();
+    boolean hasSubGoals();
     
     /**
      * Checks whether the given <code>PathNode</code> is a 
@@ -76,5 +73,5 @@ public interface GoalDecider {
      *     <code>true</code> and {@link #hasSubGoals()} returns
      *     <code>false</code>.
      */
-    public boolean check(Unit u, PathNode pathNode);
+    boolean check(Unit u, PathNode pathNode);
 }

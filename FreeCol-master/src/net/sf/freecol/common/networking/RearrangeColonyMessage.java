@@ -36,22 +36,18 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when the client requests rearrangeing of a colony.
- */
+/** The message sent when the client requests rearrangeing of a colony. */
 public class RearrangeColonyMessage extends DOMMessage {
-
     /** Container for the unit change information. */
     public static class UnitChange {
-
         public Unit unit;
         public Location loc;
         public GoodsType work;
         public Role role;
         public int roleCount;
 
-        public UnitChange() {} // deliberately empty
+        /** Deliberately empty. */
+        public UnitChange() {}
 
         public UnitChange(Unit unit, Location loc, GoodsType work,
                           Role role, int roleCount) {
@@ -137,7 +133,9 @@ public class RearrangeColonyMessage extends DOMMessage {
             @Override
             public int compare(UnitChange uc1, UnitChange uc2) {
                 int cmp = uc1.role.compareTo(uc2.role);
-                if (cmp == 0) cmp = uc1.roleCount - uc2.roleCount;
+                if (cmp == 0) {
+					cmp = uc1.roleCount - uc2.roleCount;
+				}
                 return cmp;
             }
         };
@@ -147,7 +145,6 @@ public class RearrangeColonyMessage extends DOMMessage {
 
     /** A list of unitChanges to make. */
     private List<UnitChange> unitChanges = null;
-
 
     /**
      * Create a new <code>RearrangeColonyMessage</code> with the
@@ -184,7 +181,6 @@ public class RearrangeColonyMessage extends DOMMessage {
             unitChanges.add(new UnitChange().readFromElement(game, element, i));
         }
     }
-
 
     // Public interface
 

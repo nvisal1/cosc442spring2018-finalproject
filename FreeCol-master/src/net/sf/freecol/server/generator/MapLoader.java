@@ -22,9 +22,7 @@ package net.sf.freecol.server.generator;
 import net.sf.freecol.common.model.Game;
 import net.sf.freecol.common.model.Map.Layer;
 
-
 public interface MapLoader {
-
     /**
      * Load a map into the given game, copying all layers up to the
      * given layer. Returns the highest layer actually copied,
@@ -35,14 +33,12 @@ public interface MapLoader {
      * @param layer a <code>Layer</code> value
      * @return a <code>Layer</code> value
      */
-    public Layer loadMap(Game game, Layer layer);
-
+    Layer loadMap(Game game, Layer layer);
 
     /**
      * Returns the highest layer this MapLoader is able to load.
      *
      * @return a <code>Layer</code> value
      */
-    public Layer getHighestLayer();
-
+    Layer getHighestLayer();
 }

@@ -62,7 +62,6 @@ import net.sf.freecol.common.option.UnitListOption;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
 /**
  * This class encapsulates any parts of the "specification" for
  * FreeCol that are expressed best using XML.  The XML is loaded
@@ -70,7 +69,6 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * "specification.xml" in the same package as this class.
  */
 public final class Specification {
-
     private static final Logger logger = Logger.getLogger(Specification.class.getName());
 
     /** The difficulty levels option group is special. */
@@ -85,9 +83,7 @@ public final class Specification {
     /** How many game ages. */
     public static final int NUMBER_OF_AGES = 3;
 
-
     public static class Source extends FreeColGameObjectType {
-
         /**
          * Trivial constructor.
          *
@@ -97,28 +93,19 @@ public final class Specification {
             super(id);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void toXML(FreeColXMLWriter xw) {
             throw new RuntimeException("Can not happen");
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return getId();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String getXMLTagName() { return "source"; }
-    };
+    }
 
     public static final Source AMBUSH_BONUS_SOURCE
         = new Source("model.source.ambushBonus");
@@ -163,53 +150,51 @@ public final class Specification {
         SOL_MODIFIER_SOURCE
     };
 
-
     /** A map from specification element to a reader for that element. */
     private final Map<String, ChildReader> readerMap = new HashMap<>();
 
     /* Containers filled from readers in the readerMap. */
 
-    // readerMap("building-types")
+    /** ReaderMap("building-types"). */
     private final List<BuildingType> buildingTypeList = new ArrayList<>();
-    // readerMap("disasters")
+    /** ReaderMap("disasters"). */
     private final List<Disaster> disasters = new ArrayList<>();
-    // @compat 0.10.x readerMap("equipment-types")
+    /** @compat 0.10.x readerMap("equipment-types") */
     private final List<EquipmentType> equipmentTypes = new ArrayList<>();
-    // end @compat 0.10.x
-    // readerMap("european-nation-types")
+    /** End @compat 0.10.x readerMap("european-nation-types") */
     private final List<EuropeanNationType> europeanNationTypes = new ArrayList<>();
-    // readerMap("events")
+    /** ReaderMap("events"). */
     private final List<Event> events = new ArrayList<>();
-    // readerMap("founding-fathers")
+    /** ReaderMap("founding-fathers"). */
     private final List<FoundingFather> foundingFathers = new ArrayList<>();
-    // readerMap("goods-types")
+    /** ReaderMap("goods-types"). */
     private final List<GoodsType> goodsTypeList = new ArrayList<>();
-    // readerMap("indian-nation-types")
+    /** ReaderMap("indian-nation-types"). */
     private final List<IndianNationType> indianNationTypes = new ArrayList<>();
-    // readerMap("nations")
+    /** ReaderMap("nations"). */
     private final List<Nation> nations = new ArrayList<>();
-    // readerMap("resource-types")
+    /** ReaderMap("resource-types"). */
     private final List<ResourceType> resourceTypeList = new ArrayList<>();
-    // readerMap("roles")
+    /** ReaderMap("roles"). */
     private final List<Role> roles = new ArrayList<>();
-    // readerMap("tile-types")
+    /** ReaderMap("tile-types"). */
     private final List<TileType> tileTypeList = new ArrayList<>();
-    // readerMap("tile-improvement-types")
+    /** ReaderMap("tile-improvement-types"). */
     private final List<TileImprovementType> tileImprovementTypeList = new ArrayList<>();
-    // readerMap("unit-types")
+    /** ReaderMap("unit-types"). */
     private final List<UnitType> unitTypeList = new ArrayList<>();
 
-    // readerMap("modifiers")
+    /** ReaderMap("modifiers"). */
     private final Map<String, List<Modifier>> allModifiers = new HashMap<>();
     private final List<Modifier> specialModifiers = new ArrayList<>();
 
-    // readerMap("options")
+    /** ReaderMap("options"). */
     private final Map<String, AbstractOption> allOptions = new HashMap<>();
     private final Map<String, OptionGroup> allOptionGroups = new HashMap<>();
 
     /* Containers derived from readerMap containers */
 
-    // Derived from readerMap container: goodsTypeList
+    /** Derived from readerMap container: goodsTypeList */
     private final List<GoodsType> storableGoodsTypeList = new ArrayList<>();
     private final List<GoodsType> farmedGoodsTypeList = new ArrayList<>();
     private final List<GoodsType> foodGoodsTypeList = new ArrayList<>();
@@ -219,16 +204,16 @@ public final class Specification {
     private final List<GoodsType> immigrationGoodsTypeList = new ArrayList<>();
     private final List<GoodsType> rawBuildingGoodsTypeList = new ArrayList<>();
 
-    // Derived from readerMap container: nations
+    /** Derived from readerMap container: nations */
     private final List<Nation> europeanNations = new ArrayList<>();
     private final List<Nation> REFNations = new ArrayList<>();
     private final List<Nation> indianNations = new ArrayList<>();
-    // Derived from readerMap containers: indianNationTypes europeanNationTypes
+    /** Derived from readerMap containers: indianNationTypes europeanNationTypes */
     private final List<NationType> nationTypes = new ArrayList<>();
-    // Derived from readerMap container: europeanNationTypes
+    /** Derived from readerMap container: europeanNationTypes */
     private final List<EuropeanNationType> REFNationTypes = new ArrayList<>();
 
-    // Derived from readerMap container: unitTypeList
+    /** Derived from readerMap container: unitTypeList */
     private final ArrayList<UnitType> buildableUnitTypes = new ArrayList<>();
     private final Map<GoodsType, UnitType> experts = new HashMap<>();
     private final List<UnitType> unitTypesTrainedInEurope = new ArrayList<>();
@@ -239,18 +224,18 @@ public final class Specification {
 
     /* Other containers. */
 
-    // @compat 0.10.7
+    /** @compat 0.10.7 */
     public final Map<String, String> fatherGoodsFixMap = new HashMap<>();
-    // end @compat 0.10.7
+    /** End @compat 0.10.7 */
 
     private final Map<String, FreeColGameObjectType> allTypes = new HashMap<>();
 
     private final Map<String, List<Ability>> allAbilities = new HashMap<>();
 
-    /** A cache of the military roles in decreasing order.  Do not serialize. */
+    /** A cache of the military roles in decreasing order. Do not serialize. */
     private List<Role> militaryRoles = null;
 
-    private boolean initialized = false;
+    private boolean initialized;
 
     /** The specification identifier. */
     private String id;
@@ -264,13 +249,12 @@ public final class Specification {
     /** The turn number for the game ages for FF recruitment. */
     private final int[] ages = new int[NUMBER_OF_AGES];
 
-
-    /**
-     * Creates a new Specification object.
-     */
+    /** Creates a new Specification object. */
     public Specification() {
         logger.fine("Initializing Specification");
-        for (Source source : sources) allTypes.put(source.getId(), source);
+        for (Source source : sources) {
+			allTypes.put(source.getId(), source);
+		}
 
         readerMap.put(BUILDING_TYPES_TAG,
                       new TypeReader<>(BuildingType.class, buildingTypeList));
@@ -311,7 +295,6 @@ public final class Specification {
         readerMap.put(OPTIONS_TAG, new OptionReader());
     }
 
-
     /**
      * Creates a new Specification object by loading it from the
      * given <code>FreeColXMLReader</code>.
@@ -326,7 +309,6 @@ public final class Specification {
         clean("load from stream");
         initialized = true;
     }
-
 
     /**
      * Load a specification or fragment from a stream.
@@ -363,7 +345,7 @@ public final class Specification {
      */
     private void load(InputStream in) {
         try (
-            FreeColXMLReader xr = new FreeColXMLReader(in);
+            FreeColXMLReader xr = new FreeColXMLReader(in)
         ) {
             xr.nextTag();
             load(xr);
@@ -412,7 +394,8 @@ public final class Specification {
         for (FreeColModFile mod : mods) {
             InputStream sis = null;
             try {
-                if ((sis = mod.getSpecificationInputStream()) != null) {
+                sis = mod.getSpecificationInputStream();
+				if (sis != null) {
                     // Some mods are resource only
                     load(sis);
                 }
@@ -426,7 +409,9 @@ public final class Specification {
                     rte);
             }
         }
-        if (loadedMod) clean("mod loading");
+        if (loadedMod) {
+			clean("mod loading");
+		}
         initialized = true;
         return loadedMod;
     }
@@ -446,7 +431,7 @@ public final class Specification {
         OptionGroup group = null;
         try (
             FileInputStream fis = new FileInputStream(file);
-            FreeColXMLReader xr = new FreeColXMLReader(fis);
+            FreeColXMLReader xr = new FreeColXMLReader(fis)
         ) {
             xr.nextTag();
             group = new OptionGroup(this);
@@ -474,7 +459,9 @@ public final class Specification {
      */
     public OptionGroup mergeGroup(OptionGroup group) {
         OptionGroup realGroup = allOptionGroups.get(group.getId());
-        if (realGroup == null || !realGroup.isEditable()) return realGroup;
+        if (realGroup == null || !realGroup.isEditable()) {
+			return realGroup;
+		}
 
         for (Option o : group.getOptions()) {
             if (o instanceof OptionGroup) {
@@ -499,8 +486,8 @@ public final class Specification {
     public static OptionGroup saveOptionsFile(OptionGroup group, File file) {
         if (group != null) {
             try {
-                return (group.save(file, FreeColXMLWriter.WriteScope.toSave(),
-                                   true)) ? group : null;
+                return group.save(file, FreeColXMLWriter.WriteScope.toSave(),
+                                   true) ? group : null;
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Failed to save option group "
                     + group.getId() + " to " + file.getName(), e);
@@ -605,7 +592,9 @@ public final class Specification {
         defaultUnitTypes.clear();
         int bestLandValue = -1, bestNavalValue = -1;
         for (UnitType unitType : unitTypeList) {
-            if (unitType.isDefaultUnitType()) defaultUnitTypes.add(unitType);
+            if (unitType.isDefaultUnitType()) {
+				defaultUnitTypes.add(unitType);
+			}
             if (unitType.needsGoodsToBuild()
                 && !unitType.hasAbility(Ability.BORN_IN_COLONY)) {
                 buildableUnitTypes.add(unitType);
@@ -625,12 +614,10 @@ public final class Specification {
                     bestNavalValue = unitType.getMovement();
                     fastestNavalUnitType = unitType;
                 }
-            } else {
-                if (bestLandValue < unitType.getMovement()) {
-                    bestLandValue = unitType.getMovement();
-                    fastestLandUnitType = unitType;
-                }
-            }
+            } else if (bestLandValue < unitType.getMovement()) {
+			    bestLandValue = unitType.getMovement();
+			    fastestLandUnitType = unitType;
+			}
         }
 
         // Initialize UI containers.
@@ -645,7 +632,7 @@ public final class Specification {
         {
             Option agesOption = getOption(GameOptions.AGES);
             boolean badAges = !(agesOption instanceof TextOption);
-            String agesValue = (badAges) ? ""
+            String agesValue = badAges ? ""
                 : ((TextOption)agesOption).getValue();
             String a[] = agesValue.split(",");
             badAges |= a.length != NUMBER_OF_AGES-1;
@@ -706,9 +693,7 @@ public final class Specification {
             + " read.");
     }
 
-    /**
-     * Disable editing of some critical option groups.
-     */
+    /** Disable editing of some critical option groups. */
     public void disableEditing() {
         for (String s : new String[] {
                 GameOptions.getXMLElementTagName(),
@@ -716,7 +701,9 @@ public final class Specification {
                 DIFFICULTY_LEVELS
             }) {
             OptionGroup og = allOptionGroups.get(s);
-            if (og != null) og.setEditable(false);
+            if (og != null) {
+				og.setEditable(false);
+			}
         }
     }
 
@@ -770,13 +757,11 @@ public final class Specification {
         getGameOptions().add(prices);
     }
 
-
     private interface ChildReader {
-        public void readChildren(FreeColXMLReader xr) throws XMLStreamException;
+        void readChildren(FreeColXMLReader xr) throws XMLStreamException;
     }
 
     private class ModifierReader implements ChildReader {
-
         @Override
         public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
             while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
@@ -788,12 +773,11 @@ public final class Specification {
     }
 
     private class TypeReader<T extends FreeColGameObjectType> implements ChildReader {
-
         private final Class<T> type;
         private final List<T> result;
-        private int index = 0;
+        private int index;
 
-        // Is there really no easy way to capture T?
+        /** Is there really no easy way to capture T? */
         public TypeReader(Class<T> type, List<T> listToFill) {
             result = listToFill;
             this.type = type;
@@ -806,11 +790,11 @@ public final class Specification {
                 String id = xr.readId();
                 if (id == null) {
                     logger.warning("Null identifier, tag: " + tag);
-
                 } else if (FreeColGameObjectType.DELETE_TAG.equals(tag)) {
                     FreeColGameObjectType object = allTypes.remove(id);
-                    if (object != null) result.remove(object);
-
+                    if (object != null) {
+						result.remove(object);
+					}
                 } else {
                     T object = getType(id, type);
                     allTypes.put(id, object);
@@ -845,7 +829,6 @@ public final class Specification {
      * need their own reader.
      */
     private class OptionReader implements ChildReader {
-
         private static final String RECURSIVE_TAG = "recursive";
 
         @Override
@@ -869,7 +852,6 @@ public final class Specification {
                 }
                 group.readFromXML(xr);
                 Specification.this.addOptionGroup(group, recursive);
-
             } else {
                 logger.warning(OptionGroup.getXMLElementTagName()
                     + " expected in OptionReader, not: " + tag);
@@ -955,7 +937,6 @@ public final class Specification {
         return (result == null) ? Collections.<Modifier>emptyList() : result;
     }
 
-
     // Option routines
 
     /**
@@ -979,7 +960,7 @@ public final class Specification {
      * @exception IllegalArgumentException if the identifier is null
      *     or not present.
      */
-    public AbstractOption getOption(String id) throws IllegalArgumentException {
+    public AbstractOption getOption(String id) {
         if (id == null) {
             throw new IllegalArgumentException("AbstractOption with null id.");
         } else if (!allOptions.containsKey(id)) {
@@ -997,7 +978,7 @@ public final class Specification {
      * @exception IllegalArgumentException if the identifier is null
      *     or not present.
      */
-    public OptionGroup getOptionGroup(String id) throws IllegalArgumentException {
+    public OptionGroup getOptionGroup(String id) {
         if (id == null) {
             throw new IllegalArgumentException("OptionGroup with null id.");
         } else if (!allOptionGroups.containsKey(id)) {
@@ -1134,8 +1115,7 @@ public final class Specification {
         }
     }
 
-
-    // -- Buildings --
+    /** -- Buildings --. */
 
     public List<BuildingType> getBuildingTypeList() {
         return buildingTypeList;
@@ -1151,7 +1131,7 @@ public final class Specification {
         return getType(id, BuildingType.class);
     }
 
-    // -- Goods --
+    /** -- Goods --. */
 
     public List<GoodsType> getGoodsTypeList() {
         return new ArrayList<>(goodsTypeList);
@@ -1226,7 +1206,7 @@ public final class Specification {
         return getType(id, GoodsType.class);
     }
 
-    // -- Resources --
+    /** -- Resources --. */
 
     public List<ResourceType> getResourceTypeList() {
         return resourceTypeList;
@@ -1242,7 +1222,7 @@ public final class Specification {
         return getType(id, ResourceType.class);
     }
 
-    // -- Tiles --
+    /** -- Tiles --. */
 
     public List<TileType> getTileTypeList() {
         return tileTypeList;
@@ -1258,7 +1238,7 @@ public final class Specification {
         return getType(id, TileType.class);
     }
 
-    // -- Improvements --
+    /** -- Improvements --. */
 
     public List<TileImprovementType> getTileImprovementTypeList() {
         return tileImprovementTypeList;
@@ -1274,7 +1254,7 @@ public final class Specification {
         return getType(id, TileImprovementType.class);
     }
 
-    // -- Units --
+    /** -- Units --. */
 
     public List<UnitType> getUnitTypeList() {
         return unitTypeList;
@@ -1308,10 +1288,10 @@ public final class Specification {
         Predicate<UnitType> p = (nationType == null)
             ? ut -> !ut.hasAbility(Ability.BORN_IN_INDIAN_SETTLEMENT)
                 && !ut.hasAbility(Ability.REF_UNIT)
-            : (nationType.isIndian())
+            : nationType.isIndian()
             ? ut -> ut.hasAbility(Ability.BORN_IN_INDIAN_SETTLEMENT)
                 && !ut.hasAbility(Ability.REF_UNIT)
-            : (nationType.isREF())
+            : nationType.isREF()
             ? ut -> !ut.hasAbility(Ability.BORN_IN_INDIAN_SETTLEMENT)
                 && ut.hasAbility(Ability.REF_UNIT)
             : ut -> !ut.hasAbility(Ability.BORN_IN_INDIAN_SETTLEMENT)
@@ -1424,7 +1404,7 @@ public final class Specification {
         return getType(id, UnitType.class);
     }
 
-    // -- Founding Fathers --
+    /** -- Founding Fathers --. */
 
     public List<FoundingFather> getFoundingFathers() {
         return foundingFathers;
@@ -1440,7 +1420,7 @@ public final class Specification {
         return getType(id, FoundingFather.class);
     }
 
-    // -- NationTypes --
+    /** -- NationTypes --. */
 
     public List<NationType> getNationTypes() {
         return nationTypes;
@@ -1472,8 +1452,7 @@ public final class Specification {
         return getNationType("model.nationType.default");
     }
 
-
-    // -- Nations --
+    /** -- Nations --. */
 
     public List<Nation> getNations() {
         return nations;
@@ -1501,16 +1480,14 @@ public final class Specification {
         return getType(id, Nation.class);
     }
 
-    /**
-     * Clear all European advantages.  Implements the Advantages==NONE setting.
-     */
+    /** Clear all European advantages. Implements the Advantages==NONE setting. */
     public void clearEuropeanNationalAdvantages() {
         for (Nation n : getEuropeanNations()) {
             n.setType(getDefaultNationType());
         }
     }
 
-    // -- Roles --
+    /** -- Roles --. */
 
     public List<Role> getRoles() {
         return roles;
@@ -1598,13 +1575,12 @@ public final class Specification {
      * @param naval If true, choose roles for naval units, if not, land units.
      */
     public List<Role> getREFRoles(boolean naval) {
-        return ((naval)
+        return (naval
             ? Stream.of(getDefaultRole())
             : getMilitaryRoles().stream()
                 .filter(r -> r.requiresAbility(Ability.REF_UNIT)))
             .collect(Collectors.toList());
     }
-
 
     // @compat 0.10.x -- EquipmentTypes --
     /**
@@ -1712,8 +1688,7 @@ public final class Specification {
         addOptionGroup(mgo, true);
     }
 
-
-    // -- Events --
+    /** -- Events --. */
 
     public List<Event> getEvents() {
         return events;
@@ -1729,7 +1704,7 @@ public final class Specification {
         return getType(id, Event.class);
     }
 
-    // -- Disasters --
+    /** -- Disasters --. */
 
     public List<Disaster> getDisasters() {
         return disasters;
@@ -1761,7 +1736,6 @@ public final class Specification {
             : 2;
     }        
 
-
     // General type retrieval
 
     /**
@@ -1775,10 +1749,8 @@ public final class Specification {
         FreeColGameObjectType o = findType(id);
         if (o != null) {
             return type.cast(allTypes.get(id));
-
         } else if (initialized) {
             throw new IllegalArgumentException("Undefined FCGOT: " + id);
-
         } else { // forward declaration of new type
             try {
                 Constructor<T> c = type.getConstructor(String.class,
@@ -1799,13 +1771,11 @@ public final class Specification {
      * @param id The identifier to look for, which must not be null.
      * @return The <code>FreeColGameObjectType</code> found if any.
      */
-    public FreeColGameObjectType findType(String id) throws IllegalArgumentException {
+    public FreeColGameObjectType findType(String id) {
         if (id == null) {
             throw new IllegalArgumentException("Null id");
-
         } else if (allTypes.containsKey(id)) {
             return allTypes.get(id);
-
         } else {
             return null;
         }
@@ -1865,14 +1835,11 @@ public final class Specification {
             .collect(Collectors.toList());
     }
 
-
     // Backward compatibility fixes.
     // We do not pretend to fix everything, some specs are just too broken,
     // or some changes too radical.  But we make an effort.
 
-    /**
-     * Apply all the special fixes to bring older specifications up to date.
-     */
+    /** Apply all the special fixes to bring older specifications up to date. */
     private void applyFixes() {
         fixDifficultyOptions();
         fixGameOptions();
@@ -1894,11 +1861,13 @@ public final class Specification {
         } catch (Exception e) {
             zero10X = true;
         }
-        if (!zero10X) return;
+        if (!zero10X) {
+			return;
+		}
         File base = FreeColDirectories.getBaseDirectory();
         File rolf = new File(base, ROLES_COMPAT_FILE_NAME); 
         try (
-            FileInputStream fis = new FileInputStream(rolf);
+            FileInputStream fis = new FileInputStream(rolf)
         ) {
             load(fis);
         } catch (Exception e) {
@@ -1913,15 +1882,13 @@ public final class Specification {
     }
     // end @compat 0.10.x
 
-    /**
-     * Specification backward compatibility for the spec in general.
-     */
+    /** Specification backward compatibility for the spec in general. */
     private void fixSpec() {
         // @compat 0.10.0
         if (getModifiers(Modifier.SHIP_TRADE_PENALTY) == null) {
             addModifier(new Modifier(Modifier.SHIP_TRADE_PENALTY,
                                      -30.0f, Modifier.ModifierType.PERCENTAGE,
-                                     Specification.SHIP_TRADE_PENALTY_SOURCE));
+                                     SHIP_TRADE_PENALTY_SOURCE));
         }
         // end @compat
 
@@ -1979,7 +1946,9 @@ public final class Specification {
             Option refSize = ((OptionGroup)((monarch instanceof OptionGroup)
                     ? monarch : level)).getOption(GameOptions.REF_FORCE);
             if (refSize == null
-                || !(refSize instanceof UnitListOption)) continue;
+                || !(refSize instanceof UnitListOption)) {
+				continue;
+			}
             for (AbstractUnit au
                      : ((UnitListOption)refSize).getOptionValues()) {
                 if ("DEFAULT".equals(au.getRoleId())) {
@@ -2006,25 +1975,25 @@ public final class Specification {
                     String roleId = au.getRoleId();
                     if (roleId == null) {
                         au.setRoleId(DEFAULT_ROLE_ID);
-                    } else if (au.getRoleId().startsWith("model.role.")) {
-                        ; // OK
-                    } else if ("DEFAULT".equals(au.getRoleId())) {
-                        au.setRoleId(DEFAULT_ROLE_ID);
-                    } else if ("DRAGOON".equals(au.getRoleId())) {
-                        au.setRoleId("model.role.dragoon");
-                    } else if ("MISSIONARY".equals(au.getRoleId())) {
-                        au.setRoleId("model.role.missionary");
-                    } else if ("PIONEER".equals(au.getRoleId())) {
-                        au.setRoleId("model.role.pioneer");
-                    } else if ("MISSIONARY".equals(au.getRoleId())) {
-                        au.setRoleId("model.role.missionary");
-                    } else if ("SCOUT".equals(au.getRoleId())) {
-                        au.setRoleId("model.role.scout");
-                    } else if ("SOLDIER".equals(au.getRoleId())) {
-                        au.setRoleId("model.role.soldier");
-                    } else {
-                        au.setRoleId(DEFAULT_ROLE_ID);
-                    }
+                    } else if (!au.getRoleId().startsWith("model.role.")) {
+						if ("DEFAULT".equals(au.getRoleId())) {
+						    au.setRoleId(DEFAULT_ROLE_ID);
+						} else if ("DRAGOON".equals(au.getRoleId())) {
+						    au.setRoleId("model.role.dragoon");
+						} else if ("MISSIONARY".equals(au.getRoleId())) {
+						    au.setRoleId("model.role.missionary");
+						} else if ("PIONEER".equals(au.getRoleId())) {
+						    au.setRoleId("model.role.pioneer");
+						} else if ("MISSIONARY".equals(au.getRoleId())) {
+						    au.setRoleId("model.role.missionary");
+						} else if ("SCOUT".equals(au.getRoleId())) {
+						    au.setRoleId("model.role.scout");
+						} else if ("SOLDIER".equals(au.getRoleId())) {
+						    au.setRoleId("model.role.soldier");
+						} else {
+						    au.setRoleId(DEFAULT_ROLE_ID);
+						}
+					}
                 }
             }
         }
@@ -2034,7 +2003,9 @@ public final class Specification {
         // INDEPENDENCE_DECLARED but we can not directly use that or
         // the REF gets access to colonialRegulars.
         for (NationType nt : europeanNationTypes) {
-            if (!nt.isREF()) continue;
+            if (!nt.isREF()) {
+				continue;
+			}
             if (!nt.hasAbility(Ability.INDEPENDENT_NATION)) {
                 nt.addAbility(new Ability(Ability.INDEPENDENT_NATION));
             }
@@ -2078,7 +2049,7 @@ public final class Specification {
         for (BuildingType bt : buildingTypeList) {
             for (Modifier m : bt.getModifiers()) {
                 if (allTypes.get(m.getId()) instanceof GoodsType) {
-                    m.setModifierIndex((bt.hasAbility(Ability.AUTO_PRODUCTION))
+                    m.setModifierIndex(bt.hasAbility(Ability.AUTO_PRODUCTION)
                         ? Modifier.AUTO_PRODUCTION_INDEX
                         : Modifier.BUILDING_PRODUCTION_INDEX);
                 }
@@ -2520,7 +2491,10 @@ public final class Specification {
             Option op = level.getOption(gr);
             if (op instanceof OptionGroup) {
                 OptionGroup og = (OptionGroup)op;
-                if ((op = og.getOption(id)) != null) continue;
+                op = og.getOption(id);
+				if (op != null) {
+					continue;
+				}
                 IntegerOption iop = new IntegerOption(id, this);
                 iop.setGroup(gr);
                 iop.setValue(defaultValue);
@@ -2540,8 +2514,12 @@ public final class Specification {
             Option op = level.getOption(gr);
             if (op instanceof OptionGroup) {
                 OptionGroup og = (OptionGroup)op;
-                if (og.getOption(id) instanceof UnitListOption) continue;
-                if (ulo == null) ulo = new UnitListOption(id, this);
+                if (og.getOption(id) instanceof UnitListOption) {
+					continue;
+				}
+                if (ulo == null) {
+					ulo = new UnitListOption(id, this);
+				}
                 og.add(ulo);
             }
         }
@@ -2685,14 +2663,18 @@ public final class Specification {
     }
 
     private boolean checkOptionGroup(String id) {
-        if (allOptionGroups.containsKey(id)) return false;
+        if (allOptionGroups.containsKey(id)) {
+			return false;
+		}
         OptionGroup og = new OptionGroup(id, this);
         allOptionGroups.put(id, og);
         return true;
     }
 
     private boolean checkBooleanOption(String id, String gr, boolean defaultValue) {
-        if (hasOption(id)) return false;
+        if (hasOption(id)) {
+			return false;
+		}
         BooleanOption op = new BooleanOption(id, this);
         op.setGroup(gr);
         op.setValue(defaultValue);
@@ -2700,7 +2682,9 @@ public final class Specification {
     }
 
     private boolean checkIntegerOption(String id, String gr, int defaultValue) {
-        if (hasOption(id)) return false;
+        if (hasOption(id)) {
+			return false;
+		}
         IntegerOption op = new IntegerOption(id, this);
         op.setGroup(gr);
         op.setValue(defaultValue);
@@ -2708,7 +2692,9 @@ public final class Specification {
     }
 
     private boolean checkStringOption(String id, String gr, String defaultValue) {
-        if (hasOption(id)) return false;
+        if (hasOption(id)) {
+			return false;
+		}
         StringOption op = new StringOption(id, this);
         op.setGroup(gr);
         op.setValue(defaultValue);
@@ -2716,7 +2702,9 @@ public final class Specification {
     }
 
     private boolean checkTextOption(String id, String gr, String defaultValue) {
-        if (hasOption(id)) return false;
+        if (hasOption(id)) {
+			return false;
+		}
         TextOption op = new TextOption(id, this);
         op.setGroup(gr);
         op.setValue(defaultValue);
@@ -2729,9 +2717,7 @@ public final class Specification {
         return true;
     }
         
-
-
-    // Serialization
+    /** Serialization. */
 
     private static final String BUILDING_TYPES_TAG = "building-types";
     private static final String DIFFICULTY_LEVEL_TAG = "difficulty-level";
@@ -2750,10 +2736,12 @@ public final class Specification {
     private static final String TILE_IMPROVEMENT_TYPES_TAG = "tile-improvement-types";
     private static final String UNIT_TYPES_TAG = "unit-types";
     private static final String VERSION_TAG = "version";
-    // @compat 0.10.x
+    /** @compat 0.10.x */
     private static final String EQUIPMENT_TYPES_TAG = "equipment-types";
-    // end @compat 0.10.x
-    // @compat 0.11.3
+    /**
+     * End @compat 0.10.x
+     * @compat 0.11.3
+     */
     private static final String OLD_DIFFICULTY_LEVEL_TAG = "difficultyLevel";
     private static final String OLD_TILEIMPROVEMENT_TYPES_TAG = "tileimprovement-types";
     // end @compat 0.11.3
@@ -2798,20 +2786,23 @@ public final class Specification {
         // option tree has been flattened
         xw.writeStartElement(OPTIONS_TAG);
         for (OptionGroup item : allOptionGroups.values()) {
-            if (item.getGroup().isEmpty()) item.toXML(xw);
+            if (item.getGroup().isEmpty()) {
+				item.toXML(xw);
+			}
         }
         xw.writeEndElement();
 
         // End element
         xw.writeEndElement();
-
     }
 
     private <T extends FreeColObject> void writeSection(FreeColXMLWriter xw,
         String section, Collection<T> items) throws XMLStreamException {
         xw.writeStartElement(section);
 
-        for (T item : items) item.toXML(xw);
+        for (T item : items) {
+			item.toXML(xw);
+		}
 
         xw.writeEndElement();
     }
@@ -2825,7 +2816,9 @@ public final class Specification {
      */
     public void readFromXML(FreeColXMLReader xr) throws XMLStreamException {
         String newId = xr.readId();
-        if (id == null) id = newId; // don't overwrite id with parent id!
+        if (id == null) {
+			id = newId;
+		} // don't overwrite id with parent id!
 
         if (difficultyLevel == null) {
             difficultyLevel = xr.getAttribute(DIFFICULTY_LEVEL_TAG,
@@ -2867,13 +2860,15 @@ public final class Specification {
             // are referred to directly, and better still is completely
             // replaced by roles in 0.11.x.  So this is the last chance
             // to fix any role omissions.
-            if ("equipment-types".equals(childName)) fixRoles();
+            if ("equipment-types".equals(childName)) {
+				fixRoles();
+			}
             // end @compat 0.10.x
             ChildReader reader = readerMap.get(childName);
-            if (reader == null) {
-                logger.warning("No reader found for: " + childName);
-            } else {  
+            if (reader != null) {
                 reader.readChildren(xr);
+            } else {  
+                logger.warning("No reader found for: " + childName);
             }
         }
     }

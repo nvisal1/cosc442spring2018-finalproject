@@ -37,7 +37,6 @@ import com.jcraft.jorbis.Comment;
 import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
 
-
 /**
  * Rewritten from the JCraft JOrbisPlayer example (GPLv2+), fixing a
  * bunch of bugs that prevent it from playing short files and recasting
@@ -46,16 +45,12 @@ import com.jcraft.jorbis.Info;
  * FreeCol has a few short files.  We can notice when this fails.
  */
 public class OggVorbisDecoderFactory {
-
-    /**
-     * Core JOgg/JOrbis magic handled here.
-     */
+    /** Core JOgg/JOrbis magic handled here. */
     private static class OggStream extends InputStream {
-
-        // End of stream marker.
+        /** End of stream marker. */
         private static final String EOS = "End-of-stream";
 
-        // Internal buffer size.
+        /** Internal buffer size. */
         private static final int BUFSIZ = 4096;
 
         private final Packet oggPacket = new Packet();
@@ -69,26 +64,26 @@ public class OggVorbisDecoderFactory {
 
         private final AudioFormat audioFormat;
 
-        // The buffer to convert into.
+        /** The buffer to convert into. */
         private final byte[] convBuf = new byte[BUFSIZ];
-        // The amount of data waiting in the buffer.
-        private int bufCount = 0;
-        // The position in the buffer of the data.
-        private int offset = 0;
+        /** The amount of data waiting in the buffer. */
+        private int bufCount;
+        /** The position in the buffer of the data. */
+        private int offset;
         
-        // PCM index and data.
+        /** PCM index and data. */
         private int[] pcmi;
         private float[][][] pcmData;
 
-        // The stream containing the data.
+        /** The stream containing the data. */
         private InputStream inputStream = null;
 
-
         public OggStream(InputStream inputStream) throws IOException {
-            super();
             this.inputStream = inputStream;
             String err = getHeader();
-            if (err != null) throw new IOException(err);
+            if (err != null) {
+				throw new IOException(err);
+			}
             this.audioFormat = new AudioFormat(orbisInfo.rate,
                 16, // bits per sample
                 orbisInfo.channels,
@@ -145,8 +140,12 @@ public class OggVorbisDecoderFactory {
             while (n > 0) {
                 if (bufCount <= 0) {
                     int ret = getBody(inputStream);
-                    if (ret < 0) throw new IOException("Ogg decoding error");
-                    if (ret == 0) break;
+                    if (ret < 0) {
+						throw new IOException("Ogg decoding error");
+					}
+                    if (ret == 0) {
+						break;
+					}
                     bufCount = ret;
                     offset = 0;
                 }
@@ -173,8 +172,12 @@ public class OggVorbisDecoderFactory {
             while (n > 0) {
                 if (bufCount <= 0) {
                     int ret = getBody(inputStream);
-                    if (ret < 0) throw new IOException("Ogg decoding error");
-                    if (ret == 0) break;
+                    if (ret < 0) {
+						throw new IOException("Ogg decoding error");
+					}
+                    if (ret == 0) {
+						break;
+					}
                     bufCount = ret;
                     offset = 0;
                 }
@@ -187,9 +190,11 @@ public class OggVorbisDecoderFactory {
             return wr;
         }
 
-        // No need to override InputStream behaviour.
-        //public void mark(int readLimit) {}
-        //public boolean markSupported() { return false; }
+        /**
+         * No need to override InputStream behaviour.
+         *public void mark(int readLimit) {}
+         *public boolean markSupported() { return false; }
+         */
 
         @Override
         public void reset() {}
@@ -236,7 +241,9 @@ public class OggVorbisDecoderFactory {
                     packet = 1;
                     break;
                 case 0:
-                    if ((input = getInput()) != null) return input;
+                    if ((input = getInput()) != null) {
+						return input;
+					}
                     break;
                 default:
                     return "Error reading first page";
@@ -251,7 +258,9 @@ public class OggVorbisDecoderFactory {
                     packet++;
                     break;
                 case 0:
-                    if ((input = getPage()) != null) return input;
+                    if ((input = getPage()) != null) {
+						return input;
+					}
                     break;
                 default:
                     return "Error in header packet " + packet;
@@ -275,7 +284,9 @@ public class OggVorbisDecoderFactory {
             } catch (IOException e) {
                 return e.getMessage();
             }
-            if (count > 0) oggSyncState.wrote(count);
+            if (count > 0) {
+				oggSyncState.wrote(count);
+			}
             return (count > 0) ? null : EOS;
         }
 
@@ -289,7 +300,9 @@ public class OggVorbisDecoderFactory {
             for (;;) {
                 switch (oggSyncState.pageout(oggPage)) { 
                 case 0:
-                    if ((input = getInput()) != null) return input;
+                    if ((input = getInput()) != null) {
+						return input;
+					}
                     break;
                 case 1:
                     oggStreamState.pagein(oggPage);
@@ -319,7 +332,9 @@ public class OggVorbisDecoderFactory {
                     }
                     for (;;) {
                         int n = orbisDspState.synthesis_pcmout(pcmData, pcmi);
-                        if (n <= 0) break;
+                        if (n <= 0) {
+							break;
+						}
                         orbisDspState.synthesis_read(n);
                         return 2 * orbisInfo.channels * decodePacket(n);
                     }
@@ -327,7 +342,7 @@ public class OggVorbisDecoderFactory {
                     break;
                 case 0:
                     if ((err = getPage()) != null) {
-                        return (EOS.equals(err)) ? 0 : -1;
+                        return EOS.equals(err) ? 0 : -1;
                     }
                     break;
                 default:
@@ -350,28 +365,29 @@ public class OggVorbisDecoderFactory {
                     // Retrieve the PCM
                     int value = (int)(pcmData[0][i][pcmi[i] + j] * 32767.0f);
                     // Clip to signed 16 bit
-                    if (value > 32767) value = 32767;
-                    else if (value < -32768) value = -32768;
+                    if (value > 32767) {
+						value = 32767;
+					} else if (value < -32768) {
+						value = -32768;
+					}
                     // Stuff into the conversion buffer, little endian
-                    convBuf[sampleIndex] = (byte)(value);
+                    convBuf[sampleIndex] = (byte)value;
                     convBuf[sampleIndex + 1] = (byte)(value >>> 8);
                     // Jump forward (interleaving channels)
-                    sampleIndex += 2 * (orbisInfo.channels);
+                    sampleIndex += 2 * orbisInfo.channels;
                 }
             }
             return range;
         }
-    };
+    }
 
     /**
      * The AudioInputStream extension to handle decoding Ogg/Vorbis Audio
      * input.
      */
     private static class OggVorbisAudioInputStream extends AudioInputStream {
-
-        // Core JOgg and JOrbis magic.
+        /** Core JOgg and JOrbis magic. */
         private OggStream os = null;
-
 
         /**
          * Create a new player.
@@ -388,10 +404,12 @@ public class OggVorbisDecoderFactory {
             return os.getFormat();
         }
 
-        // No need to override AudioInputStream
-        //public long getFrameLength() {
-        //    return frameLength;
-        //}
+        /**
+         * No need to override AudioInputStream
+         *public long getFrameLength() {
+         *    return frameLength;
+         *}.
+         */
 
         @Override
         public int available() {
@@ -436,13 +454,7 @@ public class OggVorbisDecoderFactory {
         public void reset() {
             os.reset();
         }
-    };
-
-
-    /**
-     * Trivial constructor.
-     */
-    public OggVorbisDecoderFactory() {}
+    }
 
     /**
      * Gets a new audio input stream to decode Ogg/Vorbis Audio from

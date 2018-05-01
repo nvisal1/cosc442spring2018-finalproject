@@ -27,12 +27,8 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-
-/**
- * A type of session to handle diplomacy.
- */
+/** A type of session to handle diplomacy. */
 public class DiplomacySession extends TransactionSession {
-
     private static final Logger logger = Logger.getLogger(DiplomacySession.class.getName());
 
     /** The agreement under consideration. */
@@ -46,7 +42,6 @@ public class DiplomacySession extends TransactionSession {
 
     /** The other player's unit (only non-null in first contact cases). */
     private final Unit otherUnit;
-
 
     public DiplomacySession(Unit unit, Settlement settlement) {
         super(makeSessionKey(DiplomacySession.class, unit, settlement));

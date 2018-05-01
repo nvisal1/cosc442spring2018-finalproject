@@ -26,13 +26,11 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Objects of this class hold the export data for a particular type of
  * goods.
  */
 public class ExportData extends FreeColObject {
-
     private static final int HIGH_LEVEL_DEFAULT = 90;
     private static final int LOW_LEVEL_DEFAULT = 10;
     private static final int EXPORT_LEVEL_DEFAULT = 50;
@@ -47,8 +45,7 @@ public class ExportData extends FreeColObject {
     private int exportLevel = EXPORT_LEVEL_DEFAULT;
 
     /** Whether to export or not. */
-    private boolean exported = false;
-
+    private boolean exported;
 
     /**
      * Creates a new <code>ExportData</code> instance with default settings.
@@ -77,7 +74,6 @@ public class ExportData extends FreeColObject {
     public ExportData(Element element) {
         readFromXMLElement(element);
     }
-
 
     /**
      * Get the high water mark for this data.
@@ -152,18 +148,13 @@ public class ExportData extends FreeColObject {
         this.exported = newExport;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String EXPORTED_TAG = "exported";
     private static final String EXPORT_LEVEL_TAG = "exportLevel";
     private static final String HIGH_LEVEL_TAG = "highLevel";
     private static final String LOW_LEVEL_TAG = "lowLevel";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -177,9 +168,6 @@ public class ExportData extends FreeColObject {
         xw.writeAttribute(EXPORT_LEVEL_TAG, exportLevel);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -193,9 +181,6 @@ public class ExportData extends FreeColObject {
         exportLevel = xr.getAttribute(EXPORT_LEVEL_TAG, EXPORT_LEVEL_DEFAULT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

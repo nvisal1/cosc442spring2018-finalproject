@@ -49,13 +49,11 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * Centers the map on a known settlement or colony.  Pressing ENTER
  * opens a panel if appropriate.
  */
 public final class EndTurnDialog extends FreeColConfirmDialog {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(EndTurnDialog.class.getName());
 
@@ -66,11 +64,9 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
      * provides debugging information rather than a searchable name.
      */
     private static class UnitWrapper {
-
         public final Unit unit;
         public final String name;
         public final String location;
-
 
         public UnitWrapper(Unit unit) {
             this.unit = unit;
@@ -79,9 +75,6 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
                 .getLocationLabelFor(unit.getOwner()));
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return name;
@@ -89,13 +82,11 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
     }
 
     private class UnitCellRenderer implements ListCellRenderer<UnitWrapper> {
-
         private final JPanel itemPanel = new MigPanel();
         private final JPanel selectedPanel = new MigPanel();
         private final JLabel imageLabel = new JLabel();
         private final JLabel nameLabel = new JLabel();
         private final JLabel locationLabel = new JLabel();
-
 
         public UnitCellRenderer() {
             itemPanel.setOpaque(false);
@@ -107,10 +98,6 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
                 .deriveFont(Font.ITALIC));
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Component getListCellRendererComponent(JList<? extends UnitWrapper> list,
                                                       UnitWrapper value,
@@ -122,7 +109,7 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
             nameLabel.setText(value.name);
             locationLabel.setText(value.location);
 
-            JPanel panel = (isSelected) ? selectedPanel : itemPanel;
+            JPanel panel = isSelected ? selectedPanel : itemPanel;
             panel.removeAll();
             panel.add(imageLabel, "center, width 40!, height 40!");
             panel.add(nameLabel, "split 2, flowy");
@@ -131,10 +118,8 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
         }
     }
 
-
     /** The list of units to display. */
     private final JList<UnitWrapper> unitList;
-
 
     /**
      * The constructor to use.
@@ -180,7 +165,9 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
         this.unitList.addListSelectionListener(new ListSelectionListener() {
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
-                    if (e.getValueIsAdjusting()) return;
+                    if (e.getValueIsAdjusting()) {
+						return;
+					}
                     selectUnit();
                 }
             });
@@ -198,9 +185,7 @@ public final class EndTurnDialog extends FreeColConfirmDialog {
         initializeConfirmDialog(frame, false, panel, icon, "ok", "cancel");
     }
 
-    /**
-     * Select the current unit in the list.
-     */
+    /** Select the current unit in the list. */
     private void selectUnit() {
         UnitWrapper wrapper = this.unitList.getSelectedValue();
         if (wrapper != null && wrapper.unit != null) {

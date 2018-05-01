@@ -31,18 +31,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when changing a work improvement type.
- */
+/** The message sent when changing a work improvement type. */
 public class ChangeWorkImprovementTypeMessage extends DOMMessage {
-
     /** The identifier of the unit that is working. */
     private final String unitId;
 
     /** The identifier of the improvement type. */
     private final String improvementId;
-
 
     /**
      * Create a new <code>ChangeWorkImprovementTypeMessage</code> with the
@@ -72,7 +67,6 @@ public class ChangeWorkImprovementTypeMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.improvementId = element.getAttribute("improvementType");
     }
-
 
     /**
      * Handle a "changeWorkImprovementType"-message.
@@ -119,12 +113,10 @@ public class ChangeWorkImprovementTypeMessage extends DOMMessage {
                 return DOMMessage.clientError("Unit can not create improvement: "
                     + improvementId);
             }
-        } else { // Has improvement, check if worker can contribute to it
-            if (!improvement.isWorkerAllowed(unit)) {
-                return DOMMessage.clientError("Unit can not work on improvement: "
-                    + improvementId);
-            }
-        }
+        } else if (!improvement.isWorkerAllowed(unit)) {
+		    return DOMMessage.clientError("Unit can not work on improvement: "
+		        + improvementId);
+		}
 
         // Proceed to change.
         return server.getInGameController()

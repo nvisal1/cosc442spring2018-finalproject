@@ -27,17 +27,12 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Stance;
 import net.sf.freecol.common.util.Utils;
 
-
-/**
- * A trade item consisting of a change of stance.
- */
+/** A trade item consisting of a change of stance. */
 public class StanceTradeItem extends TradeItem {
-    
     /** The stance between source and destination. */
     private Stance stance;
 
-        
-    /**
+            /**
      * Creates a new <code>StanceTradeItem</code> instance.
      *
      * @param game The enclosing <code>Game</code>.
@@ -64,65 +59,56 @@ public class StanceTradeItem extends TradeItem {
         super(game, xr);
     }
 
+    /** Interface TradeItem. */
 
-    // Interface TradeItem
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isValid() {
         return stance != null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isUnique() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StringTemplate getLabel() {
         return StringTemplate.key(stance);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Stance getStance() {
         return stance;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setStance(Stance stance) {
         this.stance = stance;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int evaluateFor(Player player) {
         final Stance stance = getStance();
         final double ratio = player.getStrengthRatio(getOther(player), false);
         int value = (int)Math.round(100 * ratio);
         switch (stance) {
         case WAR:
-            if (ratio < 0.33) return Integer.MIN_VALUE;
-            if (ratio < 0.5) value = -value;
+            if (ratio < 0.33) {
+				return Integer.MIN_VALUE;
+			}
+            if (ratio < 0.5) {
+				value = -value;
+			}
             break;
         case PEACE: case CEASE_FIRE: case ALLIANCE:
-            if (ratio > 0.66) return Integer.MIN_VALUE;
-            if (ratio > 0.5) value = -value;
-            else if (ratio < 0.33) value = 1000;
+            if (ratio > 0.66) {
+				return Integer.MIN_VALUE;
+			}
+            if (ratio > 0.5) {
+				value = -value;
+			} else if (ratio < 0.33) {
+				value = 1000;
+			}
             break;
         case UNCONTACTED: default:
             return Integer.MIN_VALUE;
@@ -130,39 +116,24 @@ public class StanceTradeItem extends TradeItem {
         return (getSource() == player) ? -value : value;
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof StanceTradeItem) {
-            return this.stance == ((StanceTradeItem)other).stance
-                && super.equals(other);
-        }
-        return false;
+        return other instanceof StanceTradeItem && this.stance == ((StanceTradeItem)other).stance
+		    && super.equals(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
         return 37 * hash + Utils.hashCode(this.stance);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String STANCE_TAG = "stance";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -170,9 +141,6 @@ public class StanceTradeItem extends TradeItem {
         xw.writeAttribute(STANCE_TAG, stance);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -181,9 +149,6 @@ public class StanceTradeItem extends TradeItem {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -191,9 +156,6 @@ public class StanceTradeItem extends TradeItem {
         stance = xr.getAttribute(STANCE_TAG, Stance.class, (Stance)null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

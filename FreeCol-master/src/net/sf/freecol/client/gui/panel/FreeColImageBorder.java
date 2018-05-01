@@ -31,16 +31,11 @@ import javax.swing.border.AbstractBorder;
 import net.sf.freecol.client.gui.ImageLibrary;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * A border created from a set of images. 
- */
+/** A border created from a set of images. */
 public class FreeColImageBorder extends AbstractBorder {
-
     public static final FreeColImageBorder imageBorder = new FreeColImageBorder();
 
-
-    // The buffered image objects
+    /** The buffered image objects. */
     private final BufferedImage topLeftCornerImage;
     private final BufferedImage topImage;
     private final BufferedImage topRightCornerImage;
@@ -50,10 +45,7 @@ public class FreeColImageBorder extends AbstractBorder {
     private final BufferedImage bottomLeftCornerImage;
     private final BufferedImage leftImage;
 
-
-    /**
-     * Creates the default border.
-     */
+    /** Creates the default border. */
     public FreeColImageBorder() {
         this(ResourceManager.getImage("image.menuborder.nw"),
              ResourceManager.getImage("image.menuborder.n"),
@@ -64,7 +56,6 @@ public class FreeColImageBorder extends AbstractBorder {
              ResourceManager.getImage("image.menuborder.sw"),
              ResourceManager.getImage("image.menuborder.w"));
     }
-
 
     /**
      * Creates a border with the given set of images.<br />
@@ -252,5 +243,4 @@ public class FreeColImageBorder extends AbstractBorder {
     private static int getWidth(Image im) {
         return (im == null) ? 0 : im.getWidth(null);
     }        
-
 }

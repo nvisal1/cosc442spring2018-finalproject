@@ -28,18 +28,12 @@ import net.sf.freecol.common.networking.MessageHandler;
 
 import org.w3c.dom.Element;
 
-
-/**
- * Handles all network messages being sent to the metaserver.
- */
+/** Handles all network messages being sent to the metaserver. */
 public final class NetworkHandler implements MessageHandler {
     private static final Logger logger = Logger.getLogger(NetworkHandler.class.getName());
 
-
     private final MetaServer metaServer;
     private final MetaRegister metaRegister;
-
-
 
     /**
     * The constructor to use.
@@ -55,8 +49,7 @@ public final class NetworkHandler implements MessageHandler {
         this.metaRegister = metaRegister;
     }
 
-    
-    /**
+        /**
     * Handles a network message.
     *
     * @param connection The <code>Connection</code> the message came from.
@@ -92,8 +85,7 @@ public final class NetworkHandler implements MessageHandler {
         return reply;
     }
 
-    
-    /**
+        /**
      * Handles a "getServerList"-request.
      * @param connection The <code>Connection</code> the message
      *       was received on.
@@ -104,7 +96,6 @@ public final class NetworkHandler implements MessageHandler {
     private Element getServerList(Connection connection, Element element) {
         return metaRegister.createServerList();
     }
-
 
     /**
      * Handles a "register"-request.
@@ -119,7 +110,7 @@ public final class NetworkHandler implements MessageHandler {
         int port = Integer.parseInt(element.getAttribute("port"));
         int slotsAvailable = Integer.parseInt(element.getAttribute("slotsAvailable"));
         int currentlyPlaying = Integer.parseInt(element.getAttribute("currentlyPlaying"));
-        boolean isGameStarted = Boolean.valueOf(element.getAttribute("isGameStarted"));
+        boolean isGameStarted = Boolean.parseBoolean(element.getAttribute("isGameStarted"));
         String version = element.getAttribute("version");
         int gameState = Integer.parseInt(element.getAttribute("gameState"));
 
@@ -131,7 +122,6 @@ public final class NetworkHandler implements MessageHandler {
 
         return DOMMessage.createMessage("ok");
     }
-
 
     /**
      * Handles an "update"-request.
@@ -146,7 +136,7 @@ public final class NetworkHandler implements MessageHandler {
         int port = Integer.parseInt(element.getAttribute("port"));
         int slotsAvailable = Integer.parseInt(element.getAttribute("slotsAvailable"));
         int currentlyPlaying = Integer.parseInt(element.getAttribute("currentlyPlaying"));
-        boolean isGameStarted = Boolean.valueOf(element.getAttribute("isGameStarted"));
+        boolean isGameStarted = Boolean.parseBoolean(element.getAttribute("isGameStarted"));
         String version = element.getAttribute("version");
         int gameState = Integer.parseInt(element.getAttribute("gameState"));
 
@@ -156,7 +146,6 @@ public final class NetworkHandler implements MessageHandler {
 
         return null;
     }
-
 
     /**
      * Handles a "remove"-request.
@@ -173,7 +162,6 @@ public final class NetworkHandler implements MessageHandler {
 
         return null;
     }
-
 
     /**
      * Handles a "disconnect"-request.

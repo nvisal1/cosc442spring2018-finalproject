@@ -26,20 +26,15 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * A factory class for creating <code>Resource</code> instances.
  * @see Resource
  */
 public class ResourceFactory {
-
     private static final Logger logger = Logger.getLogger(ResourceFactory.class.getName());
 
-    /**
-     * Takes a newly produced Resource.
-     */
+    /** Takes a newly produced Resource. */
     public interface ResourceSink {
-
         void add(ColorResource r);
         void add(FontResource r);
         void add(StringResource r);
@@ -48,7 +43,6 @@ public class ResourceFactory {
         void add(AudioResource r);
         void add(VideoResource r);
         void add(ImageResource r);
-
     }
 
     /**
@@ -161,8 +155,9 @@ public class ResourceFactory {
      *      already been created, or a new instance if not.
      */
     public static void createResource(URI uri, ResourceSink output) {
-        if(findResource(uri, output))
-            return;
+        if(findResource(uri, output)) {
+			return;
+		}
 
         try {
             if ("urn".equals(uri.getScheme())) {
@@ -216,5 +211,4 @@ public class ResourceFactory {
             logger.log(Level.WARNING, "Failed to create resource with URI: " + uri, e);
         }
     }
-
 }

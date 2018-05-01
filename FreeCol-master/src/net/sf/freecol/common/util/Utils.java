@@ -35,17 +35,12 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-/**
- * Collection of small static helper methods.
- */
+/** Collection of small static helper methods. */
 public class Utils {
-
     private static final Logger logger = Logger.getLogger(Utils.class.getName());
 
     /** Hex constant digits for get/restoreRandomState. */
     private static final String HEX_DIGITS = "0123456789ABCDEF";
-
 
     /**
      * Check if two objects are equal but also checks for null.
@@ -101,7 +96,9 @@ public class Utils {
      * @return The restored <code>Random</code>.
      */
     public static synchronized Random restoreRandomState(String state) {
-        if (state == null || state.isEmpty()) return null;
+        if (state == null || state.isEmpty()) {
+			return null;
+		}
         byte[] bytes = new byte[state.length() / 2];
         int pos = 0;
         for (int i = 0; i < bytes.length; i++) {

@@ -17,22 +17,19 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.model;
-
 
 /**
  * Interface for objects which can be owned by a <code>Player</code>.
  * @see Player
  */
 public interface Ownable {
-
     /**
      * Gets the owner of this <code>Ownable</code>.
      *
      * @return The <code>Player</code> controlling this <code>Ownable</code>.
      */
-    public Player getOwner();
+    Player getOwner();
 
     /**
      * Sets the owner of this <code>Ownable</code>.
@@ -41,5 +38,5 @@ public interface Ownable {
      *     of this <code>Ownable</code>.
      * @exception UnsupportedOperationException if not implemented.
      */
-    public void setOwner(Player p);
+    void setOwner(Player p);
 }

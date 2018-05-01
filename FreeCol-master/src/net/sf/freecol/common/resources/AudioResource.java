@@ -24,16 +24,13 @@ import java.net.URI;
 
 import net.sf.freecol.common.sound.SoundPlayer;
 
-
 /**
  * A <code>Resource</code> wrapping a <code>File</code> containing sounds.
  *
  * @see Resource
  */
 public class AudioResource extends Resource {
-
     private File file;
-
 
     public AudioResource(File file) {
         this.file = file;
@@ -48,9 +45,10 @@ public class AudioResource extends Resource {
     public AudioResource(URI resourceLocator) throws Exception {
         super(resourceLocator);
         File f = new File(resourceLocator);
-        if (SoundPlayer.getAudioInputStream(f) != null) this.file = f;
+        if (SoundPlayer.getAudioInputStream(f) != null) {
+			this.file = f;
+		}
     }
-
 
     /**
      * Gets the file represented by this resource.

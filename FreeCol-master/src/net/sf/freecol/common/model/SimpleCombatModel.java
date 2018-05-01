@@ -34,7 +34,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.LogBuilder;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-
 /**
  * This class implements the original Colonization combat model.
  *
@@ -43,7 +42,6 @@ import static net.sf.freecol.common.util.RandomUtils.*;
  * Note that the damage part of any CombatResult is ignored throughout.
  */
 public class SimpleCombatModel extends CombatModel {
-
     private static final Logger logger = Logger.getLogger(SimpleCombatModel.class.getName());
 
     /**
@@ -53,17 +51,10 @@ public class SimpleCombatModel extends CombatModel {
     public static final int MAXIMUM_BOMBARD_POWER = 48;
 
     /** A defence percentage bonus that disables the fortification bonus. */
-    public static final int STRONG_DEFENCE_THRESHOLD = 150; // percent
+    public static final int STRONG_DEFENCE_THRESHOLD = 150; /** Percent. */
 
     public static final Modifier UNKNOWN_DEFENCE_MODIFIER
         = new Modifier("bogus", Modifier.UNKNOWN, ModifierType.ADDITIVE);
-
-
-    /**
-     * Deliberately empty constructor.
-     */
-    public SimpleCombatModel() {}
-
 
     /**
      * Calculates the odds of success in combat.
@@ -90,20 +81,30 @@ public class SimpleCombatModel extends CombatModel {
                                            FreeColGameObject defender,
                                            LogBuilder lb) {
         if (attacker == null || defender == null) {
-            if (lb != null) lb.add(" odds=unknowable");
+            if (lb != null) {
+				lb.add(" odds=unknowable");
+			}
             return new CombatOdds(CombatOdds.UNKNOWN_ODDS);
         }
 
-        if (lb != null) lb.add(" attacker=", attacker, " ");
+        if (lb != null) {
+			lb.add(" attacker=", attacker, " ");
+		}
         double attackPower = getOffencePower(attacker, defender, lb);
-        if (lb != null) lb.add(" defender=", defender, " ");
+        if (lb != null) {
+			lb.add(" defender=", defender, " ");
+		}
         double defencePower = getDefencePower(attacker, defender, lb);
         if (attackPower == 0.0 && defencePower == 0.0) {
-            if (lb != null) lb.add(" odds=unknown");
+            if (lb != null) {
+				lb.add(" odds=unknown");
+			}
             return new CombatOdds(CombatOdds.UNKNOWN_ODDS);
         }
         double victory = attackPower / (attackPower + defencePower);
-        if (lb != null) lb.add(" odds=", victory);
+        if (lb != null) {
+			lb.add(" odds=", victory);
+		}
         return new CombatOdds(victory);
     }
 
@@ -145,7 +146,6 @@ public class SimpleCombatModel extends CombatModel {
         double result = 0.0;
         if (attacker == null) {
             throw new IllegalStateException("Null attacker");
-
         } else if (combatIsAttackMeasurement(attacker, defender)
             || combatIsAttack(attacker, defender)
             || combatIsSettlementAttack(attacker, defender)) {
@@ -156,7 +156,6 @@ public class SimpleCombatModel extends CombatModel {
                 logModifiers(lb, mods);
                 lb.add(" = ", result);
             }
-
         } else if (combatIsBombard(attacker, defender)) {
             Settlement attackerSettlement = (Settlement) attacker;
             if (attackerSettlement.hasAbility(Ability.BOMBARD_SHIPS)) {
@@ -164,9 +163,12 @@ public class SimpleCombatModel extends CombatModel {
                     .filter(u -> u.hasAbility(Ability.BOMBARD))
                     .mapToDouble(u -> u.getType().getOffence()).sum();
             }
-            if (result > MAXIMUM_BOMBARD_POWER) result = MAXIMUM_BOMBARD_POWER;
-            if (lb != null) lb.add(" bombard=", result);
-
+            if (result > MAXIMUM_BOMBARD_POWER) {
+				result = MAXIMUM_BOMBARD_POWER;
+			}
+            if (lb != null) {
+				lb.add(" bombard=", result);
+			}
         } else {
             throw new IllegalArgumentException("Bogus combat");
         }
@@ -209,7 +211,6 @@ public class SimpleCombatModel extends CombatModel {
                 logModifiers(lb, mods);
                 lb.add(" = ", result);
             }
-
         } else {
             throw new IllegalArgumentException("Bogus combat");
         }
@@ -265,11 +266,7 @@ public class SimpleCombatModel extends CombatModel {
             } else {
                 addLandOffensiveModifiers(attackerUnit, defender, result);
             }
-
-        } else if (combatIsBombard(attacker, defender)) {
-            ; // Bombard strength handled by getOffensePower
-
-        } else {
+        } else if (!combatIsBombard(attacker, defender)) {
             throw new IllegalArgumentException("Bogus combat");
         }
 
@@ -319,7 +316,9 @@ public class SimpleCombatModel extends CombatModel {
                                         Set<Modifier> result) {
         int bonus = colony.getSoL();
         if (bonus >= 0) {
-            if (attacker.getOwner().isREF()) bonus = 100 - bonus;
+            if (attacker.getOwner().isREF()) {
+				bonus = 100 - bonus;
+			}
             if (bonus > 0) {
                 result.add(new Modifier(Modifier.POPULAR_SUPPORT,
                                         bonus, ModifierType.PERCENTAGE, colony,
@@ -360,57 +359,53 @@ public class SimpleCombatModel extends CombatModel {
             result.addAll(spec.getModifiers(Modifier.AMPHIBIOUS_ATTACK));
         }
 
-        if (combatIsAttackMeasurement(attacker, defender)) {
-            ; // No defender information available
+        if (!combatIsAttackMeasurement(attacker, defender)) {
+			if (combatIsSettlementAttack(attacker, defender)) {
+			    // Settlement present, apply bombardment bonus
+			    result.addAll(attacker.getModifiers(Modifier.BOMBARD_BONUS));
 
-        } else if (combatIsSettlementAttack(attacker, defender)) {
-            // Settlement present, apply bombardment bonus
-            result.addAll(attacker.getModifiers(Modifier.BOMBARD_BONUS));
+			    // Popular support bonus
+			    if (combatIsWarOfIndependence(attacker, defender)) {
+			        addPopularSupportBonus((Colony)defender, attacker, result);
+			    }
+			} else if (combatIsAttack(attacker, defender)) {
+			    Unit defenderUnit = (Unit) defender;
+			    Tile tile = defenderUnit.getTile();
+			    if (tile != null) {
+			        if (tile.hasSettlement()) {
+			            // Bombard bonus applies to settlement defence
+			            result.addAll(attacker
+			                          .getModifiers(Modifier.BOMBARD_BONUS));
 
-            // Popular support bonus
-            if (combatIsWarOfIndependence(attacker, defender)) {
-                addPopularSupportBonus((Colony)defender, attacker, result);
-            }
+			            // Popular support bonus
+			            if (combatIsWarOfIndependence(attacker, defender)) {
+			                addPopularSupportBonus((Colony)tile.getSettlement(),
+			                                       attacker, result);
+			            }
+			        } else // Ambush bonus in the open = defender's defence
+					// bonus, if defender is REF, or attacker is indian.
+					if (isAmbush(attacker, defender)) {
+					    for (Modifier m : tile.getDefenceModifiers()) {
+					        Modifier mod = new Modifier(Modifier.OFFENCE, m);
+					        mod.setSource(Specification.AMBUSH_BONUS_SOURCE);
+					        result.add(mod);
+					    }
+					}
+			    }
 
-        } else if (combatIsAttack(attacker, defender)) {
-            Unit defenderUnit = (Unit) defender;
-            Tile tile = defenderUnit.getTile();
-            if (tile != null) {
-                if (tile.hasSettlement()) {
-                    // Bombard bonus applies to settlement defence
-                    result.addAll(attacker
-                                  .getModifiers(Modifier.BOMBARD_BONUS));
-
-                    // Popular support bonus
-                    if (combatIsWarOfIndependence(attacker, defender)) {
-                        addPopularSupportBonus((Colony)tile.getSettlement(),
-                                               attacker, result);
-                    }
-                } else {
-                    // Ambush bonus in the open = defender's defence
-                    // bonus, if defender is REF, or attacker is indian.
-                    if (isAmbush(attacker, defender)) {
-                        for (Modifier m : tile.getDefenceModifiers()) {
-                            Modifier mod = new Modifier(Modifier.OFFENCE, m);
-                            mod.setSource(Specification.AMBUSH_BONUS_SOURCE);
-                            result.add(mod);
-                        }
-                    }
-                }
-            }
-
-            // Artillery in the open penalty, attacker must be on a
-            // tile and neither unit can be in a settlement.
-            if (attacker.hasAbility(Ability.BOMBARD)
-                && attacker.getLocation() instanceof Tile
-                && attacker.getSettlement() == null
-                && attacker.getState() != Unit.UnitState.FORTIFIED
-                && defenderUnit.getSettlement() == null) {
-                result.addAll(spec.getModifiers(Modifier.ARTILLERY_IN_THE_OPEN));
-            }
-        } else {
-            throw new IllegalStateException("Bogus combat");
-        }
+			    // Artillery in the open penalty, attacker must be on a
+			    // tile and neither unit can be in a settlement.
+			    if (attacker.hasAbility(Ability.BOMBARD)
+			        && attacker.getLocation() instanceof Tile
+			        && attacker.getSettlement() == null
+			        && attacker.getState() != Unit.UnitState.FORTIFIED
+			        && defenderUnit.getSettlement() == null) {
+			        result.addAll(spec.getModifiers(Modifier.ARTILLERY_IN_THE_OPEN));
+			    }
+			} else {
+			    throw new IllegalStateException("Bogus combat");
+			}
+		}
     }
 
     /**
@@ -450,7 +445,6 @@ public class SimpleCombatModel extends CombatModel {
             } else {
                 addLandDefensiveModifiers(attacker, defenderUnit, result);
             }
-
         } else if (combatIsSettlementAttack(attacker, defender)) {
             Settlement settlement = (Settlement)defender;
             // Tile defence bonus
@@ -464,7 +458,6 @@ public class SimpleCombatModel extends CombatModel {
             // to the pre-combat dialog--- the actual attack is on the
             // unit chosen to defend.
             result.add(UNKNOWN_DEFENCE_MODIFIER);
-
         } else {
             throw new IllegalArgumentException("Bogus combat");
         }
@@ -545,7 +538,6 @@ public class SimpleCombatModel extends CombatModel {
                     && defender.getState() != Unit.UnitState.FORTIFIED) {
                     result.addAll(spec.getModifiers(Modifier.ARTILLERY_IN_THE_OPEN));
                 }
-
             } else { // In settlement
                 // Settlement defence bonus
                 result.addAll(settlement.getDefenceModifiers());
@@ -638,7 +630,6 @@ public class SimpleCombatModel extends CombatModel {
                     // (rearrange: 0.8 * odds.win + 0.2 <= r < 1.0)
                     (1.25 * r - 0.25 - odds.win)/(1.0 - odds.win), crs);
             }
-
         } else if (combatIsBombard(attacker, defender)) {
             Unit defenderUnit = (Unit) defender;
             if (!defenderUnit.isNaval()) {
@@ -674,7 +665,6 @@ public class SimpleCombatModel extends CombatModel {
                 crs.add(CombatResult.NO_RESULT);
                 crs.add(CombatResult.EVADE_BOMBARD);
             }
-
         } else {
             throw new IllegalStateException("Bogus combat");
         }
@@ -683,7 +673,9 @@ public class SimpleCombatModel extends CombatModel {
         // determinations for debugging and investigation of user
         // `I just lost N combats' complaints.
         lb.add(" great=", great, " ", action);
-        for (CombatResult cr : crs) lb.add(" ", cr);
+        for (CombatResult cr : crs) {
+			lb.add(" ", cr);
+		}
         lb.log(logger, Level.INFO);
 
         return crs;
@@ -721,11 +713,12 @@ public class SimpleCombatModel extends CombatModel {
             } else {
                 crs.add(CombatResult.DAMAGE_SHIP_ATTACK);
             }
-
         } else { // loser is land unit
             // Autoequip the defender?
-            Role autoRole = (attackerWon) ? loser.getAutomaticRole() : null;
-            if (autoRole != null) crs.add(CombatResult.AUTOEQUIP_UNIT);
+            Role autoRole = attackerWon ? loser.getAutomaticRole() : null;
+            if (autoRole != null) {
+				crs.add(CombatResult.AUTOEQUIP_UNIT);
+			}
 
             // Special handling for settlements
             boolean done = false;
@@ -740,7 +733,7 @@ public class SimpleCombatModel extends CombatModel {
                 // if they have no repair location.
                 if (!loser.isDefensiveUnit() && autoRole == null) {
                     List<Unit> ships = colony.getTile().getNavalUnits();
-                    final CombatResult shipResult = (ships.isEmpty()) ? null
+                    final CombatResult shipResult = ships.isEmpty() ? null
                         : (ships.get(0).getRepairLocation() == null)
                         ? CombatResult.SINK_COLONY_SHIPS
                         : CombatResult.DAMAGE_COLONY_SHIPS;
@@ -749,27 +742,27 @@ public class SimpleCombatModel extends CombatModel {
                         if (loserMustDie) {
                             crs.add(CombatResult.SLAUGHTER_UNIT);
                         }
-                        if (shipResult != null) crs.add(shipResult);
+                        if (shipResult != null) {
+							crs.add(shipResult);
+						}
                         crs.add(CombatResult.CAPTURE_COLONY);
                         done = true;
-
                     } else if (!great && colony.canBePillaged(winner)) {
                         crs.add(CombatResult.PILLAGE_COLONY);
                         done = true;
-
                     } else if (colony.getUnitCount() > 1
                         || loser.getLocation() == tile) {
                         loserMustDie = true;
                         done = false; // Treat as ordinary combat
-
                     } else {
                         crs.add(CombatResult.SLAUGHTER_UNIT);
-                        if (shipResult != null) crs.add(shipResult);
+                        if (shipResult != null) {
+							crs.add(shipResult);
+						}
                         crs.add(CombatResult.DESTROY_COLONY);
                         done = true;
                     }
                 }
- 
             } else if (settlement instanceof IndianSettlement) {
                 final IndianSettlement is = (IndianSettlement)settlement;
                 // Attacking and defeating the defender of a native
@@ -798,12 +791,10 @@ public class SimpleCombatModel extends CombatModel {
                             crs.add(CombatResult.CAPTURE_CONVERT);
                             lose++;
                         }
-                    } else if (r >= 1.0 - winner.getBurnProbability()) {
-                        if (any(loserPlayer.getIndianSettlements(),
-                                s -> s.hasMissionary(winnerPlayer))) {
-                            crs.add(CombatResult.BURN_MISSIONS);
-                        }
-                    }
+                    } else if (r >= 1.0 - winner.getBurnProbability() && any(loserPlayer.getIndianSettlements(),
+					        s -> s.hasMissionary(winnerPlayer))) {
+                     crs.add(CombatResult.BURN_MISSIONS);
+                  }
                 }
                 if (settlement.getUnitCount() + tile.getUnitCount() <= lose) {
                     crs.add(CombatResult.DESTROY_SETTLEMENT);
@@ -870,8 +861,8 @@ public class SimpleCombatModel extends CombatModel {
         if (promotion != null
             && (winner.hasAbility(Ability.AUTOMATIC_PROMOTION)
                 || (great
-                    && (100 * (r - Math.floor(r))
-                        <= promotion.getProbability(ChangeType.PROMOTION))))) {
+                    && 100 * (r - Math.floor(r))
+                        <= promotion.getProbability(ChangeType.PROMOTION)))) {
             crs.add(CombatResult.PROMOTE_UNIT);
         }
     }

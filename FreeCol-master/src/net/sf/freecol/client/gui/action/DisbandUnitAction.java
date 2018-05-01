@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for disbanding the active unit.
- */
+/** An action for disbanding the active unit. */
 public class DisbandUnitAction extends UnitAction {
-
     public static final String id = "disbandUnitAction";
-
 
     /**
      * Creates a new <code>DisbandUnitAction</code>.
@@ -43,12 +38,8 @@ public class DisbandUnitAction extends UnitAction {
         addImageIcons("disband");
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         igc().disbandUnit(getGUI().getActiveUnit());

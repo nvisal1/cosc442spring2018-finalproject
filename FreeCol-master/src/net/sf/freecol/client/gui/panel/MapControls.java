@@ -47,7 +47,6 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.TileImprovementType;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * A collection of panels and buttons that are used to provide the
  * user with a more detailed view of certain elements on the map and
@@ -58,7 +57,6 @@ import net.sf.freecol.common.model.Unit;
  * placed on a JComponent in order to be usable.
  */
 public abstract class MapControls {
-
     public static final int MAP_WIDTH = 220;
     public static final int MAP_HEIGHT = 128;
     public static final int GAP = 4;
@@ -72,7 +70,6 @@ public abstract class MapControls {
     protected final UnitButton miniMapZoomOutButton;
     protected final UnitButton miniMapZoomInButton;
     protected final List<UnitButton> unitButtons;
-
 
     /**
      * The basic constructor.
@@ -118,16 +115,13 @@ public abstract class MapControls {
         miniMapZoomOutButton.setFocusable(false);
         miniMapZoomInButton.setFocusable(false);
 
-        //
         // Don't allow them to gain focus
-        //
         infoPanel.setFocusable(false);
 
         for (UnitButton button : unitButtons) {
             button.setFocusable(false);
         }
     }
-
 
     /**
      * Adds the map controls to the given component.
@@ -167,9 +161,7 @@ public abstract class MapControls {
         repaint();
     }
 
-    /**
-     * Updates this <code>MapControls</code>.
-     */
+    /** Updates this <code>MapControls</code>. */
     public void update() {
         final GUI gui = freeColClient.getGUI();
         Unit unit = gui.getActiveUnit();

@@ -45,14 +45,12 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 import net.sf.freecol.server.ai.EuropeanAIPlayer;
 
-
 /**
  * Mission for building a <code>Colony</code>.
  *
  * @see net.sf.freecol.common.model.Colony Colony
  */
 public class BuildColonyMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(BuildColonyMission.class.getName());
 
     /** The tag for this mission. */
@@ -67,7 +65,6 @@ public class BuildColonyMission extends Mission {
 
     /** The value of a target <code>Tile</code>. */
     private int colonyValue;
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -97,7 +94,6 @@ public class BuildColonyMission extends Mission {
         readFromXML(xr);
     }
 
-
     /**
      * Get the colony value for a tile.
      *
@@ -118,7 +114,9 @@ public class BuildColonyMission extends Mission {
      * @return A target for this mission, or null if none found.
      */
     public static Location extractTarget(AIUnit aiUnit, PathNode path) {
-        if (path == null) return null;
+        if (path == null) {
+			return null;
+		}
         final Location loc = path.getLastNode().getLocation();
         Tile tile = loc.getTile();
         Colony colony = loc.getColony();
@@ -137,8 +135,9 @@ public class BuildColonyMission extends Mission {
     public static float scorePath(AIUnit aiUnit, PathNode path) {
         Location loc;
         if (path == null
-            || !((loc = extractTarget(aiUnit, path)) instanceof Tile)) 
-            return Integer.MIN_VALUE;
+            || !((loc = extractTarget(aiUnit, path)) instanceof Tile)) {
+			return Integer.MIN_VALUE;
+		}
 
         final Tile tile = (Tile)loc;
         final Player player = aiUnit.getUnit().getOwner();
@@ -158,7 +157,7 @@ public class BuildColonyMission extends Mission {
                                               boolean deferOK) {
         GoalDecider gd = new GoalDecider() {
                 private PathNode bestPath = null;
-                private float bestValue = 0f;
+                private float bestValue;
 
                 @Override
                 public PathNode getGoal() { return bestPath; }
@@ -178,7 +177,7 @@ public class BuildColonyMission extends Mission {
                     return false;
                 }
             };
-        return (deferOK) ? GoalDeciders.getComposedGoalDecider(false, gd,
+        return deferOK ? GoalDeciders.getComposedGoalDecider(false, gd,
             GoalDeciders.getOurClosestSettlementGoalDecider())
             : gd;
     }
@@ -193,7 +192,9 @@ public class BuildColonyMission extends Mission {
      */
     public static PathNode findTargetPath(AIUnit aiUnit, int range,
                                           boolean deferOK) {
-        if (invalidAIUnitReason(aiUnit) != null) return null;
+        if (invalidAIUnitReason(aiUnit) != null) {
+			return null;
+		}
         final Unit unit = aiUnit.getUnit();
         final Location start = unit.getPathStartLocation();
         final Unit carrier = unit.getCarrier();
@@ -232,9 +233,9 @@ public class BuildColonyMission extends Mission {
         String reason = invalidAIUnitReason(aiUnit);
         return (reason != null)
             ? reason
-            : (!aiUnit.getUnit().getOwner().canBuildColonies())
+            : !aiUnit.getUnit().getOwner().canBuildColonies()
             ? "player-not-a-colony-founder"
-            : (!aiUnit.getUnit().getType().canBuildColony())
+            : !aiUnit.getUnit().getType().canBuildColony()
             ? "unit-not-a-colony-founder"
             : null;
     }
@@ -297,29 +298,18 @@ public class BuildColonyMission extends Mission {
         return invalidMissionReason(aiUnit);
     }
 
-      
-    // Implement Mission
-    //   Inherit dispose, getTransportDestination, isOneTime
+          /** Implement Mission Inherit dispose, getTransportDestination, isOneTime. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getBaseTransportPriority() {
         return NORMAL_TRANSPORT_PRIORITY + 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTarget() {
         return target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {
         if (target == null
@@ -331,25 +321,16 @@ public class BuildColonyMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return findTarget(getAIUnit(), 5, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return invalidReason(getAIUnit(), target);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
@@ -370,24 +351,26 @@ public class BuildColonyMission extends Mission {
                 && player.owns(c)) {
                 // Favour improving colony center.
                 Mission m = euaip.getPioneeringMission(aiUnit, c.getTile());
-                if (m != null) return lbDrop(lb, ", improving with ", m);
+                if (m != null) {
+					return lbDrop(lb, ", improving with ", m);
+				}
                 // Just go to the colony.
                 setTarget(c);
                 return lbRetarget(lb);
             }
         } else if (reason != null) {
             return lbFail(lb, false, reason);
-        } else { // Target valid, but has it devalued?
-            if (target instanceof Tile) {
-                int newValue = getColonyValue((Tile)target);
-                if (newValue < colonyValue) {
-                    reason = "target tile " + target.toShortString()
-                        + " value " + colonyValue + " -> " + newValue;
-                    retarget = true;
-                }
-            }
-        }
-        if (retarget) return retargetMission(reason, lb);
+        } else if (target instanceof Tile) {
+		    int newValue = getColonyValue((Tile)target);
+		    if (newValue < colonyValue) {
+		        reason = "target tile " + target.toShortString()
+		            + " value " + colonyValue + " -> " + newValue;
+		        retarget = true;
+		    }
+		}
+        if (retarget) {
+			return retargetMission(reason, lb);
+		}
 
         for (;;) {
             // Go there.
@@ -418,7 +401,9 @@ public class BuildColonyMission extends Mission {
                 // Improve colony center?
                 Mission m
                     = euaip.getPioneeringMission(aiUnit, colony.getTile());
-                if (m != null) return lbDrop(lb, ", improving with ", m);
+                if (m != null) {
+					return lbDrop(lb, ", improving with ", m);
+				}
 
                 // Colony too small?
                 if (colony.getUnitCount() <= 1) {
@@ -427,8 +412,8 @@ public class BuildColonyMission extends Mission {
                 }
 
                 // Find a real tile target?
-                Location newTarget;
-                if ((newTarget = findTarget(aiUnit, 5, false)) != null) {
+                Location newTarget = findTarget(aiUnit, 5, false);
+                if (newTarget != null) {
                     setTarget(newTarget);
                     return lbRetarget(lb);
                 }
@@ -437,8 +422,9 @@ public class BuildColonyMission extends Mission {
                 Colony best = null;
                 int bestValue = INFINITY;
                 for (Colony c : player.getColonies()) {
-                    if (c == colony) continue;
-                    if (c.getUnitCount() < colony.getUnitCount()) continue;
+                    if (c == colony || c.getUnitCount() < colony.getUnitCount()) {
+						continue;
+					}
                     PathNode path = unit.findPath(c);
                     if (path != null && path.getTotalTurns() < bestValue) {
                         bestValue = path.getTotalTurns();
@@ -466,36 +452,36 @@ public class BuildColonyMission extends Mission {
                 return lbWait(lb, ", waiting to build at ", tile);
             }
 
-            if (tile.getOwner() == null) {
-                ; // All is well
-            } else if (player.owns(tile)) { // Already ours, clear users
-                Colony colony = (Colony)tile.getOwningSettlement();
-                if (colony != null) {
-                    logger.warning("Building on colony tile: " + tile);
-                    return lbFail(lb, false, "building on colony tile ", tile);
-                }
-            } else {
-                // Not our tile, so claim it first.  Fail if someone
-                // has claimed the tile and will not sell.  Otherwise
-                // try to buy it or steal it.
-                int price = player.getLandPrice(tile);
-                boolean fail = price < 0;
-                if (price > 0 && !player.checkGold(price)) {
-                    if (randomInt(logger, "Land gold?", getAIRandom(), 4) == 0) {
-                        lb.add(", ");
-                        euaip.cheatGold(price, lb);
-                        lb.add(" to buy ", tile);
-                    }
-                }
-                if (price >= 0) {
-                    fail = !AIMessage.askClaimLand(tile, aiUnit,
-                        ((price == 0) ? 0 : (player.checkGold(price)) ? price
-                            : NetworkConstants.STEAL_LAND))
-                        || !player.owns(tile);
-                }
-                if (fail) return retargetMission("tile-claim-at-" + tile, lb);
-                lb.add(", claimed colony tile");
-            }
+            if (tile.getOwner() != null) {
+				if (player.owns(tile)) { // Already ours, clear users
+				    Colony colony = (Colony)tile.getOwningSettlement();
+				    if (colony != null) {
+				        logger.warning("Building on colony tile: " + tile);
+				        return lbFail(lb, false, "building on colony tile ", tile);
+				    }
+				} else {
+				    // Not our tile, so claim it first.  Fail if someone
+				    // has claimed the tile and will not sell.  Otherwise
+				    // try to buy it or steal it.
+				    int price = player.getLandPrice(tile);
+				    boolean fail = price < 0;
+				    if (price > 0 && !player.checkGold(price) && randomInt(logger, "Land gold?", getAIRandom(), 4) == 0) {
+					    lb.add(", ");
+					    euaip.cheatGold(price, lb);
+					    lb.add(" to buy ", tile);
+					}
+				    if (price >= 0) {
+				        fail = !AIMessage.askClaimLand(tile, aiUnit,
+				            (price == 0) ? 0 : player.checkGold(price) ? price
+				                : NetworkConstants.STEAL_LAND)
+				            || !player.owns(tile);
+				    }
+				    if (fail) {
+						return retargetMission("tile-claim-at-" + tile, lb);
+					}
+				    lb.add(", claimed colony tile");
+				}
+			}
 
             // Log the colony values so we can improve things
             if (logger.isLoggable(Level.FINE)) {
@@ -520,15 +506,10 @@ public class BuildColonyMission extends Mission {
         }
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TARGET_TAG = "target";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -542,9 +523,6 @@ public class BuildColonyMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -554,9 +532,6 @@ public class BuildColonyMission extends Mission {
         colonyValue = xr.getAttribute(VALUE_TAG, -1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

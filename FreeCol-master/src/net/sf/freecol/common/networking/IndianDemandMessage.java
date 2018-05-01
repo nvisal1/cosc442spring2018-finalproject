@@ -30,12 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent to resolve natives making demands of a colony.
- */
+/** The message sent to resolve natives making demands of a colony. */
 public class IndianDemandMessage extends DOMMessage {
-
     /** The identifier of the unit that is demanding. */
     private final String unitId;
 
@@ -50,7 +46,6 @@ public class IndianDemandMessage extends DOMMessage {
 
     /** The result of this demand: null implies not decided yet. */
     private String result;
-
 
     /**
      * Create a new <code>IndianDemandMessage</code> with the
@@ -84,12 +79,11 @@ public class IndianDemandMessage extends DOMMessage {
 
         this.unitId = element.getAttribute("unit");
         this.colonyId = element.getAttribute("colony");
-        this.typeId = (!element.hasAttribute("type")) ? null
+        this.typeId = !element.hasAttribute("type") ? null
             : element.getAttribute("type");
         this.amount = element.getAttribute("amount");
         this.result = element.getAttribute("result");
     }
-
 
     // Public interface
 
@@ -111,17 +105,13 @@ public class IndianDemandMessage extends DOMMessage {
         return game.getFreeColGameObject(colonyId, Colony.class);
     }
 
-    /**
-     * Client-side convenience function to get the goods type in this message.
-     */
+    /** Client-side convenience function to get the goods type in this message. */
     public GoodsType getType(Game game) {
         return (typeId == null) ? null
             : game.getSpecification().getGoodsType(typeId);
     }
 
-    /**
-     * Client-side convenience function to get the gold in this message.
-     */
+    /** Client-side convenience function to get the gold in this message. */
     public int getAmount() {
         try {
             return Integer.parseInt(amount);
@@ -146,7 +136,6 @@ public class IndianDemandMessage extends DOMMessage {
     public void setResult(boolean result) {
         this.result = Boolean.toString(result);
     }
-
 
     /**
      * Handle a "indianDemand"-message.
@@ -213,8 +202,12 @@ public class IndianDemandMessage extends DOMMessage {
             "unit", unitId,
             "colony", colonyId,
             "amount", amount);
-        if (typeId != null) ret.setAttribute("type", typeId);
-        if (result != null) ret.setAttribute("result", result);
+        if (typeId != null) {
+			ret.setAttribute("type", typeId);
+		}
+        if (result != null) {
+			ret.setAttribute("result", result);
+		}
         return ret;
     }
 

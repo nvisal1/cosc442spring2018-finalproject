@@ -46,12 +46,8 @@ import net.sf.freecol.common.model.Settlement;
 import net.sf.freecol.common.model.Turn;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * The dialog that is shown prior to a possible combat.
- */
+/** The dialog that is shown prior to a possible combat. */
 public class PreCombatDialog extends FreeColConfirmDialog {
-
     /**
      * Create a new pre-combat dialog.
      *
@@ -95,13 +91,11 @@ public class PreCombatDialog extends FreeColConfirmDialog {
                 = defenderUnit.getDescription(Unit.UnitLabelType.NATIONAL);
             defenderLabel = new UnitLabel(freeColClient, defenderUnit,
                                           false, true);
-
         } else if (combatModel.combatIsSettlementAttack(attacker, defender)) {
             Settlement settlement = (Settlement) defender;
             defenderName = settlement.getName();
             defenderLabel = new JLabel(new ImageIcon(
                 lib.getSettlementImage(settlement)));
-
         } else {
             throw new IllegalStateException("Bogus attack");
         }
@@ -166,14 +160,18 @@ public class PreCombatDialog extends FreeColConfirmDialog {
     private int addLabels(JPanel panel, JLabel[] labels, boolean newline,
                           int skip) {
         int len = labels.length;
-        for (int i = 0; i < len; i++) if (labels[i] == null) len = i;
+        for (int i = 0; i < len; i++) {
+			if (labels[i] == null) {
+				len = i;
+			}
+		}
  
-        String constraint = (newline) ? "newline" : null;
+        String constraint = newline ? "newline" : null;
         if (skip > 0) {
-            if (constraint == null) {
-                constraint = "skip " + skip;
-            } else {
+            if (constraint != null) {
                 constraint += ", skip " + skip;
+            } else {
+                constraint = "skip " + skip;
             }
         }
         for (int i = 0; i < len; i++) {

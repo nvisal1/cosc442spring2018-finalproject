@@ -29,12 +29,8 @@ import net.miginfocom.swing.MigLayout;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * A dialog for choosing a map size.
- */
+/** A dialog for choosing a map size. */
 public final class MapSizeDialog extends FreeColInputDialog<Dimension> {
-
     private static final int COLUMNS = 5;
     private static final int DEFAULT_HEIGHT = 100;
     private static final int DEFAULT_WIDTH = 40;
@@ -43,7 +39,6 @@ public final class MapSizeDialog extends FreeColInputDialog<Dimension> {
         = new JTextField(Integer.toString(DEFAULT_WIDTH), COLUMNS);
     private final JTextField inputHeight
         = new JTextField(Integer.toString(DEFAULT_HEIGHT), COLUMNS);
-
 
     /**
      * Creates a dialog to choose the map size.
@@ -71,9 +66,6 @@ public final class MapSizeDialog extends FreeColInputDialog<Dimension> {
         initializeInputDialog(frame, true, panel, null, "ok", "cancel");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Dimension getInputValue() {
         int width, height;
@@ -87,12 +79,8 @@ public final class MapSizeDialog extends FreeColInputDialog<Dimension> {
             : new Dimension(width, height);
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void requestFocus() {
         this.inputWidth.requestFocus();

@@ -30,14 +30,11 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.FontLibrary;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * This panel is displayed when an imporantant event in the game has happened.
  */
 public final class EventPanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(EventPanel.class.getName());
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -62,7 +59,9 @@ public final class EventPanel extends FreeColPanel {
 
         add(headerLabel);
         add(imageLabel);
-        if (footerLabel != null) add(footerLabel);
+        if (footerLabel != null) {
+			add(footerLabel);
+		}
         add(okButton, "tag ok");
 
         setSize(getPreferredSize());

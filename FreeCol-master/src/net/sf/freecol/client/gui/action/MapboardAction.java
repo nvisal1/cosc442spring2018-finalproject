@@ -21,14 +21,11 @@ package net.sf.freecol.client.gui.action;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * Super class for all actions that should be disabled when the
  * mapboard is not selected.
  */
 public abstract class MapboardAction extends FreeColAction {
-
-
     /**
      * Creates a new <code>MapboardAction</code>.
      *
@@ -38,12 +35,8 @@ public abstract class MapboardAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() { 
         return super.shouldBeEnabled()  

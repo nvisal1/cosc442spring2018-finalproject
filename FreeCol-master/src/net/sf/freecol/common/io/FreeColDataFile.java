@@ -46,13 +46,11 @@ import net.sf.freecol.common.util.LogBuilder;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
 /**
  * Support for reading a FreeCol data file. The data file
  * is either a ZIP-file or a directory containing certain files.
  */
 public class FreeColDataFile {
-
     private static final Logger logger = Logger.getLogger(FreeColDataFile.class.getName());
 
     protected static final String ZIP_FILE_EXTENSION = "zip";
@@ -71,7 +69,6 @@ public class FreeColDataFile {
      */
     private final String jarDirectory;
 
-
     /**
      * Opens the given file for reading.
      *
@@ -83,7 +80,7 @@ public class FreeColDataFile {
             throw new IOException("File " + file.getName() + " does not exist");
         }
         this.file = file;
-        this.jarDirectory = (file.isDirectory()) ? null
+        this.jarDirectory = file.isDirectory() ? null
             : findJarDirectory(file);
     }
 
@@ -97,7 +94,7 @@ public class FreeColDataFile {
     private static String findJarDirectory(File file) {
         String expected = file.getName().substring(0, file.getName().lastIndexOf('.'));
         try (
-            JarFile jf = new JarFile(file);
+            JarFile jf = new JarFile(file)
         ) {
             final JarEntry entry = jf.entries().nextElement();
             final String en = entry.getName();
@@ -129,17 +126,29 @@ public class FreeColDataFile {
 
         List<String> result = new ArrayList<>(4);
 
-        if (!language.isEmpty()) language = "_" + language;
-        if (!country.isEmpty()) country = "_" + country;
-        if (!variant.isEmpty()) variant = "_" + variant;
+        if (!language.isEmpty()) {
+			language = "_" + language;
+		}
+        if (!country.isEmpty()) {
+			country = "_" + country;
+		}
+        if (!variant.isEmpty()) {
+			variant = "_" + variant;
+		}
 
         result.add(prefix + suffix);
         String filename = prefix + language + suffix;
-        if (!result.contains(filename)) result.add(filename);
+        if (!result.contains(filename)) {
+			result.add(filename);
+		}
         filename = prefix + language + country + suffix;
-        if (!result.contains(filename)) result.add(filename);
+        if (!result.contains(filename)) {
+			result.add(filename);
+		}
         filename = prefix + language + country + variant + suffix;
-        if (!result.contains(filename)) result.add(filename);
+        if (!result.contains(filename)) {
+			result.add(filename);
+		}
         return result;
     }
 
@@ -214,7 +223,7 @@ public class FreeColDataFile {
         lb.mark();
         for (String fileName : getResourceFileNames()) {
             try (
-                final InputStream is = getInputStream(fileName);
+                InputStream is = getInputStream(fileName)
             ) {
                 properties.load(is);
                 lb.add(", ", file, "/", fileName, " loaded");
@@ -265,7 +274,9 @@ public class FreeColDataFile {
             lb.add(", could not resolve virtual resource/s: ",
                    join(" ", todo));
         }
-        if (lb.grew()) lb.log(logger, Level.INFO);
+        if (lb.grew()) {
+			lb.log(logger, Level.INFO);
+		}
         return rc;
     }
 

@@ -32,18 +32,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when scouting a native settlement.
- */
+/** The message sent when scouting a native settlement. */
 public class ScoutIndianSettlementMessage extends DOMMessage {
-
     /** The identifier of the unit that is scouting. */
     private final String unitId;
 
     /** The direction of the settlement from the unit. */
     private final String directionString;
-
 
     /**
      * Create a new <code>ScoutIndianSettlementMessage</code> with the
@@ -72,7 +67,6 @@ public class ScoutIndianSettlementMessage extends DOMMessage {
         this.unitId = element.getAttribute("unitId");
         this.directionString = element.getAttribute("direction");
     }
-
 
     /**
      * Handle a "scoutIndianSettlement"-message.

@@ -25,25 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-/**
- * A map of goods types and their production.
- */
+/** A map of goods types and their production. */
 public class ProductionMap {
-
     public static class ProductionTree {
-
         /**
          * The abstract goods all other types of goods in this tree are
          * finally stored as.
          */
         private AbstractGoods root;
 
-        /**
-         * The abstract goods that are actually produced.
-         */
+        /** The abstract goods that are actually produced. */
         private List<AbstractGoods> leafs;
-
 
         public ProductionTree(AbstractGoods root, AbstractGoods... leafs) {
             if (leafs.length > 0) {
@@ -58,7 +50,6 @@ public class ProductionMap {
                 this.root = new AbstractGoods(root);
             }
         }
-
 
         public final AbstractGoods getRoot() {
             return root;
@@ -121,24 +112,19 @@ public class ProductionMap {
             return null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(32);
             sb.append("[").append(root.getSuffix()).append(":");
             for (AbstractGoods ag : leafs) {
-                sb.append(" ").append(ag.toString());
+                sb.append(" ").append(ag);
             }
             sb.append(" ]");
             return sb.toString();
         }
     }
 
-
     private final Map<GoodsType, Object> cache = new HashMap<>();
-
 
     public AbstractGoods get(GoodsType type) {
         Object value = cache.get(type);
@@ -190,7 +176,6 @@ public class ProductionMap {
         }
     }
 
-
     public void add(List<AbstractGoods> goods) {
         for (AbstractGoods g : goods) {
             add(g);
@@ -203,16 +188,12 @@ public class ProductionMap {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(64);
         sb.append("[");
         for (Entry<GoodsType, Object> e : cache.entrySet()) {
-            sb.append(" ").append(e.getKey().getSuffix())
-                .append(":").append(e.getValue().toString());
+            sb.append(" ").append(e.getKey().getSuffix()).append(":").append(e.getValue());
         }
         sb.append(" ]");
         return sb.toString();

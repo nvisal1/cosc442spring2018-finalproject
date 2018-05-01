@@ -30,7 +30,6 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Specification;
 
-
 /**
  * Represents an option where the valid choice is an integer and the
  * choices are represented by strings.  In general, these strings are
@@ -44,17 +43,15 @@ import net.sf.freecol.common.model.Specification;
  * use the default keys, for example).
  */
 public class SelectOption extends IntegerOption {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(SelectOption.class.getName());
 
     /** Use localized labels? */
-    protected boolean localizedLabels = false;
+    protected boolean localizedLabels;
 
     /** A map of the valid values. */
     private final Map<Integer, String> itemValues
         = new LinkedHashMap<>();
-
 
     /**
      * Creates a new <code>SelectOption</code>.
@@ -64,7 +61,6 @@ public class SelectOption extends IntegerOption {
     public SelectOption(Specification specification) {
         super(specification);
     }
-
 
     /**
      * Gets the range values of this <code>RangeOption</code>.
@@ -117,12 +113,12 @@ public class SelectOption extends IntegerOption {
 
     // Interface Option
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setValue(Integer value) {
         Set<Integer> keys = getItemValues().keySet();
-        if (keys.isEmpty()) return; // May not have been read yet
+        if (keys.isEmpty()) {
+			return;
+		} // May not have been read yet
 
         Integer fallback = null;
         for (Integer i : keys) {
@@ -130,23 +126,20 @@ public class SelectOption extends IntegerOption {
                 super.setValue(value);
                 return;
             }
-            if (fallback == null) fallback = i;
+            if (fallback == null) {
+				fallback = i;
+			}
         }
         logger.warning(getXMLElementTagName() + ".setValue invalid value: "
             + value + ", using fallback: " + fallback);
         super.setValue(fallback);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String LABEL_TAG = "label";
     private static final String LOCALIZED_LABELS_TAG = "localizedLabels";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -154,9 +147,6 @@ public class SelectOption extends IntegerOption {
         xw.writeAttribute(LOCALIZED_LABELS_TAG, localizedLabels);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -172,9 +162,6 @@ public class SelectOption extends IntegerOption {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -182,9 +169,6 @@ public class SelectOption extends IntegerOption {
         localizedLabels = xr.getAttribute(LOCALIZED_LABELS_TAG, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // We can not set the value until we have read the select options
@@ -201,9 +185,6 @@ public class SelectOption extends IntegerOption {
         setValue(value, defaultValue);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
@@ -212,15 +193,11 @@ public class SelectOption extends IntegerOption {
             addItemValue(xr.getAttribute(VALUE_TAG, INFINITY),
                          xr.getAttribute(LABEL_TAG, (String)null));
             xr.closeTag(tag);
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -231,9 +208,6 @@ public class SelectOption extends IntegerOption {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

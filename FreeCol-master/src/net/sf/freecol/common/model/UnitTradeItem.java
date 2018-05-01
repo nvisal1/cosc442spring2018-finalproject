@@ -26,17 +26,12 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.Utils;
 
-
-/**
- * A trade item consisting of a unit.
- */
+/** A trade item consisting of a unit. */
 public class UnitTradeItem extends TradeItem {
-    
     /** The unit to change hands. */
     private Unit unit;
 
-        
-    /**
+            /**
      * Creates a new <code>UnitTradeItem</code> instance.
      *
      * @param game The enclosing <code>Game</code>.
@@ -63,94 +58,61 @@ public class UnitTradeItem extends TradeItem {
         super(game, xr);
     }
 
+    /** Interface TradeItem. */
 
-    // Interface TradeItem
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isValid() {
         return unit.getOwner() == getSource()
             && unit.getType().isAvailableTo(getDestination());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isUnique() {
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StringTemplate getLabel() {
         return unit.getLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Unit getUnit() {
         return unit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setUnit(Unit unit) {
         this.unit = unit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int evaluateFor(Player player) {
         final Unit unit = getUnit();
-        return (!isValid()) ? Integer.MIN_VALUE
+        return !isValid() ? Integer.MIN_VALUE
             : (getSource() == player)
             ? -unit.evaluateFor(player)
             : unit.evaluateFor(player);
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof UnitTradeItem) {
-            return Utils.equals(this.unit, ((UnitTradeItem)other).unit)
-                && super.equals(other);
-        }
-        return false;
+        return other instanceof UnitTradeItem && Utils.equals(this.unit, ((UnitTradeItem)other).unit)
+		    && super.equals(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
         return 37 * hash + Utils.hashCode(this.unit);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String UNIT_TAG = "unit";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -158,9 +120,6 @@ public class UnitTradeItem extends TradeItem {
         xw.writeAttribute(UNIT_TAG, unit);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -169,9 +128,6 @@ public class UnitTradeItem extends TradeItem {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -179,9 +135,6 @@ public class UnitTradeItem extends TradeItem {
         unit = xr.getAttribute(getGame(), UNIT_TAG, Unit.class, (Unit)null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

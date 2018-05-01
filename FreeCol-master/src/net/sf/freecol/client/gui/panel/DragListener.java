@@ -32,7 +32,6 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.SwingGUI;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * A DragListener should be attached to Swing components that have a
  * TransferHandler attached.  The DragListener will make sure that the
@@ -40,13 +39,11 @@ import net.sf.freecol.common.model.Unit;
  * be precise).
  */
 public final class DragListener extends MouseAdapter {
-
     private static final Logger logger = Logger.getLogger(DragListener.class.getName());
 
     private final FreeColPanel parentPanel;
 
     private final FreeColClient freeColClient;
-
 
     /**
      * The constructor to use.
@@ -60,7 +57,6 @@ public final class DragListener extends MouseAdapter {
         this.freeColClient = freeColClient;
         this.parentPanel = parentPanel;
     }
-
 
     /**
      * Gets called when the mouse was pressed on a Swing component
@@ -85,28 +81,24 @@ public final class DragListener extends MouseAdapter {
                 .addMenuItems(comp);
             int lastIdx = menu.getComponentCount() - 1;
             if (lastIdx >= 0
-                && menu.getComponent(lastIdx) instanceof JPopupMenu.Separator)
-                menu.remove(lastIdx);
-            if (menu.getComponentCount() <= 0) return;
+                && menu.getComponent(lastIdx) instanceof JPopupMenu.Separator) {
+				menu.remove(lastIdx);
+			}
+            if (menu.getComponentCount() <= 0) {
+				return;
+			}
 
             final SwingGUI gui = (SwingGUI)freeColClient.getGUI();
             boolean windows = System.getProperty("os.name").startsWith("Windows");
             boolean small = Toolkit.getDefaultToolkit()
                 .getScreenSize().getHeight() < 768;
-            if (gui.isWindowed() && windows) {
+            if ((gui.isWindowed() && windows) || (!gui.isWindowed() && small)) {
                 // Work-around: JRE on Windows is unable to
                 // display popup menus that extend beyond the canvas.
-                menu.show(gui.getCanvas(), menu.getLocation().x, 0);
-            } else if (!gui.isWindowed() && small) {
-                // Move popup up when in full screen mode and when
-                // the screen size is too small to fit.  Similar
-                // to above workaround, but targeted for users
-                // with smaller screens such as netbooks.
                 menu.show(gui.getCanvas(), menu.getLocation().x, 0);
             } else {
                 menu.show(comp, e.getX(), e.getY());
             }
-
         } else {
             if (comp instanceof AbstractGoodsLabel) {
                 AbstractGoodsLabel label = (AbstractGoodsLabel)comp;

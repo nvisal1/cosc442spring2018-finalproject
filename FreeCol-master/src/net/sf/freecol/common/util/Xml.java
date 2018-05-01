@@ -17,9 +17,7 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.util;
-
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,17 +34,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
  * A class that makes it slightly tidier to create, parse and format XML
  * documents.
  */
 public final class Xml {
-
-    // ------------------------------------------------------ class API methods
+    /** ------------------------------------------------------ class API methods. */
 
     public static Document newDocument() {
-
         try {
             DocumentBuilderFactory  factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder  builder = factory.newDocumentBuilder();
@@ -57,33 +52,23 @@ public final class Xml {
         }
     }
 
-
     public static Document documentFrom( String string ) {
-
         return documentFrom( new InputSource(new StringReader(string)) );
     }
 
-
     public static Document documentFrom( InputStream stream ) {
-
         return documentFrom( new InputSource(stream) );
     }
 
-
     public static String toString( Document document ) {
-
         return document.getDocumentElement().toString();
     }
 
-
     public static boolean hasAttribute( Node xmlElement, String attributeName ) {
-
         return xmlElement.getAttributes().getNamedItem(attributeName) != null;
     }
 
-
     public static String attribute( Node xmlElement, String attributeName ) {
-
         return xmlElement.getAttributes().getNamedItem(attributeName).getNodeValue();
     }
 
@@ -96,12 +81,10 @@ public final class Xml {
     }
 
     public static String[] arrayAttribute( Node xmlElement, String attributeName, String separator ) {
-
         return attribute(xmlElement, attributeName).split(separator);
     }
 
     public static String[] arrayAttribute( Node xmlElement, String attributeName ) {
-
         return arrayAttribute(xmlElement, attributeName, ",");
     }
 
@@ -114,7 +97,6 @@ public final class Xml {
     }
 
     public static char charAttribute( Node xmlElement, String attributeName ) {
-
         return attribute(xmlElement, attributeName).charAt(0);
     }
 
@@ -126,15 +108,14 @@ public final class Xml {
         }
     }
 
-    /*
-    public static String messageAttribute( Node xmlElement, String attributeName ) {
+    /**
+    Public static String messageAttribute( Node xmlElement, String attributeName ) {
 
         return Messages.message( attribute(xmlElement, attributeName) );
     }
     */
 
     public static float floatAttribute( Node xmlElement, String attributeName ) {
-
         return Float.parseFloat( attribute(xmlElement, attributeName) );
     }
 
@@ -156,7 +137,6 @@ public final class Xml {
     }
     
     public static float[] floatArrayAttribute( Node xmlElement, String attributeName ) {
-
         return floatArrayAttribute(xmlElement, attributeName, ",");
     }
 
@@ -168,9 +148,7 @@ public final class Xml {
         }
     }
 
-
     public static int intAttribute( Node xmlElement, String attributeName ) {
-
         return Integer.parseInt( attribute(xmlElement, attributeName) );
     }
 
@@ -184,10 +162,7 @@ public final class Xml {
 
     public static int[] intArrayAttribute( Node xmlElement, String attributeName, String separator ) {
         String[] array = arrayAttribute(xmlElement, attributeName, separator);
-        /*  For testing
-        for (int k = 0; k < array.length; k++)
-            logger.info(array[k]);    
-        */
+        /* For testing for (int k = 0; k < array.length; k++) logger.info(array[k]); */
         int[] output = new int[array.length];
         for (int i = 0; i < array.length ; i++) {
             output[i] = Integer.parseInt(array[i]);
@@ -196,7 +171,6 @@ public final class Xml {
     }
     
     public static int[] intArrayAttribute( Node xmlElement, String attributeName ) {
-
         return intArrayAttribute(xmlElement, attributeName, ",");
     }
 
@@ -209,7 +183,6 @@ public final class Xml {
     }
 
     public static boolean booleanAttribute( Node xmlElement, String attributeName ) {
-
         return parseTruth( attribute(xmlElement, attributeName) );
     }
 
@@ -222,24 +195,20 @@ public final class Xml {
     }
 
     public static void forEachChild( Node xml, Method method ) {
-
         NodeList  childList = xml.getChildNodes();
 
         for ( int ci = 0, nc = childList.getLength();  ci < nc;  ci ++ ) {
             Node  child = childList.item( ci );
 
             if ( child instanceof Element ) {
-
                 method.invokeOn( child );
             }
         }
     }
 
-
-    // -------------------------------------------------- class support methods
+    /** -------------------------------------------------- class support methods. */
 
     private static Document documentFrom( InputSource source ) {
-
         DocumentBuilderFactory  factory = DocumentBuilderFactory.newInstance();
 
         try {
@@ -250,34 +219,31 @@ public final class Xml {
         }
     }
 
-
     private static boolean parseTruth( String truthAsString )
     {
         if ( null !=
-                truthAsString ) switch (truthAsString) {
-            case "yes":
-            case "true":
-                return true;
-            case "no":
-                return false;
-        }
+                truthAsString ) {
+			switch (truthAsString) {
+         case "yes":
+         case "true":
+			return true;
+         case "no":
+			return false;
+      }
+		}
         throw new RuntimeException( "mus be 'yes' or 'no': " + truthAsString );
     }
 
-
-    // ----------------------------------------------------------- constructors
+    /** ----------------------------------------------------------- constructors. */
 
     private Xml() {
     }
 
-
-    // ----------------------------------------------------------- nested types
+    /** ----------------------------------------------------------- nested types. */
 
     public interface Method {
-
-        public void invokeOn( Node xml );
+        void invokeOn( Node xml );
     }
-
 
     /**
      * This class is defined so that exceptions thrown by methods on
@@ -290,11 +256,8 @@ public final class Xml {
      * on the way to declare "throws" clauses.
      */
     public static final class Exception extends RuntimeException {
-
         Exception( Throwable cause ) {
-
             super( cause );
         }
     }
-
 }

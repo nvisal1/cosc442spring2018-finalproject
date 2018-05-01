@@ -30,14 +30,12 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.model.Game;
 
-
 /**
  * The MissionManager keeps track of all missions defined.
  *
  * @see net.sf.freecol.client.gui.action.ActionManager
  */
 public class MissionManager {
-
     private static final Logger logger = Logger.getLogger(MissionManager.class.getName());
 
     private static final Map<String, Constructor<? extends Mission>> missionMap
@@ -51,12 +49,10 @@ public class MissionManager {
                            GoToMission.class.getConstructor(Game.class, FreeColXMLReader.class));
             missionMap.put(ImprovementMission.getXMLElementTagName(),
                            ImprovementMission.class.getConstructor(Game.class, FreeColXMLReader.class));
-
         } catch (NoSuchMethodException e) {
             logger.log(Level.WARNING, "Missing constructor", e);
         }
     }
-
 
     /**
      * Returns true if the given String is a known mission tag.

@@ -19,14 +19,12 @@
 
 package net.sf.freecol.common.model;
 
-
 /**
  * Keeps track of the available game options. New options must be
  * added to the {@link Specification} and each option should be given
  * an unique identifier (defined as a constant in this class).
  */
 public class GameOptions {
-
     /** Map game option group. */
     public static final String GAMEOPTIONS_MAP
         = "gameOptions.map";
@@ -111,7 +109,6 @@ public class GameOptions {
     public static final String EQUIP_EUROPEAN_RECRUITS
         = "model.option.equipEuropeanRecruits";
 
-
     /** Colony game option group. */
     public static final String GAMEOPTIONS_COLONY
         = "gameOptions.colony";
@@ -193,7 +190,6 @@ public class GameOptions {
     //Unused at the moment
     // public static final String HAMMER_PRICE = "hammerPrice";
 
-
     /** Victory conditions game option group. */
     public static final String GAMEOPTIONS_VICTORY_CONDITIONS
         = "gameOptions.victoryConditions";
@@ -218,7 +214,6 @@ public class GameOptions {
      */
     public static final String VICTORY_DEFEAT_HUMANS
         = "model.option.victoryDefeatHumans";
-
 
     /** Years game option group. */
     public static final String GAMEOPTIONS_YEARS
@@ -275,15 +270,13 @@ public class GameOptions {
     public static final String SEASONS
         = "model.option.seasons";
     
-    
-    /**
+        /**
      * Prices game option group.
      * This group is synthesized at game initialization.
      */
     public static final String GAMEOPTIONS_PRICES
         = "gameOptions.prices";
     
-
     // Difficulty options are effectively special multi-valued game options.
 
     /** Immigration (difficulty) group. */
@@ -317,7 +310,6 @@ public class GameOptions {
     /** Predefined initial immigrants. */
     public static final String IMMIGRANTS
         = "model.option.immigrants";
-
 
     /** Native (difficulty) group. */
     public static final String DIFFICULTY_NATIVES
@@ -370,7 +362,6 @@ public class GameOptions {
     public static final String SETTLEMENT_NUMBER
         = "model.option.settlementNumber";
 
-
     /** Monarch (difficulty) group. */
     public static final String DIFFICULTY_MONARCH
         = "model.difficulty.monarch";
@@ -410,7 +401,7 @@ public class GameOptions {
     public static final String INTERVENTION_TURNS
         = "model.option.interventionTurns";
 
-    /** The basic composition of the REF.  "refSize" is a legacy term. */
+    /** The basic composition of the REF. "refSize" is a legacy term. */
     public static final String REF_FORCE
         = "model.option.refSize";
 
@@ -450,7 +441,6 @@ public class GameOptions {
     public static final String VERY_GOOD_GOVERNMENT_LIMIT
         = "model.option.veryGoodGovernmentLimit";
 
-
     /** Other (difficulty) group. */
     public static final String DIFFICULTY_OTHER
         = "model.difficulty.other";
@@ -483,7 +473,6 @@ public class GameOptions {
     public static final String GOOD_RUMOUR
         = "model.option.goodRumour";
 
-
     /** Cheat (difficulty) group. */
     public static final String DIFFICULTY_CHEAT
         = "model.difficulty.cheat";
@@ -502,7 +491,6 @@ public class GameOptions {
         = "model.option.offensiveNavalUnitCheat";
     public static final String TRANSPORT_NAVAL_UNIT_CHEAT
         = "model.option.transportNavalUnitCheat";
-
 
     /**
      * Gets the tag name of the root element representing this object.

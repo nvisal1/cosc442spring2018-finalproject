@@ -20,7 +20,6 @@
 package net.sf.freecol.common.i18n;
 
 public interface Selector {
-
     /**
      * Transform the given string selector into a replacement key for
      * a choice format.
@@ -30,6 +29,5 @@ public interface Selector {
      * the selector (only used for error reporting)
      * @return a <code>String</code> value
      */
-    public String getKey(String selector, String template);
-
+    String getKey(String selector, String template);
 }

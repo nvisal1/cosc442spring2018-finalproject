@@ -96,16 +96,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 /**
  * Handles the network messages that arrives while
  * {@link net.sf.freecol.server.FreeColServer.GameState#IN_GAME in game}.
  */
 public final class InGameInputHandler extends InputHandler
     implements NetworkConstants {
-
     private static final Logger logger = Logger.getLogger(InGameInputHandler.class.getName());
-
 
     /**
      * The constructor to use.
@@ -566,7 +563,9 @@ public final class InGameInputHandler extends InputHandler
                     try {
                         Element reply = InGameInputHandler.this
                             .handle(connection, node);
-                        if (reply != null) results.add(reply);
+                        if (reply != null) {
+							results.add(reply);
+						}
                         logger.log(Level.FINEST, "multiple(" + i + "): " + tag
                                 + " -> " + ((reply == null) ? "null"
                                     : reply.getTagName()));

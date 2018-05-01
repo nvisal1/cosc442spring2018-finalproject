@@ -27,12 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent to equip a unit for a particular role.
- */
+/** The message sent to equip a unit for a particular role. */
 public class EquipForRoleMessage extends DOMMessage {
-
     /** The identifier of the unit to equip. */
     private final String unitId;
 
@@ -41,7 +37,6 @@ public class EquipForRoleMessage extends DOMMessage {
 
     /** The role count. */
     private final String roleCount;
-
 
     /**
      * Create a new <code>EquipForRoleMessage</code> for the supplied
@@ -73,7 +68,6 @@ public class EquipForRoleMessage extends DOMMessage {
         this.roleCount = element.getAttribute("count");
     }
 
-
     /**
      * Handle a "equipForRole"-message.
      *
@@ -94,15 +88,15 @@ public class EquipForRoleMessage extends DOMMessage {
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
         }
-        if (unit.isInEurope()) {
-            ; // Always OK
-        } else if (!unit.hasTile()) {
-            return DOMMessage.clientError("Unit is not on the map: "
-                + unitId);
-        } else if (unit.getSettlement() == null) {
-            return DOMMessage.clientError("Unit is not in a settlement: "
-                + unitId);
-        }
+        if (!unit.isInEurope()) {
+			if (!unit.hasTile()) {
+			    return DOMMessage.clientError("Unit is not on the map: "
+			        + unitId);
+			} else if (unit.getSettlement() == null) {
+			    return DOMMessage.clientError("Unit is not in a settlement: "
+			        + unitId);
+			}
+		}
 
         Role role = game.getSpecification().getRole(roleId);
         if (role == null) {

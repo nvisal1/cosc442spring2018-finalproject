@@ -25,16 +25,11 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * An action for unloading a unit.
- */
+/** An action for unloading a unit. */
 public class UnloadAction extends MapboardAction {
-
     public static final String id = "unloadAction";
 
     private Unit unit = null;
-
 
     /**
      * Creates an action for unloading the currently selected unit.
@@ -60,17 +55,12 @@ public class UnloadAction extends MapboardAction {
         this.unit = unit;
     }
 
-
     private Unit getUnit() {
         return (unit != null) ? unit : getGUI().getActiveUnit();
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         final Unit carrier = getUnit();
@@ -82,15 +72,13 @@ public class UnloadAction extends MapboardAction {
             && player != null && player.owns(carrier);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         Unit carrier = getUnit();
-        if (carrier != null) igc().unload(carrier);
+        if (carrier != null) {
+			igc().unload(carrier);
+		}
     }
 }

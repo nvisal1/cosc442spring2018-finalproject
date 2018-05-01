@@ -32,12 +32,8 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.Role;
 import net.sf.freecol.common.option.UnitTypeOption.TypeSelector;
 
-
-/**
- * Represents an option where the valid choice is an AbstractUnit.
- */
+/** Represents an option where the valid choice is an AbstractUnit. */
 public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
-
     private static final Logger logger = Logger.getLogger(AbstractUnitOption.class.getName());
 
     private static final TypeSelector DEFAULT_SELECTOR = TypeSelector.UNITS;
@@ -53,7 +49,6 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
 
     /** An Option to determine the number of the AbstractUnit. */
     private IntegerOption number = null;
-
 
     /**
      * Creates a new <code>AbstractUnitOption</code>.
@@ -73,7 +68,6 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
     public AbstractUnitOption(String id, Specification specification) {
         super(id, specification);
     }
-
 
     private void requireUnitType() {
         this.unitType = new UnitTypeOption(getId() + ".unitType",
@@ -117,12 +111,8 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
         return number;
     }
 
+    /** Interface Option. */
 
-    // Interface Option
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public AbstractUnitOption clone() {
         final Specification spec = getSpecification();
@@ -133,23 +123,23 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
                 value.getRoleId(), value.getNumber());
             result.setValue(au);
         }
-        if (unitType != null) result.unitType = unitType;
-        if (role != null) result.role = role;
-        if (number != null) result.number = number;
+        if (unitType != null) {
+			result.unitType = unitType;
+		}
+        if (role != null) {
+			result.role = role;
+		}
+        if (number != null) {
+			result.number = number;
+		}
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public AbstractUnit getValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setValue(AbstractUnit value) {
         final Specification spec = getSpecification();
@@ -168,27 +158,20 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
             this.number.setValue(value.getNumber());
         }
 
-        if (isDefined && (((value == null) != (oldValue == null))
+        if (isDefined && ((value == null) != (oldValue == null)
                 || (value != null && !value.equals(oldValue)))) {
             firePropertyChange(VALUE_TAG, oldValue, value);
         }
         isDefined = true;
     }
 
+    /** Override AbstractOption. */
 
-    // Override AbstractOption
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isNullValueOK() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void generateChoices() {
         unitType.generateChoices();
@@ -199,17 +182,12 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
         role.setChoices(roles);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String NUMBER_TAG = "number";
     private static final String ROLE_TAG = "role";
     private static final String UNIT_TYPE_TAG = "unitType";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -221,9 +199,6 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
         unitType.toXML(xw, UNIT_TYPE_TAG);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         super.readChildren(xr);
@@ -237,36 +212,32 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
         setValue(au);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
         final String tag = xr.getLocalName();
 
-        if (null != tag) switch (tag) {
-            case NUMBER_TAG:
-                requireNumber();
-                number.readFromXML(xr);
-                break;
-            case ROLE_TAG:
-                requireRole();
-                role.readFromXML(xr);
-                break;
-            case UNIT_TYPE_TAG:
-                requireUnitType();
-                unitType.readFromXML(xr);
-                break;
-            default:
-                super.readChild(xr);
-                break;
-        }
+        if (null != tag) {
+			switch (tag) {
+			    case NUMBER_TAG:
+			        requireNumber();
+			        number.readFromXML(xr);
+			        break;
+			    case ROLE_TAG:
+			        requireRole();
+			        role.readFromXML(xr);
+			        break;
+			    case UNIT_TYPE_TAG:
+			        requireUnitType();
+			        unitType.readFromXML(xr);
+			        break;
+			    default:
+			        super.readChild(xr);
+			        break;
+			}
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -275,9 +246,6 @@ public class AbstractUnitOption extends AbstractOption<AbstractUnit> {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

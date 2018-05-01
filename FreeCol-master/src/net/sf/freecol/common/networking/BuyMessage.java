@@ -30,12 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when purchasing at an IndianSettlement.
- */
+/** The message sent when purchasing at an IndianSettlement. */
 public class BuyMessage extends DOMMessage {
-
     /** The object identifier of the unit that is buying. */
     private final String unitId;
 
@@ -47,7 +43,6 @@ public class BuyMessage extends DOMMessage {
 
     /** The price to pay. */
     private final String goldString;
-
 
     /**
      * Create a new <code>BuyMessage</code>.
@@ -84,7 +79,6 @@ public class BuyMessage extends DOMMessage {
         this.goldString = element.getAttribute("gold");
     }
 
-
     // Public interface
 
     /**
@@ -99,7 +93,6 @@ public class BuyMessage extends DOMMessage {
             return -1;
         }
     }
-
 
     /**
      * Handle a "buy"-message.
@@ -135,7 +128,9 @@ public class BuyMessage extends DOMMessage {
         }
 
         int gold = getGold();
-        if (gold < 0) return DOMMessage.clientError("Bad gold: " + goldString);
+        if (gold < 0) {
+			return DOMMessage.clientError("Bad gold: " + goldString);
+		}
 
         // Try to buy.
         return server.getInGameController()

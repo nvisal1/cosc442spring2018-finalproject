@@ -23,13 +23,11 @@ import java.awt.Color;
 import java.util.Date;
 import java.util.logging.Logger;
 
-
 /**
  * Represents a message that can be displayed in the GUI.  It has
  * message data and a Color.
  */
 public final class GUIMessage {
-    
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(GUIMessage.class.getName());
     
@@ -37,7 +35,6 @@ public final class GUIMessage {
     private final Color     color;
     private final Date      creationTime;
     
-
     /**
      * The constructor to use.
      *

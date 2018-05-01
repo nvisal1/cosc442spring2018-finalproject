@@ -36,12 +36,8 @@ import net.sf.freecol.common.model.NationSummary;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.StringTemplate;
 
-
-/**
- * This panel displays the Foreign Affairs Report.
- */
+/** This panel displays the Foreign Affairs Report. */
 public final class ReportForeignAffairPanel extends ReportPanel {
-
     /**
      * The constructor that will add the items to this panel.
      *
@@ -80,7 +76,9 @@ public final class ReportForeignAffairPanel extends ReportPanel {
         int n;
         for (Player enemy : getGame().getLiveEuropeanPlayers(null)) {
             NationSummary ns = igc().getNationSummary(enemy);
-            if (ns == null) continue;
+            if (ns == null) {
+				continue;
+			}
 
             JPanel enemyPanel = new MigPanel(new MigLayout("gapy 0",
                                              "[][]20[align right]0[]", ""));

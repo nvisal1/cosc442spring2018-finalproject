@@ -50,17 +50,12 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.TileType;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * This panel is used to show information about a tile.
- */
+/** This panel is used to show information about a tile. */
 public final class TilePanel extends FreeColPanel {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(TilePanel.class.getName());
 
     private static final String COLOPEDIA = "COLOPEDIA";
-
 
     /**
      * Creates a panel describing a tile.
@@ -119,7 +114,7 @@ public final class TilePanel extends FreeColPanel {
         int defenceBonus = tile.getDefenceBonusPercentage();
         if (defenceBonus != 0) {
             add(Utility.localizedLabel("tilePanel.defenseBonus"));
-            add(new JLabel(Integer.toString(defenceBonus) + "%"));
+            add(new JLabel(defenceBonus + "%"));
         }
 
         int movementCost = tile.getType().getBasicMoveCost() / 3;
@@ -172,8 +167,8 @@ public final class TilePanel extends FreeColPanel {
                                 add(label);
                             }
                         } else {
-                            label.setText(String.valueOf(potential) + "/" +
-                                          String.valueOf(expertPotential));
+                            label.setText(potential + "/" +
+                                          expertPotential);
                             label.setToolTipText(Messages.getName(colonist)
                                 + "/" + Messages.getName(expert));
                         }
@@ -212,12 +207,8 @@ public final class TilePanel extends FreeColPanel {
         setSize(getPreferredSize());
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -228,12 +219,8 @@ public final class TilePanel extends FreeColPanel {
         }
     }
 
+    /** Override JPanel. */
 
-    // Override JPanel
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getUIClassID() {
         return "TilePanelUI";

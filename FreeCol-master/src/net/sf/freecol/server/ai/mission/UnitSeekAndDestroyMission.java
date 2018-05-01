@@ -43,12 +43,8 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
-
-/**
- * Mission for attacking a specific target, be it a Unit or a Settlement.
- */
+/** Mission for attacking a specific target, be it a Unit or a Settlement. */
 public class UnitSeekAndDestroyMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(UnitSeekAndDestroyMission.class.getName());
 
     /** The tag for this mission. */
@@ -59,7 +55,6 @@ public class UnitSeekAndDestroyMission extends Mission {
      * either <code>Settlement</code> or a <code>Unit</code>.
      */
     private Location target, transportTarget;
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -91,7 +86,6 @@ public class UnitSeekAndDestroyMission extends Mission {
 
         readFromXML(xr);
     }
-
 
     /**
      * Extract a valid target for this mission from a path.
@@ -155,7 +149,9 @@ public class UnitSeekAndDestroyMission extends Mission {
             // Favour the most hostile settlements
             IndianSettlement is = (IndianSettlement) settlement;
             Tension tension = is.getAlarm(unit.getOwner());
-            if (tension != null) value += tension.getValue() / 2;
+            if (tension != null) {
+				value += tension.getValue() / 2;
+			}
         }
         return aiUnit.getAIOwner().adjustMission(aiUnit, path, 
             UnitSeekAndDestroyMission.class, value);
@@ -180,7 +176,9 @@ public class UnitSeekAndDestroyMission extends Mission {
         final CombatModel combatModel = unit.getGame().getCombatModel();
         final double off = combatModel.getOffencePower(unit, defender);
         final double def = combatModel.getDefencePower(unit, defender);
-        if (tile == null || off <= 0) return Integer.MIN_VALUE;
+        if (tile == null || off <= 0) {
+			return Integer.MIN_VALUE;
+		}
 
         int value = 1020 - turns * 100;
         value += 100 * (off - def);
@@ -192,11 +190,13 @@ public class UnitSeekAndDestroyMission extends Mission {
             .count();
 
         if (defender.isNaval()) {
-            if (tile.isLand()) value += 500; // Easy win
-        } else {
-            if (defender.hasAbility(Ability.EXPERT_SOLDIER)
-                && !defender.isArmed()) value += 100;
-        }
+            if (tile.isLand()) {
+				value += 500;
+			} // Easy win
+        } else if (defender.hasAbility(Ability.EXPERT_SOLDIER)
+		    && !defender.isArmed()) {
+			value += 100;
+		}
         return aiUnit.getAIOwner().adjustMission(aiUnit, path,
             UnitSeekAndDestroyMission.class, value);
     }
@@ -259,7 +259,9 @@ public class UnitSeekAndDestroyMission extends Mission {
      */
     public static PathNode findTargetPath(AIUnit aiUnit, int range,
                                           boolean deferOK) {
-        if (invalidAIUnitReason(aiUnit) != null) return null;
+        if (invalidAIUnitReason(aiUnit) != null) {
+			return null;
+		}
         final Unit unit = aiUnit.getUnit();
         final Location start = unit.getPathStartLocation();
 
@@ -295,9 +297,9 @@ public class UnitSeekAndDestroyMission extends Mission {
         String reason = invalidAIUnitReason(aiUnit);
         return (reason != null)
             ? reason
-            : (!aiUnit.getUnit().isOffensiveUnit())
+            : !aiUnit.getUnit().isOffensiveUnit()
             ? Mission.UNITNOTOFFENSIVE
-            : (aiUnit.getUnit().hasAbility(Ability.SPEAK_WITH_CHIEF))
+            : aiUnit.getUnit().hasAbility(Ability.SPEAK_WITH_CHIEF)
             ? "scouts-should-not-seek-and-destroy"
             : null;
     }
@@ -314,9 +316,11 @@ public class UnitSeekAndDestroyMission extends Mission {
     private static String invalidSettlementReason(AIUnit aiUnit,
                                                   Settlement settlement) {
         String reason = invalidTargetReason(settlement);
-        if (reason != null) return reason;
+        if (reason != null) {
+			return reason;
+		}
         final Unit unit = aiUnit.getUnit();
-        return (unit.isNaval())
+        return unit.isNaval()
             ? "unit-is-naval"
             : (settlement.getOwner() == unit.getOwner())
             ? Mission.TARGETOWNERSHIP
@@ -334,15 +338,17 @@ public class UnitSeekAndDestroyMission extends Mission {
      */
     private static String invalidUnitReason(AIUnit aiUnit, Unit unit) {
         String reason = invalidTargetReason(unit);
-        if (reason != null) return reason;
+        if (reason != null) {
+			return reason;
+		}
         final Tile tile = unit.getTile();
         return (tile == null)
             ? "target-not-on-map"
             : (aiUnit.getUnit().getOwner() == unit.getOwner())
             ? Mission.TARGETOWNERSHIP
-            : (tile.hasSettlement())
+            : tile.hasSettlement()
             ? "target-in-settlement"
-            : (!aiUnit.getUnit().isTileAccessible(tile))
+            : !aiUnit.getUnit().isTileAccessible(tile)
             ? "target-incompatible"
             : invalidAttackReason(aiUnit, unit.getOwner());
     }
@@ -375,39 +381,27 @@ public class UnitSeekAndDestroyMission extends Mission {
             : Mission.TARGETINVALID;
     }
 
-    
-    // Implement Mission
-    //   Inherit dispose, isOneTime
+        /** Implement Mission Inherit dispose, isOneTime. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getBaseTransportPriority() {
         return NORMAL_TRANSPORT_PRIORITY - 5;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTransportDestination() {
-        if (!isValid()) return null;
+        if (!isValid()) {
+			return null;
+		}
         Location loc = (transportTarget != null) ? transportTarget : target;
-        return (getUnit().shouldTakeTransportTo(loc)) ? loc : null;
+        return getUnit().shouldTakeTransportTo(loc) ? loc : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTarget() {
         return target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {
         if (target == null
@@ -416,14 +410,14 @@ public class UnitSeekAndDestroyMission extends Mission {
             Unit unit = getUnit();
             transportTarget = null;
             if (unit.shouldTakeTransportTo(target)
-                && (target instanceof Settlement)) {
+                && target instanceof Settlement) {
                 Settlement settlement = (Settlement)target;
                 if (settlement.isConnectedPort()) {
                     transportTarget = settlement.getTile()
                         .getBestDisembarkTile(unit.getOwner());
                     logger.finest(tag + " chose dropoff " + transportTarget
                         + " for attack on "
-                        + ((settlement.canBombardEnemyShip()) ? "hazardous"
+                        + (settlement.canBombardEnemyShip() ? "hazardous"
                             : "normal")
                         + " settlement " + settlement.getName()
                         + ": " + this);
@@ -432,25 +426,16 @@ public class UnitSeekAndDestroyMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return findTarget(getAIUnit(), 4, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return invalidReason(getAIUnit(), getTarget());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
@@ -474,7 +459,7 @@ public class UnitSeekAndDestroyMission extends Mission {
 
         // Is there a target-of-opportunity?
         final Unit unit = getUnit();
-        Location nearbyTarget = (unit.isOnCarrier()) ? null
+        Location nearbyTarget = unit.isOnCarrier() ? null
             : findTarget(aiUnit, 1, false);
         if (nearbyTarget != null) {
             if (getTarget() == null) {
@@ -488,8 +473,8 @@ public class UnitSeekAndDestroyMission extends Mission {
                 Tile nearbyTile = nearbyTarget.getTile();
                 Tile targetTile = getTarget().getTile();
                 if (now != null && nearbyTile != null && targetTile != null
-                    && (now.getDistanceTo(nearbyTile)
-                        >= now.getDistanceTo(targetTile))) {
+                    && now.getDistanceTo(nearbyTile)
+                        >= now.getDistanceTo(targetTile)) {
                     nearbyTarget = null;
                 } else {
                     lb.add(", found target of opportunity ", nearbyTarget);
@@ -532,15 +517,10 @@ public class UnitSeekAndDestroyMission extends Mission {
         }
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String TARGET_TAG = "target";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -550,9 +530,6 @@ public class UnitSeekAndDestroyMission extends Mission {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -560,9 +537,6 @@ public class UnitSeekAndDestroyMission extends Mission {
         target = xr.getLocationAttribute(getGame(), TARGET_TAG, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

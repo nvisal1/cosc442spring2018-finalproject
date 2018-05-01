@@ -26,27 +26,16 @@ import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.server.control.ChangeSet;
 
-
-/**
- * A type of session to handle looting of cargo.
- */
+/** A type of session to handle looting of cargo. */
 public class LootSession extends TransactionSession {
-
     private static final Logger logger = Logger.getLogger(LootSession.class.getName());
 
     /** The goods that are available to be captured. */
     private final List<Goods> capture;
 
-
     public LootSession(Unit winner, Unit loser, List<Goods> capture) {
         super(makeSessionKey(LootSession.class, winner, loser));
         this.capture = capture;
-    }
-
-
-    @Override
-    public void complete(ChangeSet cs) {
-        super.complete(cs);
     }
 
     public List<Goods> getCapture() {

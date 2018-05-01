@@ -28,18 +28,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when setting goods levels.
- */
+/** The message sent when setting goods levels. */
 public class SetGoodsLevelsMessage extends DOMMessage {
-
     /** The identifier of the colony where the goods levels are set. */
     private final String colonyId;
 
     /** The new ExportData. */
     private final ExportData data;
-
 
     /**
      * Create a new <code>SetGoodsLevelsMessage</code> with the
@@ -68,7 +63,6 @@ public class SetGoodsLevelsMessage extends DOMMessage {
         colonyId = element.getAttribute("colony");
         data = new ExportData((Element)element.getChildNodes().item(0));
     }
-
 
     /**
      * Handle a "setGoodsLevels"-message.

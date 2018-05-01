@@ -17,31 +17,26 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.model;
 
-
-/**
- * Interface for classes which listen to transactions in market
- */
+/** Interface for classes which listen to transactions in market. */
 public interface TransactionListener {
-
     /**
-     * Logs a purchase
+     * Logs a purchase.
      *
      * @param goodsType The type of goods which have been purchased
      * @param amount The amount of goods which have been purchased
      * @param price The unit price of the goods
      */
-    public void logPurchase(GoodsType goodsType, int amount, int price);
+    void logPurchase(GoodsType goodsType, int amount, int price);
 
     /**
-     * Logs a sale
+     * Logs a sale.
      *
      * @param goodsType The type of goods which have been sold
      * @param amount The amount of goods which have been sold
      * @param price The unit price of the goods
      * @param tax The tax which has been applied
      */
-    public void logSale(GoodsType goodsType, int amount, int price, int tax);
+    void logSale(GoodsType goodsType, int amount, int price, int tax);
 }

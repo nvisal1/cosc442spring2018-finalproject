@@ -29,50 +29,37 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.io.FreeColModFile;
 import net.sf.freecol.common.option.ModOption;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.ModOption} in order to enable
  * values to be both seen and changed.
  */
 public final class ModOptionUI extends OptionUI<ModOption>  {
-
-
     private static class BoxRenderer
         extends FreeColComboBoxRenderer<FreeColModFile> {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void setLabelValues(JLabel label, FreeColModFile value) {
             if (value != null) {
-                ModOptionUI.labelModFile(label, value);
+                labelModFile(label, value);
             }
         }
     }
 
     private static class ModOptionRenderer
         extends FreeColComboBoxRenderer<ModOption> {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void setLabelValues(JLabel label, ModOption value) {
             FreeColModFile modFile = value.getValue();
-            if (modFile == null) {
-                label.setText(value.toString());
+            if (modFile != null) {
+                labelModFile(label, modFile);
             } else {
-                ModOptionUI.labelModFile(label, modFile);
+                label.setText(value.toString());
             }
         }
     }
 
-
     /** The selection box for the various mod files. */
     private final JComboBox<FreeColModFile> box;
-
 
     /**
      * Creates a new <code>ModOptionUI</code> for the given
@@ -98,7 +85,6 @@ public final class ModOptionUI extends OptionUI<ModOption>  {
         initialize();
     }
 
-
     /**
      * Add information from a mod file to a label.
      *
@@ -113,36 +99,23 @@ public final class ModOptionUI extends OptionUI<ModOption>  {
         }
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ListCellRenderer getListCellRenderer() {
         return new ModOptionRenderer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue((FreeColModFile)this.box.getSelectedItem());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JComboBox getComponent() {
         return this.box;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         this.box.setSelectedItem(getOption().getValue());

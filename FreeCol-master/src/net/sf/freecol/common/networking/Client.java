@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.common.networking;
 
 import java.io.IOException;
@@ -28,12 +27,8 @@ import net.sf.freecol.common.FreeColException;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The client connection to a server.
- */
+/** The client connection to a server. */
 public final class Client {
-
     private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     /**
@@ -47,7 +42,6 @@ public final class Client {
 
     /** The port to connect to. */
     private final int port;
-
 
     /**
      * Creates a new <code>Client</code>.
@@ -65,7 +59,6 @@ public final class Client {
         this.port = port;
         c = new Connection(host, port, handler, name);
     }
-
 
     /**
      * Gets the host used by the connection.
@@ -110,13 +103,10 @@ public final class Client {
         c.setMessageHandler(mh);
     }
 
-    /**
-     * Disconnects this client from the server.
-     */
+    /** Disconnects this client from the server. */
     public void disconnect() {
         c.close();
     }
-
 
     /**
      * Sends the specified message to the server.

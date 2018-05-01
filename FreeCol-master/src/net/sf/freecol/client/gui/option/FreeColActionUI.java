@@ -40,21 +40,18 @@ import javax.swing.Timer;
 import net.sf.freecol.client.gui.action.FreeColAction;
 import net.sf.freecol.client.gui.panel.Utility;
 
-
 /**
  * User interface for displaying/changing a keyboard accelerator for a
  * <code>FreeColAction</code>.
  */
 public final class FreeColActionUI extends OptionUI<FreeColAction>
     implements ActionListener {
-
     private OptionGroupUI optionGroupUI;
     private KeyStroke keyStroke;
     private final JButton recordButton;
     private final JButton removeButton;
     private final BlinkingLabel bl;
     private final JPanel panel = new JPanel();
-
 
     /**
      * Creates a new <code>FreeColActionUI</code> for the
@@ -102,7 +99,6 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
         return new ImageIcon(bi);
     }
 
-
     /**
     * Creates an icon to be used on the button that removes a keyboard accelerator.
     * @return The <code>ImageIcon</code>.
@@ -110,7 +106,7 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
     public static ImageIcon getRemoveImage() {
         BufferedImage bi = new BufferedImage(9, 9, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bi.createGraphics();
-        /*g.fillRect(0, 0, 9, 9);*/
+        /* g.fillRect(0, 0, 9, 9); */
         g.setColor(Color.BLACK);
         g.drawLine(1, 0, 8, 7);
         g.drawLine(0, 1, 7, 8);
@@ -135,10 +131,11 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
         }
 
         String s = KeyEvent.getKeyModifiersText(keyStroke.getModifiers());
-        if (!s.isEmpty()) s += "+";
+        if (!s.isEmpty()) {
+			s += "+";
+		}
         return s + KeyEvent.getKeyText(keyStroke.getKeyCode());
     }
-
 
     /**
     * Removes the given <code>KeyStroke</code>. That is:
@@ -161,12 +158,8 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
         this.optionGroupUI = ui;
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == recordButton) {
@@ -179,14 +172,10 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
         }
     }
 
-
-    /**
-     * Label for displaying a <code>KeyStroke</code>.
-     */
+    /** Label for displaying a <code>KeyStroke</code>. */
     class BlinkingLabel extends JLabel implements ActionListener, KeyListener, MouseListener {
-
         private final Timer blinkingTimer = new Timer(500, this);
-        private boolean blinkOn = false;
+        private boolean blinkOn;
 
         BlinkingLabel() {
             super(getHumanKeyStrokeText(keyStroke), JLabel.CENTER);
@@ -205,7 +194,6 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
             }
         }
 
-
         @Override
         public void mouseEntered(MouseEvent e) { /* No such event */ }
         @Override
@@ -214,7 +202,6 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
         public void mousePressed(MouseEvent e) { /* No such event */ }
         @Override
         public void mouseReleased(MouseEvent e) { /* No such event */ }
-
 
         @Override
         public Dimension getMinimumSize() {
@@ -226,11 +213,9 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
             return getMinimumSize();
         }
 
-
         public void startBlinking() {
             blinkingTimer.start();
         }
-
 
         public void stopBlinking() {
             blinkingTimer.stop();
@@ -257,51 +242,38 @@ public final class FreeColActionUI extends OptionUI<FreeColAction>
             recordButton.requestFocus();
         }
 
+        /** Interface ActionListener. */
 
-        // Interface ActionListener
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void actionPerformed(ActionEvent ae) {
-            if (!hasFocus()) stopBlinking();
+            if (!hasFocus()) {
+				stopBlinking();
+			}
 
             if (blinkOn) {
                 setOpaque(false);
                 blinkOn = false;
-                repaint();
             } else {
                 setOpaque(true);
                 setBackground(Color.RED);
                 blinkOn = true;
-                repaint();
             }
+			repaint();
         }
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JPanel getComponent() {
         return panel;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setAccelerator(keyStroke);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         keyStroke = getOption().getAccelerator();

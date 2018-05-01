@@ -29,22 +29,16 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
 /**
  * Represents one of the European nations present in the game,
  * i.e. both REFs and possible human players.
  */
 public class EuropeanNationType extends NationType {
-
     /** Whether this is an REF Nation. */
-    private boolean ref = false;
+    private boolean ref;
 
-    /**
-     * Stores the starting units of this Nation at various
-     * difficulties.
-     */
+    /** Stores the starting units of this Nation at various difficulties. */
     private final Map<String, Map<String, AbstractUnit>> startingUnitMap = new HashMap<>();
-
 
     /**
      * Create a new European nation type.
@@ -55,7 +49,6 @@ public class EuropeanNationType extends NationType {
     public EuropeanNationType(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Is this a REF nation type?
@@ -125,7 +118,7 @@ public class EuropeanNationType extends NationType {
      * @param expert Is this an expert unit?
      */
     private void addStartingUnit(String id, AbstractUnit unit, boolean expert) {
-        String exTag = (expert) ? Boolean.TRUE.toString() : null;
+        String exTag = expert ? Boolean.TRUE.toString() : null;
         Map<String, AbstractUnit> units = startingUnitMap.get(exTag);
         if (units == null) {
             units = new HashMap<>();
@@ -134,8 +127,7 @@ public class EuropeanNationType extends NationType {
         units.put(id, unit);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String EXPERT_STARTING_UNITS_TAG = "expert-starting-units";
     private static final String REF_TAG = "ref";
@@ -143,10 +135,6 @@ public class EuropeanNationType extends NationType {
     private static final String TYPE_TAG = "type";
     private static final String UNIT_TAG = "unit";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -154,23 +142,21 @@ public class EuropeanNationType extends NationType {
         xw.writeAttribute(REF_TAG, ref);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
         if (startingUnitMap != null && !startingUnitMap.isEmpty()) {
-            Map<String, AbstractUnit> map;
+            Map<String, AbstractUnit> map = startingUnitMap.get(null);
             // default map
-            if ((map = startingUnitMap.get(null)) != null) {
+            if (map != null) {
                 for (Map.Entry<String, AbstractUnit> entry : map.entrySet()) {
                     writeUnit(xw, entry.getKey(), entry.getValue(), false);
                 }
             }
-            // expert map
-            if ((map = startingUnitMap.get(Boolean.TRUE.toString())) != null) {
+            map = startingUnitMap.get(Boolean.TRUE.toString());
+			// expert map
+            if (map != null) {
                 for (Map.Entry<String, AbstractUnit> entry : map.entrySet()) {
                     writeUnit(xw, entry.getKey(), entry.getValue(), true);
                 }
@@ -191,14 +177,13 @@ public class EuropeanNationType extends NationType {
 
         //xw.writeAttribute("number", unit.getNumber());
 
-        if (expert) xw.writeAttribute(EXPERT_STARTING_UNITS_TAG, expert);
+        if (expert) {
+			xw.writeAttribute(EXPERT_STARTING_UNITS_TAG, expert);
+		}
 
         xw.writeEndElement();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -211,9 +196,6 @@ public class EuropeanNationType extends NationType {
         ref = xr.getAttribute(REF_TAG, parent.ref);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -234,9 +216,6 @@ public class EuropeanNationType extends NationType {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
@@ -257,15 +236,11 @@ public class EuropeanNationType extends NationType {
 
             addStartingUnit(id, new AbstractUnit(type, roleId, 1), ex);
             xr.closeTag(UNIT_TAG);
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -24,15 +24,12 @@ import java.util.logging.Logger;
 import net.sf.freecol.server.FreeColServer;
 import net.sf.freecol.server.networking.Server;
 
-
 /**
  * The control object that is responsible for making changes to the internal
  * model and for communicating with the clients.
  */
 public abstract class Controller extends FreeColServerHolder {
-
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
-
 
     /**
      * The constructor to use.
@@ -43,10 +40,7 @@ public abstract class Controller extends FreeColServerHolder {
         super(freeColServer);
     }
 
-
-    /**
-     * Shut down the server (which sends a message to each client).
-     */
+    /** Shut down the server (which sends a message to each client). */
     public void shutdown() {
         Server server = getFreeColServer().getServer();
         if (server != null) {

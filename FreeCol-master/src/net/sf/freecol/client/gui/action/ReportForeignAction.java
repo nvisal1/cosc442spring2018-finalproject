@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action to show the Foreign Affairs report.
- */
+/** An action to show the Foreign Affairs report. */
 public class ReportForeignAction extends FreeColAction {
-
     public static final String id = "reportForeignAction";
-
 
     /**
      * Creates this action.
@@ -41,12 +36,8 @@ public class ReportForeignAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showReportForeignAffairPanel();

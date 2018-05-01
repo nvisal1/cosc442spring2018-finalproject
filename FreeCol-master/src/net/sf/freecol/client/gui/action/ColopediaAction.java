@@ -25,16 +25,12 @@ import java.awt.event.KeyEvent;
 import net.sf.freecol.client.FreeColClient;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
-/**
- * Displays a section of the Colopedia.
- */
+/** Displays a section of the Colopedia. */
 public class ColopediaAction extends FreeColAction {
-
     public static final String id = "colopediaAction.";
 
-    // Order of elements will influence ingame order of menu items.
-    public static enum PanelType {
+    /** Order of elements will influence ingame order of menu items. */
+    public enum PanelType {
         TERRAIN, RESOURCES, GOODS, UNITS,
         BUILDINGS, FATHERS, NATIONS,
         NATION_TYPES, CONCEPTS;
@@ -56,7 +52,6 @@ public class ColopediaAction extends FreeColAction {
         KeyEvent.VK_C
     };
 
-
     /**
      * Creates this action.
      *
@@ -69,12 +64,8 @@ public class ColopediaAction extends FreeColAction {
         setMnemonic(mnemonics[panelType.ordinal()]);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showColopediaPanel(getId());

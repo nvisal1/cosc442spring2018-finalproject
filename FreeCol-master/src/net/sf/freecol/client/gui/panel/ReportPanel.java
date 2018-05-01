@@ -43,12 +43,8 @@ import net.sf.freecol.common.model.Map;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * This panel displays a report.
- */
+/** This panel displays a report. */
 public class ReportPanel extends FreeColPanel {
-
     protected static final Logger logger = Logger.getLogger(ReportPanel.class.getName());
 
     protected final JPanel reportPanel;
@@ -56,7 +52,6 @@ public class ReportPanel extends FreeColPanel {
     protected final JLabel header;
 
     protected JScrollPane scrollPane;
-
 
     /**
      * Creates the basic FreeCol report panel.
@@ -86,10 +81,7 @@ public class ReportPanel extends FreeColPanel {
         getGUI().restoreSavedSize(this, 200 + (int)(scale*850), 200 + (int)(scale*525));
     }
 
-
-    /**
-     * Prepares this panel to be displayed.
-     */
+    /** Prepares this panel to be displayed. */
     public void initialize() {
         reportPanel.removeAll();
         reportPanel.doLayout();
@@ -104,7 +96,7 @@ public class ReportPanel extends FreeColPanel {
         String roleId = au.getRoleId();
         int count = au.getNumber();
         ImageIcon unitIcon = new ImageIcon(getImageLibrary().getSmallUnitImage(
-            unitType, roleId, (count == 0)));
+            unitType, roleId, count == 0));
         JLabel unitLabel = new JLabel(unitIcon);
         unitLabel.setText(String.valueOf(count));
         if (count == 0) {
@@ -130,12 +122,8 @@ public class ReportPanel extends FreeColPanel {
         add(main, "cell 0 1, height 100%, width 100%");
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();
@@ -151,11 +139,8 @@ public class ReportPanel extends FreeColPanel {
         }
     }
 
-    // Override Component
+    /** Override Component. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

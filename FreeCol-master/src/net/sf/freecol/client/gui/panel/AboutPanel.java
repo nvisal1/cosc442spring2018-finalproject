@@ -40,7 +40,6 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.FontLibrary;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * This is the About panel
  *  
@@ -67,10 +66,8 @@ import net.sf.freecol.common.resources.ResourceManager;
  * | ---------------|
  * | okButton       |
  * | ---------------|
- * 
  */
 public final class AboutPanel extends FreeColPanel {
-
     private static final Logger logger = Logger.getLogger(AboutPanel.class.getName());
 
     public static final String SITE_URL
@@ -79,7 +76,6 @@ public final class AboutPanel extends FreeColPanel {
         = "http://sourceforge.net/projects/freecol/";
     private static final String MANUAL_URL
         = "http://www.freecol.org/documentation/freecol-user-manual.html";
-
 
     /**
      * The constructor that will add the items to this panel.
@@ -155,11 +151,8 @@ public final class AboutPanel extends FreeColPanel {
         add(okButton, "newline 20, tag ok");
     }
 
-    // Interface ActionListener
+    /** Interface ActionListener. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String url = ae.getActionCommand();

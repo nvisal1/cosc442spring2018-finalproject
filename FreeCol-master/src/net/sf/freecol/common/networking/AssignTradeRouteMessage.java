@@ -27,18 +27,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when assigning a trade route to a unit.
- */
+/** The message sent when assigning a trade route to a unit. */
 public class AssignTradeRouteMessage extends DOMMessage {
-
     /** The identifier of the unit. */
     private final String unitId;
 
     /** The identifier of the trade route. */
     private final String tradeRouteId;
-
 
     /**
      * Create a new <code>AssignTradeRouteMessage</code> with the
@@ -65,11 +60,10 @@ public class AssignTradeRouteMessage extends DOMMessage {
         super(getXMLElementTagName());
 
         this.unitId = element.getAttribute("unit");
-        this.tradeRouteId = (element.hasAttribute("tradeRoute"))
+        this.tradeRouteId = element.hasAttribute("tradeRoute")
             ? element.getAttribute("tradeRoute")
             : null;
     }
-
 
     /**
      * Handle a "assignTradeRoute"-message.

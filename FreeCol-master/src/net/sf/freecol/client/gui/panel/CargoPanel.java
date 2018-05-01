@@ -35,21 +35,18 @@ import net.sf.freecol.common.model.Unit;
 
 import net.miginfocom.swing.MigLayout;
 
-
 /**
  * A panel that holds units and goods that represent Units and cargo
  * that are on board the currently selected ship.
  */
 public class CargoPanel extends FreeColPanel
     implements DropTarget, PropertyChangeListener {
-
     private static final Logger logger = Logger.getLogger(CargoPanel.class.getName());
 
     /** The carrier that contains cargo. */
     private Unit carrier;
 
     private DefaultTransferHandler defaultTransferHandler = null;
-
 
     /**
      * Creates this CargoPanel.
@@ -64,21 +61,18 @@ public class CargoPanel extends FreeColPanel
         this.defaultTransferHandler
             = new DefaultTransferHandler(getFreeColClient(), this);
 
-        if (withTitle) setBorder(Utility.localizedBorder("cargoOnCarrier"));
+        if (withTitle) {
+			setBorder(Utility.localizedBorder("cargoOnCarrier"));
+		}
     }
 
-
-    /**
-     * Initialize this CargoPanel.
-     */
+    /** Initialize this CargoPanel. */
     public void initialize() {
         addPropertyChangeListeners();
         update();
     }
 
-    /**
-     * Clean up this CargoPanel.
-     */
+    /** Clean up this CargoPanel. */
     public void cleanup() {
         removePropertyChangeListeners();
     }
@@ -97,9 +91,7 @@ public class CargoPanel extends FreeColPanel
         }
     }
 
-    /**
-     * Update this CargoPanel.
-     */
+    /** Update this CargoPanel. */
     public void update() {
         removeAll();
 
@@ -134,7 +126,6 @@ public class CargoPanel extends FreeColPanel
         repaint();
     }
 
-
     /**
      * Whether this panel is active.
      *
@@ -166,9 +157,7 @@ public class CargoPanel extends FreeColPanel
         }
     }
 
-    /**
-     * Update the title of this CargoPanel.
-     */
+    /** Update the title of this CargoPanel. */
     private void updateTitle() {
         Utility.localizeBorder(this, (carrier == null)
             ? StringTemplate.key("cargoOnCarrier")
@@ -178,34 +167,31 @@ public class CargoPanel extends FreeColPanel
                 .addAmount("%space%", carrier.getSpaceLeft()));
     }
 
-
     // Interface DropTarget
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean accepts(Unit unit) {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean accepts(Goods goods) {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Component add(Component comp, boolean editState) {
-        if (carrier == null) return null;
+        if (carrier == null) {
+			return null;
+		}
 
         if (editState) {
             if (comp instanceof GoodsLabel) {
                 Goods goods = ((GoodsLabel)comp).getGoods();
                 int loadableAmount = carrier.getLoadableAmount(goods.getType());
-                if (loadableAmount == 0) return null;
+                if (loadableAmount == 0) {
+					return null;
+				}
                 if (loadableAmount > goods.getAmount()) {
                     loadableAmount = goods.getAmount();
                 }
@@ -215,7 +201,6 @@ public class CargoPanel extends FreeColPanel
                 igc().loadCargo(toAdd, carrier);
                 update();
                 return comp;
-
             } else if (comp instanceof MarketLabel) {
                 MarketLabel label = (MarketLabel)comp;
                 Player player = carrier.getOwner();
@@ -227,14 +212,15 @@ public class CargoPanel extends FreeColPanel
                 igc().nextModelMessage();
                 update();
                 return comp;
-
             } else if (comp instanceof UnitLabel) {
                 Unit unit = ((UnitLabel)comp).getUnit();
                 if (carrier.canAdd(unit)) {
                     Container oldParent = comp.getParent();
                     if (igc().boardShip(unit, carrier)) {
                         ((UnitLabel) comp).setSmall(false);
-                        if (oldParent != null) oldParent.remove(comp);
+                        if (oldParent != null) {
+							oldParent.remove(comp);
+						}
                         update();
                         return comp;
                     }
@@ -246,15 +232,12 @@ public class CargoPanel extends FreeColPanel
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int suggested(GoodsType type) {
         return carrier.getLoadableAmount(type);
     }
 
-
-    // Interface PropertyChangeListener
+    /** Interface PropertyChangeListener. */
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
@@ -264,23 +247,15 @@ public class CargoPanel extends FreeColPanel
         update();
     }
 
+    /** Override JLabel. */
 
-    // Override JLabel
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getUIClassID() {
         return "CargoPanelUI";
     }
 
+    /** Override Container. */
 
-    // Override Container
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void remove(Component comp) {
         if (comp instanceof UnitLabel) {
@@ -294,12 +269,8 @@ public class CargoPanel extends FreeColPanel
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

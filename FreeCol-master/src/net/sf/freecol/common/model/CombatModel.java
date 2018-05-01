@@ -24,48 +24,41 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-
-/**
- * A abstract requirements for a FreeCol combat model.
- */
+/** A abstract requirements for a FreeCol combat model. */
 public abstract class CombatModel {
-
-    public static enum CombatResult {
-        // Special results that set the sense of the result.
+    public enum CombatResult {
+        /** Special results that set the sense of the result. */
         NO_RESULT,
         LOSE,
         WIN,
-        // Specific actions
-        AUTOEQUIP_UNIT,       // Defending unit auto-arms
-        BURN_MISSIONS,        // Defending natives burn attackers missions
-        CAPTURE_AUTOEQUIP,    // Winner captures loser auto-equipment
-        CAPTURE_COLONY,       // Winning Europeans capture a colony
-        CAPTURE_CONVERT,      // Winning Europeans cause native to convert
-        CAPTURE_EQUIP,        // Winner captures loser equipment
-        CAPTURE_UNIT,         // Losing unit is captured
-        DAMAGE_COLONY_SHIPS,  // Ships in losing colony are damaged
-        DAMAGE_SHIP_ATTACK,   // Losing ship is damaged by normal attack
-        DAMAGE_SHIP_BOMBARD,  // Losing ship is damaged by bombardment
-        DEMOTE_UNIT,          // Losing unit is demoted
-        DESTROY_COLONY,       // Winning natives burn a colony
-        DESTROY_SETTLEMENT,   // Winner destroys a native settlement
-        EVADE_ATTACK,         // Defending ship evades normal attack
-        EVADE_BOMBARD,        // Defending ship evades bombardment
-        LOOT_SHIP,            // Losing ship is looted
-        LOSE_AUTOEQUIP,       // Losing unit auto-arms and loses the arms
-        LOSE_EQUIP,           // Losing unit loses some equipment
-        PILLAGE_COLONY,       // Winning natives pillage an undefended colony
-        PROMOTE_UNIT,         // Winning unit is promoted
-        SINK_COLONY_SHIPS,    // Ships in losing colony are sunk
-        SINK_SHIP_ATTACK,     // Losing ship is sunk by normal attack
-        SINK_SHIP_BOMBARD,    // Losing ship is sunk by bombardment
+        /** Specific actions. */
+        AUTOEQUIP_UNIT,       /** Defending unit auto-arms. */
+        BURN_MISSIONS,        /** Defending natives burn attackers missions. */
+        CAPTURE_AUTOEQUIP,    /** Winner captures loser auto-equipment. */
+        CAPTURE_COLONY,       /** Winning Europeans capture a colony. */
+        CAPTURE_CONVERT,      /** Winning Europeans cause native to convert. */
+        CAPTURE_EQUIP,        /** Winner captures loser equipment. */
+        CAPTURE_UNIT,         /** Losing unit is captured. */
+        DAMAGE_COLONY_SHIPS,  /** Ships in losing colony are damaged. */
+        DAMAGE_SHIP_ATTACK,   /** Losing ship is damaged by normal attack. */
+        DAMAGE_SHIP_BOMBARD,  /** Losing ship is damaged by bombardment. */
+        DEMOTE_UNIT,          /** Losing unit is demoted. */
+        DESTROY_COLONY,       /** Winning natives burn a colony. */
+        DESTROY_SETTLEMENT,   /** Winner destroys a native settlement. */
+        EVADE_ATTACK,         /** Defending ship evades normal attack. */
+        EVADE_BOMBARD,        /** Defending ship evades bombardment. */
+        LOOT_SHIP,            /** Losing ship is looted. */
+        LOSE_AUTOEQUIP,       /** Losing unit auto-arms and loses the arms. */
+        LOSE_EQUIP,           /** Losing unit loses some equipment. */
+        PILLAGE_COLONY,       /** Winning natives pillage an undefended colony. */
+        PROMOTE_UNIT,         /** Winning unit is promoted. */
+        SINK_COLONY_SHIPS,    /** Ships in losing colony are sunk. */
+        SINK_SHIP_ATTACK,     /** Losing ship is sunk by normal attack. */
+        SINK_SHIP_BOMBARD,    /** Losing ship is sunk by bombardment. */
         SLAUGHTER_UNIT,       // Losing unit is slaughtered
     }
 
-
-    /**
-     * Odds a particular outcome will occur in combat.
-     */
+    /** Odds a particular outcome will occur in combat. */
     public static class CombatOdds {
         public static final double UNKNOWN_ODDS = -1.0;
 
@@ -75,13 +68,6 @@ public abstract class CombatModel {
             this.win = win;
         }
     }
-
-
-    /**
-     * Empty constructor is sufficient.
-     */
-    public CombatModel() {}
-
 
     /**
      * Is this just a measurement of offence power?

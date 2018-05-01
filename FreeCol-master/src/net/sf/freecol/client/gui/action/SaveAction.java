@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for saving the game.
- */
+/** An action for saving the game. */
 public class SaveAction extends FreeColAction {
-
     public static final String id = "saveAction";
-
 
     /**
      * Creates a new <code>SaveAction</code>.
@@ -41,27 +36,15 @@ public class SaveAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
-        if (freeColClient.isMapEditor()) return true;
-
-        // In game
-        if (!freeColClient.canSaveCurrentGame()) return false;
-        return !getGUI().isShowingSubPanel();
+        return freeColClient.isMapEditor() || (freeColClient.canSaveCurrentGame() && !getGUI().isShowingSubPanel());
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (!freeColClient.isMapEditor()) {

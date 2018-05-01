@@ -58,7 +58,6 @@ import net.sf.freecol.common.util.Utils;
 
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
 /**
  * TileViewer is a private helper class of MapViewer and SwingGUI.
  * 
@@ -66,12 +65,9 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * for MapViewer and some GUI-panels.
  */
 public final class TileViewer {
-
     private static final Logger logger = Logger.getLogger(TileViewer.class.getName());
 
-
     private static class SortableImage implements Comparable<SortableImage> {
-
         public final BufferedImage image;
         public final int index;
 
@@ -80,29 +76,23 @@ public final class TileViewer {
             this.index = index;
         }
 
-        // Implement Comparable<SortableImage>
+        /** Implement Comparable<SortableImage>. */
 
         @Override
         public int compareTo(SortableImage other) {
             return other.index - this.index;
         }
 
-        // Override Object
+        /** Override Object. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean equals(Object other) {
             if (other instanceof SortableImage) {
-                return this.compareTo((SortableImage)other) == 0;
+                return compareTo((SortableImage)other) == 0;
             }
             return super.equals(other);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int hashCode() {
             int hash = super.hashCode();
@@ -117,15 +107,14 @@ public final class TileViewer {
 
     private RoadPainter rp;
 
-    // Helper variables for displaying.
+    /** Helper variables for displaying. */
     private int tileHeight, tileWidth, halfHeight, halfWidth;
 
-    // The height offset to paint at (in pixels).
+    /** The height offset to paint at (in pixels). */
     static final int STATE_OFFSET_X = 25,
                      STATE_OFFSET_Y = 10;
 
     private final GeneralPath fog = new GeneralPath();
-
 
     /**
      * The constructor to use.
@@ -137,7 +126,6 @@ public final class TileViewer {
 
         setImageLibraryAndUpdateData(new ImageLibrary());
     }
-
 
     /**
      * Gets the contained <code>ImageLibrary</code>.
@@ -160,7 +148,7 @@ public final class TileViewer {
         Dimension size2 = new Dimension(
             (size.width > 0) ? size.width
                              : (2*ImageLibrary.TILE_SIZE.width*size.height +
-                                   (ImageLibrary.TILE_OVERLAY_SIZE.height+1)) /
+                                   ImageLibrary.TILE_OVERLAY_SIZE.height+1) /
                                (2*ImageLibrary.TILE_OVERLAY_SIZE.height),
             -1);
         BufferedImage terrainImage = ImageLibrary.getTerrainImage(
@@ -204,8 +192,9 @@ public final class TileViewer {
      * @return The image.
      */
     BufferedImage createTileImageWithBeachBorderAndItems(Tile tile) {
-        if (!tile.isExplored())
-            return lib.getTerrainImage(null, tile.getX(), tile.getY());
+        if (!tile.isExplored()) {
+			return lib.getTerrainImage(null, tile.getX(), tile.getY());
+		}
         final TileType tileType = tile.getType();
         Dimension terrainTileSize = lib.tileSize;
         BufferedImage overlayImage = lib.getOverlayImage(tile);
@@ -415,8 +404,9 @@ public final class TileViewer {
      */
     void displayLargeCenteredImage(Graphics2D g, BufferedImage image) {
         int y = tileHeight - image.getHeight();
-        if(y > 0)
-            y /= 2;
+        if(y > 0) {
+			y /= 2;
+		}
         g.drawImage(image, (tileWidth - image.getWidth())/2, y, null);
     }
 
@@ -471,17 +461,15 @@ public final class TileViewer {
                                         -1);
                                     imageBorders.add(si);
                                 }
-                            } else if (!tile.isLand() || borderingTile.isLand()) {
-                                if (borderingTileType.getIndex() < tileType.getIndex() &&
-                                        !lib.getTerrainImage(tileType, 0, 0).equals(lib.getTerrainImage(borderingTileType, 0, 0))) {
-                                    // Draw land terrain with bordering land type, or ocean/high seas limit,
-                                    // if the tiles do not share same graphics (ocean & great river)
-                                    si = new SortableImage(
-                                            lib.getBorderImage(borderingTileType, direction, x, y),
-                                            borderingTileType.getIndex());
-                                    imageBorders.add(si);
-                                }
-                            }
+                            } else if ((!tile.isLand() || borderingTile.isLand()) && borderingTileType.getIndex() < tileType.getIndex() &&
+							        !lib.getTerrainImage(tileType, 0, 0).equals(lib.getTerrainImage(borderingTileType, 0, 0))) {
+                           // Draw land terrain with bordering land type, or ocean/high seas limit,
+                           // if the tiles do not share same graphics (ocean & great river)
+                           si = new SortableImage(
+							    lib.getBorderImage(borderingTileType, direction, x, y),
+							    borderingTileType.getIndex());
+                           imageBorders.add(si);
+                        }
                         }
                     }
                 }
@@ -587,7 +575,7 @@ public final class TileViewer {
         if (FreeColDebugger.debugDisplayCoordinates()) {
             String posString = tile.getX() + ", " + tile.getY();
             if (tile.getHighSeasCount() >= 0) {
-                posString += "/" + Integer.toString(tile.getHighSeasCount());
+                posString += "/" + tile.getHighSeasCount();
             }
             g.drawString(posString,
                 (tileWidth - g.getFontMetrics().stringWidth(posString)) / 2,
@@ -642,7 +630,6 @@ public final class TileViewer {
                         populationString, theColor, font);
                     displayCenteredImage(g, stringImage);
                 }
-
             } else if (settlement instanceof IndianSettlement) {
                 IndianSettlement is = (IndianSettlement)settlement;
                 BufferedImage settlementImage = lib.getSettlementImage(settlement);
@@ -673,8 +660,9 @@ public final class TileViewer {
                     }
                 }
 
-                // Draw the alarm chip if needed.
-                if ((chip = lib.getAlarmChip(g, is, player)) != null) {
+                chip = lib.getAlarmChip(g, is, player);
+				// Draw the alarm chip if needed.
+                if (chip != null) {
                     g.drawImage(chip, (int)xOffset, (int)yOffset, null);
                 }
             } else {
@@ -713,7 +701,7 @@ public final class TileViewer {
         // Tile Overlays (eg. hills and mountains)
         if (overlayImage != null) {
             g.drawImage(overlayImage,
-                0, (tileHeight - overlayImage.getHeight()), null);
+                0, tileHeight - overlayImage.getHeight(), null);
         }
         for (int index = startIndex; index < tileItems.size(); index++) {
             if (tileItems.get(index).getZIndex() < Tile.FOREST_ZINDEX) {
@@ -729,7 +717,7 @@ public final class TileViewer {
             BufferedImage forestImage = lib.getForestImage(
                 tile.getType(), tile.getRiverStyle());
             g.drawImage(forestImage,
-                0, (tileHeight - forestImage.getHeight()), null);
+                0, tileHeight - forestImage.getHeight(), null);
         }
 
         // draw all remaining items
@@ -738,9 +726,7 @@ public final class TileViewer {
         }
     }
 
-    /**
-     * Draws the given TileItem on the given Tile.
-     */
+    /** Draws the given TileItem on the given Tile. */
     private void displayTileItem(Graphics2D g, Tile tile, TileItem item) {
         if (item instanceof TileImprovement) {
             displayTileImprovement(g, tile, (TileImprovement)item);
@@ -771,9 +757,9 @@ public final class TileViewer {
                     && ti.getMagnitude() < TileImprovement.FJORD_RIVER) {
                 // @compat 0.10.5
                 // America_large had some bogus rivers in 0.10.5
-                if (ti.getStyle() != null)
-                // end @compat 0.10.5
-                    g.drawImage(lib.getRiverImage(ti.getStyle()), 0, 0, null);
+                if (ti.getStyle() != null) {
+					g.drawImage(lib.getRiverImage(ti.getStyle()), 0, 0, null);
+				}
             } else {
                 String key = "image.tile." + ti.getType().getId();
                 if (ResourceManager.hasImageResource(key)) {
@@ -785,5 +771,4 @@ public final class TileViewer {
             }
         }
     }
-
 }

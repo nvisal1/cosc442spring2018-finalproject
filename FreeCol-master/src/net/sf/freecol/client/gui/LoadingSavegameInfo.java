@@ -19,11 +19,8 @@
 
 package net.sf.freecol.client.gui;
 
-/**
- * Used for transferring data for the savegame to be loaded.
-*/
+/** Used for transferring data for the savegame to be loaded. */
 public class LoadingSavegameInfo {
-
     private final boolean singlePlayer;
     private final int port;
     private final String serverName;
@@ -60,5 +57,4 @@ public class LoadingSavegameInfo {
     public String getServerName() {
         return serverName;
     }
-
 }

@@ -17,7 +17,6 @@
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.sf.freecol.client.gui.panel;
 
 import java.awt.Component;
@@ -25,9 +24,7 @@ import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.Unit;
 
-
 public interface DropTarget {
-
     /**
      * Returns <code>true</code> if the given Unit could be dropped on
      * this target.
@@ -35,7 +32,7 @@ public interface DropTarget {
      * @param unit an <code>Unit</code> value
      * @return a <code>boolean</code> value
      */
-    public boolean accepts(Unit unit);
+    boolean accepts(Unit unit);
 
     /**
      * Returns <code>true</code> if the given Goods could be dropped on
@@ -44,7 +41,7 @@ public interface DropTarget {
      * @param goods a <code>Goods</code> value
      * @return a <code>boolean</code> value
      */
-    public boolean accepts(Goods goods);
+    boolean accepts(Goods goods);
 
     /**
      * Adds a component to this container and makes sure that the unit or
@@ -59,7 +56,7 @@ public interface DropTarget {
      *     currently selected carrier.
      * @return The component argument on success, null on failure.
      */
-    public Component add(Component comp, boolean editState);
+    Component add(Component comp, boolean editState);
 
     /**
      * Get a suggested amount of goods to add, used when partial
@@ -68,5 +65,5 @@ public interface DropTarget {
      * @param goodsType The <code>GoodsType</code> proposed to add.
      * @return A good amount of goods to add.
      */
-    public int suggested(GoodsType goodsType);
+    int suggested(GoodsType goodsType);
 }

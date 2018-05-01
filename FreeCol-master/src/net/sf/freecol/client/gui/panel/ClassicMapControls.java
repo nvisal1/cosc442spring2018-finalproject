@@ -32,7 +32,6 @@ import net.sf.freecol.client.gui.FontLibrary;
 import net.sf.freecol.client.gui.action.ActionManager;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * A collection of panels and buttons that are used to provide
  * the user with a more detailed view of certain elements on the
@@ -43,11 +42,9 @@ import net.sf.freecol.common.resources.ResourceManager;
  * be placed on a JComponent in order to be usable.
  */
 public final class ClassicMapControls extends MapControls {
-
     private final JPanel panel;
     private final Font arrowFont;
     private final ActionManager am;
-
 
     /**
      * The basic constructor.
@@ -120,9 +117,7 @@ public final class ClassicMapControls extends MapControls {
         canvas.removeFromCanvas(panel);
     }
 
-    /**
-     * Repaint
-     */
+    /** Repaint. */
     @Override
     public void repaint() {
         panel.repaint();

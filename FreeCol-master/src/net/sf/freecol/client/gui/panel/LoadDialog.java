@@ -31,15 +31,10 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.common.i18n.Messages;
 
-
-/**
- * A dialog for choosing a file to load.
- */
+/** A dialog for choosing a file to load. */
 public final class LoadDialog extends FreeColDialog<File> {
-
     /** Fake file for the cancel selection. */
     private static final File cancelFile = new File("");
-
 
     /**
      * Creates a dialog to choose a file to load.
@@ -79,10 +74,6 @@ public final class LoadDialog extends FreeColDialog<File> {
         initializeDialog(frame, DialogType.QUESTION, true, fileChooser, null, c);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public File getResponse() {
         File value = (File)getValue();

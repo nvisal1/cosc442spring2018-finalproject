@@ -43,15 +43,10 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Turn;
 
-
-/**
- * This panel displays the ContinentalCongress Report.
- */
+/** This panel displays the ContinentalCongress Report. */
 public final class ReportContinentalCongressPanel extends ReportPanel {
-
     private static final String none
         = Messages.message("report.continentalCongress.none");
-
 
     /**
      * Creates the continental congress report.

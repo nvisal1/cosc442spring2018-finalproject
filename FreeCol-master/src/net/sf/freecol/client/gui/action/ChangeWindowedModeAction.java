@@ -24,14 +24,9 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.GUI;
 
-
-/**
- * An action for toggling between full-screen and windowed mode.
- */
+/** An action for toggling between full-screen and windowed mode. */
 public class ChangeWindowedModeAction extends SelectableAction {
-
     public static final String id = "changeWindowedModeAction";
-
 
     /**
      * Creates a new <code>ChangeWindowedModeAction</code>.
@@ -42,42 +37,32 @@ public class ChangeWindowedModeAction extends SelectableAction {
         super(freeColClient, id, null);
     }
 
+    /** Override SelectableAction. */
 
-    // Override SelectableAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean shouldBeSelected() {
         final GUI gui = getGUI();
         return super.shouldBeSelected()
-            && !(gui == null || gui.isWindowed());
+            && gui != null && !gui.isWindowed();
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean shouldBeEnabled() {
         final GUI gui = getGUI();
         return super.shouldBeEnabled()
-            && !(gui == null || gui.isShowingSubPanel());
+            && gui != null && !gui.isShowingSubPanel();
     }
     
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         GUI gui = getGUI();
-        if (gui == null) return;
+        if (gui == null) {
+			return;
+		}
         gui.changeWindowedMode();
     }
 }

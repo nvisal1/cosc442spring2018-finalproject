@@ -30,18 +30,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when declining to investigate strange mounds.
- */
+/** The message sent when declining to investigate strange mounds. */
 public class DeclineMoundsMessage extends DOMMessage {
-
     /** The identifier of the unit that is exploring. */
     private final String unitId;
 
     /** The direction of exploration. */
     private final String directionString;
-
 
     /**
      * Create a new <code>DeclineMoundsMessage</code> with the
@@ -70,7 +65,6 @@ public class DeclineMoundsMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.directionString = element.getAttribute("direction");
     }
-
 
     /**
      * Handle a "declineMounds"-message.

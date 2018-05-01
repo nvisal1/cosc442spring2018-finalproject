@@ -96,7 +96,6 @@ import net.sf.freecol.common.option.Option;
 import net.sf.freecol.common.option.OptionGroup;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * The main container for the other GUI components in FreeCol. This
  * container is where the panels, dialogs and menus are added. In
@@ -110,12 +109,10 @@ import net.sf.freecol.common.resources.ResourceManager;
  * localized text.  Dialogs return results, and may be modal or non-modal.
  */
 public final class Canvas extends JDesktopPane {
-
     private static final Logger logger = Logger.getLogger(Canvas.class.getName());
 
     /** A wrapper class for non-modal dialogs. */
     private class DialogCallback<T> implements Runnable {
-        
         /** The dialog to show. */
         private final FreeColDialog<T> fcd;
 
@@ -125,10 +122,7 @@ public final class Canvas extends JDesktopPane {
         /** The handler for the dialog response. */
         private final DialogHandler<T> handler;
 
-
-        /**
-         * Constructor.
-         */
+        /** Constructor. */
         public DialogCallback(FreeColDialog<T> fcd, Tile tile,
                               DialogHandler<T> handler) {
             this.fcd = fcd;
@@ -136,8 +130,7 @@ public final class Canvas extends JDesktopPane {
             this.handler = handler;
         }
 
-
-        // Implement Runnable
+        /** Implement Runnable. */
 
         @Override
         public void run() {
@@ -157,9 +150,9 @@ public final class Canvas extends JDesktopPane {
                 }
             }.start();
         }
-    };
+    }
 
-    private static enum PopupPosition {
+    private enum PopupPosition {
         ORIGIN,
         CENTERED,
         CENTERED_LEFT,
@@ -206,7 +199,7 @@ public final class Canvas extends JDesktopPane {
     /** Used to detect resizing. */
     private Dimension oldSize = null;
 
-    private boolean clientOptionsDialogShowing = false;
+    private boolean clientOptionsDialogShowing;
 
     private LoadingSavegameDialog loadingSavegameDialog;
 
@@ -215,7 +208,6 @@ public final class Canvas extends JDesktopPane {
 
     /** The dialogs in view. */
     private final List<FreeColDialog<?>> dialogs = new ArrayList<>();
-
 
     /**
      * The constructor to use.
@@ -282,9 +274,7 @@ public final class Canvas extends JDesktopPane {
         return windowed;
     }
 
-    /**
-     * Change the windowed mode.
-     */
+    /** Change the windowed mode. */
     void changeWindowedMode() {
         // Clean up the old frame
         JMenuBar menuBar = null;
@@ -312,11 +302,11 @@ public final class Canvas extends JDesktopPane {
         frame.setVisible(true);
     }
 
-    /**
-     * Start the GUI for the map editor.
-     */
+    /** Start the GUI for the map editor. */
     void startMapEditorGUI() {
-        if (frame == null) return;
+        if (frame == null) {
+			return;
+		}
 
         // We may need to reset the zoom value to the default value
         gui.resetMapZoom();
@@ -330,36 +320,34 @@ public final class Canvas extends JDesktopPane {
         addMouseMotionListener(listener);
     }
 
-    /**
-     * Quit the GUI.  All that is required is to exit the full screen.
-     */
+    /** Quit the GUI. All that is required is to exit the full screen. */
     void quit() throws Exception {
         if (frame != null && !windowed) {
             frame.exitFullScreen();
         }
     }
 
-    /**
-     * In game initializations.
-     */
+    /** In game initializations. */
     void initializeInGame() {
-        if (frame == null) return;
+        if (frame == null) {
+			return;
+		}
         frame.setInGameMenuBar();
     }
 
-    /**
-     * Reset the menu bar.
-     */
+    /** Reset the menu bar. */
     void resetMenuBar() {
-        if (frame == null) return;
+        if (frame == null) {
+			return;
+		}
         frame.resetMenuBar();
     }
 
-    /**
-     * Update the menu bar.
-     */
+    /** Update the menu bar. */
     void updateMenuBar() {
-        if (frame == null) return;
+        if (frame == null) {
+			return;
+		}
         frame.updateMenuBar();
     }
 
@@ -412,9 +400,7 @@ public final class Canvas extends JDesktopPane {
         mapViewer.setCurrentPath(path);
     }
 
-    /**
-     * Sets the path of the active unit to display it.
-     */
+    /** Sets the path of the active unit to display it. */
     void updateCurrentPathForActiveUnit() {
         mapViewer.updateCurrentPathForActiveUnit();
     }
@@ -468,24 +454,19 @@ public final class Canvas extends JDesktopPane {
         refresh();
     }
 
-    /**
-     * Starts a goto operation.
-     */
+    /** Starts a goto operation. */
     void startGoto() {
         setCursor((java.awt.Cursor)UIManager.get("cursor.go"));
         mapViewer.startGoto();
         refresh();
     }
 
-    /**
-     * Stops any ongoing goto operation.
-     */
+    /** Stops any ongoing goto operation. */
     void stopGoto() {
         setCursor(null);
         mapViewer.stopGoto();
         refresh();
     }
-
 
     // Internals
 
@@ -505,7 +486,7 @@ public final class Canvas extends JDesktopPane {
                                       boolean resizable) {
         final int FRAME_EMPTY_SPACE = 60;
 
-        final JInternalFrame f = (toolBox) ? new ToolBoxFrame()
+        final JInternalFrame f = toolBox ? new ToolBoxFrame()
             : new JInternalFrame();
         if (f.getContentPane() instanceof JComponent) {
             JComponent c = (JComponent) f.getContentPane();
@@ -549,7 +530,7 @@ public final class Canvas extends JDesktopPane {
         f.setSize(width, height);
         Point p = chooseLocation(comp, width, height, popupPosition);
         f.setLocation(p);
-        this.add(f, MODAL_LAYER);
+        add(f, MODAL_LAYER);
         f.setName(comp.getClass().getSimpleName());
 
         f.setFrameIcon(null);
@@ -572,7 +553,7 @@ public final class Canvas extends JDesktopPane {
         comp.setLocation((getWidth() - comp.getWidth()) / 2,
                          (getHeight() - comp.getHeight()) / 2);
 
-        this.add(comp, i);
+        add(comp, i);
     }
 
     /**
@@ -608,16 +589,13 @@ public final class Canvas extends JDesktopPane {
     private Point chooseLocation(Component comp, int width, int height, 
                                  PopupPosition popupPosition) {
         Point p = null;
-        if ((comp instanceof FreeColPanel)
-            && (p = getSavedPosition(comp)) != null) {
-            // Sanity check stuff coming out of client options.
-            if (p.getX() < 0
-                || p.getX() >= getWidth() - width
-                || p.getY() < 0
-                || p.getY() >= getHeight() - height) {
-                p = null;
-            }
-        }
+        if (comp instanceof FreeColPanel
+            && (p = getSavedPosition(comp)) != null && (p.getX() < 0
+		    || p.getX() >= getWidth() - width
+		    || p.getY() < 0
+		    || p.getY() >= getHeight() - height)) {
+		p = null;
+         }
         int x = 0, y = 0;
         if (p != null) {
             x = (int)p.getX();
@@ -641,7 +619,8 @@ public final class Canvas extends JDesktopPane {
                 break;
             }
         }
-        if ((p = getClearSpace(x, y, width, height, MAXTRY)) != null
+        p = getClearSpace(x, y, width, height, MAXTRY);
+		if (p != null
             && p.x >= 0 && p.x < getWidth()
             && p.y >= 0 && p.y < getHeight()) {
             x = p.x;
@@ -650,9 +629,7 @@ public final class Canvas extends JDesktopPane {
         return new Point(x, y);
     }
 
-    /**
-     * Create key bindings for all actions.
-     */
+    /** Create key bindings for all actions. */
     private void createKeyBindings() {
         for (Option option : freeColClient.getActionManager().getOptions()) {
             FreeColAction action = (FreeColAction) option;
@@ -674,18 +651,20 @@ public final class Canvas extends JDesktopPane {
      */
     private Point getClearSpace(final int x, final int y,
                                 final int w, final int h, int tries) {
-        final Rectangle bounds = this.getBounds();
-        if (!bounds.contains(x, y)) return null;
+        final Rectangle bounds = getBounds();
+        if (!bounds.contains(x, y)) {
+			return null;
+		}
 
         tries = 3 * tries + 1; // 3 new candidates per level
         List<Point> todo = new ArrayList<>();
         Point p = new Point(x, y);
         todo.add(p);
 
-        List<Component> allComponents = Arrays.stream(this.getComponents())
+        List<Component> allComponents = Arrays.stream(getComponents())
             .filter(c -> !(c instanceof GrayLayer) && c.isValid())
             .collect(Collectors.toList());
-        for (FreeColDialog<?> fcd : dialogs) allComponents.add(fcd);
+        allComponents.addAll(dialogs);
 
         // Find the position with the least overlap
         int bestScore = Integer.MAX_VALUE;
@@ -719,7 +698,9 @@ public final class Canvas extends JDesktopPane {
                 best = p;
             }
             // Guarantee eventual completion
-            if (--tries <= 0) break;
+            if (--tries <= 0) {
+				break;
+			}
 
             int n = todo.size(),
                 // Some alternative new positions
@@ -736,10 +717,10 @@ public final class Canvas extends JDesktopPane {
                 y0ok = bounds.contains(x, y0 + h),
                 x1ok = bounds.contains(x1, y),
                 y1ok = bounds.contains(x, y1);
-            todo.add(n, new Point((x0ok) ? x0 : (x1ok) ? x1 : x2,
-                                  (y0ok) ? y0 : (y1ok) ? y1 : y2));
-            todo.add(n, new Point(x, (y0ok) ? y0 : (y1ok) ? y1 : y2));
-            todo.add(n, new Point((x0ok) ? x0 : (x1ok) ? x1 : x2, y));
+            todo.add(n, new Point(x0ok ? x0 : x1ok ? x1 : x2,
+                                  y0ok ? y0 : y1ok ? y1 : y2));
+            todo.add(n, new Point(x, y0ok ? y0 : y1ok ? y1 : y2));
+            todo.add(n, new Point(x0ok ? x0 : x1ok ? x1 : x2, y));
         }
         return best;
     }
@@ -793,7 +774,9 @@ public final class Canvas extends JDesktopPane {
      * @return A <code>PopupPosition</code> for a panel to be displayed.
      */
     private PopupPosition setOffsetFocus(Tile tile) {
-        if (tile == null) return PopupPosition.CENTERED;
+        if (tile == null) {
+			return PopupPosition.CENTERED;
+		}
         int where = mapViewer.setOffsetFocus(tile);
         return (where > 0) ? PopupPosition.CENTERED_LEFT
             : (where < 0) ? PopupPosition.CENTERED_RIGHT
@@ -809,7 +792,9 @@ public final class Canvas extends JDesktopPane {
      */
     private Point getSavedPosition(Component comp) {
         final ClientOptions co = freeColClient.getClientOptions();
-        if (co == null) return null;
+        if (co == null) {
+			return null;
+		}
         try {
             if (!co.getBoolean(ClientOptions.REMEMBER_PANEL_POSITIONS)) {
                 return null;
@@ -834,7 +819,9 @@ public final class Canvas extends JDesktopPane {
      */
     private Dimension getSavedSize(Component comp) {
         final ClientOptions co = freeColClient.getClientOptions();
-        if (co == null) return null;
+        if (co == null) {
+			return null;
+		}
         try {
             if (!co.getBoolean(ClientOptions.REMEMBER_PANEL_SIZES)) {
                 return null;
@@ -873,7 +860,9 @@ public final class Canvas extends JDesktopPane {
      * @param frame The enclosing <code>JInternalFrame</code>.
      */
     private void notifyClose(Component c, JInternalFrame frame) {
-        if (frame == null) return;
+        if (frame == null) {
+			return;
+		}
 
         if (c instanceof FreeColPanel) {
             FreeColPanel fcp = (FreeColPanel)c;
@@ -884,17 +873,20 @@ public final class Canvas extends JDesktopPane {
         }
     }
 
-    /**
-     * Remove the panels derived from the EuropePanel.
-     */
+    /** Remove the panels derived from the EuropePanel. */
     private void removeEuropeanSubpanels() {
-        FreeColPanel panel;
-        if ((panel = getExistingFreeColPanel(RecruitPanel.class)) != null)
-            removeFromCanvas(panel);
-        if ((panel = getExistingFreeColPanel(PurchasePanel.class)) != null)
-            removeFromCanvas(panel);
-        if ((panel = getExistingFreeColPanel(TrainPanel.class)) != null)
-            removeFromCanvas(panel);
+        FreeColPanel panel = getExistingFreeColPanel(RecruitPanel.class);
+        if (panel != null) {
+			removeFromCanvas(panel);
+		}
+        panel = getExistingFreeColPanel(PurchasePanel.class);
+		if (panel != null) {
+			removeFromCanvas(panel);
+		}
+        panel = getExistingFreeColPanel(TrainPanel.class);
+		if (panel != null) {
+			removeFromCanvas(panel);
+		}
     }
 
     /**
@@ -933,7 +925,9 @@ public final class Canvas extends JDesktopPane {
     private void savePosition(Component comp, Point position) {
         try {
             if (!freeColClient.getClientOptions()
-                .getBoolean(ClientOptions.REMEMBER_PANEL_POSITIONS)) return;
+                .getBoolean(ClientOptions.REMEMBER_PANEL_POSITIONS)) {
+				return;
+			}
         } catch (Exception e) {}
 
         String className = comp.getClass().getName();
@@ -950,7 +944,9 @@ public final class Canvas extends JDesktopPane {
     private void saveSize(Component comp, Dimension size) {
         try {
             if (!freeColClient.getClientOptions()
-                .getBoolean(ClientOptions.REMEMBER_PANEL_SIZES)) return;
+                .getBoolean(ClientOptions.REMEMBER_PANEL_SIZES)) {
+				return;
+			}
         } catch (Exception e) {}
 
         String className = comp.getClass().getName();
@@ -963,16 +959,18 @@ public final class Canvas extends JDesktopPane {
      * for the presence of other dialogs.
      */
     private void restartBlinking() {
-        if (mapViewer.getViewMode() != GUI.MOVE_UNITS_MODE) return;
+        if (mapViewer.getViewMode() != GUI.MOVE_UNITS_MODE) {
+			return;
+		}
         for (FreeColDialog<?> f : dialogs) {
-            if (f.isModal()) return;
+            if (f.isModal()) {
+				return;
+			}
         }
         mapViewer.restartBlinking();
     }
 
-    /**
-     * Stop blinking on the map.
-     */
+    /** Stop blinking on the map. */
     private void stopBlinking() {
         mapViewer.stopBlinking();
     }
@@ -992,7 +990,9 @@ public final class Canvas extends JDesktopPane {
         T response = freeColDialog.getResponse();
         remove(freeColDialog);
         dialogRemove(freeColDialog);
-        if (freeColDialog.isModal()) restartBlinking();
+        if (freeColDialog.isModal()) {
+			restartBlinking();
+		}
         return response;
     }
 
@@ -1033,7 +1033,6 @@ public final class Canvas extends JDesktopPane {
         panel.requestFocus();
     }
 
-
     // Public API
 
     /**
@@ -1044,7 +1043,7 @@ public final class Canvas extends JDesktopPane {
      */
     @Override
     public Component add(Component comp) {
-        this.add(comp, JLayeredPane.DEFAULT_LAYER);
+        add(comp, JLayeredPane.DEFAULT_LAYER);
         return comp;
     }
 
@@ -1059,9 +1058,7 @@ public final class Canvas extends JDesktopPane {
         gui.updateMenuBar();
     }
 
-    /**
-     * Closes all the menus that are currently open.
-     */
+    /** Closes all the menus that are currently open. */
     void closeMenus() {
         for (JInternalFrame frame : getAllFrames()) {
             for (Component c : frame.getContentPane().getComponents()) {
@@ -1075,9 +1072,7 @@ public final class Canvas extends JDesktopPane {
         }
     }
 
-    /**
-     * Closes the {@link MainPanel}.
-     */
+    /** Closes the {@link MainPanel}. */
     void closeMainPanel() {
        if (mainPanel != null) {
           remove(mainPanel);
@@ -1113,11 +1108,7 @@ public final class Canvas extends JDesktopPane {
         }
 
         MouseMotionListener[] mouseMotionListeners = getMouseMotionListeners();
-        if (mouseMotionListeners.length > 0) {
-            return true;
-        }
-
-        return false;
+        return mouseMotionListeners.length > 0;
     }
 
     /**
@@ -1199,9 +1190,7 @@ public final class Canvas extends JDesktopPane {
             if (c instanceof ToolBoxFrame) {
                 continue;
             }
-            if (c instanceof JInternalFrame) {
-                return c;
-            } else if (c instanceof JInternalFrame.JDesktopIcon) {
+            if (c instanceof JInternalFrame || c instanceof JInternalFrame.JDesktopIcon) {
                 return c;
             }
         }
@@ -1239,9 +1228,7 @@ public final class Canvas extends JDesktopPane {
         return getShowingSubPanel() != null;
     }
 
-    /**
-     * Refresh this canvas.
-     */
+    /** Refresh this canvas. */
     void refresh() {
         repaint(0, 0, getWidth(), getHeight());
     }
@@ -1252,7 +1239,9 @@ public final class Canvas extends JDesktopPane {
      * @param comp The <code>Component</code> to remove.
      */
     public void removeFromCanvas(Component comp) {
-        if (comp == null) return;
+        if (comp == null) {
+			return;
+		}
 
         final Rectangle updateBounds = comp.getBounds();
         final JInternalFrame frame = getInternalFrame(comp);
@@ -1274,9 +1263,7 @@ public final class Canvas extends JDesktopPane {
                 updateBounds.width, updateBounds.height);
     }
 
-    /**
-     * Removes components that is only used when in game.
-     */
+    /** Removes components that is only used when in game. */
     void removeInGameComponents() {
         // remove listeners, they will be added when launching the new game...
         KeyListener[] keyListeners = getKeyListeners();
@@ -1346,9 +1333,7 @@ public final class Canvas extends JDesktopPane {
         }
     }
 
-    /**
-     * Closes all panels, changes the background and shows the main menu.
-     */
+    /** Closes all panels, changes the background and shows the main menu. */
     void returnToTitle() {
         // FIXME: check if the GUI object knows that we're not
         // inGame. (Retrieve value of GUI::inGame.)  If GUI thinks
@@ -1364,9 +1349,7 @@ public final class Canvas extends JDesktopPane {
         addMouseMotionListener(new CanvasMouseMotionListener(freeColClient, this));
     }
 
-    /**
-     * Updates the sizes of the components on this Canvas.
-     */
+    /** Updates the sizes of the components on this Canvas. */
     private void updateSizes() {
         if (oldSize == null
                 || oldSize.width != getWidth()
@@ -1378,12 +1361,8 @@ public final class Canvas extends JDesktopPane {
         }
     }
 
+    /** Override JComponent. */
 
-    // Override JComponent
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void paintComponent(Graphics g) {
         updateSizes();
@@ -1391,9 +1370,9 @@ public final class Canvas extends JDesktopPane {
         chatDisplay.removeOldMessages();
 
         Dimension size = getSize();
-        if ((freeColClient.getGame() != null)
-                && (freeColClient.getGame().getMap() != null)
-                && (mapViewer.getFocus() != null)
+        if (freeColClient.getGame() != null
+                && freeColClient.getGame().getMap() != null
+                && mapViewer.getFocus() != null
                 && freeColClient.isInGame()) {
             /* ingame view */
 
@@ -1411,63 +1390,53 @@ public final class Canvas extends JDesktopPane {
                 }
                 greyLayer.setBounds(0, 0, size.width, size.height);
                 greyLayer.setPlayer(freeColClient.getGame().getCurrentPlayer());
-            } else {
-                if (greyLayer != null && greyLayer.getParent() != null) {
-                    removeFromCanvas(greyLayer);
-                }
-            }
+            } else if (greyLayer != null && greyLayer.getParent() != null) {
+			    removeFromCanvas(greyLayer);
+			}
 
             // paint chat display
             chatDisplay.display(g2d, mapViewer.getImageLibrary(), size);
+        } else if (!freeColClient.isMapEditor()) {
+		    /* main menu */
+		    // TODO: Check if its right to sometimes have an unfocused map
+		    //       ingame and end up here after clicking outside map.
 
-        } else {
-            if (!freeColClient.isMapEditor()) {
-                /* main menu */
-                // TODO: Check if its right to sometimes have an unfocused map
-                //       ingame and end up here after clicking outside map.
-
-                final String bgImageKey = "image.flavor.Canvas.map";
-                if (ResourceManager.hasImageResource(bgImageKey)) {
-                    // Get the background without scaling, to avoid wasting
-                    // memory needlessly keeping an unbounded number of rescaled
-                    // versions of the largest image in FreeCol, forever.
-                    final Image bgImage = ResourceManager.getImage(bgImageKey);
-                    // Draw background image with scaling.
-                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                    g2d.drawImage(bgImage, 0, 0, size.width, size.height, this);
-                    String versionStr = "v. " + FreeCol.getVersion();
-                    Font oldFont = g2d.getFont();
-                    Color oldColor = g2d.getColor();
-                    Font newFont = oldFont.deriveFont(Font.BOLD);
-                    TextLayout layout = new TextLayout(versionStr, newFont,
-                        g2d.getFontRenderContext());
-                    Rectangle2D bounds = layout.getBounds();
-                    float x = size.width - (float) bounds.getWidth() - 5;
-                    float y = size.height - (float) bounds.getHeight();
-                    g2d.setColor(Color.white);
-                    layout.draw(g2d, x, y);
-                    g2d.setFont(oldFont);
-                    g2d.setColor(oldColor);
-                } else {
-                    g2d.setColor(Color.BLACK);
-                    g2d.fillRect(0, 0, size.width, size.height);
-                }
-
-            } else {
-                /* map editor??? */
-                g2d.setColor(Color.BLACK);
-                g2d.fillRect(0, 0, size.width, size.height);
-            }
-        }
+		    final String bgImageKey = "image.flavor.Canvas.map";
+		    if (ResourceManager.hasImageResource(bgImageKey)) {
+		        // Get the background without scaling, to avoid wasting
+		        // memory needlessly keeping an unbounded number of rescaled
+		        // versions of the largest image in FreeCol, forever.
+		        final Image bgImage = ResourceManager.getImage(bgImageKey);
+		        // Draw background image with scaling.
+		        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		        g2d.drawImage(bgImage, 0, 0, size.width, size.height, this);
+		        String versionStr = "v. " + FreeCol.getVersion();
+		        Font oldFont = g2d.getFont();
+		        Color oldColor = g2d.getColor();
+		        Font newFont = oldFont.deriveFont(Font.BOLD);
+		        TextLayout layout = new TextLayout(versionStr, newFont,
+		            g2d.getFontRenderContext());
+		        Rectangle2D bounds = layout.getBounds();
+		        float x = size.width - (float) bounds.getWidth() - 5;
+		        float y = size.height - (float) bounds.getHeight();
+		        g2d.setColor(Color.white);
+		        layout.draw(g2d, x, y);
+		        g2d.setFont(oldFont);
+		        g2d.setColor(oldColor);
+		    } else {
+		        g2d.setColor(Color.BLACK);
+		        g2d.fillRect(0, 0, size.width, size.height);
+		    }
+		} else {
+		    /* map editor??? */
+		    g2d.setColor(Color.BLACK);
+		    g2d.fillRect(0, 0, size.width, size.height);
+		}
     }
 
+    /** Override Container. */
 
-    // Override Container
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void remove(Component comp) {
         removeFromCanvas(comp);
@@ -1476,7 +1445,6 @@ public final class Canvas extends JDesktopPane {
             requestFocus();
         }
     }
-
 
     // Special handling for the startGamePanel.
 
@@ -1488,20 +1456,15 @@ public final class Canvas extends JDesktopPane {
         startGamePanel.refreshPlayersTable();
     }
 
-    /**
-     * Update the game options in the start panel.
-     */
+    /** Update the game options in the start panel. */
     void updateGameOptions() {
         startGamePanel.updateGameOptions();
     }
 
-    /**
-     * Update the map generator options in the start panel.
-     */
+    /** Update the map generator options in the start panel. */
     void updateMapGeneratorOptions() {
         startGamePanel.updateMapGeneratorOptions();
     }
-
 
     // Dialog display
 
@@ -1595,24 +1558,25 @@ public final class Canvas extends JDesktopPane {
         }
 
         dialogAdd(freeColDialog);
-        if (freeColDialog.isModal()) stopBlinking();
+        if (freeColDialog.isModal()) {
+			stopBlinking();
+		}
         freeColDialog.requestFocus();
         freeColDialog.setVisible(true);
     }
 
-
-    // Simple front ends to display each panel or dialog.
+    /** Simple front ends to display each panel or dialog. */
 
     void removeTradeRoutePanel(TradeRoutePanel panel) {
         remove(panel);
         TradeRouteInputPanel trip
             = getExistingFreeColPanel(TradeRouteInputPanel.class);
-        if (trip != null) trip.cancelTradeRoute();
+        if (trip != null) {
+			trip.cancelTradeRoute();
+		}
     }
         
-    /**
-     * Display the AboutPanel.
-     */
+    /** Display the AboutPanel. */
     void showAboutPanel() {
         showSubPanel(new AboutPanel(freeColClient), false);
     }
@@ -1664,7 +1628,9 @@ public final class Canvas extends JDesktopPane {
      */
     void showChatPanel() {
         // FIXME: does it have state, or can we create a new one?
-        if (freeColClient.isSinglePlayer()) return; // chat with who?
+        if (freeColClient.isSinglePlayer()) {
+			return;
+		} // chat with who?
         showSubPanel(chatPanel, true);
     }
 
@@ -1718,7 +1684,9 @@ public final class Canvas extends JDesktopPane {
         } else {
             panel.requestFocus();
         }
-        if (unit != null) panel.setSelectedUnit(unit);
+        if (unit != null) {
+			panel.setSelectedUnit(unit);
+		}
         return panel;
     }
 
@@ -1744,14 +1712,11 @@ public final class Canvas extends JDesktopPane {
         return ccp;
     }
 
-    /**
-     * Show the compact labour report.
-     */
+    /** Show the compact labour report. */
     void showCompactLabourReport() {
         CompactLabourReport details = new CompactLabourReport(freeColClient);
         details.initialize();
         showSubPanel(details, false);
-
     }
 
     /**
@@ -1888,7 +1853,9 @@ public final class Canvas extends JDesktopPane {
         if (messageId != null) {
             display = Messages.message(messageId);
         }
-        if (display == null || display.isEmpty()) display = message;
+        if (display == null || display.isEmpty()) {
+			display = message;
+		}
         ErrorPanel errorPanel = new ErrorPanel(freeColClient, display);
         showSubPanel(errorPanel, true);
     }
@@ -1899,7 +1866,9 @@ public final class Canvas extends JDesktopPane {
      * @see EuropePanel
      */
     void showEuropePanel() {
-        if (freeColClient.getGame() == null) return;
+        if (freeColClient.getGame() == null) {
+			return;
+		}
         EuropePanel panel = getExistingFreeColPanel(EuropePanel.class);
         if (panel == null) {
             panel = new EuropePanel(freeColClient, (getHeight() > 780));
@@ -1920,9 +1889,7 @@ public final class Canvas extends JDesktopPane {
                      PopupPosition.CENTERED, false);
     }
 
-    /**
-     * Display the FindSettlementPanel.
-     */
+    /** Display the FindSettlementPanel. */
     void showFindSettlementPanel() {
         showSubPanel(new FindSettlementPanel(freeColClient),
                      PopupPosition.ORIGIN, true);
@@ -2065,13 +2032,17 @@ public final class Canvas extends JDesktopPane {
      * @return The selected <code>File</code>.
      */
     File showLoadDialog(File directory, FileFilter[] filters) {
-        if (filters == null) filters = getFileFilters();
+        if (filters == null) {
+			filters = getFileFilters();
+		}
         File response = null;
         for (;;) {
             response = showFreeColDialog(new LoadDialog(freeColClient, frame,
                                                         directory, filters),
                                          null);
-            if (response == null || response.isFile()) break;
+            if (response == null || response.isFile()) {
+				break;
+			}
             showErrorMessage("error.noSuchFile");
         }
         return response;
@@ -2093,12 +2064,9 @@ public final class Canvas extends JDesktopPane {
         return showFreeColDialog(loadingSavegameDialog, null);
     }
 
-    /**
-     * Show a panel containing the log file.
-     */
+    /** Show a panel containing the log file. */
     void showLogFilePanel() {
         showSubPanel(new ErrorPanel(freeColClient), true);
-
     }
 
     /**
@@ -2112,13 +2080,13 @@ public final class Canvas extends JDesktopPane {
         frame.removeMenuBar();
         mainPanel = new MainPanel(freeColClient);
         addCentered(mainPanel, JLayeredPane.DEFAULT_LAYER);
-        if (userMsg != null) gui.showInformationMessage(userMsg);
+        if (userMsg != null) {
+			gui.showInformationMessage(userMsg);
+		}
         mainPanel.requestFocus();
     }
 
-    /**
-     * Display the map editor transform panel.
-     */
+    /** Display the map editor transform panel. */
     void showMapEditorTransformPanel() {
         JInternalFrame f = addAsFrame(new MapEditorTransformPanel(freeColClient),
             true, PopupPosition.CENTERED, false);
@@ -2153,7 +2121,9 @@ public final class Canvas extends JDesktopPane {
      * @param messages The <code>ModelMessage</code>s to display.
      */
     void showModelMessages(List<ModelMessage> messages) {
-        if (messages.isEmpty()) return;
+        if (messages.isEmpty()) {
+			return;
+		}
         final Game game = freeColClient.getGame();
         int n = messages.size();
         String[] texts = new String[n];
@@ -2286,9 +2256,7 @@ public final class Canvas extends JDesktopPane {
                                  tile);
     }
 
-    /**
-     * Displays the purchase panel.
-     */
+    /** Displays the purchase panel. */
     void showPurchasePanel() {
         PurchasePanel panel = getExistingFreeColPanel(PurchasePanel.class);
         if (panel == null) {
@@ -2296,9 +2264,7 @@ public final class Canvas extends JDesktopPane {
         }
     }
 
-    /**
-     * Displays the recruit panel.
-     */
+    /** Displays the recruit panel. */
     void showRecruitPanel() {
         RecruitPanel panel = getExistingFreeColPanel(RecruitPanel.class);
         if (panel == null) {
@@ -2345,7 +2311,9 @@ public final class Canvas extends JDesktopPane {
      */
     public File showSaveDialog(File directory, FileFilter[] filters,
                                String defaultName) {
-        if (filters == null) filters = getFileFilters();
+        if (filters == null) {
+			filters = getFileFilters();
+		}
         return showFreeColDialog(new SaveDialog(freeColClient, frame, directory,
                                                 filters, defaultName),
                                  null);
@@ -2380,7 +2348,7 @@ public final class Canvas extends JDesktopPane {
     }
 
     /**
-     * display the select-tribute-amount dialog.
+     * Display the select-tribute-amount dialog.
      *
      * @param question a <code>stringtemplate</code> describing the
      *     amount of tribute to demand.
@@ -2431,7 +2399,9 @@ public final class Canvas extends JDesktopPane {
      */
     ColonyPanel showSpyColonyPanel(Tile tile) {
         Colony colony = tile.getColony();
-        if (colony == null) return null;
+        if (colony == null) {
+			return null;
+		}
         ColonyPanel panel = new ColonyPanel(freeColClient, colony);
         showFreeColPanel(panel, tile, true);
         return panel;
@@ -2458,9 +2428,7 @@ public final class Canvas extends JDesktopPane {
         }
     }
 
-    /**
-     * Display the statistics panel.
-     */
+    /** Display the statistics panel. */
     void showStatisticsPanel() {
         showSubPanel(new StatisticsPanel(freeColClient), true);
     }
@@ -2486,7 +2454,9 @@ public final class Canvas extends JDesktopPane {
      * @param tile The <code>Tile</code> to display.
      */
     void showTilePanel(Tile tile) {
-        if (tile == null || !tile.isExplored()) return;
+        if (tile == null || !tile.isExplored()) {
+			return;
+		}
         showSubPanel(new TilePanel(freeColClient, tile), false);
     }
 
@@ -2501,8 +2471,9 @@ public final class Canvas extends JDesktopPane {
      * @see TilePopup
      */
     void showTilePopup(Tile tile, int x, int y) {
-        if (tile == null)
-            return;
+        if (tile == null) {
+			return;
+		}
         TilePopup tp = new TilePopup(freeColClient, this, tile);
         if (tp.hasItem()) {
             tp.show(this, x, y);
@@ -2536,9 +2507,7 @@ public final class Canvas extends JDesktopPane {
         showSubPanel(panel, null, true);
     }
 
-    /**
-     * Displays the training panel.
-     */
+    /** Displays the training panel. */
     void showTrainPanel() {
         TrainPanel panel = getExistingFreeColPanel(TrainPanel.class);
         if (panel == null) {
@@ -2579,22 +2548,26 @@ public final class Canvas extends JDesktopPane {
         showSubPanel(new WorkProductionPanel(freeColClient, unit), true);
     }
 
-    /**
-     * Update all panels derived from the EuropePanel.
-     */
+    /** Update all panels derived from the EuropePanel. */
     void updateEuropeanSubpanels() {
         RecruitPanel rp
             = getExistingFreeColPanel(RecruitPanel.class);
-        if (rp != null) rp.update();
+        if (rp != null) {
+			rp.update();
+		}
         PurchasePanel pp
             = getExistingFreeColPanel(PurchasePanel.class);
-        if (pp != null) pp.update();
+        if (pp != null) {
+			pp.update();
+		}
         TrainPanel tp
             = getExistingFreeColPanel(TrainPanel.class);
-        if (tp != null) tp.update();
+        if (tp != null) {
+			tp.update();
+		}
     }
 
-    // Singleton specialist reports
+    /** Singleton specialist reports. */
 
     void showReportCargoPanel() {
         ReportCargoPanel r
@@ -2613,11 +2586,11 @@ public final class Canvas extends JDesktopPane {
         } catch (Exception e) {
             compact = false;
         }
-        ReportPanel r = (compact)
+        ReportPanel r = compact
             ? getExistingFreeColPanel(ReportCompactColonyPanel.class)
             : getExistingFreeColPanel(ReportClassicColonyPanel.class);
         if (r == null) {
-            showSubPanel((compact)
+            showSubPanel(compact
                 ? new ReportCompactColonyPanel(freeColClient)
                 : new ReportClassicColonyPanel(freeColClient),
                 true);
@@ -2736,10 +2709,10 @@ public final class Canvas extends JDesktopPane {
      */
     void showReportTurnPanel(List<ModelMessage> messages) {
         ReportTurnPanel r = getExistingFreeColPanel(ReportTurnPanel.class);
-        if (r == null) {
-            showSubPanel(new ReportTurnPanel(freeColClient, messages), true);
-        } else {
+        if (r != null) {
             r.setMessages(messages);
+        } else {
+            showSubPanel(new ReportTurnPanel(freeColClient, messages), true);
         }
     }
 }

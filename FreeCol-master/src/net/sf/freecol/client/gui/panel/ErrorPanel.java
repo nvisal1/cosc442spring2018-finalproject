@@ -34,17 +34,12 @@ import net.miginfocom.swing.MigLayout;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.io.FreeColDirectories;
 
-
-/**
- * This is the panel that pops up when an error needs to be reported.
- */
+/** This is the panel that pops up when an error needs to be reported. */
 public final class ErrorPanel extends FreeColPanel {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(ErrorPanel.class.getName());
 
     private static final String SHOW = "show";
-
 
     /**
      * Creates a panel to display the given error message.
@@ -77,12 +72,11 @@ public final class ErrorPanel extends FreeColPanel {
         String message = null;
         try (
             FileInputStream fis = new FileInputStream(logFile);
-            BufferedInputStream logFileStream = new BufferedInputStream(fis);
+            BufferedInputStream logFileStream = new BufferedInputStream(fis)
         ) {
             logFileStream.read(buffer);
             message = new String(buffer, "UTF-8");
         } catch (Exception e) {
-            ;// ignore
         }
 
         JTextArea textArea = Utility.getDefaultTextArea(message, 40);
@@ -98,12 +92,8 @@ public final class ErrorPanel extends FreeColPanel {
         add(okButton, "tag ok");
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         final String command = ae.getActionCommand();

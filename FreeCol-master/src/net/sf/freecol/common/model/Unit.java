@@ -46,9 +46,7 @@ import net.sf.freecol.common.model.UnitTypeChange.ChangeType;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
 import org.w3c.dom.Element;
-
 
 /**
  * Represents all pieces that can be moved on the map-board. This includes:
@@ -59,7 +57,6 @@ import org.w3c.dom.Element;
  */
 public class Unit extends GoodsLocation
     implements Consumer, Locatable, Movable, Nameable, Ownable {
-
     private static final Logger logger = Logger.getLogger(Unit.class.getName());
 
     /**
@@ -72,10 +69,7 @@ public class Unit extends GoodsLocation
     public static final String MOVE_CHANGE = "MOVE_CHANGE";
     public static final String ROLE_CHANGE = "ROLE_CHANGE";
 
-    /**
-     * A comparator to compare units by position, top to bottom,
-     * left to right.
-     */
+    /** A comparator to compare units by position, top to bottom, left to right. */
     public static final Comparator<Unit> locComparator
         = Comparator.comparingInt(u -> Location.getRank(u));
 
@@ -85,16 +79,16 @@ public class Unit extends GoodsLocation
             .thenComparing(Comparator.comparing(Unit::getRole));
     
     /** A state a Unit can have. */
-    public static enum UnitState {
+    public enum UnitState {
         ACTIVE,
         FORTIFIED,
         SENTRY,
         IN_COLONY,
         IMPROVING,
-        // @compat 0.10.0
+        /** @compat 0.10.0 */
         TO_EUROPE,
         TO_AMERICA,
-        // end @compat
+        /** End @compat. */
         FORTIFYING,
         SKIPPED;
 
@@ -145,7 +139,7 @@ public class Unit extends GoodsLocation
     protected GoodsType experienceType;
 
     /** The mount of experience a unit has earned. */
-    protected int experience = 0;
+    protected int experience;
 
     /**
      * The number of turns until the work is finished (e.g. sailing,
@@ -166,7 +160,7 @@ public class Unit extends GoodsLocation
     protected Unit teacher;
 
     /** Number of turns of training needed by this unit. */
-    protected int turnsOfTraining = 0;
+    protected int turnsOfTraining;
 
     /** The original nationality. */
     protected String nationality = null;
@@ -189,14 +183,14 @@ public class Unit extends GoodsLocation
     /** Which stop in a trade route the unit is going to. */
     protected int currentStop = -1;
 
-    /** To be used only for type == TREASURE_TRAIN */
+    /** To be used only for type == TREASURE_TRAIN. */
     protected int treasureAmount;
 
     /**
      * The attrition this unit has accumulated.  At the moment, this
      * equals the number of turns it has spent in the open.
      */
-    protected int attrition = 0;
+    protected int attrition;
 
     /**
      * The amount of goods carried by this unit.  This variable is
@@ -206,7 +200,6 @@ public class Unit extends GoodsLocation
      * @see #getVisibleGoodsCount()
      */
     protected int visibleGoodsCount;
-
 
     /**
      * Constructor for ServerUnit.
@@ -241,7 +234,6 @@ public class Unit extends GoodsLocation
         super(game, id);
     }
 
-
     /**
      * Get the individual name of this unit.
      *
@@ -269,15 +261,15 @@ public class Unit extends GoodsLocation
      * @return The name of the apparent owner of this <code>Unit</code>.
      */
     public StringTemplate getApparentOwnerName() {
-        Player own = (hasAbility(Ability.PIRACY)) ? getGame().getUnknownEnemy()
+        Player own = hasAbility(Ability.PIRACY) ? getGame().getUnknownEnemy()
             : owner;
         return own.getNationLabel();
     }
 
     /** What type of unit label do we want? */
-    public static enum UnitLabelType {
-        PLAIN,      // Just the basics
-        NATIONAL,   // Add the nation
+    public enum UnitLabelType {
+        PLAIN,      /** Just the basics. */
+        NATIONAL,   /** Add the nation. */
         FULL        // Add the equipment and extras
     }
 
@@ -317,10 +309,7 @@ public class Unit extends GoodsLocation
                                          role.getId(), null);
 
         case NATIONAL:
-            if (role.getMaximumCount() > 1) {
-                // If the amount of equipment can vary an equipment
-                // label is required, so fall through into the FULL case.
-            } else {
+            if (role.getMaximumCount() <= 1) {
                 return Messages.getUnitLabel(getName(), type.getId(), 1,
                                              owner.getNationId(), role.getId(),
                                              null);
@@ -358,7 +347,11 @@ public class Unit extends GoodsLocation
                     boolean first = true;
                     extra = StringTemplate.label("");
                     for (AbstractGoods ag : requiredGoods) {
-                        if (first) first = false; else extra.addName(" ");
+                        if (first) {
+							first = false;
+						} else {
+							extra.addName(" ");
+						}
                         extra.addStringTemplate(ag.getLabel());
                     }
                 }
@@ -405,7 +398,7 @@ public class Unit extends GoodsLocation
         boolean unknown = combatOdds.win == CombatModel.CombatOdds.UNKNOWN_ODDS
             || tile.hasSettlement();
         return StringTemplate.template("model.unit.attackTileOdds")
-            .addName("%chance%", (unknown) ? "??"
+            .addName("%chance%", unknown ? "??"
                 : String.valueOf((int)(combatOdds.win * 100)));
     }
     
@@ -417,8 +410,8 @@ public class Unit extends GoodsLocation
      */
     public StringTemplate getDestinationLabel() {
         // Create the right tag for the tagged "goingTo" message.
-        String type = (isPerson()) ? "person"
-            : (isNaval()) ? "ship"
+        String type = isPerson() ? "person"
+            : isNaval() ? "ship"
             : "other";
         return getDestinationLabel(type, getDestination(), getOwner());
     }
@@ -478,7 +471,9 @@ public class Unit extends GoodsLocation
      * @return True if the type change succeeds.
      */
     public boolean changeType(UnitType unitType) {
-        if (!unitType.isAvailableTo(owner)) return false;
+        if (!unitType.isAvailableTo(owner)) {
+			return false;
+		}
 
         setType(unitType);
         if (getMovesLeft() > getInitialMovesLeft()) {
@@ -498,7 +493,7 @@ public class Unit extends GoodsLocation
      * @return True if this is a naval <code>Unit</code>.
      */
     public boolean isNaval() {
-        return (unitType == null) ? false : unitType.isNaval();
+        return unitType != null && unitType.isNaval();
     }
 
     /**
@@ -599,10 +594,13 @@ public class Unit extends GoodsLocation
      *     the new value.
      */
     public boolean checkSetState(UnitState s) {
-        if (getState() == s) return false;
+        if (getState() == s) {
+			return false;
+		}
         switch (s) {
         case ACTIVE:
-            return true;
+		case SENTRY:
+			return true;
         case FORTIFIED:
             return getState() == UnitState.FORTIFYING;
         case FORTIFYING:
@@ -613,8 +611,6 @@ public class Unit extends GoodsLocation
                 && getOwner().canAcquireForImprovement(location.getTile());
         case IN_COLONY:
             return !isNaval();
-        case SENTRY:
-            return true;
         case SKIPPED:
             return getState() == UnitState.ACTIVE;
         default:
@@ -677,10 +673,8 @@ public class Unit extends GoodsLocation
         // Now initiate the new UnitState
         switch (s) {
         case ACTIVE:
-            setWorkLeft(-1);
-            break;
-        case SENTRY:
-            setWorkLeft(-1);
+		case SENTRY:
+			setWorkLeft(-1);
             break;
         case FORTIFIED:
             setWorkLeft(-1);
@@ -690,11 +684,11 @@ public class Unit extends GoodsLocation
             setWorkLeft(1);
             break;
         case IMPROVING:
-            if (workImprovement == null) {
-                setWorkLeft(-1);
-            } else {
+            if (workImprovement != null) {
                 setWorkLeft(workImprovement.getTurnsToComplete()
                     + ((getMovesLeft() > 0) ? 0 : 1));
+            } else {
+                setWorkLeft(-1);
             }
             movesLeft = 0;
             break;
@@ -713,7 +707,9 @@ public class Unit extends GoodsLocation
      */
     public void setStateToAllChildren(UnitState state) {
         if (canCarryUnits()) {
-            for (Unit u : getUnitList()) u.setState(state);
+            for (Unit u : getUnitList()) {
+				u.setState(state);
+			}
         }
     }
 
@@ -728,7 +724,9 @@ public class Unit extends GoodsLocation
      */
     public void changeOwner(Player owner) {
         final Player oldOwner = this.owner;
-        if (oldOwner == owner) return;
+        if (oldOwner == owner) {
+			return;
+		}
 
         if (oldOwner == null) {
             logger.warning("Unit " + getId()
@@ -739,20 +737,30 @@ public class Unit extends GoodsLocation
         setOwner(owner);
 
         // Clear trade route and goto orders if changing owner.
-        if (getTradeRoute() != null) setTradeRoute(null);
-        if (getDestination() != null) setDestination(null);
+        if (getTradeRoute() != null) {
+			setTradeRoute(null);
+		}
+        if (getDestination() != null) {
+			setDestination(null);
+		}
 
         // If its a carrier, we need to update the units it has loaded
         // before finishing with it
-        for (Unit u : getUnitList()) u.changeOwner(owner);
+        for (Unit u : getUnitList()) {
+			u.changeOwner(owner);
+		}
 
         if (getTeacher() != null && !canBeStudent(getTeacher())) {
             getTeacher().setStudent(null);
             setTeacher(null);
         }
 
-        if (oldOwner != null) oldOwner.removeUnit(this);
-        if (owner != null) owner.addUnit(this);
+        if (oldOwner != null) {
+			oldOwner.removeUnit(this);
+		}
+        if (owner != null) {
+			owner.addUnit(this);
+		}
 
         getGame().notifyOwnerChanged(this, oldOwner, owner);
     }
@@ -824,7 +832,7 @@ public class Unit extends GoodsLocation
             setExperience(0);
         }
         setRole(role);
-        setRoleCount((role.isDefaultRole()) ? 0 : roleCount);
+        setRoleCount(role.isDefaultRole() ? 0 : roleCount);
     }
 
     /**
@@ -835,7 +843,9 @@ public class Unit extends GoodsLocation
      */
     public boolean changeRoleCount(int delta) {
         this.roleCount = Math.max(0, this.roleCount + delta);
-        if (this.roleCount != 0) return false;
+        if (this.roleCount != 0) {
+			return false;
+		}
         this.role = getSpecification().getDefaultRole();
         return true;
     }
@@ -858,7 +868,9 @@ public class Unit extends GoodsLocation
      * @return A list of available <code>Role</code>s.
      */
     public List<Role> getAvailableRoles(List<Role> roles) {
-        if (roles == null) roles = getSpecification().getRoles();
+        if (roles == null) {
+			roles = getSpecification().getRoles();
+		}
         return roles.stream()
             .filter(r -> roleIsAvailable(r)).collect(Collectors.toList());
     }
@@ -871,7 +883,7 @@ public class Unit extends GoodsLocation
     public Role getMilitaryRole() {
         List<Role> roles
             = getAvailableRoles(getSpecification().getMilitaryRoles());
-        return (roles.isEmpty()) ? null : roles.get(0);
+        return roles.isEmpty() ? null : roles.get(0);
     }
 
     /**
@@ -915,7 +927,7 @@ public class Unit extends GoodsLocation
      * @return The carrier this unit is aboard, or null if none.
      */
     public Unit getCarrier() {
-        return (isOnCarrier()) ? ((Unit)getLocation()) : null;
+        return isOnCarrier() ? (Unit)getLocation() : null;
     }
 
     /**
@@ -962,14 +974,13 @@ public class Unit extends GoodsLocation
         return getTile() != null;
     }
 
-
     /**
      * Gets the work location this unit is working in.
      *
      * @return The current <code>WorkLocation</code>, or null if none.
      */
     public WorkLocation getWorkLocation() {
-        return (isInColony()) ? (WorkLocation)getLocation() : null;
+        return isInColony() ? (WorkLocation)getLocation() : null;
     }
 
     /**
@@ -979,7 +990,7 @@ public class Unit extends GoodsLocation
      */
     public Building getWorkBuilding() {
         if (getLocation() instanceof Building) {
-            return ((Building) getLocation());
+            return (Building) getLocation();
         }
         return null;
     }
@@ -991,7 +1002,7 @@ public class Unit extends GoodsLocation
      */
     public ColonyTile getWorkTile() {
         if (getLocation() instanceof ColonyTile) {
-            return ((ColonyTile) getLocation());
+            return (ColonyTile) getLocation();
         }
         return null;
     }
@@ -1083,9 +1094,13 @@ public class Unit extends GoodsLocation
      */
     public void changeWorkType(GoodsType type) {
         setWorkType(type);
-        if (type != null) experienceType = type;
+        if (type != null) {
+			experienceType = type;
+		}
         WorkLocation wl = getWorkLocation();
-        if (wl != null) wl.updateProductionType();
+        if (wl != null) {
+			wl.updateProductionType();
+		}
     }
 
     /**
@@ -1199,7 +1214,9 @@ public class Unit extends GoodsLocation
      */
     public final void setStudent(final Unit newStudent) {
         Unit oldStudent = this.student;
-        if (oldStudent == newStudent) return;
+        if (oldStudent == newStudent) {
+			return;
+		}
 
         if (newStudent == null) {
             this.student = null;
@@ -1236,7 +1253,9 @@ public class Unit extends GoodsLocation
      */
     public final void setTeacher(final Unit newTeacher) {
         Unit oldTeacher = this.teacher;
-        if (newTeacher == oldTeacher) return;
+        if (newTeacher == oldTeacher) {
+			return;
+		}
 
         if (newTeacher == null) {
             this.teacher = null;
@@ -1335,7 +1354,6 @@ public class Unit extends GoodsLocation
      * @param typeStudent The student <code>UnitType</code>.
      * @return The <code>UnitType</code> taught.
      * @see #getTurnsOfTraining
-     *
      */
     public static UnitType getUnitTypeTeaching(UnitType typeTeacher,
                                                UnitType typeStudent) {
@@ -1555,9 +1573,11 @@ public class Unit extends GoodsLocation
      * @return The target <code>Stop</code>.
      */
     public List<TradeRouteStop> getCurrentStops() {
-        if (validateCurrentStop() < 0) return null;
+        if (validateCurrentStop() < 0) {
+			return null;
+		}
         List<TradeRouteStop> stops
-            = new ArrayList<TradeRouteStop>(getTradeRoute().getStops());
+            = new ArrayList<>(getTradeRoute().getStops());
         rotate(stops, currentStop);
         return stops;
     }
@@ -1592,13 +1612,11 @@ public class Unit extends GoodsLocation
             List<TradeRouteStop> stops = tradeRoute.getStops();
             if (stops == null || stops.isEmpty()) {
                 currentStop = -1;
-            } else {
-                if (currentStop < 0 || currentStop >= stops.size()) {
-                    // The current stop can become out of range if the trade
-                    // route is modified.
-                    currentStop = 0;
-                }
-            }
+            } else if (currentStop < 0 || currentStop >= stops.size()) {
+			    // The current stop can become out of range if the trade
+			    // route is modified.
+			    currentStop = 0;
+			}
         }
         return currentStop;
     }
@@ -1623,7 +1641,7 @@ public class Unit extends GoodsLocation
         IndianSettlement is;
         return ((colony = getColony()) != null) ? colony
             : ((is = getIndianSettlement()) != null) ? is
-            : (isInEurope()) ? (TradeLocation)getOwner().getEurope()
+            : isInEurope() ? (TradeLocation)getOwner().getEurope()
             : null;
     }
 
@@ -1681,7 +1699,6 @@ public class Unit extends GoodsLocation
             : getGoodsSpaceTaken();
     }
 
-
     // Combat routines
 
     /**
@@ -1697,14 +1714,20 @@ public class Unit extends GoodsLocation
      *     by this unit, or null if none.
      */
     public Role getAutomaticRole() {
-        if (!hasDefaultRole()) return null;
+        if (!hasDefaultRole()) {
+			return null;
+		}
         Set<Ability> autoDefence = getAbilities(Ability.AUTOMATIC_EQUIPMENT);
-        if (autoDefence.isEmpty()) return null;
-        Settlement settlement = (isInColony()) ? getColony()
+        if (autoDefence.isEmpty()) {
+			return null;
+		}
+        Settlement settlement = isInColony() ? getColony()
             : (getLocation() instanceof IndianSettlement)
             ? (Settlement)getLocation()
             : null;
-        if (settlement == null) return null;
+        if (settlement == null) {
+			return null;
+		}
 
         final Specification spec = getSpecification();
         for (Ability ability : autoDefence) {
@@ -1728,13 +1751,17 @@ public class Unit extends GoodsLocation
      *     of capturing the loser equipment.
      */
     public Role canCaptureEquipment(Role role) {
-        if (!hasAbility(Ability.CAPTURE_EQUIPMENT)) return null;
+        if (!hasAbility(Ability.CAPTURE_EQUIPMENT)) {
+			return null;
+		}
         final Specification spec = getSpecification();
         final Role oldRole = getRole();
         for (Role r : getAvailableRoles(spec.getMilitaryRoles())) {
             for (Role.RoleChange rc : r.getRoleChanges()) {
                 if (rc.getFrom(spec) == oldRole
-                    && rc.getCapture(spec) == role) return r;
+                    && rc.getCapture(spec) == role) {
+					return r;
+				}
             }
         }
         return null;
@@ -1844,21 +1871,8 @@ public class Unit extends GoodsLocation
      */
     public static boolean betterDefender(Unit defender, double defenderPower,
                                          Unit other, double otherPower) {
-        if (defender == null) {
-            return true;
-        } else if (defender.isPerson() && other.isPerson()
-            && !defender.isArmed() && other.isArmed()) {
-            return true;
-        } else if (defender.isPerson() && other.isPerson()
-            && defender.isArmed() && !other.isArmed()) {
-            return false;
-        } else if (!defender.isDefensiveUnit() && other.isDefensiveUnit()) {
-            return true;
-        } else if (defender.isDefensiveUnit() && !other.isDefensiveUnit()) {
-            return false;
-        } else {
-            return defenderPower < otherPower;
-        }
+        return defender == null || (defender.isPerson() && other.isPerson()
+		    && !defender.isArmed() && other.isArmed()) || ((!defender.isPerson() || !other.isPerson() || !defender.isArmed() || other.isArmed()) && ((!defender.isDefensiveUnit() && other.isDefensiveUnit()) || ((!defender.isDefensiveUnit() || other.isDefensiveUnit()) && defenderPower < otherPower)));
     }
 
     /**
@@ -1876,7 +1890,6 @@ public class Unit extends GoodsLocation
         return (best != null) ? best : player.getEurope();
     }
 
-
     // Movement handling
 
     /**
@@ -1884,7 +1897,7 @@ public class Unit extends GoodsLocation
      *
      * @see Unit#getMoveType(Direction)
      */
-    public static enum MoveType {
+    public enum MoveType {
         MOVE(null, true),
         MOVE_HIGH_SEAS(null, true),
         EXPLORE_LOST_CITY_RUMOUR(null, true),
@@ -1916,14 +1929,10 @@ public class Unit extends GoodsLocation
         MOVE_NO_TILE("Attempt to move when not on a tile"),
         MOVE_ILLEGAL("Unspecified illegal move");
 
-        /**
-         * The reason why this move type is illegal.
-         */
+        /** The reason why this move type is illegal. */
         private final String reason;
 
-        /**
-         * Does this move type imply progress towards a destination.
-         */
+        /** Does this move type imply progress towards a destination. */
         private final boolean progress;
 
         MoveType(String reason) {
@@ -1993,16 +2002,10 @@ public class Unit extends GoodsLocation
             }
         }
 
-        if (isBeached(from)) {
+        if (isBeached(from) || (cost > ml && (ml + 2 >= getInitialMovesLeft() || cost <= ml + 2
+		     || target.hasSettlement()) && ml != 0)) {
             // Ship on land due to it was in a colony which was abandoned
             cost = ml;
-        } else if (cost > ml) {
-            // Using +2 in order to make 1/3 and 2/3 move count as
-            // 3/3, only when getMovesLeft > 0
-            if ((ml + 2 >= getInitialMovesLeft() || cost <= ml + 2
-                 || target.hasSettlement()) && ml != 0) {
-                cost = ml;
-            }
         }
         return cost;
     }
@@ -2015,7 +2018,7 @@ public class Unit extends GoodsLocation
      */
     public MoveType getMoveType(Direction direction) {
         Tile target;
-        return (!hasTile())
+        return !hasTile()
             ? MoveType.MOVE_NO_TILE
             : ((target = getTile().getNeighbourOrNull(direction)) == null)
             ? MoveType.MOVE_ILLEGAL
@@ -2030,7 +2033,7 @@ public class Unit extends GoodsLocation
      * @return The move type.
      */
     public MoveType getMoveType(Tile target) {
-        return (!hasTile())
+        return !hasTile()
             ? MoveType.MOVE_NO_TILE
             : getMoveType(getTile(), target, getMovesLeft());
     }
@@ -2077,7 +2080,7 @@ public class Unit extends GoodsLocation
      *         types on failure.
      */
     public MoveType getSimpleMoveType(Tile from, Tile target) {
-        return (isNaval()) ? getNavalMoveType(from, target)
+        return isNaval() ? getNavalMoveType(from, target)
             : getLandMoveType(from, target);
     }
 
@@ -2091,7 +2094,7 @@ public class Unit extends GoodsLocation
      *         types on failure.
      */
     public MoveType getSimpleMoveType(Tile target) {
-        return (!hasTile()) ? MoveType.MOVE_NO_TILE
+        return !hasTile() ? MoveType.MOVE_NO_TILE
             : getSimpleMoveType(getTile(), target);
     }
 
@@ -2104,7 +2107,7 @@ public class Unit extends GoodsLocation
      */
     public MoveType getSimpleMoveType(Direction direction) {
         Tile target;
-        return (!hasTile())
+        return !hasTile()
             ? MoveType.MOVE_NO_TILE
             : ((target = getTile().getNeighbourOrNull(direction)) == null)
             ? MoveType.MOVE_ILLEGAL
@@ -2122,7 +2125,7 @@ public class Unit extends GoodsLocation
     private MoveType getNavalMoveType(@SuppressWarnings("unused") Tile from,
                                       Tile target) {
         if (target == null) {
-            return (getOwner().canMoveToEurope()) ? MoveType.MOVE_HIGH_SEAS
+            return getOwner().canMoveToEurope() ? MoveType.MOVE_HIGH_SEAS
                 : MoveType.MOVE_NO_EUROPE;
         } else if (isDamaged()) {
             return MoveType.MOVE_NO_REPAIR;
@@ -2142,11 +2145,11 @@ public class Unit extends GoodsLocation
         } else { // target at sea
             Unit defender = target.getFirstUnit();
             if (defender != null && !getOwner().owns(defender)) {
-                return (isOffensiveUnit())
+                return isOffensiveUnit()
                     ? MoveType.ATTACK_UNIT
                     : MoveType.MOVE_NO_ATTACK_CIVILIAN;
             } else {
-                return (target.isDirectlyHighSeasConnected())
+                return target.isDirectlyHighSeasConnected()
                     ? MoveType.MOVE_HIGH_SEAS
                     : MoveType.MOVE;
             }
@@ -2162,7 +2165,9 @@ public class Unit extends GoodsLocation
      * @return The move type.
      */
     private MoveType getLandMoveType(Tile from, Tile target) {
-        if (target == null) return MoveType.MOVE_ILLEGAL;
+        if (target == null) {
+			return MoveType.MOVE_ILLEGAL;
+		}
 
         Player owner = getOwner();
         Unit defender = target.getFirstUnit();
@@ -2176,7 +2181,7 @@ public class Unit extends GoodsLocation
                     } else if (!isOffensiveUnit()) {
                         return MoveType.MOVE_NO_ATTACK_CIVILIAN;
                     } else {
-                        return (allowMoveFrom(from))
+                        return allowMoveFrom(from)
                             ? MoveType.ATTACK_UNIT
                             : MoveType.MOVE_NO_ATTACK_MARINE;
                     }
@@ -2194,16 +2199,16 @@ public class Unit extends GoodsLocation
             } else if (isColonist()) {
                 if (settlement instanceof Colony
                     && hasAbility(Ability.NEGOTIATE)) {
-                    return (allowMoveFrom(from))
+                    return allowMoveFrom(from)
                         ? MoveType.ENTER_FOREIGN_COLONY_WITH_SCOUT
                         : MoveType.MOVE_NO_ACCESS_WATER;
                 } else if (settlement instanceof IndianSettlement
                     && hasAbility(Ability.SPEAK_WITH_CHIEF)) {
-                    return (allowMoveFrom(from))
+                    return allowMoveFrom(from)
                         ? MoveType.ENTER_INDIAN_SETTLEMENT_WITH_SCOUT
                         : MoveType.MOVE_NO_ACCESS_WATER;
                 } else if (isOffensiveUnit()) {
-                    return (allowMoveFrom(from))
+                    return allowMoveFrom(from)
                         ? MoveType.ATTACK_SETTLEMENT
                         : MoveType.MOVE_NO_ATTACK_MARINE;
                 } else if (hasAbility(Ability.ESTABLISH_MISSION)) {
@@ -2212,7 +2217,7 @@ public class Unit extends GoodsLocation
                     return getLearnMoveType(from, settlement);
                 }
             } else if (isOffensiveUnit()) {
-                return (allowMoveFrom(from))
+                return allowMoveFrom(from)
                     ? MoveType.ATTACK_SETTLEMENT
                     : MoveType.MOVE_NO_ATTACK_MARINE;
             } else {
@@ -2221,7 +2226,7 @@ public class Unit extends GoodsLocation
         } else { // moving to sea, check for embarkation
             return (defender == null || !getOwner().owns(defender))
                 ? MoveType.MOVE_NO_ACCESS_EMBARK
-                : (any(target.getUnitList(), u -> u.canAdd(this)))
+                : any(target.getUnitList(), u -> u.canAdd(this))
                 ? MoveType.EMBARK
                 : MoveType.MOVE_NO_ACCESS_FULL;
         }
@@ -2236,14 +2241,14 @@ public class Unit extends GoodsLocation
      */
     private MoveType getTradeMoveType(Settlement settlement) {
         if (settlement instanceof Colony) {
-            return (getOwner().atWarWith(settlement.getOwner()))
+            return getOwner().atWarWith(settlement.getOwner())
                 ? MoveType.MOVE_NO_ACCESS_WAR
-                : (!hasAbility(Ability.TRADE_WITH_FOREIGN_COLONIES))
+                : !hasAbility(Ability.TRADE_WITH_FOREIGN_COLONIES)
                 ? MoveType.MOVE_NO_ACCESS_TRADE
                 : MoveType.ENTER_SETTLEMENT_WITH_CARRIER_AND_GOODS;
         } else if (settlement instanceof IndianSettlement) {
             // Do not block for war, bringing gifts is allowed
-            return (!allowContact(settlement))
+            return !allowContact(settlement)
                 ? MoveType.MOVE_NO_ACCESS_CONTACT
                 : (hasGoodsCargo() || getSpecification()
                     .getBoolean(GameOptions.EMPTY_TRADERS))
@@ -2265,11 +2270,11 @@ public class Unit extends GoodsLocation
         if (settlement instanceof Colony) {
             return MoveType.MOVE_NO_ACCESS_SETTLEMENT;
         } else if (settlement instanceof IndianSettlement) {
-            return (!allowContact(settlement))
+            return !allowContact(settlement)
                 ? MoveType.MOVE_NO_ACCESS_CONTACT
-                : (!allowMoveFrom(from))
+                : !allowMoveFrom(from)
                 ? MoveType.MOVE_NO_ACCESS_WATER
-                : (!getType().canBeUpgraded(null, ChangeType.NATIVES))
+                : !getType().canBeUpgraded(null, ChangeType.NATIVES)
                 ? MoveType.MOVE_NO_ACCESS_SKILL
                 : MoveType.ENTER_INDIAN_SETTLEMENT_WITH_FREE_COLONIST;
         } else {
@@ -2288,11 +2293,11 @@ public class Unit extends GoodsLocation
         if (settlement instanceof Colony) {
             return MoveType.MOVE_NO_ACCESS_SETTLEMENT;
         } else if (settlement instanceof IndianSettlement) {
-            return (!allowContact(settlement))
+            return !allowContact(settlement)
                 ? MoveType.MOVE_NO_ACCESS_CONTACT
-                : (!allowMoveFrom(from))
+                : !allowMoveFrom(from)
                 ? MoveType.MOVE_NO_ACCESS_WATER
-                : (settlement.getOwner().missionsBanned(getOwner()))
+                : settlement.getOwner().missionsBanned(getOwner())
                 ? MoveType.MOVE_NO_ACCESS_MISSION_BAN
                 : MoveType.ENTER_INDIAN_SETTLEMENT_WITH_MISSIONARY;
         } else {
@@ -2332,7 +2337,7 @@ public class Unit extends GoodsLocation
      *     actually move, such as trade.
      */
     public boolean isTileAccessible(Tile tile) {
-        return (isNaval())
+        return isNaval()
             ? (!tile.isLand()
                 || (tile.hasSettlement()
                     && getOwner().owns(tile.getSettlement())))
@@ -2361,7 +2366,9 @@ public class Unit extends GoodsLocation
         StringBuilder sb = new StringBuilder(16);
         int quotient = getMovesLeft() / 3;
         int remainder = getMovesLeft() % 3;
-        if (quotient > 0 || remainder == 0) sb.append(quotient);
+        if (quotient > 0 || remainder == 0) {
+			sb.append(quotient);
+		}
         if (remainder > 0) {
             sb.append("(").append(remainder).append("/3) ");
         }
@@ -2388,10 +2395,7 @@ public class Unit extends GoodsLocation
      * @return True if this unit can move immediately to the high seas.
      */
     public boolean canMoveToHighSeas() {
-        if (isInEurope() || isAtSea()) return true;
-        if (!getOwner().canMoveToEurope()
-            || !getType().canMoveToHighSeas()) return false;
-        return getTile().isDirectlyHighSeasConnected();
+        return isInEurope() || isAtSea() || (getOwner().canMoveToEurope() && getType().canMoveToHighSeas() && getTile().isDirectlyHighSeasConnected());
     }
 
     /**
@@ -2401,12 +2405,8 @@ public class Unit extends GoodsLocation
      *      seas or can make a move to a neighbouring high seas tile.
      */
     public boolean hasHighSeasMove() {
-        return (canMoveToHighSeas())
-            ? true
-            : (hasTile() && getMovesLeft() > 0)
-            ? any(getTile().getSurroundingTiles(1, 1),
-                Tile::isDirectlyHighSeasConnected)
-            : false;
+        return canMoveToHighSeas() || (hasTile() && getMovesLeft() > 0 && any(getTile().getSurroundingTiles(1, 1),
+		    Tile::isDirectlyHighSeasConnected));
     }
 
     /**
@@ -2432,7 +2432,9 @@ public class Unit extends GoodsLocation
     public boolean isAtLocation(Location loc) {
         Location ourLoc = getLocation(),
             otherLoc = (loc instanceof Unit) ? ((Unit)loc).getLocation() : loc;
-        if (ourLoc instanceof Unit) ourLoc = ((Unit)ourLoc).getLocation();
+        if (ourLoc instanceof Unit) {
+			ourLoc = ((Unit)ourLoc).getLocation();
+		}
         return Map.isSameLocation(ourLoc, otherLoc);
     }
 
@@ -2457,9 +2459,11 @@ public class Unit extends GoodsLocation
      *      the high seas.
      */
     public Location resolveDestination() {
-        if (!isAtSea()) throw new IllegalArgumentException("Not at sea.");
+        if (!isAtSea()) {
+			throw new IllegalArgumentException("Not at sea.");
+		}
         TradeRouteStop stop = getStop();
-        Location dst = (TradeRoute.isStopValid(this, stop))
+        Location dst = TradeRoute.isStopValid(this, stop)
             ? stop.getLocation()
             : getDestination();
         Tile best;
@@ -2471,7 +2475,7 @@ public class Unit extends GoodsLocation
     }
 
     /**
-     * Set movesLeft to 0 if has some spent moves and it's in a colony
+     * Set movesLeft to 0 if has some spent moves and it's in a colony.
      *
      * @see #add(Locatable)
      * @see #remove(Locatable)
@@ -2502,7 +2506,6 @@ public class Unit extends GoodsLocation
             && !isInColony();
     }
 
-
     // Map support routines
 
     /**
@@ -2517,30 +2520,28 @@ public class Unit extends GoodsLocation
         final Unit carrier = getCarrier();
         Location ret = getTile();
         if (isOnCarrier()) {
-            if (ret != null) {
-                ; // OK
-            } else if (carrier.getDestination() == null) {
-                ret = null;
-            } else if (carrier.getDestination() instanceof Map) {
-                ret = carrier.getFullEntryLocation();
-            } else if (carrier.getDestination() instanceof Settlement) {
-                ret = carrier.getDestination();
-            } else { // destination must be Europe
-                ret = null;
-            }
-        } else if (isNaval()) {
-            if (ret != null) {
-                ; // OK
-            } else if (getDestination() == null
-                || getDestination() instanceof Map) {
-                ret = getFullEntryLocation();
-            } else if (getDestination() instanceof Settlement) {
-                ret = getDestination();
-            } else {
-                ret = getFullEntryLocation();
-            }
-        }
-        if (ret != null) return ret;
+            if (ret == null) {
+				if (carrier.getDestination() == null) {
+				    ret = null;
+				} else if (carrier.getDestination() instanceof Map) {
+				    ret = carrier.getFullEntryLocation();
+				} else if (carrier.getDestination() instanceof Settlement) {
+				    ret = carrier.getDestination();
+				} else { // destination must be Europe
+				    ret = null;
+				}
+			}
+        } else if (isNaval() && ret == null) {
+			if (getDestination() == null
+			    || getDestination() instanceof Map || !(getDestination() instanceof Settlement)) {
+			    ret = getFullEntryLocation();
+			} else {
+			    ret = getDestination();
+			}
+		}
+        if (ret != null) {
+			return ret;
+		}
 
         // Must be a land unit not on the map.  May have a carrier.
         // Get our nearest settlement to Europe, fallback to any other.
@@ -2553,9 +2554,13 @@ public class Unit extends GoodsLocation
                     bestValue = value;
                     ret = s;
                 }
-            } else if (bestValue == INFINITY) ret = s;
+            } else if (bestValue == INFINITY) {
+				ret = s;
+			}
         }
-        if (ret != null) return ret;
+        if (ret != null) {
+			return ret;
+		}
 
         // Owner has no settlements.  If it is the REF, start from a
         // rebel colony.  Prefer the closest port.
@@ -2569,17 +2574,23 @@ public class Unit extends GoodsLocation
                             bestValue = value;
                             ret = s;
                         }
-                    } else if (bestValue == INFINITY) ret = s;
+                    } else if (bestValue == INFINITY) {
+						ret = s;
+					}
                 }
             }
-            if (ret != null) return ret;
+            if (ret != null) {
+				return ret;
+			}
         }
 
         // Desperately find the nearest land to the entry location.
         Location entry = getFullEntryLocation();
         if (entry != null && entry.getTile() != null) {
             for (Tile t : entry.getTile().getSurroundingTiles(INFINITY)) {
-                if (t.isLand()) return t;
+                if (t.isLand()) {
+					return t;
+				}
             }
         }
 
@@ -2616,8 +2627,12 @@ public class Unit extends GoodsLocation
      * @return A path to the trivial target, or null if none found.
      */
     public PathNode getTrivialPath() {
-        if (isDisposed() || getLocation() == null) return null;
-        if (!isNaval()) return findOurNearestSettlement();
+        if (isDisposed() || getLocation() == null) {
+			return null;
+		}
+        if (!isNaval()) {
+			return findOurNearestSettlement();
+		}
         PathNode path = findOurNearestPort();
         if (path == null) {
             // This is unusual, but can happen when a ship is up a
@@ -2788,7 +2803,9 @@ public class Unit extends GoodsLocation
     public PathNode findOurNearestSettlement(final boolean excludeStart,
                                              int range, final boolean coastal) {
         final Player player = getOwner();
-        if (player.getNumberOfSettlements() <= 0 || !hasTile()) return null;
+        if (player.getNumberOfSettlements() <= 0 || !hasTile()) {
+			return null;
+		}
         return findOurNearestSettlement(getTile(), excludeStart,
                                         range, coastal);
     }
@@ -2809,7 +2826,9 @@ public class Unit extends GoodsLocation
                                              int range, final boolean coastal) {
         final Player player = getOwner();
         if (startTile == null
-            || player.getNumberOfSettlements() <= 0) return null;
+            || player.getNumberOfSettlements() <= 0) {
+			return null;
+		}
         final GoalDecider gd = new GoalDecider() {
 
                 private int bestValue = Integer.MAX_VALUE;
@@ -2823,7 +2842,9 @@ public class Unit extends GoodsLocation
                 public boolean check(Unit u, PathNode path) {
                     Tile t = path.getTile();
                     if (t == null
-                        || (t == startTile && excludeStart)) return false;
+                        || (t == startTile && excludeStart)) {
+						return false;
+					}
                     Settlement settlement = t.getSettlement();
                     int value;
                     if (settlement != null
@@ -2901,22 +2922,20 @@ public class Unit extends GoodsLocation
                 type = 1;
             } else if (dstTile.isHighSeasConnected()) {
                 // Carrier is blocked or destination is blocked.
-                type = (getTile().isOnRiver()) ? 1 : 2;
+                type = getTile().isOnRiver() ? 1 : 2;
             } else {
                 // Destination must be blocked
                 type = 2;
             }
-        } else {
-            if (dstTile == null || getTile().getContiguity() != dstCont) {
-                // Ocean travel will be required
-                // If already at port try to improve its connectivity,
-                // otherwise go to a port.
-                type = (srcTile.isHighSeasConnected()) ? 1 : 2;
-            } else {
-                // Pure land travel, just find a nearer settlement.
-                type = 3;
-            }
-        }
+        } else if (dstTile == null || getTile().getContiguity() != dstCont) {
+		    // Ocean travel will be required
+		    // If already at port try to improve its connectivity,
+		    // otherwise go to a port.
+		    type = srcTile.isHighSeasConnected() ? 1 : 2;
+		} else {
+		    // Pure land travel, just find a nearer settlement.
+		    type = 3;
+		}
 
         switch (type) {
         case 0:
@@ -3009,10 +3028,12 @@ public class Unit extends GoodsLocation
      */
     public boolean canAttack(Unit defender) {
         if (!isOffensiveUnit() || defender == null
-            || !defender.hasTile()) return false;
+            || !defender.hasTile()) {
+			return false;
+		}
 
         Tile tile = defender.getTile();
-        return (isNaval())
+        return isNaval()
             ? !tile.hasSettlement() && defender.isNaval()
             : !defender.isNaval() || defender.isBeached();
     }
@@ -3039,7 +3060,9 @@ public class Unit extends GoodsLocation
                 @Override
                 public boolean check(Unit unit, PathNode path) {
                     Tile tile = path.getTile();
-                    if (tile == null) return false;
+                    if (tile == null) {
+						return false;
+					}
                     Unit first = tile.getFirstUnit();
                     if (first == null
                         || !getOwner().atWarWith(first.getOwner())) {
@@ -3066,10 +3089,10 @@ public class Unit extends GoodsLocation
         // is low).  So use the heuristic of increasing the range by
         // the ratio of the fastest appropriate (land/naval) unit type
         // speed over the unit speed.
-        int reverseRange = range * (((isNaval())
+        int reverseRange = range * (isNaval()
                 ? getSpecification().getFastestNavalUnitType()
                 : getSpecification().getFastestLandUnitType())
-            .getMovement()) / this.getType().getMovement();
+            .getMovement() / getType().getMovement();
 
         return (start == null) ? null
             : search(start, threatDecider, CostDeciders.avoidIllegal(),
@@ -3097,8 +3120,7 @@ public class Unit extends GoodsLocation
      */
     public int getLineOfSight() {
         final Turn turn = getGame().getTurn();
-        Set<Modifier> result = new HashSet<>();
-        result.addAll(this.getModifiers(Modifier.LINE_OF_SIGHT_BONUS,
+        Set<Modifier> result = new HashSet<>(getModifiers(Modifier.LINE_OF_SIGHT_BONUS,
                                         unitType, turn));
         if (hasTile() && getTile().isExplored()) {
             result.addAll(getTile().getType()
@@ -3107,7 +3129,6 @@ public class Unit extends GoodsLocation
         float base = unitType.getLineOfSight();
         return (int)applyModifiers(base, turn, result);
     }
-
 
     // Goods handling
 
@@ -3208,7 +3229,9 @@ public class Unit extends GoodsLocation
      * @return The number cargo slots occupied by goods.
      */
     public int getGoodsSpaceTaken() {
-        if (!canCarryGoods()) return 0;
+        if (!canCarryGoods()) {
+			return 0;
+		}
         GoodsContainer gc = getGoodsContainer();
         return (gc == null) ? 0 : gc.getSpaceTaken();
     }
@@ -3219,7 +3242,7 @@ public class Unit extends GoodsLocation
      * @return The number of cargo slots occupied by units.
      */
     public int getUnitSpaceTaken() {
-        return (canCarryUnits())
+        return canCarryUnits()
             ? getUnitList().stream().mapToInt(u -> u.getSpaceTaken()).sum()
             : 0;
     }
@@ -3261,13 +3284,16 @@ public class Unit extends GoodsLocation
      * @return The amount of goods that could be loaded onto this unit.
      */
     public int getLoadableAmount(GoodsType type) {
-        if (!canCarryGoods()) return 0;
+        if (!canCarryGoods()) {
+			return 0;
+		}
         int result = getSpaceLeft() * GoodsContainer.CARGO_SIZE;
         int count = getGoodsCount(type) % GoodsContainer.CARGO_SIZE;
-        if (count != 0) result += GoodsContainer.CARGO_SIZE - count;
+        if (count != 0) {
+			result += GoodsContainer.CARGO_SIZE - count;
+		}
         return result;
     }
-
 
     // Miscellaneous more complex functionality
 
@@ -3315,13 +3341,11 @@ public class Unit extends GoodsLocation
             } else {
                 ret = StringTemplate.key("model.unit." + getState().getKey());
             }
-        } else {
-            if (isNaval()) {
-                ret = StringTemplate.name(String.valueOf(getVisibleGoodsCount()));
-            } else {
-                ret = StringTemplate.key("model.unit.occupation.activeNoMovesLeft");
-            }
-        }
+        } else if (isNaval()) {
+		    ret = StringTemplate.name(String.valueOf(getVisibleGoodsCount()));
+		} else {
+		    ret = StringTemplate.key("model.unit.occupation.activeNoMovesLeft");
+		}
         return ret;
     }
 
@@ -3386,7 +3410,9 @@ public class Unit extends GoodsLocation
         if (!canCarryTreasure()) {
             throw new IllegalStateException("Can't carry treasure");
         }
-        if (loc == null) return false;
+        if (loc == null) {
+			return false;
+		}
 
         if (getOwner().getEurope() == null) {
             // Any colony will do once independent, as the treasure stays
@@ -3440,7 +3466,7 @@ public class Unit extends GoodsLocation
      *     signals a more advanced type of units.
      */
     public static int getSkillLevel(UnitType unitType) {
-        return (unitType.hasSkill()) ? unitType.getSkill() : 0;
+        return unitType.hasSkill() ? unitType.getSkill() : 0;
     }
 
     /**
@@ -3453,7 +3479,9 @@ public class Unit extends GoodsLocation
         HashSet<Modifier> result = new HashSet<>();
         for (Modifier m : getModifiers(Modifier.MISSIONARY_TRADE_BONUS)) {
             Modifier modifier = new Modifier(m);
-            if (!sense) modifier.setValue(-m.getValue());
+            if (!sense) {
+				modifier.setValue(-m.getValue());
+			}
             result.add(modifier);
         }
         return result;
@@ -3496,11 +3524,11 @@ public class Unit extends GoodsLocation
      * @return A pioneering score.
      */
     public int getPioneerScore() {
-        int ht = (hasTile()) ? 100 : 0;
+        int ht = hasTile() ? 100 : 0;
         return (getLocation() == null || !isColonist()) ? -1000
-            : (hasAbility(Ability.IMPROVE_TERRAIN)) ? 900 + ht
-            : (hasAbility(Ability.EXPERT_PIONEER)) ? 700
-            : (!hasDefaultRole()) ? 0
+            : hasAbility(Ability.IMPROVE_TERRAIN) ? 900 + ht
+            : hasAbility(Ability.EXPERT_PIONEER) ? 700
+            : !hasDefaultRole() ? 0
             : (getSkillLevel() > 0) ? 0
             : 200 + getSkillLevel() * 50;
     }
@@ -3517,11 +3545,11 @@ public class Unit extends GoodsLocation
      * @return A scouting score.
      */
     public int getScoutScore() {
-        int ht = (hasTile()) ? 100 : 0;
+        int ht = hasTile() ? 100 : 0;
         return (getLocation() == null || !isColonist()) ? -1000
-            : (hasAbility(Ability.SPEAK_WITH_CHIEF)) ? 900 + ht
-            : (hasAbility(Ability.EXPERT_SCOUT)) ? 700
-            : (!hasDefaultRole()) ? 0
+            : hasAbility(Ability.SPEAK_WITH_CHIEF) ? 900 + ht
+            : hasAbility(Ability.EXPERT_SCOUT) ? 700
+            : !hasDefaultRole() ? 0
             : (getSkillLevel() <= 0) ? -200 * getSkillLevel()
             : 0;
     }
@@ -3583,7 +3611,6 @@ public class Unit extends GoodsLocation
     }
     // end @compat 0.11.0
 
-
     // Message unpacking support.
 
     /**
@@ -3619,8 +3646,7 @@ public class Unit extends GoodsLocation
      * @throws IllegalStateException on failure to validate the settlementId
      *     in any way.
      */
-    public Settlement getAdjacentSettlementSafely(String settlementId)
-        throws IllegalStateException {
+    public Settlement getAdjacentSettlementSafely(String settlementId) {
         Game game = getOwner().getGame();
 
         Settlement settlement = game.getFreeColGameObject(settlementId,
@@ -3660,8 +3686,7 @@ public class Unit extends GoodsLocation
      * @throws IllegalStateException on failure to validate the settlementId
      *     in any way.
      */
-    public IndianSettlement getAdjacentIndianSettlementSafely(String id)
-        throws IllegalStateException {
+    public IndianSettlement getAdjacentIndianSettlementSafely(String id) {
         Settlement settlement = getAdjacentSettlementSafely(id);
         if (!(settlement instanceof IndianSettlement)) {
             throw new IllegalStateException("Not an indianSettlement: " + id);
@@ -3673,46 +3698,30 @@ public class Unit extends GoodsLocation
         return (IndianSettlement)settlement;
     }
 
+    /** Interface Consumer. */
 
-    // Interface Consumer
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<AbstractGoods> getConsumedGoods() {
         return unitType.getConsumedGoods();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getPriority() {
         return unitType.getPriority();
     }
 
+    /** Interface Ownable. */
 
-    // Interface Ownable
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Player getOwner() {
         return owner;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * -vis: This routine has visibility implications.
-     */
+    /** {@inheritDoc} -vis: This routine has visibility implications. */
     @Override
     public void setOwner(Player player) {
         this.owner = player;
     }
-
 
     // Interface Locatable
     //   getTile and getSpaceTaken are shared with Location below
@@ -3746,7 +3755,9 @@ public class Unit extends GoodsLocation
             return ((Colony)newLocation).joinColony(this);
         }
 
-        if (newLocation == location) return true;
+        if (newLocation == location) {
+			return true;
+		}
         if (newLocation != null && !newLocation.canAdd(this)) {
             logger.warning("Can not add " + this + " to "
                 + newLocation.getId());
@@ -3760,13 +3771,13 @@ public class Unit extends GoodsLocation
         // We have to handle this issue here in setLocation as this is
         // the only place that contains information about both
         // locations.
-        Colony oldColony = (isInColony()) ? location.getColony() : null;
+        Colony oldColony = isInColony() ? location.getColony() : null;
         Colony newColony = (newLocation instanceof WorkLocation)
             ? newLocation.getColony() : null;
         boolean withinColony = newColony != null && newColony == oldColony;
         boolean preserveEducation = withinColony
-            && (((WorkLocation)location).canTeach()
-                == ((WorkLocation)newLocation).canTeach());
+            && ((WorkLocation)location).canTeach()
+                == ((WorkLocation)newLocation).canTeach();
 
         // First disable education that will fail due to the move.
         if (oldColony != null && !preserveEducation) {
@@ -3774,13 +3785,11 @@ public class Unit extends GoodsLocation
         }
 
         // Move out of the old location.
-        if (location == null) {
-            ; // do nothing
-        } else if (!location.remove(this)) {//-vis
-            // "Should not happen" (should always be able to remove)
-            throw new RuntimeException("Failed to remove " + this
-                + " from " + location.getId());
-        }
+        if (location != null && !location.remove(this)) {//-vis
+		    // "Should not happen" (should always be able to remove)
+		    throw new RuntimeException("Failed to remove " + this
+		        + " from " + location.getId());
+		}
 
         // Move in to the new location.
         if (newLocation == null) {
@@ -3798,8 +3807,12 @@ public class Unit extends GoodsLocation
 
         // Update population of any colonies involved.
         if (!withinColony) {
-            if (oldColony != null) oldColony.updatePopulation();
-            if (newColony != null) newColony.updatePopulation();
+            if (oldColony != null) {
+				oldColony.updatePopulation();
+			}
+            if (newColony != null) {
+				newColony.updatePopulation();
+			}
         }
         return true;
     }
@@ -3816,37 +3829,29 @@ public class Unit extends GoodsLocation
             : getLocation() instanceof Europe;
     }
 
-
-    // Interface Location (from GoodsLocation via UnitLocation)
-    // Inherits
-    //   FreeColObject.getId
-    //   UnitLocation.getLocationLabelFor
-    //   UnitLocation.contains
-    //   UnitLocation.canAdd
-    //   UnitLocation.getUnitCount
-    //   UnitLocation.getUnitList
-    //   GoodsLocation.getGoodsContainer
-
     /**
-     * {@inheritDoc}
+     * Interface Location (from GoodsLocation via UnitLocation)
+     * Inherits
+     *   FreeColObject.getId
+     *   UnitLocation.getLocationLabelFor
+     *   UnitLocation.contains
+     *   UnitLocation.canAdd
+     *   UnitLocation.getUnitCount
+     *   UnitLocation.getUnitList
+     *   GoodsLocation.getGoodsContainer
      */
+
     @Override
     public Tile getTile() {
         return (location != null) ? location.getTile() : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StringTemplate getLocationLabel() {
         return StringTemplate.template("model.unit.onBoard")
-            .addStringTemplate("%unit%", this.getLabel());
+            .addStringTemplate("%unit%", getLabel());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean add(Locatable locatable) {
         if (!canAdd(locatable)) {
@@ -3876,9 +3881,6 @@ public class Unit extends GoodsLocation
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean remove(Locatable locatable) {
         if (locatable == null) {
@@ -3900,37 +3902,25 @@ public class Unit extends GoodsLocation
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Settlement getSettlement() {
         Location location = getLocation();
         return (location != null) ? location.getSettlement() : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location up() {
-        return (isInEurope()) ? getLocation().up()
-            : (isInColony()) ? getColony()
-            : (hasTile()) ? getTile().up()
+        return isInEurope() ? getLocation().up()
+            : isInColony() ? getColony()
+            : hasTile() ? getTile().up()
             : this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getRank() {
         return Location.getRank(getLocation());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toShortString() {
         StringBuilder sb = new StringBuilder(32);
@@ -3938,21 +3928,21 @@ public class Unit extends GoodsLocation
         if (!hasDefaultRole()) {
             sb.append("-").append(getRoleSuffix());
             int count = getRoleCount();
-            if (count > 1) sb.append(".").append(count);
+            if (count > 1) {
+				sb.append(".").append(count);
+			}
         }
         return sb.toString();
     }
 
-
-    // UnitLocation
-    // Inherits
-    //   UnitLocation.getSpaceTaken
-    //   UnitLocation.moveToFront
-    //   UnitLocation.clearUnitList
-
     /**
-     * {@inheritDoc}
+     * UnitLocation
+     * Inherits
+     *   UnitLocation.getSpaceTaken
+     *   UnitLocation.moveToFront
+     *   UnitLocation.clearUnitList
      */
+
     @Override
     public int getSpaceTaken() {
         // We do not have to consider what this unit is carrying
@@ -3960,22 +3950,19 @@ public class Unit extends GoodsLocation
         return unitType.getSpaceTaken();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public NoAddReason getNoAddReason(Locatable locatable) {
         if (locatable == this) {
             return NoAddReason.ALREADY_PRESENT;
         } else if (locatable instanceof Unit) {
-            return (!canCarryUnits())
+            return !canCarryUnits()
                 ? NoAddReason.WRONG_TYPE
                 : (locatable.getSpaceTaken() > getSpaceLeft())
                 ? NoAddReason.CAPACITY_EXCEEDED
                 : super.getNoAddReason(locatable);
         } else if (locatable instanceof Goods) {
             Goods goods = (Goods)locatable;
-            return (!canCarryGoods())
+            return !canCarryGoods()
                 ? NoAddReason.WRONG_TYPE
                 : (goods.getAmount() > getLoadableAmount(goods.getType()))
                 ? NoAddReason.CAPACITY_EXCEEDED
@@ -3987,28 +3974,16 @@ public class Unit extends GoodsLocation
         return super.getNoAddReason(locatable);
     }
 
+    /** GoodsLocation Inherits GoodsLocation.addGoods GoodsLocation.removeGoods */
 
-    // GoodsLocation
-    // Inherits
-    //   GoodsLocation.addGoods
-    //   GoodsLocation.removeGoods
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getGoodsCapacity() {
         return getCargoCapacity();
     }
 
-
     // Override FreeColGameObject
 
-    /**
-     * {@inheritDoc}
-     *
-     * -vis: This routine can change player visibility.
-     */
+    /** {@inheritDoc} -vis: This routine can change player visibility. */
     @Override
     public void disposeResources() {
         if (location != null) {
@@ -4034,18 +4009,12 @@ public class Unit extends GoodsLocation
         super.disposeResources();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FreeColGameObject getLinkTarget(Player player) {
-        return (hasTile()) ? (FreeColGameObject)getTile().up()
+        return hasTile() ? (FreeColGameObject)getTile().up()
             : player.getEurope();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int checkIntegrity(boolean fix) {
         int result = super.checkIntegrity(fix);
@@ -4059,39 +4028,32 @@ public class Unit extends GoodsLocation
                 result = -1;
             }
         }
-        if (this.destination != null) {
-            if (((FreeColGameObject)this.destination).isUninitialized()) {
-                if (fix) {
-                    this.destination = null;
-                    logger.warning("Cleared uninitialized destination for: "
-                        + getId());
-                    result = Math.min(result, 0);
-                } else {
-                    logger.warning("Uninitialized destination for: "
-                        + getId());
-                    result = -1;
-                }
-            }
-        }
+        if (this.destination != null && ((FreeColGameObject)this.destination).isUninitialized()) {
+		    if (fix) {
+		        this.destination = null;
+		        logger.warning("Cleared uninitialized destination for: "
+		            + getId());
+		        result = Math.min(result, 0);
+		    } else {
+		        logger.warning("Uninitialized destination for: "
+		            + getId());
+		        result = -1;
+		    }
+		}
         return result;
     }
 
+    /** Override FreeColObject. */
 
-    // Override FreeColObject
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Set<Ability> getAbilities(String id, FreeColGameObjectType fcgot,
                                      Turn turn) {
         final Player owner = getOwner();
         final UnitType unitType = getType();
-        Set<Ability> result = new HashSet<>();
+        Set<Ability> result = new HashSet<>(unitType.getAbilities(id));
 
         // UnitType abilities always apply.
-        result.addAll(unitType.getAbilities(id));
-
+        
         // Roles apply with qualification.
         result.addAll(role.getAbilities(id, fcgot, turn));
 
@@ -4122,19 +4084,15 @@ public class Unit extends GoodsLocation
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Set<Modifier> getModifiers(String id, FreeColGameObjectType fcgot,
                                       Turn turn) {
         final Player owner = getOwner();
         final UnitType unitType = getType();
-        Set<Modifier> result = new HashSet<>();
+        Set<Modifier> result = new HashSet<>(unitType.getModifiers(id, fcgot, turn));
 
         // UnitType modifiers always apply
-        result.addAll(unitType.getModifiers(id, fcgot, turn));
-
+        
         // The player's modifiers may not all apply
         result.addAll(owner.getModifiers(id, fcgot, turn));
         
@@ -4144,8 +4102,7 @@ public class Unit extends GoodsLocation
         return result;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String ATTRITION_TAG = "attrition";
     private static final String COUNT_TAG = "count";
@@ -4174,31 +4131,33 @@ public class Unit extends GoodsLocation
     private static final String VISIBLE_GOODS_COUNT_TAG = "visibleGoodsCount";
     private static final String WORK_LEFT_TAG = "workLeft";
     private static final String WORK_TYPE_TAG = "workType";
-    // @compat 0.10.5
+    /** @compat 0.10.5 */
     private static final String OLD_UNITS_TAG = "units";
-    // end @compat
-    // @compat 0.10.7
+    /**
+     * End @compat
+     * @compat 0.10.7
+     */
     private static final String OLD_HIT_POINTS_TAG = "hitpoints";
     private static final String EQUIPMENT_TAG = "equipment";
-    /** The equipment this Unit carries.  Now subsumed into roles. */
+    /** The equipment this Unit carries. Now subsumed into roles. */
     private final TypeCountMap<EquipmentType> equipment
         = new TypeCountMap<>();
-    // end @compat 0.10.x
-    // @compat 0.11.3
-    private static final String OLD_TILE_IMPROVEMENT_TAG = "tileimprovement";
-    // end @compat 0.11.3
-
-
     /**
-     * {@inheritDoc}
+     * End @compat 0.10.x
+     * @compat 0.11.3
      */
+    private static final String OLD_TILE_IMPROVEMENT_TAG = "tileimprovement";
+    /** End @compat 0.11.3 */
+
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
 
         boolean full = xw.validFor(getOwner());
 
-        if (name != null) xw.writeAttribute(NAME_TAG, name);
+        if (name != null) {
+			xw.writeAttribute(NAME_TAG, name);
+		}
 
         xw.writeAttribute(UNIT_TYPE_TAG, unitType);
 
@@ -4213,7 +4172,6 @@ public class Unit extends GoodsLocation
         if (!full && hasAbility(Ability.PIRACY)) {
             // Pirates do not disclose national characteristics.
             xw.writeAttribute(OWNER_TAG, getGame().getUnknownEnemy());
-
         } else {
             xw.writeAttribute(OWNER_TAG, getOwner());
 
@@ -4236,7 +4194,6 @@ public class Unit extends GoodsLocation
                 // working inside a colony and has to be specially
                 // serialized to the client.
                 xw.writeLocationAttribute(LOCATION_TAG, getColony());
-
             } else {
                 xw.writeLocationAttribute(LOCATION_TAG, location);
             }
@@ -4251,7 +4208,9 @@ public class Unit extends GoodsLocation
 
             xw.writeAttribute(TURNS_OF_TRAINING_TAG, turnsOfTraining);
 
-            if (workType != null) xw.writeAttribute(WORK_TYPE_TAG, workType);
+            if (workType != null) {
+				xw.writeAttribute(WORK_TYPE_TAG, workType);
+			}
 
             if (experienceType != null) {
                 xw.writeAttribute(EXPERIENCE_TYPE_TAG, experienceType);
@@ -4267,9 +4226,13 @@ public class Unit extends GoodsLocation
 
             xw.writeAttribute(ATTRITION_TAG, attrition);
 
-            if (student != null) xw.writeAttribute(STUDENT_TAG, student);
+            if (student != null) {
+				xw.writeAttribute(STUDENT_TAG, student);
+			}
 
-            if (teacher != null) xw.writeAttribute(TEACHER_TAG, teacher);
+            if (teacher != null) {
+				xw.writeAttribute(TEACHER_TAG, teacher);
+			}
 
             if (destination != null) {
                 xw.writeLocationAttribute(DESTINATION_TAG, destination);
@@ -4283,26 +4246,20 @@ public class Unit extends GoodsLocation
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         if (xw.validFor(getOwner())) {
-
             // Do not show goods or units carried by this unit.
             super.writeChildren(xw);
 
-            if (workImprovement != null) workImprovement.toXML(xw);
-
+            if (workImprovement != null) {
+				workImprovement.toXML(xw);
+			}
         } else if (getType().canCarryGoods()) {
             xw.writeAttribute(VISIBLE_GOODS_COUNT_TAG, getVisibleGoodsCount());
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -4315,7 +4272,9 @@ public class Unit extends GoodsLocation
         Player oldOwner = owner;
         owner = xr.findFreeColGameObject(game, OWNER_TAG,
                                          Player.class, (Player)null, true);
-        if (xr.shouldIntern()) game.checkOwners(this, oldOwner);
+        if (xr.shouldIntern()) {
+			game.checkOwners(this, oldOwner);
+		}
 
         UnitType oldUnitType = unitType;
         unitType = xr.getType(spec, UNIT_TYPE_TAG,
@@ -4349,13 +4308,11 @@ public class Unit extends GoodsLocation
                 && !unitType.hasAbility(Ability.REF_UNIT)) {
                 role = spec.getRole("model.role.dragoon");
             }
-        } else {
-            if ("model.role.infantry".equals(role.getId())) {
-                role = spec.getRole("model.role.soldier");
-            } else if ("model.role.cavalry".equals(role.getId())) {
-                role = spec.getRole("model.role.dragoon");
-            }
-        }            
+        } else if ("model.role.infantry".equals(role.getId())) {
+		    role = spec.getRole("model.role.soldier");
+		} else if ("model.role.cavalry".equals(role.getId())) {
+		    role = spec.getRole("model.role.dragoon");
+		}            
         // end @compat 0.10.x
 
         roleCount = xr.getAttribute(ROLE_COUNT_TAG,
@@ -4384,7 +4341,9 @@ public class Unit extends GoodsLocation
 
         hitPoints = xr.getAttribute(HIT_POINTS_TAG, -1);
         // @compat 0.10.7
-        if (hitPoints < 0) hitPoints = xr.getAttribute(OLD_HIT_POINTS_TAG, -1);
+        if (hitPoints < 0) {
+			hitPoints = xr.getAttribute(OLD_HIT_POINTS_TAG, -1);
+		}
         // end @compat
 
         teacher = xr.makeFreeColGameObject(game, TEACHER_TAG,
@@ -4420,13 +4379,12 @@ public class Unit extends GoodsLocation
         changeWorkType(xr.getType(spec, WORK_TYPE_TAG, GoodsType.class, null));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
-        if (getGoodsContainer() != null) getGoodsContainer().removeAll();
+        if (getGoodsContainer() != null) {
+			getGoodsContainer().removeAll();
+		}
         equipment.clear();
         workImprovement = null;
 
@@ -4500,9 +4458,6 @@ public class Unit extends GoodsLocation
         // end @compat 0.10.x
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -4522,7 +4477,6 @@ public class Unit extends GoodsLocation
                 super.readChild(xr);
             }
         // end @compat 0.10.5
-
         } else if (TileImprovement.getXMLElementTagName().equals(tag)
                    // @compat 0.11.3
                    || OLD_TILE_IMPROVEMENT_TAG.equals(tag)
@@ -4530,7 +4484,6 @@ public class Unit extends GoodsLocation
                    ) {
             workImprovement = xr.readFreeColGameObject(game,
                                                        TileImprovement.class);
-
         } else {
             super.readChild(xr);
         }
@@ -4555,7 +4508,9 @@ public class Unit extends GoodsLocation
             if (!hasDefaultRole()) {
                 sb.append("-").append(getRoleSuffix());
                 int count = getRoleCount();
-                if (count > 1) sb.append(".").append(count);
+                if (count > 1) {
+					sb.append(".").append(count);
+				}
             }
             sb.append(" ").append(getMovesAsString());
         }
@@ -4563,17 +4518,11 @@ public class Unit extends GoodsLocation
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return toString("");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -26,21 +26,17 @@ import java.util.StringTokenizer;
 
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
 /**
  * A rule consists of any number of relations combined with "and" and
  * "or" operators. The "and" operator binds more strongly, and there
  * are no grouping features.
  */
 public class Rule {
-
     private final List<List<Relation>> conditions = new ArrayList<>();
-
 
     public Rule(String input) {
         parse(input);
     }
-
 
     /**
      * Adds a list of relations combined with the "and" operator.

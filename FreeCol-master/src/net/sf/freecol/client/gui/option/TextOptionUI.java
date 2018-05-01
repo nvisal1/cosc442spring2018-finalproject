@@ -23,16 +23,13 @@ import javax.swing.JTextField;
 
 import net.sf.freecol.common.option.TextOption;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.TextOption} in order to enable
  * values to be both seen and changed.
  */
 public final class TextOptionUI extends OptionUI<TextOption>  {
-
     private final JTextField box = new JTextField(16);
-
 
     /**
      * Creates a new <code>TextOptionUI</code> for the given
@@ -48,28 +45,18 @@ public final class TextOptionUI extends OptionUI<TextOption>  {
         initialize();
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JTextField getComponent() {
         return box;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue(box.getText());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         box.setText(getOption().getValue());

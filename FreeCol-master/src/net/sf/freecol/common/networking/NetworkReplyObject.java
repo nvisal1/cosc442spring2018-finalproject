@@ -19,18 +19,15 @@
 
 package net.sf.freecol.common.networking;
 
-
 /**
  * Class for storing a network response.  If the response has not been
  * set when {@link #getResponse} has been called, this method will
  * block until {@link #setResponse} is called.
  */
 public class NetworkReplyObject {
-
     private Object response = null;
-    private boolean responseGiven = false;
+    private boolean responseGiven;
     private final int networkReplyId;
-
 
     /**
      * The constructor.
@@ -85,9 +82,7 @@ public class NetworkReplyObject {
         return networkReplyId;
     }
 
-    /**
-     * Interrupts any thread waiting for a response.
-     */
+    /** Interrupts any thread waiting for a response. */
     public synchronized void interrupt() {
         responseGiven = true;
         notify();

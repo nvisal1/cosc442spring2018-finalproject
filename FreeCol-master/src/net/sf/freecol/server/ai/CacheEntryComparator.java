@@ -21,19 +21,14 @@ package net.sf.freecol.server.ai;
 
 import java.util.Comparator;
 
-
-/**
- * A special comparator to sort the production cache with.
- */
+/** A special comparator to sort the production cache with. */
 public class CacheEntryComparator implements Comparator<ProductionCache.Entry> {
-
     public int compareProduction(ProductionCache.Entry entry1, ProductionCache.Entry entry2) {
         return entry2.getProduction() - entry1.getProduction();
     }
 
     @Override
     public int compare(ProductionCache.Entry entry1, ProductionCache.Entry entry2) {
-
         int production = compareProduction(entry1, entry2);
         if (production != 0) {
             return production;
@@ -79,4 +74,3 @@ public class CacheEntryComparator implements Comparator<ProductionCache.Entry> {
         }
     }
 }
-

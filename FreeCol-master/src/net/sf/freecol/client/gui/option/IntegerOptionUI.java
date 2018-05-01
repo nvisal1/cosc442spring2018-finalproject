@@ -25,14 +25,12 @@ import javax.swing.SpinnerNumberModel;
 
 import net.sf.freecol.common.option.IntegerOption;
 
-
 /**
  * This class provides visualization for an
  * {@link net.sf.freecol.common.option.IntegerOption} in order to enable
  * values to be both seen and changed.
  */
 public final class IntegerOptionUI extends OptionUI<IntegerOption>  {
-
     private final JSpinner spinner = new JSpinner();
 
     /**
@@ -61,28 +59,18 @@ public final class IntegerOptionUI extends OptionUI<IntegerOption>  {
         initialize();
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JComponent getComponent() {
         return spinner;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue((Integer) spinner.getValue());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         spinner.setValue(getOption().getValue());

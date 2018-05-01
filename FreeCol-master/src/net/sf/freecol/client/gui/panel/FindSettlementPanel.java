@@ -52,29 +52,23 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Settlement;
 import net.sf.freecol.common.model.StringTemplate;
 
-
 /**
  * Centers the map on a known settlement or colony.  Pressing ENTER
  * opens a panel if appropriate.
  */
 public final class FindSettlementPanel extends FreeColPanel
     implements ListSelectionListener, ItemListener {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(FindSettlementPanel.class.getName());
 
     private class SettlementRenderer
         extends FreeColComboBoxRenderer<Settlement> {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void setLabelValues(JLabel label, Settlement value) {
             StringTemplate template = StringTemplate
                 .template("findSettlementPanel.settlement")
                 .addName("%name%", value.getName())
-                .addName("%capital%", ((value.isCapital()) ? "*" : ""))
+                .addName("%capital%", value.isCapital() ? "*" : "")
                 .addStringTemplate("%nation%",
                     value.getOwner().getNationLabel());
             label.setText(Messages.message(template));
@@ -83,7 +77,7 @@ public final class FindSettlementPanel extends FreeColPanel
         }
     }
 
-    private static enum DisplayListOption {
+    private enum DisplayListOption {
         ALL,
         ONLY_NATIVES,
         ONLY_EUROPEAN
@@ -94,7 +88,6 @@ public final class FindSettlementPanel extends FreeColPanel
 
     /** The list of settlements to display. */
     private final JList<Settlement> settlementList;
-
 
     /**
      * Create a new panel.
@@ -202,8 +195,7 @@ public final class FindSettlementPanel extends FreeColPanel
         }
     }
 
-
-    // Interface ItemListener
+    /** Interface ItemListener. */
 
     @Override
     public void itemStateChanged(ItemEvent event) {
@@ -220,12 +212,8 @@ public final class FindSettlementPanel extends FreeColPanel
         }
     }
 
+    /** Interface ListSelectionListener. */
 
-    // Interface ListSelectionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void valueChanged(ListSelectionEvent e) {
         Settlement settlement = this.settlementList.getSelectedValue();
@@ -234,20 +222,13 @@ public final class FindSettlementPanel extends FreeColPanel
         }
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void requestFocus() {
         this.settlementList.requestFocus();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

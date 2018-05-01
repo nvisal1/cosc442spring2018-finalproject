@@ -26,14 +26,12 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 
 import org.w3c.dom.Element;
 
-
 /**
  * The <code>Ability</code> class encapsulates a bonus or penalty
  * that can be applied to any action within the game, most obviously
  * combat.
  */
 public final class Ability extends Feature {
-
     /**
      * The ability to add the current tax as a bonus to the production
      * of bells.  Provided by the {@link FoundingFather} Thomas Paine.
@@ -117,9 +115,7 @@ public final class Ability extends Feature {
     public static final String BUILD
         = "model.ability.build";
 
-    /**
-     * The ability to build a customs house.  Yes this is misspelled.
-     */
+    /** The ability to build a customs house. Yes this is misspelled. */
     public static final String BUILD_CUSTOM_HOUSE
         = "model.ability.buildCustomHouse";
 
@@ -143,7 +139,7 @@ public final class Ability extends Feature {
     public static final String CAN_RECRUIT_UNIT
         = "model.ability.canRecruitUnit";
 
-    /** The ability of certain armed units to capture equipment.*/
+    /** The ability of certain armed units to capture equipment. */
     public static final String CAPTURE_EQUIPMENT
         = "model.ability.captureEquipment";
 
@@ -154,7 +150,7 @@ public final class Ability extends Feature {
     public static final String CAPTURE_GOODS
         = "model.ability.captureGoods";
 
-    /** The ability of certain armed units to capture another player's units.*/
+    /** The ability of certain armed units to capture another player's units. */
     public static final String CAPTURE_UNITS
         = "model.ability.captureUnits";
 
@@ -162,10 +158,7 @@ public final class Ability extends Feature {
     public static final String CARRY_GOODS
         = "model.ability.carryGoods";
 
-    /**
-     * The ability of certain units (e.g. treasure trains) to carry
-     * treasure.
-     */
+    /** The ability of certain units (e.g. treasure trains) to carry treasure. */
     public static final String CARRY_TREASURE
         = "model.ability.carryTreasure";
 
@@ -224,10 +217,7 @@ public final class Ability extends Feature {
     public static final String EVADE_ATTACK
         = "model.ability.evadeAttack";
 
-    /**
-     * The ability of certain units to work as missionaries more
-     * effectively.
-     */
+    /** The ability of certain units to work as missionaries more effectively. */
     public static final String EXPERT_MISSIONARY
         = "model.ability.expertMissionary";
 
@@ -284,10 +274,7 @@ public final class Ability extends Feature {
     public static final String INCITE_NATIVES
         = "model.ability.inciteNatives";
 
-    /**
-     * The ability denoting that a declaration of independence has
-     * been made.
-     */
+    /** The ability denoting that a declaration of independence has been made. */
     public static final String INDEPENDENCE_DECLARED
         = "model.ability.independenceDeclared";
 
@@ -342,10 +329,7 @@ public final class Ability extends Feature {
     public static final String PIRACY
         = "model.ability.piracy";
 
-    /**
-     * An ability that enhances the treasure plundered from native
-     * settlements.
-     */
+    /** An ability that enhances the treasure plundered from native settlements. */
     public static final String PLUNDER_NATIVES
         = "model.ability.plunderNatives";
 
@@ -385,10 +369,7 @@ public final class Ability extends Feature {
     public static final String SPY_ON_COLONY
         = "model.ability.spyOnColony";
 
-    /**
-     * Units with this ability can be chosen as support units from
-     * the crown.
-     */
+    /** Units with this ability can be chosen as support units from the crown. */
     public static final String SUPPORT_UNIT
         = "model.ability.supportUnit";
 
@@ -404,10 +385,8 @@ public final class Ability extends Feature {
     public static final String UNDEAD
         = "model.ability.undead";
 
-
     /** The ability value. */
     private boolean value = true;
-
 
     /**
      * Creates a new <code>Ability</code> instance.
@@ -475,7 +454,6 @@ public final class Ability extends Feature {
         readFromXMLElement(e);
     }
 
-
     /**
      * Get the ability value.
      *
@@ -494,39 +472,23 @@ public final class Ability extends Feature {
         this.value = newValue;
     }
 
+    /** Override Object. */
 
-    // Override Object
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o instanceof Ability) {
-            return this.value == ((Ability)o).value
-                && super.equals(o);
-        }
-        return false;
+        return this == o || (o instanceof Ability && this.value == ((Ability)o).value
+		    && super.equals(o));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash += (value) ? 1 : 0;
+        hash += value ? 1 : 0;
         return hash;
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -534,9 +496,6 @@ public final class Ability extends Feature {
         xw.writeAttribute(VALUE_TAG, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -544,9 +503,6 @@ public final class Ability extends Feature {
         value = xr.getAttribute(VALUE_TAG, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(32);
@@ -558,9 +514,6 @@ public final class Ability extends Feature {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

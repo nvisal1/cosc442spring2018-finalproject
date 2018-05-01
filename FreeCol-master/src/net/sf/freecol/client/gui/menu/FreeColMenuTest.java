@@ -39,10 +39,7 @@ import javax.swing.JTextArea;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.FreeColFrame;
 
-
-/**
- * Test the menus.
- */
+/** Test the menus. */
 public class FreeColMenuTest implements ActionListener, ItemListener {
     JTextArea output;
     JScrollPane scrollPane;
@@ -91,7 +88,7 @@ public class FreeColMenuTest implements ActionListener, ItemListener {
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        JMenuItem source = (JMenuItem)(e.getSource());
+        JMenuItem source = (JMenuItem)e.getSource();
         String s = "Item event detected."
                    + newline
                    + "    Event source: " + source.getText()
@@ -104,7 +101,7 @@ public class FreeColMenuTest implements ActionListener, ItemListener {
         output.setCaretPosition(output.getDocument().getLength());
     }
 
-    // Returns just the class name -- no package info.
+    /** Returns just the class name -- no package info. */
     protected String getClassName(Object o) {
         String classString = o.getClass().getName();
         int dotIndex = classString.lastIndexOf('.');

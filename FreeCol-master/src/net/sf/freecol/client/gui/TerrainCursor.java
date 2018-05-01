@@ -25,12 +25,8 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 
-
-/**
- * The blinking cursor on the map.
- */
+/** The blinking cursor on the map. */
 public class TerrainCursor implements ActionListener  {
-
     public static final int OFF = 0;
     public static final int ON = 1;
 
@@ -38,10 +34,7 @@ public class TerrainCursor implements ActionListener  {
     private boolean active;
     private final EventListenerList listenerList;
 
-
-    /**
-     * Creates a new <code>TerrainCursor</code> instance.
-     */
+    /** Creates a new <code>TerrainCursor</code> instance. */
     public TerrainCursor() {
         active = true;
         
@@ -71,11 +64,15 @@ public class TerrainCursor implements ActionListener  {
     }
 
     public void startBlinking() {
-        if (!blinkTimer.isRunning()) blinkTimer.start();
+        if (!blinkTimer.isRunning()) {
+			blinkTimer.start();
+		}
     }
 
     public void stopBlinking() {
-        if (blinkTimer.isRunning()) blinkTimer.stop();
+        if (blinkTimer.isRunning()) {
+			blinkTimer.stop();
+		}
     }
 
     public void addActionListener(ActionListener listener) {
@@ -93,12 +90,8 @@ public class TerrainCursor implements ActionListener  {
         }
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         active = !active;

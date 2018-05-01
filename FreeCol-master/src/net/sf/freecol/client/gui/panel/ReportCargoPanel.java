@@ -28,12 +28,8 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 
-
-/**
- * This panel displays the Cargo Report.
- */
+/** This panel displays the Cargo Report. */
 public final class ReportCargoPanel extends ReportUnitPanel {
-
     /**
      * Creates a cargo report.
      *
@@ -42,7 +38,6 @@ public final class ReportCargoPanel extends ReportUnitPanel {
     public ReportCargoPanel(FreeColClient freeColClient) {
         super(freeColClient, "reportCargoAction", false);
     }
-
 
     @Override
     protected void addREFUnits() {}
@@ -73,5 +68,4 @@ public final class ReportCargoPanel extends ReportUnitPanel {
             }
         }
     }
-
 }

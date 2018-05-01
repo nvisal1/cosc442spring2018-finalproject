@@ -21,13 +21,11 @@ package net.sf.freecol.common.resources;
 
 import java.net.URI;
 
-
 /**
  * A <code>Resource</code> wrapping an <code>String</code>.
  * @see Resource
  */
 public class StringResource extends Resource {
-
     private String data;
 
     /**
@@ -48,7 +46,6 @@ public class StringResource extends Resource {
             this.data = this.data.substring(idx+1);
         }
     }
-
 
     /**
      * Gets the <code>String</code> represented by this resource.

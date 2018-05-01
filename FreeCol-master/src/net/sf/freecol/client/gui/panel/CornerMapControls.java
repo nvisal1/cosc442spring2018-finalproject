@@ -39,7 +39,6 @@ import net.sf.freecol.common.model.Direction;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * A collection of panels and buttons that are used to provide the
  * user with a more detailed view of certain elements on the map and
@@ -50,14 +49,9 @@ import net.sf.freecol.common.resources.ResourceManager;
  * placed on a JComponent in order to be usable.
  */
 public final class CornerMapControls extends MapControls {
-
     private static final Logger logger = Logger.getLogger(CornerMapControls.class.getName());
 
     public class MiniMapPanel extends JPanel {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void paintComponent(Graphics graphics) {
             if (miniMapSkin != null) {
@@ -73,7 +67,6 @@ public final class CornerMapControls extends MapControls {
 
     private final Image miniMapSkin;
 
-
     /**
      * The basic constructor.
      *
@@ -87,13 +80,12 @@ public final class CornerMapControls extends MapControls {
         compassRose.setSize(compassRose.getPreferredSize());
         compassRose.addMouseListener(new MouseAdapter() {
 
-                /**
-                 * {@inheritDoc}
-                 */
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     Unit unit = freeColClient.getGUI().getActiveUnit();
-                    if (unit == null) return;
+                    if (unit == null) {
+						return;
+					}
                     int x = e.getX() - compassRose.getWidth()/2;
                     int y = e.getY() - compassRose.getHeight()/2;
                     double theta = Math.atan2(y, x) + Math.PI/2 + Math.PI/8;
@@ -108,7 +100,7 @@ public final class CornerMapControls extends MapControls {
         miniMapPanel = new MiniMapPanel();
         miniMapPanel.setFocusable(false);
         
-        /**
+        /*
          * In order to make the setLocation setup work, we need to set
          * the layout to null first, then set the size of the minimap,
          * and then its location.
@@ -151,7 +143,6 @@ public final class CornerMapControls extends MapControls {
         }
     }
 
-
     /**
      * Add a component to the canvas.
      *
@@ -167,7 +158,6 @@ public final class CornerMapControls extends MapControls {
                 + " in " + canvas.getSize(), e);
         }
     }
-
 
     // Implement MapControls
 
@@ -186,9 +176,7 @@ public final class CornerMapControls extends MapControls {
         final boolean rose = freeColClient.getClientOptions()
             .getBoolean(ClientOptions.DISPLAY_COMPASS_ROSE);
 
-        //
         // Relocate GUI Objects
-        //
         final int cw = canvas.getWidth();
         final int ch = canvas.getHeight();
         infoPanel.setLocation(cw - infoPanel.getWidth(),
@@ -213,12 +201,12 @@ public final class CornerMapControls extends MapControls {
             }
         }
 
-        //
         // Add the GUI Objects to the container
-        //
         addToCanvas(canvas, infoPanel);
         addToCanvas(canvas, miniMapPanel);
-        if (rose) addToCanvas(canvas, compassRose);
+        if (rose) {
+			addToCanvas(canvas, compassRose);
+		}
         if (!freeColClient.isMapEditor()) {
             for (UnitButton button : unitButtons) {
                 addToCanvas(canvas, button);

@@ -29,17 +29,12 @@ import net.sf.freecol.common.util.LogBuilder;
 import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
-
-/**
- * Mission for wandering in random directions.
- */
+/** Mission for wandering in random directions. */
 public class UnitWanderMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(UnitWanderMission.class.getName());
 
     /** The tag for this mission. */
     private static final String tag = "AI wanderer";
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -69,69 +64,49 @@ public class UnitWanderMission extends Mission {
         readFromXML(xr);
     }
 
-
-    // Implement Mission
-    //   Inherit dispose, getBaseTransportPriority, getTransportDestination
-
     /**
-     * {@inheritDoc}
+     * Implement Mission
+     *   Inherit dispose, getBaseTransportPriority, getTransportDestination.
      */
+
     @Override
     public Location getTarget() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {}
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isOneTime() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return invalidAIUnitReason(getAIUnit());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
         String reason = invalidReason();
-        if (reason != null) return lbFail(lb, false, reason);
+        if (reason != null) {
+			return lbFail(lb, false, reason);
+		}
 
         // Just move in random directions.
         moveRandomlyTurn(tag);
         return lbAt(lb);
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

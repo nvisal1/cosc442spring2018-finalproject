@@ -22,7 +22,6 @@ package net.sf.freecol.common.resources;
 import java.net.URI;
 import java.net.URL;
 
-
 /**
  * A <code>Resource</code> wrapping a <code>FAFile</code>.
  *
@@ -30,14 +29,11 @@ import java.net.URL;
  * @see FAFile
  */
 public class FAFileResource extends Resource {
-
     private final FAFile FAFile;
-
 
     public FAFileResource(FAFile FAFile) {
         this.FAFile = FAFile;
     }
-
 
     /**
      * Do not use directly.
@@ -50,7 +46,6 @@ public class FAFileResource extends Resource {
         URL url = resourceLocator.toURL();
         FAFile = new FAFile(url.openStream());
     }
-
 
     /**
      * Gets the <code>FAFile</code> represented by this resource.

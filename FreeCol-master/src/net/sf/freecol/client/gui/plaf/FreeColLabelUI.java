@@ -25,16 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.metal.MetalLabelUI;
 
-
-/**
- * Sets the default opaque attribute to <i>false</i>.
- */
+/** Sets the default opaque attribute to <i>false</i>. */
 public class FreeColLabelUI extends MetalLabelUI {
-
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return new FreeColLabelUI();
     }
-
 
     @Override
     public void installUI(JComponent c) {

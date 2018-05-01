@@ -27,15 +27,10 @@ import javax.swing.JTextField;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * A simple input dialog to collect a string.
- */
+/** A simple input dialog to collect a string. */
 public final class FreeColStringInputDialog extends FreeColInputDialog<String> {
-
     /** The text field for the user to set. */
     private final JTextField textField;
-
 
     /**
      * Creates a dialog to input a string field.
@@ -69,20 +64,13 @@ public final class FreeColStringInputDialog extends FreeColInputDialog<String> {
         initializeInputDialog(frame, modal, panel, null, okKey, cancelKey);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String getInputValue() {
         return textField.getText();
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void requestFocus() {
         this.textField.requestFocus();

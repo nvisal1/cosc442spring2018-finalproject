@@ -30,18 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-
 /**
  * Represents the data within a Font Animation File.
  * 
  * @see net.sf.freecol.client.gui.panel.DeclarationPanel
  */
 public class FAFile {
-
-    // FIXME: Use two hashes, to be safer?
+    /** FIXME: Use two hashes, to be safer? */
     private final HashMap<Object, Object> letters = new HashMap<>();
-    private int maxHeight = 0;
-
+    private int maxHeight;
 
     /**
      * Reads data from the given <code>InputStream</code> and
@@ -54,8 +51,7 @@ public class FAFile {
         load(new CREatingInputStream(is));
     }
 
-    
-    /**
+        /**
      * Gets the <code>Dimension</code> of the given
      * <code>String</code> when rendered.
      * 
@@ -145,7 +141,10 @@ public class FAFile {
         line = in.readLine();
         while (line != null && !line.startsWith("[Chars]")) {
             String name = line;
-            if ((line = in.readLine()) == null) break;
+            line = in.readLine();
+			if (line == null) {
+				break;
+			}
             st = new StringTokenizer(line);
             int width = Integer.parseInt(st.nextToken());
             int height = Integer.parseInt(st.nextToken());
@@ -153,13 +152,19 @@ public class FAFile {
             int[] xs = new int[numberOfPoints];
             int[] ys = new int[numberOfPoints];
 
-            if ((line = in.readLine()) == null) break;
+            line = in.readLine();
+			if (line == null) {
+				break;
+			}
             st = new StringTokenizer(line);
             for (int i=0; i<numberOfPoints; i++) {
                 xs[i] = Integer.parseInt(st.nextToken());               
             }
 
-            if ((line = in.readLine()) == null) break;
+            line = in.readLine();
+			if (line == null) {
+				break;
+			}
             st = new StringTokenizer(line);         
             for (int i=0; i<numberOfPoints; i++) {
                 ys[i] = Integer.parseInt(st.nextToken());               
@@ -190,7 +195,10 @@ public class FAFile {
                 xs[i] = Integer.parseInt(st.nextToken());               
             }
 
-            if ((line = in.readLine()) == null) break;
+            line = in.readLine();
+			if (line == null) {
+				break;
+			}
             st = new StringTokenizer(line);         
             for (int i=0; i<numberOfPoints; i++) {
                 ys[i] = Integer.parseInt(st.nextToken());               
@@ -206,7 +214,6 @@ public class FAFile {
             line = in.readLine();
         }
     }
-
 
     private FALetter getLetter(char letter) {
         return (FALetter) letters.get(letter);
@@ -260,4 +267,3 @@ public class FAFile {
         private final InputStream in;
     }
 }
-

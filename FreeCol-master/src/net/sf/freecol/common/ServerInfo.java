@@ -24,7 +24,6 @@ import net.sf.freecol.FreeCol;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 /**
  * Contains information about a single server.  This information is
  * normally retrieved from a meta-server.
@@ -32,7 +31,6 @@ import org.w3c.dom.Element;
  * @see net.sf.freecol.metaserver
  */
 public class ServerInfo {
-
     private String name;
     private String address;
     private int port;
@@ -43,10 +41,7 @@ public class ServerInfo {
     private String version;
     private int gameState;
 
-
-    /**
-     * Empty constructor that can be used by subclasses.
-     */
+    /** Empty constructor that can be used by subclasses. */
     protected ServerInfo() {}
 
     /**
@@ -68,8 +63,7 @@ public class ServerInfo {
                isGameStarted, version, gameState);
     }
 
-    
-    /**
+        /**
      * Creates an object from the given <code>Element</code>.
      *
      * @param element The XML DOM Element containing the information that will be
@@ -78,7 +72,6 @@ public class ServerInfo {
     public ServerInfo(Element element) {
         readFromXMLElement(element);
     }
-
 
     /**
      * Updates the object with the given information.
@@ -138,7 +131,6 @@ public class ServerInfo {
         return address;
     }
 
-
     /**
      * Returns the port in which clients may connect.
      * @return The port.
@@ -147,8 +139,7 @@ public class ServerInfo {
         return port;
     }
     
-    
-    /**
+        /**
      * Returns the number of currently active (connected and not dead) players.
      * @return The number of players.
      */
@@ -156,8 +147,7 @@ public class ServerInfo {
         return currentlyPlaying;
     }
     
-    
-    /**
+        /**
      * Returns the number of players that may connect.
      * @return The number of slots available on the server.
      */
@@ -165,8 +155,7 @@ public class ServerInfo {
         return slotsAvailable;
     }
 
-    
-    /**
+        /**
      * Returns the FreeCol version of the server.
      *
      * @return The version.
@@ -175,7 +164,6 @@ public class ServerInfo {
     public String getVersion() {
         return version;
     }
-
 
     /**
      * Gets the current state of the game.
@@ -186,7 +174,6 @@ public class ServerInfo {
     public int getGameState() {
         return gameState;
     }
-
 
     /**
      * Creates an XML-representation of this object.
@@ -208,7 +195,6 @@ public class ServerInfo {
         return element;
     }
 
-
     /**
      * Reads attributes from the given element.
      * @param element The XML DOM Element containing information that
@@ -218,7 +204,6 @@ public class ServerInfo {
         update(element);
     }
 
-
     /**
      * Gets the tag name of the root element representing this object.
      * @return "metaItem".
@@ -226,7 +211,6 @@ public class ServerInfo {
     public static String getXMLElementTagName() {
         return "serverInfo";
     }
-
 
     /**
      * Returns a <code>String</code> representation of this object for debugging purposes.
@@ -237,5 +221,4 @@ public class ServerInfo {
                 + ", " + slotsAvailable + ", " + isGameStarted + ", " + version
                 + ", " + gameState;
     }
-
 }

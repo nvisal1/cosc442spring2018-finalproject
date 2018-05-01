@@ -27,15 +27,10 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when the client requests abandoning of a colony.
- */
+/** The message sent when the client requests abandoning of a colony. */
 public class AbandonColonyMessage extends DOMMessage {
-
     /** The identifier of the colony to abandon. */
     private final String colonyId;
-
 
     /**
      * Create a new <code>AbandonColonyMessage</code> with the specified
@@ -61,7 +56,6 @@ public class AbandonColonyMessage extends DOMMessage {
         this.colonyId = element.getAttribute("colony");
     }
 
-
     /**
      * Handle a "abandonColony"-message.
      *
@@ -85,7 +79,7 @@ public class AbandonColonyMessage extends DOMMessage {
         if (colony.getUnitCount() != 0) {
             return DOMMessage.clientError("Attempt to abandon colony "
                 + colonyId + " with non-zero unit count "
-                + Integer.toString(colony.getUnitCount()));
+                + colony.getUnitCount());
         }
 
         // Proceed to abandon

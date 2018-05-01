@@ -35,12 +35,8 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 
 import org.xml.sax.SAXException;
 
-
-/**
- * The thread that checks for incoming messages.
- */
+/** The thread that checks for incoming messages. */
 final class ReceivingThread extends Thread {
-
     private static final Logger logger = Logger.getLogger(ReceivingThread.class.getName());
 
     /**
@@ -53,7 +49,6 @@ final class ReceivingThread extends Thread {
      * the underlying input stream has to be closed directly.
      */
     private static class FreeColNetworkInputStream extends InputStream {
-
         private static final int BUFFER_SIZE = 16384;
 
         private static final char END_OF_STREAM = '\n';
@@ -62,14 +57,13 @@ final class ReceivingThread extends Thread {
 
         private final byte[] buffer = new byte[BUFFER_SIZE];
 
-        private int bStart = 0;
+        private int bStart;
 
-        private int bEnd = 0;
+        private int bEnd;
 
         private boolean empty = true;
 
-        private boolean wait = false;
-
+        private boolean wait;
 
         /**
          * Creates a new <code>FreeColNetworkInputStream</code>.
@@ -98,7 +92,9 @@ final class ReceivingThread extends Thread {
          * @exception IllegalStateException if the buffer is not empty.
          */
         private boolean fill() throws IOException {
-            if (!this.empty) throw new IllegalStateException("Not empty.");
+            if (!this.empty) {
+				throw new IllegalStateException("Not empty.");
+			}
 
             int r;
             if (this.bStart < this.bEnd) {
@@ -109,11 +105,15 @@ final class ReceivingThread extends Thread {
             } else {
                 r = this.in.read(buffer, this.bEnd, this.bStart - this.bEnd);
             }
-            if (r <= 0) return false;
+            if (r <= 0) {
+				return false;
+			}
 
             this.empty = false;
             this.bEnd += r;
-            if (this.bEnd >= BUFFER_SIZE) this.bEnd = 0;
+            if (this.bEnd >= BUFFER_SIZE) {
+				this.bEnd = 0;
+			}
             return true;
         }
 
@@ -126,7 +126,9 @@ final class ReceivingThread extends Thread {
          */
         @Override
         public int read() throws IOException {
-            if (this.wait) return -1;
+            if (this.wait) {
+				return -1;
+			}
 
             if (this.empty && !fill()) {
                 this.wait = true;
@@ -135,8 +137,12 @@ final class ReceivingThread extends Thread {
 
             int ret = buffer[this.bStart];
             this.bStart++;
-            if (this.bStart >= BUFFER_SIZE) this.bStart = 0;
-            if (this.bStart == this.bEnd) this.empty = true;
+            if (this.bStart >= BUFFER_SIZE) {
+				this.bStart = 0;
+			}
+            if (this.bStart == this.bEnd) {
+				this.empty = true;
+			}
 
             if (ret == END_OF_STREAM) {
                 this.wait = true;
@@ -156,7 +162,9 @@ final class ReceivingThread extends Thread {
          */
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
-            if (this.wait) return -1;
+            if (this.wait) {
+				return -1;
+			}
 
             int n = 0;
             for (; n < len; n++) {
@@ -167,8 +175,12 @@ final class ReceivingThread extends Thread {
 
                 byte value = buffer[this.bStart];
                 this.bStart++;
-                if (this.bStart == BUFFER_SIZE) this.bStart = 0;
-                if (this.bStart == this.bEnd) this.empty = true;
+                if (this.bStart == BUFFER_SIZE) {
+					this.bStart = 0;
+				}
+                if (this.bStart == this.bEnd) {
+					this.empty = true;
+				}
 
                 if (value == END_OF_STREAM) {
                     this.wait = true;
@@ -199,7 +211,6 @@ final class ReceivingThread extends Thread {
 
     /** A counter for reply ids. */
     private int nextNetworkReplyId;
-
 
     /**
      * The constructor to use.
@@ -242,16 +253,12 @@ final class ReceivingThread extends Thread {
         return nro;
     }
 
-    /**
-     * Checks if this thread should run.
-     */
+    /** Checks if this thread should run. */
     private synchronized boolean shouldRun() {
         return this.shouldRun;
     }
 
-    /**
-     * Tells this thread that it does not need to do any more work.
-     */
+    /** Tells this thread that it does not need to do any more work. */
     public synchronized void askToStop() {
         if (this.shouldRun) {
             this.shouldRun = false;
@@ -261,9 +268,7 @@ final class ReceivingThread extends Thread {
         }
     }
 
-    /**
-     * Disconnects this thread.
-     */
+    /** Disconnects this thread. */
     private void disconnect(String reason) {
         askToStop();
         if (connection.getMessageHandler() != null) {
@@ -304,7 +309,6 @@ final class ReceivingThread extends Thread {
 
         if (Connection.DISCONNECT_TAG.equals(tag)) {
             askToStop();
-
         } else if (Connection.REPLY_TAG.equals(tag)) {
             int id = xr.getAttribute(Connection.NETWORK_REPLY_ID_TAG, -1);
             NetworkReplyObject nro = waitingThreads.remove(id);
@@ -314,7 +318,6 @@ final class ReceivingThread extends Thread {
                 bis.reset();
                 nro.setResponse(new DOMMessage(bis));
             }
-        
         } else {
             try {
                 bis.reset();
@@ -324,7 +327,9 @@ final class ReceivingThread extends Thread {
             }
         }
 
-        if (xr != null) xr.close();
+        if (xr != null) {
+			xr.close();
+		}
     }
 
     /**
@@ -342,13 +347,17 @@ final class ReceivingThread extends Thread {
                     listen();
                     timesFailed = 0;
                 } catch (SAXException|XMLStreamException e) {
-                    if (!shouldRun()) break;
+                    if (!shouldRun()) {
+						break;
+					}
                     logger.log(Level.WARNING, "XML fail", e);
                     if (++timesFailed > MAXIMUM_RETRIES) {
                         disconnect("Too many failures (XML)");
                     }
                 } catch (IOException e) {
-                    if (!shouldRun()) break;
+                    if (!shouldRun()) {
+						break;
+					}
                     logger.log(Level.WARNING, "IO fail", e);
                     disconnect("Unexpected IO failure");
                 }

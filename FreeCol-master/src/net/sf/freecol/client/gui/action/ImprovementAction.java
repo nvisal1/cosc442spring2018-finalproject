@@ -26,7 +26,6 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.TileImprovementType;
 import net.sf.freecol.common.model.Unit;
 
-
 /**
  * An action for using the active unit to add a tile improvement to
  * the unit's tile, possibly changing the tile type in the process. In
@@ -34,9 +33,7 @@ import net.sf.freecol.common.model.Unit;
  * plowing and building a road.
  */
 public class ImprovementAction extends UnitAction {
-
     private final TileImprovementType improvement;
-
 
     /**
      * Creates this action.
@@ -52,12 +49,8 @@ public class ImprovementAction extends UnitAction {
         addImageIcons(improvement.getSuffix());
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         if (super.shouldBeEnabled()) {
@@ -71,16 +64,14 @@ public class ImprovementAction extends UnitAction {
         return false;
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         Unit unit = getGUI().getActiveUnit();
-        if (unit == null) return;
+        if (unit == null) {
+			return;
+		}
 
         igc().changeWorkImprovementType(unit, improvement);
     }

@@ -28,18 +28,13 @@ import java.util.logging.Logger;
 import net.sf.freecol.common.debug.FreeColDebugger;
 import net.sf.freecol.common.model.Location;
 
-
-/**
- * A class to wrap a StringBuilder for log generation purposes.
- */
+/** A class to wrap a StringBuilder for log generation purposes. */
 public class LogBuilder {
-
     /** The string builder to use. */
     private final StringBuilder sb;
 
     /** The remembered buffer index. */
     private final List<Integer> points = new ArrayList<>();
-
 
     /**
      * Create a new LogBuilder that can only be used as a buffer.
@@ -49,7 +44,6 @@ public class LogBuilder {
     public LogBuilder(int size) {
         this.sb = (size <= 0) ? null : new StringBuilder(size);
     }
-
 
     /**
      * Convert a simple object to a string suitable for a log buffer.
@@ -88,7 +82,9 @@ public class LogBuilder {
      * @param objects The objects to add.
      */
     public void add(Object... objects) {
-        if (sb != null) add(sb, objects);
+        if (sb != null) {
+			add(sb, objects);
+		}
     }
 
     /**
@@ -99,16 +95,20 @@ public class LogBuilder {
      */
     public <T> void addCollection(String delim, Collection<T> c) {
         if (sb != null) {
-            for (T t : c) add(sb, t, delim);
-            if (!c.isEmpty()) shrink(delim);
+            for (T t : c) {
+				add(sb, t, delim);
+			}
+            if (!c.isEmpty()) {
+				shrink(delim);
+			}
         }
     }
 
-    /**
-     * Add a stack trace to the buffer.
-     */
+    /** Add a stack trace to the buffer. */
     public void addStackTrace() {
-        if (sb != null) FreeColDebugger.addStackTrace(this);
+        if (sb != null) {
+			FreeColDebugger.addStackTrace(this);
+		}
     }
 
     /**
@@ -117,12 +117,12 @@ public class LogBuilder {
      * @param size The size to truncate to.
      */
     public void truncate(int size) {
-        if (sb != null && sb.length() > size) sb.setLength(size);
+        if (sb != null && sb.length() > size) {
+			sb.setLength(size);
+		}
     }
 
-    /**
-     * Remember a position in a buffer.
-     */
+    /** Remember a position in a buffer. */
     public void mark() {
         if (sb != null) {
             this.points.add(0, sb.length());
@@ -138,9 +138,13 @@ public class LogBuilder {
      * @return True if the buffer grew (before inserting).
      */
     public boolean grew(Object... objects) {
-        if (sb == null) return false;
+        if (sb == null) {
+			return false;
+		}
         int p = this.points.remove(0);
-        if (sb.length() <= p) return false;
+        if (sb.length() <= p) {
+			return false;
+		}
         StringBuilder sb2 = new StringBuilder(64);
         add(sb2, objects);
         this.sb.insert(p, sb2.toString());
@@ -189,18 +193,28 @@ public class LogBuilder {
      * @param objects The <code>Object</code>s to add.
      */
     public static String wide(int size, Object... objects) {
-        if (size == 0) return "";
+        if (size == 0) {
+			return "";
+		}
         boolean left = size > 0;
-        if (!left) size = -size;
+        if (!left) {
+			size = -size;
+		}
         StringBuilder s2 = new StringBuilder(size);
         add(s2, objects);
         int delta = size - s2.length();
         if (left) {
-            for (; delta > 0; delta--) s2.append(" ");
+            for (; delta > 0; delta--) {
+				s2.append(" ");
+			}
         } else {
-            for (; delta > 0; delta--) s2.insert(0, " ");
+            for (; delta > 0; delta--) {
+				s2.insert(0, " ");
+			}
         }
-        if (delta < 0) s2.setLength(size);
+        if (delta < 0) {
+			s2.setLength(size);
+		}
         return s2.toString();
     }
 

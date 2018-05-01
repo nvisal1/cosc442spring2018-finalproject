@@ -45,14 +45,12 @@ import net.sf.freecol.common.model.Turn;
 
 import static net.sf.freecol.common.util.StringUtils.getBreakingPoint;
 
-
 /**
  * This panel shows the progress of constructing a building or
  * unit in a colony.
  */
 public class ConstructionPanel extends MigPanel
     implements PropertyChangeListener {
-
     public static final String EVENT
         = Colony.ColonyChangeEvent.BUILD_QUEUE_CHANGE.toString();
 
@@ -68,7 +66,6 @@ public class ConstructionPanel extends MigPanel
     /** The text to display if buildable == null. */
     private StringTemplate defaultLabel
         = StringTemplate.key("constructionPanel.clickToBuild");
-
 
     /**
      * Creates a ConstructionPanel.
@@ -91,7 +88,6 @@ public class ConstructionPanel extends MigPanel
                 "push[]10[center]push"));
         setOpaque(openBuildQueue);
     }
-
 
     public void setColony(Colony newColony) {
         if (newColony != colony) {
@@ -184,7 +180,6 @@ public class ConstructionPanel extends MigPanel
         repaint();
     }
 
-
     public final StringTemplate getDefaultLabel() {
         return defaultLabel;
     }
@@ -193,12 +188,8 @@ public class ConstructionPanel extends MigPanel
         this.defaultLabel = newDefaultLabel;
     }
 
+    /** Interface PropertyChangeListener. */
 
-    // Interface PropertyChangeListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         update();

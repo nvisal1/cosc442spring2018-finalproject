@@ -33,12 +33,8 @@ import net.sf.freecol.common.option.SelectOption;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-
-/**
- * A class to encapsulate a binary land map.
- */
+/** A class to encapsulate a binary land map. */
 public class LandMap {
-
     private static final Logger logger = Logger.getLogger(LandMap.class.getName());
 
     /** The map width. */
@@ -47,7 +43,7 @@ public class LandMap {
     /** The map height. */
     private final int height;
 
-    /** The land map.  True means land. */
+    /** The land map. True means land. */
     private boolean[][] map;
 
     /** Number of land tiles on the map. */
@@ -58,7 +54,6 @@ public class LandMap {
 
     /** Minimum number of land tiles on the map. */
     private int minimumNumberOfTiles;
-
 
     /**
      * Create a new land map with specified dimensions.
@@ -86,10 +81,10 @@ public class LandMap {
         int n = 0;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                bmap[x][y] = (map.isValid(x, y))
-                    ? map.getTile(x, y).isLand()
-                    : false;
-                if (bmap[x][y]) n++;
+                bmap[x][y] = map.isValid(x, y) && map.getTile(x, y).isLand();
+                if (bmap[x][y]) {
+					n++;
+				}
             }
         }
         this.map = bmap;
@@ -118,7 +113,6 @@ public class LandMap {
         generate(gen, preferredDistanceToEdge, minimumNumberOfTiles,
                  random);
     }
-
 
     /**
      * Get the width of the land map.
@@ -157,9 +151,8 @@ public class LandMap {
      * @return True if there is land present.
      */
     public boolean isLand(int x, int y) {
-        return (isValid(x, y)) ? this.map[x][y] : false;
+        return isValid(x, y) && this.map[x][y];
     }
-
 
     // Internals
 
@@ -213,20 +206,18 @@ public class LandMap {
         cleanMap();
     }
 
-    /**
-     * Create the standard FreeCol land map.
-     */
+    /** Create the standard FreeCol land map. */
     private void createClassicLandMap(int preferredDistanceToEdge,
                                       int minimumNumberOfTiles, Random random) {
         int x, y;
         while (numberOfLandTiles < minimumNumberOfTiles) {
             int failCounter = 0;
             do {
-                x = (randomInt(logger, "ClassicW", random,
-                               width - preferredDistanceToEdge * 4))
+                x = randomInt(logger, "ClassicW", random,
+                               width - preferredDistanceToEdge * 4)
                     + preferredDistanceToEdge * 2;
-                y = (randomInt(logger, "ClassicH", random,
-                               height - preferredDistanceToEdge * 4))
+                y = randomInt(logger, "ClassicH", random,
+                               height - preferredDistanceToEdge * 4)
                     + preferredDistanceToEdge * 2;
                 failCounter++;
                 // If landmass% is set too high, this loop may fail to
@@ -267,13 +258,13 @@ public class LandMap {
         }
     }
 
-    /**
-     * Remove any 1x1 islands on the map.
-     */
+    /** Remove any 1x1 islands on the map. */
     private void cleanMap() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (isSingleTile(x, y)) map[x][y] = false;
+                if (isSingleTile(x, y)) {
+					map[x][y] = false;
+				}
             }
         }
     }
@@ -307,7 +298,9 @@ public class LandMap {
      */
     private int setLand(int x, int y, int preferredDistanceToEdge,
                         Random random) {
-        if (map[x][y]) return 0;
+        if (map[x][y]) {
+			return 0;
+		}
 
         int ret = 1;
         map[x][y] = true;
@@ -340,7 +333,9 @@ public class LandMap {
      */
     private int growLand(int x, int y, int preferredDistanceToEdge,
                          Random random) {
-        if (map[x][y]) return 0; // Already land
+        if (map[x][y]) {
+			return 0;
+		} // Already land
 
         // Generate a comparison value:
         // Only if the number of adjacent land tiles is bigger than this value,
@@ -350,14 +345,16 @@ public class LandMap {
         // preferredDistanceToEdge (*2 for pole ends) at the maps edges.
         int r = randomInt(logger, "Grow", random, 8)
             + Math.max(-1,
-                (1 + Math.max(preferredDistanceToEdge - Math.min(x, width-x),
-                    2 * preferredDistanceToEdge - Math.min(y, height-y))));
+                1 + Math.max(preferredDistanceToEdge - Math.min(x, width-x),
+                    2 * preferredDistanceToEdge - Math.min(y, height-y)));
 
         int sum = 0;
         Position p = new Position(x, y);
         for (Direction direction : Direction.values()) {
             Position n = new Position(p, direction);
-            if (n.isValid(width, height) && map[n.getX()][n.getY()]) sum++;
+            if (n.isValid(width, height) && map[n.getX()][n.getY()]) {
+				sum++;
+			}
         }
 
         return (sum > r) ? setLand(x, y, preferredDistanceToEdge, random)
@@ -439,7 +436,7 @@ public class LandMap {
         if (size >= minSize) {
             for (x = 0; x < width; x++) {
                 for (y = 0; y < height; y++) {
-                    if (newLand[x][y] == true) {
+                    if (newLand[x][y]) {
                         map[x][y] = true;
                         numberOfLandTiles++;
                     }

@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 
 import net.sf.freecol.common.model.Specification;
 
-
 /**
  * Represents an option where the valid choice is an integer and the
  * choices are represented by strings. In general, these strings are
@@ -39,10 +38,8 @@ import net.sf.freecol.common.model.Specification;
  * a fixed rank for each possible values.
  */
 public class RangeOption extends SelectOption {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(RangeOption.class.getName());
-
 
     /**
      * Creates a new <code>RangeOption</code>.
@@ -53,7 +50,6 @@ public class RangeOption extends SelectOption {
         super(specification);
     }
 
-
     /**
      * Gets the rank of the current selected value in the list of
      * values of this <code>RangeOption</code>.
@@ -63,7 +59,9 @@ public class RangeOption extends SelectOption {
     public int getValueRank() {
         int rank = 0;
         for (Integer i : getItemValues().keySet()) {
-            if (i == getValue()) return rank;
+            if (i == getValue()) {
+				return rank;
+			}
             rank++;
         }
         return 0; // Actually invalid
@@ -80,7 +78,9 @@ public class RangeOption extends SelectOption {
         Iterator<Integer> iterator = getItemValues().keySet().iterator();
 
         while (rank >= 0) {
-            if (!iterator.hasNext()) break;
+            if (!iterator.hasNext()) {
+				break;
+			}
             curValue = iterator.next();
             rank--;
         }
@@ -98,12 +98,8 @@ public class RangeOption extends SelectOption {
         return "rangeValue";
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

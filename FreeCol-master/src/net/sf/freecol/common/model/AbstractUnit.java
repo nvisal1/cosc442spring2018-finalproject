@@ -28,22 +28,15 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
-/**
- * Contains the information necessary to create a new unit.
- */
+/** Contains the information necessary to create a new unit. */
 public class AbstractUnit extends FreeColObject {
-
     /** The role identifier of this AbstractUnit. */
     private String roleId = Specification.DEFAULT_ROLE_ID;
 
     /** The number of units. */
     private int number = 1;
 
-
-    /**
-     * Deliberately empty constructor.
-     */
+    /** Deliberately empty constructor. */
     public AbstractUnit() {}
 
     /**
@@ -79,7 +72,6 @@ public class AbstractUnit extends FreeColObject {
     public AbstractUnit(FreeColXMLReader xr) throws XMLStreamException {
         readFromXML(xr);
     }
-
 
     /**
      * Get the role identifier.
@@ -216,16 +208,11 @@ public class AbstractUnit extends FreeColObject {
         return template;
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String ROLE_TAG = "role";
     private static final String NUMBER_TAG = "number";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -235,9 +222,6 @@ public class AbstractUnit extends FreeColObject {
         xw.writeAttribute(NUMBER_TAG, number);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected final void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -250,9 +234,6 @@ public class AbstractUnit extends FreeColObject {
         number = xr.getAttribute(NUMBER_TAG, 1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -261,9 +242,6 @@ public class AbstractUnit extends FreeColObject {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

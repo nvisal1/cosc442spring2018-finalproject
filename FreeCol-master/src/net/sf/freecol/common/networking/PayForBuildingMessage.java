@@ -27,15 +27,10 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when paying for a building.
- */
+/** The message sent when paying for a building. */
 public class PayForBuildingMessage extends DOMMessage {
-
     /** The identifier of the colony that is building. */
     private final String colonyId;
-
 
     /**
      * Create a new <code>PayForBuildingMessage</code> with the
@@ -61,7 +56,6 @@ public class PayForBuildingMessage extends DOMMessage {
 
         this.colonyId = element.getAttribute("colony");
     }
-
 
     /**
      * Handle a "payForBuilding"-message.

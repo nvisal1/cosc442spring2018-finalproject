@@ -37,12 +37,8 @@ import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.Map;
 
-
-/**
- * A dialog to allow resizing of the map.
- */
+/** A dialog to allow resizing of the map. */
 public class ScaleMapSizeDialog extends FreeColDialog<Dimension> {
-
     private static final int COLUMNS = 5;
 
     final Map oldMap;
@@ -50,7 +46,6 @@ public class ScaleMapSizeDialog extends FreeColDialog<Dimension> {
     final JTextField inputWidth;
 
     final JTextField inputHeight;
-
 
     /**
      * Create a ScaleMapSizeDialog.
@@ -111,27 +106,26 @@ public class ScaleMapSizeDialog extends FreeColDialog<Dimension> {
         initializeDialog(frame, DialogType.QUESTION, true, panel, null, c);
     }
 
-    /**
-     * Force the text fields to contain non-negative integers.
-     */
+    /** Force the text fields to contain non-negative integers. */
     private void checkFields() {
         try {
             int w = Integer.parseInt(inputWidth.getText());
-            if (w <= 0) throw new NumberFormatException();
+            if (w <= 0) {
+				throw new NumberFormatException();
+			}
         } catch (NumberFormatException nfe) {
             inputWidth.setText(Integer.toString(oldMap.getWidth()));
         } 
         try {
             int h = Integer.parseInt(inputHeight.getText());
-            if (h <= 0) throw new NumberFormatException();
+            if (h <= 0) {
+				throw new NumberFormatException();
+			}
         } catch (NumberFormatException nfe) {
             inputHeight.setText(Integer.toString(oldMap.getHeight()));
         } 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Dimension getResponse() {
         Object value = getValue();
@@ -143,8 +137,7 @@ public class ScaleMapSizeDialog extends FreeColDialog<Dimension> {
         return null;
     }
 
-
-    // Override Component
+    /** Override Component. */
 
     @Override
     public void requestFocus() {

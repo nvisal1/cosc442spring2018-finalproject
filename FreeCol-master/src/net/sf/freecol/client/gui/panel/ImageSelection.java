@@ -25,17 +25,15 @@ import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 
-
 /**
  * Represents an image selection that can be selected and
  * dragged/dropped to/from Swing components.
  */
 public final class ImageSelection implements Transferable {
-    
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(ImageSelection.class.getName());
 
-    //private static final DataFlavor[] flavors = {DataFlavor.imageFlavor};
+    /** Private static final DataFlavor[] flavors = {DataFlavor.imageFlavor}; */
 
     private final JLabel label;
 

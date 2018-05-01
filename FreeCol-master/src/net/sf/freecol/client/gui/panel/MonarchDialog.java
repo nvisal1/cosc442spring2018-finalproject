@@ -39,7 +39,6 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.Monarch.MonarchAction;
 import net.sf.freecol.common.model.StringTemplate;
 
-
 /**
  * This panel is used to show monarch actions.
  *
@@ -49,7 +48,6 @@ import net.sf.freecol.common.model.StringTemplate;
  * prevents just extending FreeColConfirmDialog. 
  */
 public final class MonarchDialog extends FreeColDialog<Boolean> {
-
     /**
      * Creates a dialog to handle monarch interactions.
      *
@@ -70,9 +68,13 @@ public final class MonarchDialog extends FreeColDialog<Boolean> {
                 + action);
         }
         String yesId = action.getYesKey();
-        if (!Messages.containsKey(yesId)) yesId = null;        
+        if (!Messages.containsKey(yesId)) {
+			yesId = null;
+		}        
         String noId = action.getNoKey();
-        if (!Messages.containsKey(noId)) noId = "close";
+        if (!Messages.containsKey(noId)) {
+			noId = "close";
+		}
 
         String hdrKey = action.getHeaderKey();
         if (!Messages.containsKey(hdrKey)) {

@@ -38,12 +38,8 @@ import net.sf.freecol.server.ai.GoodsWish;
 import net.sf.freecol.server.ai.Wish;
 import net.sf.freecol.server.ai.WorkerWish;
 
-
-/**
- * Mission for realizing a <code>Wish</code>.
- */
+/** Mission for realizing a <code>Wish</code>. */
 public class WishRealizationMission extends Mission {
-
     private static final Logger logger = Logger.getLogger(WishRealizationMission.class.getName());
 
     /** The tag for this mission. */
@@ -51,7 +47,6 @@ public class WishRealizationMission extends Mission {
 
     /** The wish to be realized. */
     private Wish wish;
-
 
     /**
      * Creates a mission for the given <code>AIUnit</code>.
@@ -86,7 +81,6 @@ public class WishRealizationMission extends Mission {
         readFromXML(xr);
     }
 
-
     /**
      * Get the wish handled by this mission.
      *
@@ -111,13 +105,8 @@ public class WishRealizationMission extends Mission {
             : null;
     }
 
+    /** Implement Mission Inherit getTransportDestination, isOneTime. */
 
-    // Implement Mission
-    //   Inherit getTransportDestination, isOneTime
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void dispose() {
         if (this.wish != null) {
@@ -127,55 +116,39 @@ public class WishRealizationMission extends Mission {
         super.dispose();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getBaseTransportPriority() {
         return NORMAL_TRANSPORT_PRIORITY;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location getTarget() {
         return (this.wish == null) ? null : this.wish.getDestination();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTarget(Location target) {
         // Ignored, target is set by wish
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Location findTarget() {
         return getTarget();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String invalidReason() {
         return (this.wish == null) ? "wish-null"
             : invalidReason(getAIUnit(), getTarget());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mission doMission(LogBuilder lb) {
         lb.add(tag);
         String reason = invalidReason();
-        if (reason != null) return lbFail(lb, false, reason);
+        if (reason != null) {
+			return lbFail(lb, false, reason);
+		}
 
         // Move towards the target.
         final Unit unit = getUnit();
@@ -229,18 +202,13 @@ public class WishRealizationMission extends Mission {
         return lbDrop(lb);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String WISH_TAG = "wish";
-    // @compat 0.10.3
+    /** @compat 0.10.3 */
     private static final String OLD_GOODS_WISH_TAG = "GoodsWish";
-    // end @compat
+    /** End @compat. */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -248,9 +216,6 @@ public class WishRealizationMission extends Mission {
         xw.writeAttribute(WISH_TAG, wish);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -266,19 +231,14 @@ public class WishRealizationMission extends Mission {
                 // end @compat
                 ) {
                 wish = new GoodsWish(aiMain, wid);
-
             } else if (wid.startsWith(WorkerWish.getXMLElementTagName())) {
                 wish = new WorkerWish(aiMain, wid);
-
             } else {
                 throw new XMLStreamException("Unknown wish tag: " + wid);
             }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

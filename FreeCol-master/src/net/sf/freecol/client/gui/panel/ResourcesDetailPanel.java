@@ -41,14 +41,9 @@ import net.sf.freecol.common.model.Scope;
 import net.sf.freecol.common.model.Specification;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-
-/**
- * This panel displays details of resources in the Colopedia.
- */
+/** This panel displays details of resources in the Colopedia. */
 public class ResourcesDetailPanel
     extends ColopediaGameObjectTypePanel<ResourceType> {
-
-
     /**
      * Creates a new instance of this ColopediaDetailPanel.
      *
@@ -60,23 +55,18 @@ public class ResourcesDetailPanel
         super(freeColClient, colopediaPanel, PanelType.RESOURCES.getKey());
     }
 
+    /** Implement ColopediaDetailPanel. */
 
-    // Implement ColopediaDetailPanel
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void addSubTrees(DefaultMutableTreeNode root) {
         super.addSubTrees(root, getSpecification().getResourceTypeList());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void buildDetail(String id, JPanel panel) {
-        if (getId().equals(id)) return;
+        if (getId().equals(id)) {
+			return;
+		}
 
         ResourceType type = getSpecification().getResourceType(id);
         panel.setLayout(new MigLayout("wrap 2", "[]20[]"));
@@ -95,7 +85,9 @@ public class ResourcesDetailPanel
                     .filter(s -> s.getType() != null)
                     .map(s -> Messages.getName(spec.findType(s.getType())))
                     .collect(Collectors.joining(", "));
-                if (!scopeStrings.isEmpty()) text += " (" + scopeStrings + ")";
+                if (!scopeStrings.isEmpty()) {
+					text += " (" + scopeStrings + ")";
+				}
             }
 
             GoodsType goodsType = getSpecification().getGoodsType(modifier.getId());

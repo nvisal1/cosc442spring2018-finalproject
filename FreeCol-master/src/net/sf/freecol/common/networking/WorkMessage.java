@@ -28,18 +28,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent to handle changes in work location.
- */
+/** The message sent to handle changes in work location. */
 public class WorkMessage extends DOMMessage {
-
     /** The identifier of the unit. */
     private final String unitId;
 
-    /** The identifier of the work location.  */
+    /** The identifier of the work location. */
     private final String workLocationId;
-
 
     /**
      * Create a new <code>WorkMessage</code> for the supplied unit and
@@ -67,7 +62,6 @@ public class WorkMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.workLocationId = element.getAttribute("workLocation");
     }
-
 
     /**
      * Handle a "work"-message.

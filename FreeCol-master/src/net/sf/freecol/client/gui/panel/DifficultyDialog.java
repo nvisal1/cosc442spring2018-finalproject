@@ -39,7 +39,6 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.option.OptionGroup;
 
-
 /**
  * Dialog for displaying and modifying the difficulty level.
  *
@@ -47,7 +46,6 @@ import net.sf.freecol.common.option.OptionGroup;
  */
 public final class DifficultyDialog extends OptionsDialog
     implements TreeSelectionListener {
-
     private static final Logger logger = Logger.getLogger(DifficultyDialog.class.getName());
 
     /** File filters array to filter for XML files. */
@@ -61,7 +59,6 @@ public final class DifficultyDialog extends OptionsDialog
      * used before the game has been started.
      */
     private final Specification specification;
-
 
     /**
      * Use this constructor to display the difficulty level of the
@@ -105,7 +102,6 @@ public final class DifficultyDialog extends OptionsDialog
         initialize(frame);
     }
 
-
     /**
      * Gets this dialog's instance of the <code>Specification</code>.
      *
@@ -115,7 +111,6 @@ public final class DifficultyDialog extends OptionsDialog
     public Specification getSpecification() {
         return specification;
     }
-
 
     // Internals
 
@@ -166,9 +161,7 @@ public final class DifficultyDialog extends OptionsDialog
             });
     }
 
-    /**
-     * Initialize the XML file filter.
-     */
+    /** Initialize the XML file filter. */
     private void initializeFilters() {
         synchronized (filters) {
             if (filters[0] == null) {
@@ -178,8 +171,7 @@ public final class DifficultyDialog extends OptionsDialog
         }
     }
 
-
-    // Implement TreeSelectionListener
+    /** Implement TreeSelectionListener. */
 
     @Override
     public void valueChanged(TreeSelectionEvent event) {
@@ -191,12 +183,8 @@ public final class DifficultyDialog extends OptionsDialog
         }
     }
 
+    /** Override OptionsDialog. */
 
-    // Override OptionsDialog
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public OptionGroup getResponse() {
         OptionGroup value = super.getResponse();

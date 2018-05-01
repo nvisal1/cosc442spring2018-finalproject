@@ -37,7 +37,6 @@ import net.sf.freecol.server.networking.Server;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 /**
  * Handles a new client connection.  {@link PreGameInputHandler} is
  * set as the message handler when the client has successfully logged
@@ -45,9 +44,7 @@ import org.w3c.dom.Element;
  */
 public final class UserConnectionHandler extends FreeColServerHolder
     implements MessageHandler {
-
     private static final Logger logger = Logger.getLogger(UserConnectionHandler.class.getName());
-
 
     /**
      * The constructor to use.
@@ -57,7 +54,6 @@ public final class UserConnectionHandler extends FreeColServerHolder
     public UserConnectionHandler(FreeColServer freeColServer) {
         super(freeColServer);
     }
-
 
     // Implement MessageHandler
 
@@ -71,13 +67,13 @@ public final class UserConnectionHandler extends FreeColServerHolder
     @Override
     public synchronized Element handle(Connection conn, Element element) {
         final String tag = element.getTagName();
-        return ("disconnect".equals(tag)) 
+        return "disconnect".equals(tag) 
             ? disconnect(conn, element)
-            : ("gameState".equals(tag))
+            : "gameState".equals(tag)
             ? gameState(conn, element)
-            : ("getVacantPlayers".equals(tag))
+            : "getVacantPlayers".equals(tag)
             ? getVacantPlayers(conn, element)
-            : ("login".equals(tag))
+            : "login".equals(tag)
             ? login(conn, element)
             : unknown(tag);
     }
@@ -188,7 +184,8 @@ public final class UserConnectionHandler extends FreeColServerHolder
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {}
-                if ((timeOut -= 1000) <= 0) {
+                timeOut -= 1000;
+				if (timeOut <= 0) {
                     return DOMMessage.createError("server.timeOut", null);
                 }
             }
@@ -216,14 +213,12 @@ public final class UserConnectionHandler extends FreeColServerHolder
 
             // Ready now to handle pre-game messages.
             mh = freeColServer.getPreGameInputHandler();
-
         } else { // Restoring from existing game.
             game = freeColServer.getGame();
             player = (ServerPlayer)game.getPlayerByName(userName);
             if (player == null) {
                 StringBuilder sb = new StringBuilder("Player \"");
-                sb.append(userName).append("\" is not present in the game.")
-                    .append("\n  Known players = ( ");
+                sb.append(userName).append("\" is not present in the game." + "\n  Known players = ( ");
                 for (Player p : game.getLiveEuropeanPlayers(null)) {
                     sb.append(p.getName()).append(" ");
                 }

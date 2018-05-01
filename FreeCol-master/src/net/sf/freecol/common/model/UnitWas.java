@@ -26,13 +26,11 @@ import java.util.logging.Logger;
 import net.sf.freecol.common.model.Colony.ColonyChangeEvent;
 import net.sf.freecol.common.util.Utils;
 
-
 /**
  * Helper container to remember a unit state prior to some change,
  * and fire off any consequent property changes.
  */
 public class UnitWas implements Comparable<UnitWas> {
-
     private static final Logger logger = Logger.getLogger(UnitWas.class.getName());
 
     private final Unit unit;
@@ -45,7 +43,6 @@ public class UnitWas implements Comparable<UnitWas> {
     private final int movesLeft;
     private final List<Unit> units;
     private final Colony colony;
-
 
     /**
      * Record the state of a unit.
@@ -67,7 +64,6 @@ public class UnitWas implements Comparable<UnitWas> {
             unit.getGoodsContainer().saveState();
         }
     }
-
 
     public Unit getUnit() {
         return unit;
@@ -164,7 +160,7 @@ public class UnitWas implements Comparable<UnitWas> {
         return ret;
     }
 
-    // FIXME: fix this non-OO nastiness
+    /** FIXME: fix this non-OO nastiness */
     private String change(FreeColGameObject fcgo) {
         return (fcgo instanceof Tile) ? Tile.UNIT_CHANGE
             : (fcgo instanceof Europe) ? Europe.UNIT_CHANGE
@@ -174,9 +170,11 @@ public class UnitWas implements Comparable<UnitWas> {
             : null;
     }
 
-    // FIXME: fix this non-OO nastiness
+    /** FIXME: fix this non-OO nastiness */
     private int getAmount(Location location, GoodsType goodsType) {
-        if (goodsType == null) return 0;
+        if (goodsType == null) {
+			return 0;
+		}
         if (location instanceof WorkLocation) {
             ProductionInfo info = ((WorkLocation)location).getProductionInfo();
             return AbstractGoods.getCount(goodsType, info.getProduction());
@@ -184,18 +182,14 @@ public class UnitWas implements Comparable<UnitWas> {
         return 0;
     }
 
-    // Implement Comparable<UnitWas>
+    /** Implement Comparable<UnitWas>. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int compareTo(UnitWas uw) {
         // Order by decreasing capacity of the location the unit is to
         // be moved to, so that if we traverse a sorted list of
         // UnitWas we minimize the chance of a unit being moved to a
         // full location.
-        //
         // Unfortunately this also tends to move units that need
         // equipment first, leading to failures to rearm, so it is
         // best to make two passes anyway.  See revertAll().  However
@@ -211,22 +205,16 @@ public class UnitWas implements Comparable<UnitWas> {
         return cmp;
     }
 
-    // Override Object
+    /** Override Object. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object other) {
         if (other instanceof UnitWas) {
-            return this.compareTo((UnitWas)other) == 0;
+            return compareTo((UnitWas)other) == 0;
         }
         return super.equals(other);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -241,14 +229,13 @@ public class UnitWas implements Comparable<UnitWas> {
         return 37 * hash + Utils.hashCode(colony);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         Tile tile = colony.getTile();
         String roleStr = "/" + role.getSuffix();
-        if (roleCount > 0) roleStr += "." + roleCount;
+        if (roleCount > 0) {
+			roleStr += "." + roleCount;
+		}
         String locStr = (loc == null) ? ""
             : (loc instanceof Building)
             ? ((Building)loc).getType().getSuffix()
@@ -259,7 +246,9 @@ public class UnitWas implements Comparable<UnitWas> {
             : loc.getId();
         Location newLoc = unit.getLocation();
         String newRoleStr = "/" + unit.getRole().getSuffix();
-        if (unit.getRoleCount() > 0) newRoleStr += "." + unit.getRoleCount();
+        if (unit.getRoleCount() > 0) {
+			newRoleStr += "." + unit.getRoleCount();
+		}
         String newLocStr = (newLoc == null) ? ""
             : (newLoc instanceof Building)
             ? ((Building)newLoc).getType().getSuffix()
@@ -273,9 +262,9 @@ public class UnitWas implements Comparable<UnitWas> {
         return String.format("%-30s %-25s -> %-25s",
             unit.getId() + ":" + unit.getType().getSuffix(),
             locStr + ((work == null || workAmount <= 0) ? "" : "("
-                + Integer.toString(workAmount) + " " + work.getSuffix() + ")"),
+                + workAmount + " " + work.getSuffix() + ")"),
             newLocStr + ((newWork == null || newWorkAmount <= 0) ? "" : "("
-                + Integer.toString(newWorkAmount) + " "
+                + newWorkAmount + " "
                 + newWork.getSuffix() + ")")).trim();
     }
 }

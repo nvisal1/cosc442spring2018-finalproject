@@ -27,7 +27,6 @@ import net.sf.freecol.common.model.Direction;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.TileImprovement;
 
-
 /**
  * This class facilitates building, editing the TileImprovement style
  * for rivers Rivers on the Map are composed of many individual
@@ -35,37 +34,27 @@ import net.sf.freecol.common.model.TileImprovement;
  * river TileImprovement on a Tile has a style which represents the
  * inputs/outputs of water to/from neighboring Tiles This class allows
  * manipulation of individual stream(s) to neighboring Tiles (there
- * are many in case of confluence)
+ * are many in case of confluence).
  */
 public class RiverSection {
-
-//    private static final Logger logger = Logger.getLogger(RiverImprovementBuilder.class.getName());
+/**    Private static final Logger logger = Logger.getLogger(RiverImprovementBuilder.class.getName()); */
 
     private static final char[] template = {
         '0', '1', '2', '3'
     };
 
-    /**
-     * River magnitude (size) for each direction toward the edges of the tile
-     */
+    /** River magnitude (size) for each direction toward the edges of the tile. */
     private java.util.Map<Direction, Integer> branches
         = new EnumMap<>(Direction.class);
 
-    /**
-     * River magnitude (size) at the center of the tile
-     */
+    /** River magnitude (size) at the center of the tile. */
     private int size = TileImprovement.SMALL_RIVER;
 
-    /**
-     * Direction the river is flowing toward, at the current section
-     */
+    /** Direction the river is flowing toward, at the current section. */
     public Direction direction;
 
-    /**
-     * Tile of the current river section
-     */
+    /** Tile of the current river section. */
     private Tile tile;
-
 
     /**
      * Creates a new RiverSection with the given branches. This
@@ -99,16 +88,14 @@ public class RiverSection {
     }
 
     /**
-     * Returns the size
+     * Returns the size.
      * @return size
      */
     public final int getSize() {
         return size;
     }
 
-    /**
-     * Sets the size of a branch
-     */
+    /** Sets the size of a branch. */
     public final void setBranch(Direction direction, int size) {
         if (size != TileImprovement.SMALL_RIVER) {
             size = TileImprovement.LARGE_RIVER;
@@ -116,9 +103,7 @@ public class RiverSection {
         branches.put(direction, size);
     }
 
-    /**
-     * Gets the size of a branch
-     */
+    /** Gets the size of a branch. */
     public final int getBranch(Direction direction) {
         if (branches.containsKey(direction)) {
             return branches.get(direction);
@@ -127,16 +112,12 @@ public class RiverSection {
         }
     }
 
-    /**
-     * Removes a branch
-     */
+    /** Removes a branch. */
     public final void removeBranch(Direction direction) {
         branches.remove(direction);
     }
 
-    /**
-     * Increases the size a branch
-     */
+    /** Increases the size a branch. */
     public final void growBranch(Direction direction, int increment) {
         int newSize = Math.min(TileImprovement.LARGE_RIVER,
                                Math.max(TileImprovement.NO_RIVER,
@@ -144,14 +125,11 @@ public class RiverSection {
         setBranch(direction, newSize);
     }
 
-    /**
-     * Increases the size of this section by one.
-     */
+    /** Increases the size of this section by one. */
     public void grow() {
         this.size++;
         setBranch(direction, TileImprovement.LARGE_RIVER);
     }
-
 
     public String encodeStyle() {
         StringBuilder sb = new StringBuilder();

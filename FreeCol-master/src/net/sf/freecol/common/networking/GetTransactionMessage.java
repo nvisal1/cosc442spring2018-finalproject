@@ -28,21 +28,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent to initiate a transaction.
- */
+/** The message sent to initiate a transaction. */
 public class GetTransactionMessage extends DOMMessage {
-
     /** The object identifier of the unit performing the transaction. */
     private final String unitId;
 
-    /**
-     * The object identifier of the settlement at which the
-     * transaction occurs.
-     */
+    /** The object identifier of the settlement at which the transaction occurs. */
     private final String settlementId;
-
 
     /**
      * Create a new <code>GetTransactionMessage</code> with the
@@ -72,7 +64,6 @@ public class GetTransactionMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.settlementId = element.getAttribute("settlement");
     }
-
 
     /**
      * Handle a "getTransaction"-message.

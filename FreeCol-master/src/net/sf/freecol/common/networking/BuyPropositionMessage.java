@@ -30,12 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when negotiating a purchase at an IndianSettlement.
- */
+/** The message sent when negotiating a purchase at an IndianSettlement. */
 public class BuyPropositionMessage extends DOMMessage {
-
     /** The object identifier of the unit that is buying. */
     private final String unitId;
 
@@ -47,7 +43,6 @@ public class BuyPropositionMessage extends DOMMessage {
 
     /** The price being negotiated. */
     private final String goldString;
-
 
     /**
      * Create a new <code>BuyPropositionMessage</code>.
@@ -84,7 +79,6 @@ public class BuyPropositionMessage extends DOMMessage {
         this.goldString = element.getAttribute("gold");
     }
 
-
     // Public interface
 
     /**
@@ -99,7 +93,6 @@ public class BuyPropositionMessage extends DOMMessage {
             return -1;
         }
     }
-
 
     /**
      * Handle a "buyProposition"-message.

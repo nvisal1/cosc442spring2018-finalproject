@@ -25,14 +25,9 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Player.PlayerType;
 
-
-/**
- * An action for declaring independence.
- */
+/** An action for declaring independence. */
 public class DeclareIndependenceAction extends MapboardAction {
-
     public static final String id = "declareIndependenceAction";
-
 
     /**
      * Creates a new <code>DeclareIndependenceAction</code>.
@@ -43,12 +38,8 @@ public class DeclareIndependenceAction extends MapboardAction {
         super(freeColClient, id);
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         Player p = freeColClient.getMyPlayer();
@@ -56,12 +47,8 @@ public class DeclareIndependenceAction extends MapboardAction {
             && p.getPlayerType() == PlayerType.COLONIAL;
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         igc().declareIndependence();

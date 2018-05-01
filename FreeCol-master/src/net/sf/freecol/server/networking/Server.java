@@ -35,7 +35,6 @@ import net.sf.freecol.server.FreeColServer;
 
 import org.w3c.dom.Element;
 
-
 /**
  * The networking server in which new clients can connect and methods
  * like <code>sendToAll</code> are kept.
@@ -49,7 +48,6 @@ import org.w3c.dom.Element;
  * @see net.sf.freecol.common.networking
  */
 public final class Server extends Thread {
-
     private static final Logger logger = Logger.getLogger(Server.class.getName());
 
     /** Backlog for socket. */
@@ -79,7 +77,6 @@ public final class Server extends Thread {
     /** For information about this variable see the run method. */
     private final Object shutdownLock = new Object();
 
-
     /**
      * Creates a new network server. Use {@link #run server.start()} to start
      * listening for new connections.
@@ -100,7 +97,6 @@ public final class Server extends Thread {
                                              InetAddress.getByName(host));
         this.serverSocket.setReuseAddress(true);
     }
-
 
     /**
      * Gets the host that is being used for the public socket.
@@ -137,7 +133,9 @@ public final class Server extends Thread {
      * @param connection The connection to add.
      */
     public void addDummyConnection(Connection connection) {
-        if (!running) return;
+        if (!running) {
+			return;
+		}
         connections.put(new Socket(), connection);
     }
 
@@ -147,7 +145,9 @@ public final class Server extends Thread {
      * @param connection The connection to add.
      */
     public void addConnection(Connection connection) {
-        if (!running) return;
+        if (!running) {
+			return;
+		}
         connections.put(connection.getSocket(), connection);
     }
 
@@ -180,7 +180,9 @@ public final class Server extends Thread {
      */
     public void sendToAll(Element element, Connection exceptConnection) {
         for (Connection c : new ArrayList<>(connections.values())) {
-            if (c == exceptConnection) continue;
+            if (c == exceptConnection) {
+				continue;
+			}
             if (c.isAlive()) {
                 try {
                     c.sendAndWait(element);
@@ -221,7 +223,6 @@ public final class Server extends Thread {
         // finished*.  Because of this a new server can't be created
         // on the same port as this server right after closing this
         // server.
-        //
         // Now that the shutdown method 'hangs' until the entire
         // server thread is finished you can be certain that the
         // ServerSocket is REALLY closed after execution of shutdown.
@@ -248,9 +249,7 @@ public final class Server extends Thread {
         }
     }
 
-    /**
-     * Shuts down the server thread.
-     */
+    /** Shuts down the server thread. */
     public void shutdown() {
         this.running = false;
  
@@ -267,7 +266,9 @@ public final class Server extends Thread {
         }
 
         for (Connection c : connections.values()) {
-            if (c.isAlive()) c.close();
+            if (c.isAlive()) {
+				c.close();
+			}
         }
         connections.clear();
 

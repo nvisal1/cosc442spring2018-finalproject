@@ -29,12 +29,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * The message sent when doing a monarch action.
- */
+/** The message sent when doing a monarch action. */
 public class MonarchActionMessage extends DOMMessage {
-
     /** The monarch action. */
     private final MonarchAction action;
 
@@ -47,9 +43,8 @@ public class MonarchActionMessage extends DOMMessage {
     /** The tax rate, if appropriate. */
     private String tax;
 
-    /** Is the offer accepted?  Valid in replies from client. */
+    /** Is the offer accepted? Valid in replies from client. */
     private String resultString;
-
 
     /**
      * Create a new <code>MonarchActionMessage</code> with the given action.
@@ -92,7 +87,6 @@ public class MonarchActionMessage extends DOMMessage {
             this.template = null;
         }
     }
-
 
     // Public interface
 
@@ -167,7 +161,6 @@ public class MonarchActionMessage extends DOMMessage {
         return this;
     }
 
-
     /**
      * Handles a "monarchAction"-message.
      *
@@ -196,8 +189,12 @@ public class MonarchActionMessage extends DOMMessage {
         Element result = createMessage(getXMLElementTagName(),
             "action", action.toString(),
             "monarch", monarchKey);
-        if (tax != null) result.setAttribute("tax", tax);
-        if (resultString != null) result.setAttribute("result", resultString);
+        if (tax != null) {
+			result.setAttribute("tax", tax);
+		}
+        if (resultString != null) {
+			result.setAttribute("result", resultString);
+		}
         if (template != null) {
             result.appendChild(template.toXMLElement(result.getOwnerDocument()));
         }

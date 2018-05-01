@@ -24,14 +24,9 @@ import net.sf.freecol.client.ClientOptions;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for enable/disable fog of war in on the minimap.
- */
+/** An action for enable/disable fog of war in on the minimap. */
 public class MiniMapToggleFogOfWarAction extends MapboardAction {
-
     public static final String id = "miniMapToggleFogOfWarAction";
-
 
     /**
      * Creates a new <code>MiniMapToggleFogAction</code>.
@@ -56,11 +51,8 @@ public class MiniMapToggleFogOfWarAction extends MapboardAction {
         addImageIcons("toggle_fog_of_war");
     }
     
-    // Interface ActionListener
+    /** Interface ActionListener. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().miniMapToggleFogOfWarControls();
@@ -72,4 +64,3 @@ public class MiniMapToggleFogOfWarAction extends MapboardAction {
         }
     }
 }
-

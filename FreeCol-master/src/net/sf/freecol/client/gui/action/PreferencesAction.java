@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for editing user preferences.
- */
+/** An action for editing user preferences. */
 public class PreferencesAction extends FreeColAction {
-
     public static final String id = "preferencesAction";
-
 
     /**
      * Creates a new <code>DeclareIndependenceAction</code>.
@@ -41,12 +36,8 @@ public class PreferencesAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().showClientOptionsDialog();

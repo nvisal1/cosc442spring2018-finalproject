@@ -36,13 +36,11 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
 
 import org.w3c.dom.Element;
 
-
 /**
  * Contains goods and can be used by a {@link Location} to make certain
  * tasks easier.
  */
 public class GoodsContainer extends FreeColGameObject implements Ownable {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(Location.class.getName());
 
@@ -77,7 +75,6 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
 
     /** The location for this <code>GoodsContainer</code>. */
     private Location parent = null;
-
 
     /**
      * Creates an empty <code>GoodsContainer</code>.
@@ -120,7 +117,6 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         readFromXMLElement(e);
     }
 
-
     /**
      * Set the goods location.
      *
@@ -152,7 +148,7 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
      */
     public int getGoodsCount(GoodsType type) {
         synchronized (storedGoods) {
-            return (storedGoods.containsKey(type)) 
+            return storedGoods.containsKey(type) 
                 ? storedGoods.get(type)
                 : 0;
         }
@@ -168,7 +164,7 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
     public int getOldGoodsCount(GoodsType type) {
         synchronized (storedGoods) {
             synchronized (oldStoredGoods) {
-                return (oldStoredGoods.containsKey(type))
+                return oldStoredGoods.containsKey(type)
                     ? oldStoredGoods.get(type)
                     : 0;
             }
@@ -244,7 +240,9 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
      */
     public Goods removeGoods(GoodsType type, int amount) {
         int oldAmount = getGoodsCount(type);
-        if (oldAmount <= 0) return null;
+        if (oldAmount <= 0) {
+			return null;
+		}
 
         int newAmount = oldAmount - amount;
         Goods removedGoods;
@@ -280,18 +278,14 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         }
     }
 
-    /**
-     * Remove all goods.
-     */
+    /** Remove all goods. */
     public void removeAll() {
         synchronized (storedGoods) {
             storedGoods.clear();
         }
     }
 
-    /**
-     * Clear both containers.
-     */
+    /** Clear both containers. */
     private void clearContainers() {
         synchronized (storedGoods) {
             storedGoods.clear();
@@ -313,9 +307,10 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
                 storedGoods.clear();
                 return;
             }
-            for (GoodsType goodsType : storedGoods.keySet()) {
-                if (goodsType.isStorable() && !goodsType.limitIgnored()
-                    && storedGoods.get(goodsType) > newAmount) {
+            for (Entry<GoodsType, Integer> entry : storedGoods.entrySet()) {
+                GoodsType goodsType = entry.getKey();
+				if (goodsType.isStorable() && !goodsType.limitIgnored()
+                    && entry.getValue() > newAmount) {
                     setAmount(goodsType, newAmount);
                 }
             }
@@ -372,8 +367,9 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
     public List<Goods> getGoods() {
         List<Goods> totalGoods = new ArrayList<>();
         synchronized (storedGoods) {
-            for (GoodsType goodsType : storedGoods.keySet()) {
-                int amount = storedGoods.get(goodsType);
+            for (Entry<GoodsType, Integer> entry : storedGoods.entrySet()) {
+                GoodsType goodsType = entry.getKey();
+				int amount = entry.getValue();
                 while (amount > 0) {
                     totalGoods.add(new Goods(getGame(), parent, goodsType,
                             ((amount >= CARGO_SIZE) ? CARGO_SIZE : amount)));
@@ -460,54 +456,39 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         return ret;
     }
 
-    // Interface Ownable
+    /** Interface Ownable. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Player getOwner() {
         return (parent instanceof Ownable) ? ((Ownable)parent).getOwner()
             : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setOwner(Player p) {
         throw new UnsupportedOperationException("Can not set GoodsContainer owner");
     }
 
-    // Override FreeColGameObject
+    /** Override FreeColGameObject. */
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void disposeResources() {
         clearContainers();
         super.disposeResources();
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     public static final String AMOUNT_TAG = "amount";
     public static final String OLD_STORED_GOODS_TAG = "oldStoredGoods";
     public static final String STORED_GOODS_TAG = "storedGoods";
     public static final String TYPE_TAG = "type";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
         if (xw.validFor(getOwner())) {
-
             writeStorage(xw, STORED_GOODS_TAG, storedGoods);
 
             writeStorage(xw, OLD_STORED_GOODS_TAG, oldStoredGoods);
@@ -525,12 +506,13 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
      */
     private void writeStorage(FreeColXMLWriter xw, String tag,
                               Map<GoodsType, Integer> storage) throws XMLStreamException {
-        if (storage.isEmpty()) return;
+        if (storage.isEmpty()) {
+			return;
+		}
 
         xw.writeStartElement(tag);
 
         for (GoodsType goodsType : getSortedCopy(storage.keySet())) {
-
             xw.writeStartElement(Goods.getXMLElementTagName());
 
             xw.writeAttribute(TYPE_TAG, goodsType);
@@ -543,9 +525,6 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         xw.writeEndElement();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -554,19 +533,14 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
 
         if (OLD_STORED_GOODS_TAG.equals(tag)) {
             readStorage(xr, oldStoredGoods);
-
         } else if (STORED_GOODS_TAG.equals(tag)) {
             readStorage(xr, storedGoods);
-
         } else {
             super.readChild(xr);
         }
@@ -594,7 +568,6 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
                 int amount = xr.getAttribute(AMOUNT_TAG, 0);
 
                 storage.put(goodsType, amount);
-
             } else {
                 throw new XMLStreamException("Bogus GoodsContainer tag: "
                     + tag);
@@ -603,21 +576,18 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
         sb.append("[").append(getId()).append(" [");
         // Do not bother to synchronize containers for display
-        for (Map.Entry<GoodsType, Integer> entry : storedGoods.entrySet()) {
+        for (Entry<GoodsType, Integer> entry : storedGoods.entrySet()) {
             sb.append(entry.getKey()).append("=").append(entry.getValue())
                 .append(", ");
         }
         sb.setLength(sb.length() - ", ".length());
         sb.append("][");
-        for (Map.Entry<GoodsType, Integer> entry : oldStoredGoods.entrySet()) {
+        for (Entry<GoodsType, Integer> entry : oldStoredGoods.entrySet()) {
             sb.append(entry.getKey()).append("=").append(entry.getValue())
                 .append(", ");
         }
@@ -626,9 +596,6 @@ public class GoodsContainer extends FreeColGameObject implements Ownable {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

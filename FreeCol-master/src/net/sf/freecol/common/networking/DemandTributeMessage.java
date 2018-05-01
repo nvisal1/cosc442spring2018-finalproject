@@ -32,18 +32,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when demanding tribute from a native settlement.
- */
+/** The message sent when demanding tribute from a native settlement. */
 public class DemandTributeMessage extends DOMMessage {
-
     /** The identifier of the object demanding tribute. */
     private final String unitId;
 
     /** The direction the demand is made. */
     private final String directionString;
-
 
     /**
      * Create a new <code>DemandTributeMessage</code> with the
@@ -73,7 +68,6 @@ public class DemandTributeMessage extends DOMMessage {
         this.directionString = element.getAttribute("direction");
     }
 
-
     /**
      * Handle a "demandTribute"-message.
      *
@@ -93,10 +87,7 @@ public class DemandTributeMessage extends DOMMessage {
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
         }
-        if (unit.isArmed()
-            || unit.hasAbility(Ability.DEMAND_TRIBUTE)) {
-            ; // ok
-        } else {
+        if (!unit.isArmed() && !unit.hasAbility(Ability.DEMAND_TRIBUTE)) {
             return DOMMessage.clientError("Unit is neither armed"
                 + " nor able to demand tribute: " + unitId);
         }

@@ -27,12 +27,8 @@ import net.sf.freecol.server.FreeColServer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-/**
- * The message sent when logging in.
- */
+/** The message sent when logging in. */
 public class LoginMessage extends DOMMessage {
-
     /** The Player that is logging in. */
     private final Player player;
 
@@ -60,8 +56,7 @@ public class LoginMessage extends DOMMessage {
     /** The game. */
     private final Game game;
 
-        
-    /**
+            /**
      * Create a new <code>LoginMessage</code> with the supplied name
      * and version.
      *
@@ -118,8 +113,7 @@ public class LoginMessage extends DOMMessage {
             : new Game((Element)children.item(0), this.userName);
     }
 
-
-    // Public interface
+    /** Public interface. */
 
     public String getUserName() {
         return userName;
@@ -153,7 +147,6 @@ public class LoginMessage extends DOMMessage {
     public Game getGame() {
         return game;
     }
-
 
     /**
      * Handle a "login"-message.

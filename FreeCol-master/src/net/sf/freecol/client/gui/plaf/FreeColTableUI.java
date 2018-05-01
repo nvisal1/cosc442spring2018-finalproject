@@ -25,16 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTableUI;
 
-
-/**
- * UI-class for tables.
- */
+/** UI-class for tables. */
 public class FreeColTableUI extends BasicTableUI {
-
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return new FreeColTableUI();
     }
-
 
     @Override
     public void installUI(JComponent c) {

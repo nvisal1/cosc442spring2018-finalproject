@@ -19,7 +19,6 @@
 
 package net.sf.freecol.client.gui.panel;
 
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -28,18 +27,13 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.AbstractGoods;
 import net.sf.freecol.common.model.GoodsType;
 
-
-/**
- * This label represents AbstractGoods.
- */
+/** This label represents AbstractGoods. */
 public class AbstractGoodsLabel extends JLabel {
-
     private final AbstractGoods abstractGoods;
 
-    private boolean partialChosen = false;
+    private boolean partialChosen;
 
-    private boolean fullChosen = false;
-
+    private boolean fullChosen;
 
     /**
      * Initializes this JLabel with the given goods data.
@@ -54,7 +48,6 @@ public class AbstractGoodsLabel extends JLabel {
 
         setToolTipText(Messages.getName(abstractGoods));
     }
-
 
     /**
      * Has a partial amount been selected?

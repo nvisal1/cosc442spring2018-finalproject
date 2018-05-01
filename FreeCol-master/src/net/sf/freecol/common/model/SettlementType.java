@@ -28,14 +28,10 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * The various types of settlements in the game.
- */
+/** The various types of settlements in the game. */
 public class SettlementType extends FreeColGameObjectType {
-
     /** Whether this SettlementType is a capital. */
-    private boolean capital = false;
+    private boolean capital;
 
     /** How many tiles this SettlementType can see. */
     private int visibleRadius = 2;
@@ -79,7 +75,6 @@ public class SettlementType extends FreeColGameObjectType {
     /** The gifts this SettlementType generates when visited by a scout. */
     private List<RandomRange> gifts = null;
 
-
     /**
      * Creates a new settlement type.
      *
@@ -103,7 +98,6 @@ public class SettlementType extends FreeColGameObjectType {
 
         readFromXML(xr);
     }
-
 
     /**
      * Is this a capital settlement type?
@@ -228,7 +222,6 @@ public class SettlementType extends FreeColGameObjectType {
             : find(gifts, g -> g.appliesTo(unit));
     }
 
-
     /**
      * Gets the warehouse capacity of this settlement.
      *
@@ -244,7 +237,9 @@ public class SettlementType extends FreeColGameObjectType {
      * @param gift The gift to add.
      */
     private void addGift(RandomRange gift) {
-        if (gifts == null) gifts = new ArrayList<>();
+        if (gifts == null) {
+			gifts = new ArrayList<>();
+		}
         gifts.add(gift);
     }
 
@@ -254,12 +249,13 @@ public class SettlementType extends FreeColGameObjectType {
      * @param range The plunder to add.
      */
     private void addPlunder(RandomRange range) {
-        if (plunder == null) plunder = new ArrayList<>();
+        if (plunder == null) {
+			plunder = new ArrayList<>();
+		}
         plunder.add(range);
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String CAPITAL_TAG = "capital";
     private static final String CLAIMABLE_RADIUS_TAG = "claimable-radius";
@@ -274,7 +270,7 @@ public class SettlementType extends FreeColGameObjectType {
     private static final String TRADE_BONUS_TAG = "trade-bonus";
     private static final String VISIBLE_RADIUS_TAG = "visible-radius";
     private static final String WANDERING_RADIUS_TAG = "wandering-radius";
-    // @compat 0.11.3
+    /** @compat 0.11.3 */
     private static final String OLD_CLAIMABLE_RADIUS_TAG = "claimableRadius";
     private static final String OLD_CONVERT_THRESHOLD_TAG = "convertThreshold";
     private static final String OLD_EXTRA_CLAIMABLE_RADIUS_TAG = "extraClaimableRadius";
@@ -285,12 +281,8 @@ public class SettlementType extends FreeColGameObjectType {
     private static final String OLD_TRADE_BONUS_TAG = "tradeBonus";
     private static final String OLD_VISIBLE_RADIUS_TAG = "visibleRadius";
     private static final String OLD_WANDERING_RADIUS_TAG = "wanderingRadius";
-    // end @compat 0.11.3
+    /** End @compat 0.11.3 */
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -318,25 +310,23 @@ public class SettlementType extends FreeColGameObjectType {
         xw.writeAttribute(CONVERT_THRESHOLD_TAG, convertThreshold);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
 
         if (plunder != null) {
-            for (RandomRange range : plunder) range.toXML(xw, PLUNDER_TAG);
+            for (RandomRange range : plunder) {
+				range.toXML(xw, PLUNDER_TAG);
+			}
         }
 
         if (gifts != null) {
-            for (RandomRange range : gifts) range.toXML(xw, GIFTS_TAG);
+            for (RandomRange range : gifts) {
+				range.toXML(xw, GIFTS_TAG);
+			}
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -346,77 +336,74 @@ public class SettlementType extends FreeColGameObjectType {
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MINIMUM_SIZE_TAG)) {
             minimumSize = xr.getAttribute(OLD_MINIMUM_SIZE_TAG, minimumSize);
-        } else
-        // end @compat 0.11.3
-            minimumSize = xr.getAttribute(MINIMUM_SIZE_TAG, minimumSize);
+        } else {
+			minimumSize = xr.getAttribute(MINIMUM_SIZE_TAG, minimumSize);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MAXIMUM_SIZE_TAG)) {
             maximumSize = xr.getAttribute(OLD_MAXIMUM_SIZE_TAG, maximumSize);
-        } else
-        // end @compat 0.11.3
-            maximumSize = xr.getAttribute(MAXIMUM_SIZE_TAG, maximumSize);
+        } else {
+			maximumSize = xr.getAttribute(MAXIMUM_SIZE_TAG, maximumSize);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_VISIBLE_RADIUS_TAG)) {
             visibleRadius = xr.getAttribute(OLD_VISIBLE_RADIUS_TAG, visibleRadius);
-        } else
-        // end @compat 0.11.3
-            visibleRadius = xr.getAttribute(VISIBLE_RADIUS_TAG, visibleRadius);
+        } else {
+			visibleRadius = xr.getAttribute(VISIBLE_RADIUS_TAG, visibleRadius);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_CLAIMABLE_RADIUS_TAG)) {
             claimableRadius = xr.getAttribute(OLD_CLAIMABLE_RADIUS_TAG, claimableRadius);
-        } else
-        // end @compat 0.11.3
-            claimableRadius = xr.getAttribute(CLAIMABLE_RADIUS_TAG, claimableRadius);
+        } else {
+			claimableRadius = xr.getAttribute(CLAIMABLE_RADIUS_TAG, claimableRadius);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_EXTRA_CLAIMABLE_RADIUS_TAG)) {
             extraClaimableRadius = xr.getAttribute(OLD_EXTRA_CLAIMABLE_RADIUS_TAG, extraClaimableRadius);
-        } else
-        // end @compat 0.11.3
-            extraClaimableRadius = xr.getAttribute(EXTRA_CLAIMABLE_RADIUS_TAG, extraClaimableRadius);
+        } else {
+			extraClaimableRadius = xr.getAttribute(EXTRA_CLAIMABLE_RADIUS_TAG, extraClaimableRadius);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_WANDERING_RADIUS_TAG)) {
             wanderingRadius = xr.getAttribute(OLD_WANDERING_RADIUS_TAG, wanderingRadius);
-        } else
-        // end @compat 0.11.3
-            wanderingRadius = xr.getAttribute(WANDERING_RADIUS_TAG, wanderingRadius);
+        } else {
+			wanderingRadius = xr.getAttribute(WANDERING_RADIUS_TAG, wanderingRadius);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MINIMUM_GROWTH_TAG)) {
             minimumGrowth = xr.getAttribute(OLD_MINIMUM_GROWTH_TAG, minimumGrowth);
-        } else
-        // end @compat 0.11.3
-            minimumGrowth = xr.getAttribute(MINIMUM_GROWTH_TAG, minimumGrowth);
+        } else {
+			minimumGrowth = xr.getAttribute(MINIMUM_GROWTH_TAG, minimumGrowth);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_MAXIMUM_GROWTH_TAG)) {
             maximumGrowth = xr.getAttribute(OLD_MAXIMUM_GROWTH_TAG, maximumGrowth);
-        } else
-        // end @compat 0.11.3
-            maximumGrowth = xr.getAttribute(MAXIMUM_GROWTH_TAG, maximumGrowth);
+        } else {
+			maximumGrowth = xr.getAttribute(MAXIMUM_GROWTH_TAG, maximumGrowth);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_TRADE_BONUS_TAG)) {
             tradeBonus = xr.getAttribute(OLD_TRADE_BONUS_TAG, tradeBonus);
-        } else
-        // end @compat 0.11.3
-            tradeBonus = xr.getAttribute(TRADE_BONUS_TAG, tradeBonus);
+        } else {
+			tradeBonus = xr.getAttribute(TRADE_BONUS_TAG, tradeBonus);
+		}
 
         // @compat 0.11.3
         if (xr.hasAttribute(OLD_CONVERT_THRESHOLD_TAG)) {
             convertThreshold = xr.getAttribute(OLD_CONVERT_THRESHOLD_TAG, convertThreshold);
-        } else
-        // end @compat 0.11.3
-            convertThreshold = xr.getAttribute(CONVERT_THRESHOLD_TAG, convertThreshold);
+        } else {
+			convertThreshold = xr.getAttribute(CONVERT_THRESHOLD_TAG, convertThreshold);
+		}
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -428,27 +415,19 @@ public class SettlementType extends FreeColGameObjectType {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final String tag = xr.getLocalName();
 
         if (GIFTS_TAG.equals(tag)) {
             addGift(new RandomRange(xr));
-
         } else if (PLUNDER_TAG.equals(tag)) {
             addPlunder(new RandomRange(xr));
-
         } else {
             super.readChild(xr);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

@@ -45,14 +45,9 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
-/**
- * A tooltip for a single building in a Colony.
- */
+/** A tooltip for a single building in a Colony. */
 public class BuildingToolTip extends JToolTip {
-
     private static JLabel arrow = null;
-
 
     /**
      * Creates this BuildingToolTip.
@@ -66,7 +61,7 @@ public class BuildingToolTip extends JToolTip {
         final int workplaces = building.getUnitCapacity();
         List<AbstractGoods> outputs = building.getOutputs();
         // FIXME: consider several outputs
-        final GoodsType output = (outputs.isEmpty()) ? null
+        final GoodsType output = outputs.isEmpty() ? null
             : outputs.get(0).getType();
 
         if (arrow == null) {
@@ -194,12 +189,8 @@ public class BuildingToolTip extends JToolTip {
         setPreferredSize(layout.preferredLayoutSize(this));
     }
 
+    /** Override Component. */
 
-    // Override Component
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeNotify() {
         super.removeNotify();

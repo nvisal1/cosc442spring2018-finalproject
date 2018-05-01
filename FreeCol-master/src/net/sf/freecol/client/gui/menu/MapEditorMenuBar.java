@@ -39,7 +39,6 @@ import net.sf.freecol.common.option.FileOption;
 import net.sf.freecol.common.option.MapGeneratorOptions;
 import net.sf.freecol.common.option.OptionGroup;
 
-
 /**
  * The menu bar used when running in editor mode.
  *
@@ -51,10 +50,8 @@ import net.sf.freecol.common.option.OptionGroup;
  * @see InGameMenuBar
  */
 public class MapEditorMenuBar extends FreeColMenuBar {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(MapEditorMenuBar.class.getName());
-
 
     /**
      * Creates a new <code>MapEditorMenuBar</code>. This menu bar will include
@@ -67,14 +64,11 @@ public class MapEditorMenuBar extends FreeColMenuBar {
         super(freeColClient);
 
         // Add a mouse listener so that autoscrolling can happen in this menubar
-        this.addMouseMotionListener(listener);
+        addMouseMotionListener(listener);
         reset();
     }
 
-
-    /**
-     * Resets this menu bar.
-     */
+    /** Resets this menu bar. */
     @Override
     public final void reset() {
         removeAll();
@@ -164,5 +158,4 @@ public class MapEditorMenuBar extends FreeColMenuBar {
 
         add(menu);
     }
-
 }

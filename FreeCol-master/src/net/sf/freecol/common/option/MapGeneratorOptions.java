@@ -21,7 +21,6 @@ package net.sf.freecol.common.option;
 
 import net.sf.freecol.server.generator.MapGenerator;
 
-
 /**
  * Keeps track of the available map generator options.
  * More of a handy place to organize the names than an actual option type.
@@ -30,8 +29,6 @@ import net.sf.freecol.server.generator.MapGenerator;
  * @see net.sf.freecol.common.option.OptionGroup
  */
 public class MapGeneratorOptions {
-
-
     /** Map generator options import group. */
     public static final String MAPGENERATOROPTIONS_IMPORT
         = "mapGeneratorOptions.import";
@@ -55,7 +52,6 @@ public class MapGeneratorOptions {
     /** Option for using the settlements imported from a file. */
     public static final String IMPORT_SETTLEMENTS 
         = "model.option.importSettlements";
-
 
     /** Map generator options land generator group. */
     public static final String MAPGENERATOROPTIONS_LAND_GENERATOR
@@ -92,7 +88,6 @@ public class MapGeneratorOptions {
     /** Option for setting the distance to the high seas. */
     public static final String DISTANCE_TO_HIGH_SEA
         = "model.option.distanceToHighSea";
-
 
     /** Map generator options terrain generator group. */
     public static final String MAPGENERATOROPTIONS_TERRAIN_GENERATOR
@@ -140,8 +135,6 @@ public class MapGeneratorOptions {
                             TEMPERATURE_TEMPERATE = 2,
                             TEMPERATURE_WARM      = 3,
                             TEMPERATURE_HOT       = 4;
-
-
 
     /**
      * Gets the tag name of the root element representing this object.

@@ -27,16 +27,13 @@ import javax.swing.JComboBox;
 import net.sf.freecol.client.gui.plaf.FreeColComboBoxRenderer;
 import net.sf.freecol.common.option.StringOption;
 
-
 /**
  * This class provides visualization for a
  * {@link net.sf.freecol.common.option.StringOption} in order to enable
  * values to be both seen and changed.
  */
 public final class StringOptionUI extends OptionUI<StringOption>  {
-
     private final JComboBox<String> box = new JComboBox<>();
-
 
     /**
      * Creates a new <code>StringOptionUI</code> for the given
@@ -58,28 +55,18 @@ public final class StringOptionUI extends OptionUI<StringOption>  {
         initialize();
     }
 
+    /** Implement OptionUI. */
 
-    // Implement OptionUI
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public JComboBox<String> getComponent() {
         return box;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateOption() {
         getOption().setValue((String)box.getSelectedItem());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void reset() {
         box.setSelectedItem(getOption().getValue());

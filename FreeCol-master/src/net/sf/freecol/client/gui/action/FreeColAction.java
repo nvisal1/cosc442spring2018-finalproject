@@ -42,14 +42,12 @@ import net.sf.freecol.common.model.Game;
 import net.sf.freecol.common.option.Option;
 import net.sf.freecol.common.resources.ResourceManager;
 
-
 /**
  * The super class of all actions in FreeCol.  Subclasses of this
  * object is stored in an {@link ActionManager}.
  */
 public abstract class FreeColAction extends AbstractAction
     implements Option<FreeColAction> {
-
     /** Protected to congregate the subclasses here. */
     protected static final Logger logger = Logger.getLogger(FreeColAction.class.getName());
 
@@ -62,17 +60,14 @@ public abstract class FreeColAction extends AbstractAction
      * @author johnathanj
      */
     public class InnerMenuKeyListener implements MenuKeyListener {
-
         final int mnemonic;
 
-
         public InnerMenuKeyListener() {
-            mnemonic = ((Integer) getValue(MNEMONIC_KEY));
+            mnemonic = (Integer) getValue(MNEMONIC_KEY);
         }
 
         @Override
         public void menuKeyPressed(MenuKeyEvent e) {
-
             if (e.getKeyCode() == mnemonic) {
                 ActionEvent ae = new ActionEvent(e.getSource(), e.getID(), (String) getValue(Action.NAME),
                                                  e.getModifiers());
@@ -101,8 +96,7 @@ public abstract class FreeColAction extends AbstractAction
 
     protected final FreeColClient freeColClient;
 
-    private int orderButtonImageCount = 0;
-
+    private int orderButtonImageCount;
 
     /**
      * Creates a new <code>FreeColAction</code>.
@@ -128,7 +122,6 @@ public abstract class FreeColAction extends AbstractAction
             setAccelerator(KeyStroke.getKeyStroke(accelerator));
         }
     }
-
 
     /**
      * Gets the main controller object for the client.
@@ -193,17 +186,14 @@ public abstract class FreeColAction extends AbstractAction
         return freeColClient.getClientOptions();
     }
 
-
-    /**
-     * Don't use this method.
-     */
+    /** Don't use this method. */
     @Override
     public FreeColAction clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException("FreeColAction can not be cloned.");
     }
 
     /**
-     * Gets the mnemonic to be used for selecting this action
+     * Gets the mnemonic to be used for selecting this action.
      *
      * @return The mnemonic of the action
      */
@@ -358,16 +348,18 @@ public abstract class FreeColAction extends AbstractAction
      */
     public void update() {
         boolean b = shouldBeEnabled();
-        if (isEnabled() != b) setEnabled(b);
+        if (isEnabled() != b) {
+			setEnabled(b);
+		}
     }
 
-
-    // Serialization
-    // This is not actually a FreeColObject, so the serialization is
-    // less elaborate.
+    /**
+     * Serialization
+     * This is not actually a FreeColObject, so the serialization is
+     * less elaborate.
+     */
     
     private static final String ACCELERATOR_TAG = "accelerator";
-
 
     /**
      * This method writes an XML-representation of this object to the given
@@ -402,9 +394,6 @@ public abstract class FreeColAction extends AbstractAction
         xr.closeTag(getXMLElementTagName());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getName();

@@ -27,16 +27,11 @@ import javax.swing.plaf.basic.BasicTableHeaderUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
-
-/**
- * UI-class for table headers.
- */
+/** UI-class for table headers. */
 public class FreeColTableHeaderUI extends BasicTableHeaderUI {
-
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return new FreeColTableHeaderUI();
     }
-
 
     @Override
     public void installUI(JComponent c) {

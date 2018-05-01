@@ -28,17 +28,14 @@ import java.util.Set;
 
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
 /**
  * The <code>ProductionCache</code> is contains all relevant
  * information about the production and consumption of the
  * colony. This includes the production of all colony tiles and
  * buildings, as well as the consumption of all units, buildings and
  * build queues.
- *
  */
 public class ProductionCache {
-
     /**
      * The colony whose production is being cached. The goods stored
      * in the colony may need to be considered in order to prevent
@@ -61,8 +58,7 @@ public class ProductionCache {
      * Flag to indicate whether the cache is up to date, or not and
      * needs {@link #update} to be called.
      */
-    private boolean upToDate = false;
-
+    private boolean upToDate;
 
     /**
      * Creates a new <code>ProductionCache</code> instance.
@@ -72,7 +68,6 @@ public class ProductionCache {
     public ProductionCache(Colony colony) {
         this.colony = colony;
     }
-
 
     /**
      * Updates all data structures.  The method has no side effects.
@@ -91,7 +86,9 @@ public class ProductionCache {
      * arguments.
      */
     private synchronized void update() {
-        if (upToDate) return; // nothing to do
+        if (upToDate) {
+			return;
+		} // nothing to do
         final Specification spec = colony.getSpecification();
         final GoodsType bells = spec.getGoodsType("model.goods.bells");
 
@@ -175,7 +172,6 @@ public class ProductionCache {
         upToDate = true;
     }
 
-
     /**
      * Returns the number of goods of the given type stored in the
      * colony.
@@ -192,7 +188,6 @@ public class ProductionCache {
      * called whenever global production modifiers change. This might
      * be the case when a new {@link FoundingFather} is added, or when
      * the colony's production bonus changes.
-     *
      */
     public synchronized void invalidate() {
         upToDate = false;

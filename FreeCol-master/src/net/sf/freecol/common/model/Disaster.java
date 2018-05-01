@@ -29,13 +29,11 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.RandomChoice;
 
-
 /**
  * This class describes disasters that can happen to a Colony, such as
  * flooding, disease or Indian raids.
  */
 public class Disaster extends FreeColGameObjectType {
-
     /**
      * Bankruptcy occurs if upkeep is enabled and a player is unable
      * to pay for the maintenance of all buildings.
@@ -43,17 +41,16 @@ public class Disaster extends FreeColGameObjectType {
     public static final String BANKRUPTCY = "model.disaster.bankruptcy";
 
     /** Whether to apply one, many or all applicable disasters. */
-    public static enum Effects { ONE, SEVERAL, ALL };
+    public enum Effects { ONE, SEVERAL, ALL }
 
-    /** Whether this disaster is natural.  Defaults to false. */
-    private boolean natural = false;
+    /** Whether this disaster is natural. Defaults to false. */
+    private boolean natural;
 
     /** The number of effects of this disaster. Defaults to <code>ONE</code>. */
     private Effects numberOfEffects = Effects.ONE;
 
     /** The effects of this disaster. */
     private List<RandomChoice<Effect>> effects = null;
-
 
     /**
      * Create a new disaster.
@@ -64,7 +61,6 @@ public class Disaster extends FreeColGameObjectType {
     public Disaster(String id, Specification specification) {
         super(id, specification);
     }
-
 
     /**
      * Is this a natural disaster?
@@ -101,21 +97,18 @@ public class Disaster extends FreeColGameObjectType {
      * @param effect The <code>Effect</code> to add.
      */
     private void addEffect(Effect effect) {
-        if (effects == null) effects = new ArrayList<>();
+        if (effects == null) {
+			effects = new ArrayList<>();
+		}
         effects.add(new RandomChoice<>(effect, effect.getProbability()));
     }
 
-
-    // Serialization
+    /** Serialization. */
 
     private static final String EFFECT_TAG = "effect";
     private static final String EFFECTS_TAG = "effects";
     private static final String NATURAL_TAG = "natural";
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -125,9 +118,6 @@ public class Disaster extends FreeColGameObjectType {
         xw.writeAttribute(EFFECTS_TAG, numberOfEffects);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeChildren(xw);
@@ -137,9 +127,6 @@ public class Disaster extends FreeColGameObjectType {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
         super.readAttributes(xr);
@@ -150,14 +137,11 @@ public class Disaster extends FreeColGameObjectType {
 
         natural = xr.getAttribute(NATURAL_TAG, parent.natural);
 
-        numberOfEffects = (xr.hasAttribute(EFFECTS_TAG))
+        numberOfEffects = xr.hasAttribute(EFFECTS_TAG)
             ? xr.getAttribute(EFFECTS_TAG, Effects.class, Effects.ONE)
             : parent.numberOfEffects;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
         // Clear containers.
@@ -169,7 +153,9 @@ public class Disaster extends FreeColGameObjectType {
         Disaster parent = xr.getType(spec, EXTENDS_TAG, Disaster.class, this);
 
         if (parent != this && !parent.getEffects().isEmpty()) {
-            if (effects == null) effects = new ArrayList<>();
+            if (effects == null) {
+				effects = new ArrayList<>();
+			}
             for (RandomChoice<Effect> choice : parent.getEffects()) {
                 Effect effect = new Effect(choice.getObject());
                 effect.getFeatureContainer().replaceSource(parent, this);
@@ -180,9 +166,6 @@ public class Disaster extends FreeColGameObjectType {
         super.readChildren(xr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
         final Specification spec = getSpecification();
@@ -192,16 +175,11 @@ public class Disaster extends FreeColGameObjectType {
             Effect effect = new Effect(xr, spec);
             effect.getFeatureContainer().replaceSource(null, this);
             addEffect(effect);
-
         } else {
             super.readChild(xr);
         }
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(64);
@@ -213,9 +191,6 @@ public class Disaster extends FreeColGameObjectType {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

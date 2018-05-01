@@ -36,15 +36,12 @@ import javax.swing.plaf.metal.MetalButtonUI;
 
 import net.sf.freecol.client.gui.ImageLibrary;
 
-
 /**
  * Sets the default opaque attribute to <i>false</i> and
  * uses a 10% black shading on the {@link #paintButtonPressed}.
  */
 public class FreeColButtonUI extends MetalButtonUI {
-
     private static final FreeColButtonUI sharedInstance = new FreeColButtonUI();
-
 
     public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
         return sharedInstance;
@@ -89,7 +86,6 @@ public class FreeColButtonUI extends MetalButtonUI {
             g2d.fillRect(0, 0, size.width, size.height);
             g2d.setComposite(oldComposite);
             g2d.setColor(oldColor);
-
         }
     }
 }

@@ -22,7 +22,6 @@ package net.sf.freecol.common.model;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Represents the style of a tile improvement, such as a river or
  * road. Since TileImprovementStyles are immutable and some styles are
@@ -50,7 +49,6 @@ import java.util.Map;
  *   These are distinct so that the overlays can vary.
  */
 public class TileImprovementStyle {
-
     /** Cache all TileImprovementStyles. */
     private static final Map<String, TileImprovementStyle> cache = new HashMap<>();
 
@@ -59,7 +57,6 @@ public class TileImprovementStyle {
 
     /** A key for the forest overlay, derived from the above. */
     private final String mask;
-
 
     /**
      * Private constructor, only called in getInstance() below.
@@ -72,12 +69,13 @@ public class TileImprovementStyle {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < style.length(); i++) {
             char c = style.charAt(i);
-            if (Character.digit(c, Character.MAX_RADIX) < 0) break;
+            if (Character.digit(c, Character.MAX_RADIX) < 0) {
+				break;
+			}
             sb.append((c == '0') ? "0" : "1");
         }
         this.mask = sb.toString();
     }
-
 
     /**
      * Gets the key suitable for looking up an appropriate tile
@@ -108,7 +106,9 @@ public class TileImprovementStyle {
      * @return The style in the new format.
      */
     public static String decodeOldStyle(String input, int pad) {
-        if (pad <= 0) return null;
+        if (pad <= 0) {
+			return null;
+		}
         boolean isZero = true;
         StringBuilder sb = new StringBuilder();
         try {
@@ -122,7 +122,9 @@ public class TileImprovementStyle {
         } catch (NumberFormatException nfe) {
             return null;
         }
-        if (isZero) return null;
+        if (isZero) {
+			return null;
+		}
         while (sb.length() < pad) {
             sb.append("0");
         }
@@ -137,7 +139,9 @@ public class TileImprovementStyle {
      * @return The corresponding <code>TileImprovementStyle</code>.
      */
     public static TileImprovementStyle getInstance(String key) {
-        if (key == null || key.isEmpty() || "0".equals(key)) return null;
+        if (key == null || key.isEmpty() || "0".equals(key)) {
+			return null;
+		}
 
         TileImprovementStyle result = cache.get(key);
         if (result == null) {
@@ -150,11 +154,7 @@ public class TileImprovementStyle {
         return result;
     }
 
-        
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+            @Override
     public String toString() {
         return style;
     }

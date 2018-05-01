@@ -28,18 +28,11 @@ import net.sf.freecol.common.model.Settlement;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-
-/**
- * Cost deciders to be used while finding paths.
- */
+/** Cost deciders to be used while finding paths. */
 public final class CostDeciders {
-
-    /**
-     * A <code>CostDecider</code> that costs unit moves normally.
-     */
+    /** A <code>CostDecider</code> that costs unit moves normally. */
     private static final CostDecider avoidIllegalCostDecider
         = new BaseCostDecider();
-
 
     /**
      * A trivial <code>CostDecider</code> that only considers the
@@ -61,7 +54,6 @@ public final class CostDeciders {
             public int getNewTurns() { return 0; }
         };
 
-
     /**
      * A <code>CostDecider</code> that only considers the number of
      * tiles visited when determining the cost, but differs from the
@@ -74,7 +66,7 @@ public final class CostDeciders {
                 return (newLocation == null) ? ILLEGAL_MOVE
                     : (newLocation instanceof Europe) ? 1
                     : (newLocation.getTile() == null) ? ILLEGAL_MOVE
-                    : (unit.isTileAccessible(newLocation.getTile())) ? 1
+                    : unit.isTileAccessible(newLocation.getTile()) ? 1
                     : ILLEGAL_MOVE;
             }
             @Override
@@ -82,7 +74,6 @@ public final class CostDeciders {
             @Override
             public int getNewTurns() { return 1; }
         };
-
 
     /**
      * A <code>CostDecider</code> that uses server-side knowledge of where
@@ -93,22 +84,15 @@ public final class CostDeciders {
         public int getCost(Unit unit, Location oldLocation,
                            Location newLocation, int movesLeft) {
             int cost = super.getCost(unit, oldLocation, newLocation, movesLeft);
-            if (cost != ILLEGAL_MOVE && cost != Map.INFINITY) {
-                if (newLocation instanceof Europe) {
-                    ; // ok
-                } else if (!newLocation.getTile().isExploredBy(unit.getOwner())) {
-                    return ILLEGAL_MOVE;
-                }
-            }
+            if (cost != ILLEGAL_MOVE && cost != Map.INFINITY && !(newLocation instanceof Europe) && !newLocation.getTile().isExploredBy(unit.getOwner())) {
+			    return ILLEGAL_MOVE;
+			}
             return cost;
         }
-    };
-    /**
-     * A server-side <code>CostDecider</code> that costs unit moves normally.
-     */
+    }
+    /** A server-side <code>CostDecider</code> that costs unit moves normally. */
     private static final CostDecider
         serverAvoidIllegalCostDecider = new ServerBaseCostDecider();
-
 
     /**
      * A <code>CostDecider</code> that costs unit moves normally while
@@ -128,13 +112,10 @@ public final class CostDeciders {
             }
             return cost;
         }
-    };
-    /**
-     * An instance of the cost decider for avoiding settlements.
-     */
+    }
+    /** An instance of the cost decider for avoiding settlements. */
     private static final AvoidSettlementsCostDecider
         avoidSettlementsCostDecider = new AvoidSettlementsCostDecider();
-
 
     /**
      * A <code>CostDecider</code> that costs unit moves normally while
@@ -151,32 +132,24 @@ public final class CostDeciders {
             if (cost != ILLEGAL_MOVE && cost != Map.INFINITY
                 && tile != null) {
                 final Unit defender = tile.getFirstUnit();
-                if (defender != null
-                    && defender.getOwner() != unit.getOwner()) {
-                    return ILLEGAL_MOVE;
-                } else if (unit.getTradeRoute() != null
-                    && tile.hasLostCityRumour()) {
+                if ((defender != null
+                    && defender.getOwner() != unit.getOwner()) || (unit.getTradeRoute() != null
+                    && tile.hasLostCityRumour())) {
                     return ILLEGAL_MOVE;
                 }
             }
             return cost;
         }
-    };
+    }
 
-    /**
-     * An instance of the settlement+unit avoiding cost decider.
-     */
+    /** An instance of the settlement+unit avoiding cost decider. */
     private static final AvoidSettlementsAndBlockingUnitsCostDecider
         avoidSettlementsAndBlockingUnitsCostDecider
         = new AvoidSettlementsAndBlockingUnitsCostDecider();
 
-
-    /**
-     * A <code>CostDecider</code> to avoid naval danger.
-     */
+    /** A <code>CostDecider</code> to avoid naval danger. */
     private static class AvoidNavalDangerCostDecider
         extends AvoidSettlementsAndBlockingUnitsCostDecider {
-
         @Override
         public int getCost(Unit unit, Location oldLocation,
                            Location newLocation, int movesLeft) {
@@ -189,7 +162,9 @@ public final class CostDeciders {
                     final Player owner = unit.getOwner();
                     tiles: for (Tile t : tile.getSurroundingTiles(1)) {
                         for (Unit u : t.getUnitList()) {
-                            if (u.getOwner() == owner) break;
+                            if (u.getOwner() == owner) {
+								break;
+							}
                             if (u.hasAbility(Ability.PIRACY)
                                 || (u.getOwner().atWarWith(owner)
                                     && u.isOffensiveUnit())) {
@@ -203,8 +178,7 @@ public final class CostDeciders {
             }
             return cost;
         }
-    };
-
+    }
 
     // Public interface
 
@@ -271,9 +245,9 @@ public final class CostDeciders {
     public static CostDecider defaultCostDeciderFor(final Unit unit) {
         return (unit == null)
             ? avoidIllegal()
-            : (unit.isNaval())
+            : unit.isNaval()
             ? avoidNavalDanger()
-            : (unit.isOffensiveUnit())
+            : unit.isOffensiveUnit()
             ? avoidSettlements()
             : avoidSettlementsAndBlockingUnits();
     }

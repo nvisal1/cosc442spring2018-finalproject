@@ -27,12 +27,8 @@ import net.sf.freecol.common.model.Goods;
 import net.sf.freecol.common.model.Monarch.MonarchAction;
 import net.sf.freecol.server.control.ChangeSet;
 
-
-/**
- * A type of session to handle monarch actions that require response.
- */
+/** A type of session to handle monarch actions that require response. */
 public class MonarchSession extends TransactionSession {
-
     private static final Logger logger = Logger.getLogger(MonarchSession.class.getName());
 
     /** The player whose monarch is active. */
@@ -52,7 +48,6 @@ public class MonarchSession extends TransactionSession {
 
     /** Mercenary price. */
     private final int price;
-
 
     public MonarchSession(ServerPlayer serverPlayer, MonarchAction action,
                           int tax, Goods goods) {
@@ -84,7 +79,9 @@ public class MonarchSession extends TransactionSession {
             serverPlayer.csRaiseTax(tax, goods, result, cs);
             break;
         case MONARCH_MERCENARIES: case HESSIAN_MERCENARIES:
-            if (result) serverPlayer.csAddMercenaries(mercenaries, price, cs);
+            if (result) {
+				serverPlayer.csAddMercenaries(mercenaries, price, cs);
+			}
             break;
         default:
             break;

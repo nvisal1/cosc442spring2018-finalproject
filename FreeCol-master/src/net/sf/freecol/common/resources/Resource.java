@@ -21,7 +21,6 @@ package net.sf.freecol.common.resources;
 
 import java.net.URI;
 
-
 /**
  * Represents a resource that either has been or can be loaded using a
  * <code>URI</code>.  There can only be one instance of
@@ -29,18 +28,13 @@ import java.net.URI;
  * identity) <code>URI</code>.
  */
 public abstract class Resource {
-
     /**
      * Implement the Preloadable interface if a Resource has a use for
      * calls to a preload method.
      */
     public interface Preloadable {
-
-        /**
-         * Preload the resource.
-         */
-        public void preload();
-
+        /** Preload the resource. */
+        void preload();
     }
 
     /**
@@ -48,26 +42,17 @@ public abstract class Resource {
      * calls to a clean method.
      */
     public interface Cleanable {
-
-        /**
-         * Clean the caches inside the resource.
-         */
-        public void clean();
-
+        /** Clean the caches inside the resource. */
+        void clean();
     }
 
-
-    /**
-     * The <code>URI</code> used when loading this resource.
-     */
+    /** The <code>URI</code> used when loading this resource. */
     private final URI resourceLocator;
-
 
     protected Resource() {
         // empty constructor
         resourceLocator = null;
     }
-
 
     /**
      * Do not use directly.
@@ -78,7 +63,6 @@ public abstract class Resource {
     public Resource(URI resourceLocator) {
         this.resourceLocator = resourceLocator;
     }
-
 
     /**
      * Returns the <code>URI</code> used for loading the resource.

@@ -38,13 +38,11 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
  * Class for parsing raw message data into an XML-tree and for creating new
  * XML-trees.
  */
 public class Message {
-
     protected static final Logger logger = Logger.getLogger(Message.class.getName());
 
     private static final String FREECOL_PROTOCOL_VERSION = "0.1.6";
@@ -53,7 +51,6 @@ public class Message {
 
     /** The actual Message data. */
     protected Document document;
-
 
     protected Message() {
         // empty constructor
@@ -119,13 +116,13 @@ public class Message {
             if (dumpMsgOnError) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 inputSource.getByteStream().reset();
-                while (true) {
+                do {
                     int i = inputSource.getByteStream().read();
                     if (-1 == i) {
                         break;
                     }
                     baos.write(i);
-                }
+                } while (true);
                 logger.severe(baos.toString("UTF-8"));
             }
             throw e;
@@ -141,7 +138,6 @@ public class Message {
     public Message(Document document) {
         this.document = document;
     }
-
 
     /**
      * Gets the <code>Document</code> holding the message data.
@@ -223,9 +219,6 @@ public class Message {
         return null; // do nothing
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return document.getDocumentElement().toString();

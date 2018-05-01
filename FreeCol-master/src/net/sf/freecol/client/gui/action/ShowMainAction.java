@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
 /**
  * Returns to the <code>MainPanel</code>.
  * All in-game components are removed.
@@ -31,9 +30,7 @@ import net.sf.freecol.client.FreeColClient;
  * @see net.sf.freecol.client.gui.panel.MainPanel
  */
 public class ShowMainAction extends FreeColAction {
-
     public static final String id = "showMainAction";
-
 
     /**
      * Creates this action.
@@ -44,15 +41,13 @@ public class ShowMainAction extends FreeColAction {
         super(freeColClient, id);
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (!getGUI().confirmStopGame()) return;
+        if (!getGUI().confirmStopGame()) {
+			return;
+		}
         getConnectController().quitGame(true);
         getGUI().removeInGameComponents();
         freeColClient.setMapEditor(false);

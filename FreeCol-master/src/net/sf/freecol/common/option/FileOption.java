@@ -27,18 +27,13 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.Specification;
 
-
-/**
- * Represents an option for specifying a <code>File</code>.
- */
+/** Represents an option for specifying a <code>File</code>. */
 public class FileOption extends AbstractOption<File> {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(FileOption.class.getName());
 
     /** The value of this option. */
     private File value = null;
-
 
     /**
      * Creates a new <code>FileOption</code>.
@@ -49,12 +44,8 @@ public class FileOption extends AbstractOption<File> {
         super(specification);
     }
 
+    /** Interface Option. */
 
-    // Interface Option
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FileOption clone() {
         FileOption result = new FileOption(getSpecification());
@@ -62,17 +53,11 @@ public class FileOption extends AbstractOption<File> {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public File getValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setValue(File value) {
         final File oldValue = this.value;
@@ -84,20 +69,13 @@ public class FileOption extends AbstractOption<File> {
         isDefined = true;
     }
 
+    /** Override AbstractOption. */
 
-    // Override AbstractOption
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isNullValueOK() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setValue(String valueString, String defaultValueString) {
         if (valueString != null) {
@@ -109,13 +87,8 @@ public class FileOption extends AbstractOption<File> {
         }
     }
 
+    /** Serialization. */
 
-    // Serialization
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
         super.writeAttributes(xw);
@@ -125,9 +98,6 @@ public class FileOption extends AbstractOption<File> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
@@ -137,9 +107,6 @@ public class FileOption extends AbstractOption<File> {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getXMLTagName() { return getXMLElementTagName(); }
 

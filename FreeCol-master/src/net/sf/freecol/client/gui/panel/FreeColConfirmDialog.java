@@ -28,12 +28,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.common.i18n.Messages;
 
-
-/**
- * A simple modal ok/cancel dialog.
- */
+/** A simple modal ok/cancel dialog. */
 public class FreeColConfirmDialog extends FreeColDialog<Boolean> {
-
     /**
      * Internal constructor.
      *
@@ -63,7 +59,6 @@ public class FreeColConfirmDialog extends FreeColDialog<Boolean> {
 
         initializeConfirmDialog(frame, modal, obj, icon, okKey, cancelKey);
     }
-
 
     /**
      * Initialize this confirm dialog.

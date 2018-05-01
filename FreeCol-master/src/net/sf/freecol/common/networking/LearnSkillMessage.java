@@ -31,18 +31,13 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when learning for the skill taught at a settlement.
- */
+/** The message sent when learning for the skill taught at a settlement. */
 public class LearnSkillMessage extends DOMMessage {
-
     /** The identifier of the unit that is learning. */
     private final String unitId;
 
     /** The direction the unit is learning in. */
     private final String directionString;
-
 
     /**
      * Create a new <code>LearnSkillMessage</code> with the
@@ -71,7 +66,6 @@ public class LearnSkillMessage extends DOMMessage {
         this.unitId = element.getAttribute("unitId");
         this.directionString = element.getAttribute("direction");
     }
-
 
     /**
      * Handle a "learnSkill"-message.

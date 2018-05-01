@@ -41,12 +41,8 @@ import net.sf.freecol.common.i18n.Messages;
 
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-
-/**
- * Display the current game statistics.
- */
+/** Display the current game statistics. */
 public final class StatisticsPanel extends FreeColPanel {
-
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(StatisticsPanel.class.getName());
 
@@ -55,17 +51,10 @@ public final class StatisticsPanel extends FreeColPanel {
     };
 
     private static class StatisticsModel extends AbstractTableModel {
-
         private static final int NAME_COLUMN = 0, VALUE_COLUMN = 1;
         private final String[] columnNames = { "name", "value" };
 
         private Object data[][] = null;
-
-
-        /**
-         * A standard constructor.
-         */
-        public StatisticsModel() {}
 
         /**
          * Gives this table model the data that is being used in the
@@ -73,7 +62,7 @@ public final class StatisticsPanel extends FreeColPanel {
          * data set. To modify or extend the data set use other
          * methods.
          */
-        public void setData(java.util.Map<String, String> statsData) {
+        public void setData(Map<String, String> statsData) {
             this.data = new Object[2][statsData.size()];
             int i = 0;
             for (Entry<String, String> e : mapEntriesByKey(statsData)) {
@@ -83,69 +72,53 @@ public final class StatisticsPanel extends FreeColPanel {
             }
         }
 
-        // AbstractTableModel
+        /** AbstractTableModel. */
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Class<?> getColumnClass(int column) {
             return String.class;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String getColumnName(int column) {
             return Messages.message(columnNames[column]);
         }
 
-        ///**
-        // * {@inheritDoc}
-        // */
-        //@Override
-        //public boolean isCellEditable(int row, int column) {
-        //    return false;
-        //}
-
-
-        // Interface TableModel
-
         /**
-         * {@inheritDoc}
+         * /** * {@inheritDoc}
+         * * /.
+         *@Override
+         *public boolean isCellEditable(int row, int column) {
+         *    return false;
+         *}
+
+         * Interface TableModel
          */
+
         @Override
         public int getColumnCount() {
             return columnNames.length;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int getRowCount() {
             return data[NAME_COLUMN].length;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Object getValueAt(int row, int column) {
-            if ((row < getRowCount()) && (column < getColumnCount())
-                && (row >= 0) && (column >= 0)) {
+            if (row < getRowCount() && column < getColumnCount()
+                && row >= 0 && column >= 0) {
                 switch (column) {
-                case StatisticsModel.NAME_COLUMN:
+                case NAME_COLUMN:
                     return data[NAME_COLUMN][row];
-                case StatisticsModel.VALUE_COLUMN:
+                case VALUE_COLUMN:
                     return data[VALUE_COLUMN][row];
                 }
             }
             return null;
         }
     }
-
 
     /**
      * Creates the statistics panel.
@@ -162,7 +135,7 @@ public final class StatisticsPanel extends FreeColPanel {
 
         // Title
         JPanel header = new JPanel();
-        this.add(header, BorderLayout.NORTH);
+        add(header, BorderLayout.NORTH);
         header.add(Utility.localizedLabel("statistics"), JPanel.CENTER_ALIGNMENT);
 
         // Actual stats panel
@@ -174,7 +147,7 @@ public final class StatisticsPanel extends FreeColPanel {
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
 
-        this.add(scrollPane,BorderLayout.CENTER);
+        add(scrollPane,BorderLayout.CENTER);
         statsPanel.add(displayStatsMessage("client", clientStatistics));
         statsPanel.add(displayStatsMessage("server", serverStatistics));
 
@@ -182,7 +155,6 @@ public final class StatisticsPanel extends FreeColPanel {
 
         setSize(getPreferredSize());
     }
-
 
     private JPanel displayStatsMessage(String title,
                                        Map<String, String> stats) {

@@ -61,13 +61,11 @@ import net.sf.freecol.common.resources.ResourceMapping;
 import net.sf.freecol.server.FreeColServer;
 import net.sf.freecol.server.FreeColServer.GameState;
 
-
 /**
  * The main control class for the FreeCol client.  This class both
  * starts and keeps references to the GUI and the control objects.
  */
 public final class FreeColClient {
-
     private static final Logger logger = Logger.getLogger(FreeColClient.class.getName());
 
     private final ConnectController connectController;
@@ -89,7 +87,6 @@ public final class FreeColClient {
 
     /** Encapsulation of the server API. */
     private final ServerAPI serverAPI;
-
 
     /** The GUI encapsulation. */
     private final GUI gui;
@@ -113,7 +110,7 @@ public final class FreeColClient {
      * Indicates if the game has started, has nothing to do with
      * whether or not the client is logged in.
      */
-    private boolean inGame = false;
+    private boolean inGame;
 
     /** Are we using the map editor? */
     private boolean mapEditor;
@@ -127,11 +124,10 @@ public final class FreeColClient {
      * Connection Object, but instead it is an indication of an
      * approved login to a server.
      */
-    private boolean loggedIn = false;
+    private boolean loggedIn;
 
     /** Run in headless mode. */
     private final boolean headless;
-
 
     public FreeColClient(final InputStream splashStream,
                          final String fontName) {
@@ -151,16 +147,14 @@ public final class FreeColClient {
                          final float scale, boolean headless) {
         mapEditor = false;
         this.headless = headless
-            || System.getProperty("java.awt.headless", "false").equals("true");
-        if (this.headless) {
-            if (!FreeColDebugger.isInDebugMode()
-                || FreeColDebugger.getDebugRunTurns() <= 0) {
-                fatal(Messages.message("client.headlessDebug"));
-            }
-        }
+            || "true".equals(System.getProperty("java.awt.headless", "false"));
+        if (this.headless && (!FreeColDebugger.isInDebugMode()
+		    || FreeColDebugger.getDebugRunTurns() <= 0)) {
+		fatal(Messages.message("client.headlessDebug"));
+         }
 
         // Get the splash screen up early on to show activity.
-        gui = (this.headless) ? new GUI(this, scale)
+        gui = this.headless ? new GUI(this, scale)
                               : new SwingGUI(this, scale);
         gui.displaySplashScreen(splashStream);
 
@@ -201,11 +195,9 @@ public final class FreeColClient {
         //   - base resources
         //   - resources in the default "classic" ruleset,
         //   - resources in the default actions
-        //
         // FIXME: probably should not need to load "classic", but there
         // are a bunch of things in there (e.g. order buttons) that first
         // need to move to base because the action manager requires them.
-        //
         // Not so easy, since the ActionManager also creates tile
         // improvement actions, which depend on the
         // specification. However, this step could probably be
@@ -262,7 +254,9 @@ public final class FreeColClient {
         }
         ResourceManager.setModMapping(modMappings);
         // Update the actions, resources may have changed.
-        if (this.actionManager != null) updateActions();
+        if (this.actionManager != null) {
+			updateActions();
+		}
 
         // Initialize Sound (depends on client options)
         this.soundController = new SoundController(this, sound);
@@ -280,28 +274,16 @@ public final class FreeColClient {
         //   - display the main panel and let the user choose what to
         //     do (which will often be to progress through the
         //     NewPanel to a call to the connect controller to start a game)
-        if (savedGame != null) {
+        if (savedGame != null || spec != null || !showOpeningVideo) {
             soundController.playSound("sound.intro.general");
             SwingUtilities.invokeLater(() -> {
                     if (!connectController.startSavedGame(savedGame, userMsg)) {
                         gui.showMainPanel(userMsg);
                     }
                 });
-        } else if (spec != null) { // Debug or fast start
-            soundController.playSound("sound.intro.general");
-            SwingUtilities.invokeLater(() -> {
-                    if (!connectController.startSinglePlayerGame(spec, true)) {
-                        gui.showMainPanel(userMsg);
-                    }
-                });
-        } else if (showOpeningVideo) {
+        } else {
             SwingUtilities.invokeLater(() -> {
                     gui.showOpeningVideo(userMsg);
-                });
-        } else {
-            soundController.playSound("sound.intro.general");
-            SwingUtilities.invokeLater(() -> {
-                    gui.showMainPanel(userMsg);
                 });
         }
 
@@ -374,7 +356,6 @@ public final class FreeColClient {
         logger.log(Level.SEVERE, err);
         FreeCol.fatal(err);
     }
-
 
     // Accessors
 
@@ -472,7 +453,6 @@ public final class FreeColClient {
     public ServerAPI askServer() {
         return serverAPI;
     }
-
 
     /**
      * Gets the GUI attached to this client.
@@ -636,7 +616,6 @@ public final class FreeColClient {
         return headless;
     }
 
-
     // Utilities
 
     /**
@@ -655,7 +634,6 @@ public final class FreeColClient {
     public void addSpecificationActions(Specification specification) {
         actionManager.addSpecificationActions(specification);
     }
-
 
     /**
      * Checks if this client is the game admin.
@@ -754,9 +732,7 @@ public final class FreeColClient {
         gui.showNewPanel(specification);
     }
 
-    /**
-     * Continue playing after winning the game.
-     */
+    /** Continue playing after winning the game. */
     public void continuePlaying() {
         askServer().continuePlaying();
     }
@@ -767,7 +743,9 @@ public final class FreeColClient {
      * @param turns The number of turns to skip.
      */
     public void skipTurns(int turns) {
-        if (freeColServer == null) return;
+        if (freeColServer == null) {
+			return;
+		}
         if (turns <= 0) {
             freeColServer.getInGameController().setSkippedTurns(0);
             return;
@@ -777,16 +755,14 @@ public final class FreeColClient {
         askServer().startSkipping();
     }
 
-    /**
-     * Quits the application.
-     */
+    /** Quits the application. */
     public void askToQuit() {
-        if (gui.confirm("quitDialog.areYouSure.text", "ok", "cancel")) quit();
+        if (gui.confirm("quitDialog.areYouSure.text", "ok", "cancel")) {
+			quit();
+		}
     }
 
-    /**
-     * Retire from the game.
-     */
+    /** Retire from the game. */
     public void retire() {
         if (gui.confirm("retireDialog.areYouSure.text", "ok", "cancel")) {
             Player player = getMyPlayer();
@@ -796,9 +772,7 @@ public final class FreeColClient {
         }
     }
 
-    /**
-     * Quits the application without any questions.
-     */
+    /** Quits the application without any questions. */
     public void quit() {
         getConnectController().quitGame(isSinglePlayer());
         try { // delete outdated autosave files
@@ -810,7 +784,9 @@ public final class FreeColClient {
             if (validPeriod != 0L && autoSave != null
                 && (flist = autoSave.list()) != null) {
                 for (String f : flist) {
-                    if (!f.endsWith("." + FreeCol.FREECOL_SAVE_EXTENSION)) continue;
+                    if (!f.endsWith("." + FreeCol.FREECOL_SAVE_EXTENSION)) {
+						continue;
+					}
                     // delete files which are older than user option allows
                     File saveGameFile = new File(autoSave, f);
                     if (saveGameFile.lastModified() + validPeriod < timeNow) {

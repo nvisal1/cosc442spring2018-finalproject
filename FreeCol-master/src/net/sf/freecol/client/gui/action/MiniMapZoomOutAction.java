@@ -23,14 +23,9 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-
-/**
- * An action for zooming out on the minimap.
- */
+/** An action for zooming out on the minimap. */
 public class MiniMapZoomOutAction extends MapboardAction {
-
     public static final String id = "miniMapZoomOutAction";
-
 
     /**
      * Creates a new <code>MiniMapZoomOutAction</code>.
@@ -55,23 +50,15 @@ public class MiniMapZoomOutAction extends MapboardAction {
         addImageIcons("zoom_out");
     }
 
+    /** Override FreeColAction. */
 
-    // Override FreeColAction
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean shouldBeEnabled() {
         return super.shouldBeEnabled() && getGUI().canZoomOutMapControls();
     }
 
+    /** Interface ActionListener. */
 
-    // Interface ActionListener
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         getGUI().zoomOutMapControls();

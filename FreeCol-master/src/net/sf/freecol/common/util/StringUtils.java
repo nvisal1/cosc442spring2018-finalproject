@@ -24,12 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
-/**
- * Collection of small static helper methods using Strings.
- */
+/** Collection of small static helper methods using Strings. */
 public class StringUtils {
-
     /**
      * Joins the given strings.
      *
@@ -106,13 +102,16 @@ public class StringUtils {
         StringBuilder sb = new StringBuilder(len);
         int idx, from = 0;
         for (;;) {
-            if ((idx = base.indexOf('_', from)) < 0) {
+            idx = base.indexOf('_', from);
+			if (idx < 0) {
                 sb.append(base.substring(from));
                 break;
             }
-            sb.append(base.substring(from, idx));
+            sb.append(base, from, idx);
             from = idx+1;
-            if (from >= len) break;
+            if (from >= len) {
+				break;
+			}
             char ch = base.charAt(from);
             if (Character.isLetter(ch)) {
                 sb.append(Character.toUpperCase(ch));
@@ -173,15 +172,21 @@ public class StringUtils {
         Character d = null;
         for (;;) {
             for (; i < len; i++) {
-                if (delim.indexOf(text.charAt(i)) < 0) break;
+                if (delim.indexOf(text.charAt(i)) < 0) {
+					break;
+				}
             }
-            if (i >= len) break;
+            if (i >= len) {
+				break;
+			}
             start = i;
             for (; i < len; i++) {
-                if (delim.indexOf(text.charAt(i)) >= 0) break;
+                if (delim.indexOf(text.charAt(i)) >= 0) {
+					break;
+				}
             }
             String s = text.substring(start, i);
-            String t = (top.isEmpty()) ? s : top + d + s;
+            String t = top.isEmpty() ? s : top + d + s;
             if (fontMetrics.stringWidth(t) > width) {
                 if (top.isEmpty()) {
                     result.add(s);
@@ -193,7 +198,9 @@ public class StringUtils {
                 top = t;
             }
             if (i >= len) {
-                if (!top.isEmpty()) result.add(top);
+                if (!top.isEmpty()) {
+					result.add(top);
+				}
                 break;
             }
             d = text.charAt(i);

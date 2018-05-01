@@ -31,18 +31,13 @@ import net.sf.freecol.server.model.ServerUnit;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message sent when moving a unit.
- */
+/** The message sent when moving a unit. */
 public class MoveMessage extends DOMMessage {
-
     /** The identifier of the object to be moved. */
     private final String unitId;
 
     /** The direction to move. */
     private final String directionString;
-
 
     /**
      * Create a new <code>MoveMessage</code> for the supplied unit and
@@ -71,7 +66,6 @@ public class MoveMessage extends DOMMessage {
         this.unitId = element.getAttribute("unit");
         this.directionString = element.getAttribute("direction");
     }
-
 
     /**
      * Handle a "move"-message.

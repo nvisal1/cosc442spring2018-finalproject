@@ -26,12 +26,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-
-/**
- * The message that contains a chat string.
- */
+/** The message that contains a chat string. */
 public class ChatMessage extends DOMMessage {
-
     /** The object identifier of the sender player. */
     private String sender;
 
@@ -40,7 +36,6 @@ public class ChatMessage extends DOMMessage {
 
     /** Whether this is a private message or not. */
     private final boolean privateChat;
-
 
     /**
      * Create a new <code>ChatMessage</code> with the
@@ -74,7 +69,6 @@ public class ChatMessage extends DOMMessage {
         privateChat = Boolean.parseBoolean(element.getAttribute("privateChat"));
     }
 
-
     // Public interface
 
     /**
@@ -104,7 +98,6 @@ public class ChatMessage extends DOMMessage {
     public boolean isPrivate() {
         return privateChat;
     }
-
 
     /**
      * Handle a "chat"-message.
