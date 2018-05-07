@@ -172,17 +172,7 @@ public class AIMessage {
             Element result = null;
 
             for (int i = 0; i < nodes.getLength(); i++) {
-                if (nodes.item(i) instanceof Element
-                    && ((Element)nodes.item(i)).getTagName().equals(expect)) {
-                    result = (Element)nodes.item(i);
-                    continue;
-                }
-                try {
-                    Element e = conn.handle((Element)nodes.item(i));
-                    if (e != null) replies.add(e);
-                } catch (FreeColException fce) {
-                    logger.log(Level.WARNING, "AI handler failed: " + reply, fce);
-                }
+                result = checkNode(conn, expect, reply, replies, nodes, result, i);
             }
             if (!askHandling(conn, DOMMessage.collapseElements(replies))
                 || result == null) return null;
@@ -194,6 +184,22 @@ public class AIMessage {
             + ", recieved " + tag);
         return null;
     }
+
+	private static Element checkNode(Connection conn, String expect, Element reply, List<Element> replies,
+			NodeList nodes, Element result, int i) {
+		if (nodes.item(i) instanceof Element
+		    && ((Element)nodes.item(i)).getTagName().equals(expect)) {
+		    result = (Element)nodes.item(i);
+		    return result;
+		}
+		try {
+		    Element e = conn.handle((Element)nodes.item(i));
+		    if (e != null) replies.add(e);
+		} catch (FreeColException fce) {
+		    logger.log(Level.WARNING, "AI handler failed: " + reply, fce);
+		}
+		return result;
+	}
         
     /**
      * Sends a DOMMessage to the server.

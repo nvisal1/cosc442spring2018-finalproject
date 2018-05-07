@@ -212,14 +212,19 @@ public class AIMain extends FreeColObject
             throw new NullPointerException("aiObject == null");
         }
         boolean present;
-        synchronized (aiObjects) {
+        syncPresent(id, aiObject);
+    }
+
+	private void syncPresent(String id, AIObject aiObject) {
+		boolean present;
+		synchronized (aiObjects) {
             present = aiObjects.containsKey(id);
             if (!present) aiObjects.put(id, aiObject);
         }
         if (present) {
             throw new RuntimeException("AIObject already created: " + id);
         }
-    }
+	}
 
     /**
      * Removes a reference to the given <code>AIObject</code>.
@@ -301,7 +306,11 @@ public class AIMain extends FreeColObject
     public Map<String, String> getAIStatistics() {
         Map<String, String> stats = new HashMap<>();
         Map<String, Long> objStats = new HashMap<>();
-        for (AIObject aio : getAIObjects()) {
+        return getStats(stats, objStats);
+    }
+
+	private Map<String, String> getStats(Map<String, String> stats, Map<String, Long> objStats) {
+		for (AIObject aio : getAIObjects()) {
             String className = aio.getClass().getSimpleName();
             if (objStats.containsKey(className)) {
                 Long count = objStats.get(className);
@@ -317,7 +326,7 @@ public class AIMain extends FreeColObject
         }
 
         return stats;
-    }
+	}
 
     /**
      * Checks the integrity of this <code>AIMain</code> by checking if
@@ -331,18 +340,14 @@ public class AIMain extends FreeColObject
         int result = 1;
         for (AIObject aio : getAIObjects()) {
             int integ = aio.checkIntegrity(fix);
-            if (integ < 0 && fix) {
-                logger.warning("Invalid AIObject: " + aio.getId()
-                    + " (" + lastPart(aio.getClass().getName(), ".")
-                    + "), dropping.");
-                removeAIObject(aio.getId());
-                aio.dispose();
-                integ = 0;
-            }
-            result = Math.min(result, integ);
+            result = getIntegrity(fix, result, aio, integ);
         }
 
-        for (FreeColGameObject fcgo : getGame().getFreeColGameObjects()) {
+        return getResult(fix, result);
+    }
+
+	private int getResult(boolean fix, int result) {
+		for (FreeColGameObject fcgo : getGame().getFreeColGameObjects()) {
             if (shouldHaveAIObject(fcgo)
                 && getAIObject(fcgo.getId()) == null) {
                 if (fix) {
@@ -356,7 +361,20 @@ public class AIMain extends FreeColObject
             }
         }
         return result;
-    }
+	}
+
+	private int getIntegrity(boolean fix, int result, AIObject aio, int integ) {
+		if (integ < 0 && fix) {
+		    logger.warning("Invalid AIObject: " + aio.getId()
+		        + " (" + lastPart(aio.getClass().getName(), ".")
+		        + "), dropping.");
+		    removeAIObject(aio.getId());
+		    aio.dispose();
+		    integ = 0;
+		}
+		result = Math.min(result, integ);
+		return result;
+	}
 
 
     // Interface FreeColGameObjectListener
@@ -381,26 +399,30 @@ public class AIMain extends FreeColObject
         if (fcgo instanceof Colony) {
             new AIColony(this, (Colony)fcgo);
         } else if (fcgo instanceof ServerPlayer) {
-            ServerPlayer player = (ServerPlayer)fcgo;
-            if (player.getPlayerType() == null) {
-                // No point doing anything with the object yet, as we
-                // need the player type before we can create the
-                // right class of AI player.
-                logger.info("Temporarily ignoring incomplete AI player: "
-                    + fcgo.getId());
-            } else if (player.isIndian()) {
-                new NativeAIPlayer(this, player);
-            } else if (player.isREF()) {
-                new REFAIPlayer(this, player);
-            } else if (player.isEuropean()) {
-                new EuropeanAIPlayer(this, player);
-            } else {
-                throw new IllegalArgumentException("Bogus player: " + player);
-            }
+            findServePlayer(fcgo);
         } else if (fcgo instanceof Unit) {
             new AIUnit(this, (Unit)fcgo);
         }
     }
+
+	private void findServePlayer(FreeColGameObject fcgo) {
+		ServerPlayer player = (ServerPlayer)fcgo;
+		if (player.getPlayerType() == null) {
+		    // No point doing anything with the object yet, as we
+		    // need the player type before we can create the
+		    // right class of AI player.
+		    logger.info("Temporarily ignoring incomplete AI player: "
+		        + fcgo.getId());
+		} else if (player.isIndian()) {
+		    new NativeAIPlayer(this, player);
+		} else if (player.isREF()) {
+		    new REFAIPlayer(this, player);
+		} else if (player.isEuropean()) {
+		    new EuropeanAIPlayer(this, player);
+		} else {
+		    throw new IllegalArgumentException("Bogus player: " + player);
+		}
+	}
 
     /**
      * Removes the <code>AIObject</code> for a given AI identifier.
@@ -429,18 +451,22 @@ public class AIMain extends FreeColObject
         logger.finest("Owner changed for " + source.getId()
             + " with AI object: " + ao);
         AIPlayer aiOwner = getAIPlayer(oldOwner);
-        if (aiOwner != null) {
+        checkAiPlayer(ao, aiOwner);
+        if (ao != null) {
+            ao.dispose();
+            setFreeColGameObject(source.getId(), source);
+        }
+    }
+
+	private void checkAiPlayer(AIObject ao, AIPlayer aiOwner) {
+		if (aiOwner != null) {
             if (ao instanceof AIColony) {
                 aiOwner.removeAIColony((AIColony)ao);
             } else if (ao instanceof AIUnit) {
                 aiOwner.removeAIUnit((AIUnit)ao);
             }
         }
-        if (ao != null) {
-            ao.dispose();
-            setFreeColGameObject(source.getId(), source);
-        }
-    }
+	}
 
 
     // Override FreeColObject

@@ -136,18 +136,7 @@ public class Cargo {
             PathNode pick = deliver.getCarrierMove();
             if (pick == null) return "invalid-transport-not-needed";
             // The pickup node determines the c/twait locations.
-            if (carrying) {
-                this.twait = this.cwait = null;
-            } else {
-                this.cwait = Location.upLoc(pick.getLocation());
-                // If there is a previous non-carrier move on the delivery
-                // path, that is where the transportable should wait.
-                // This will be true for units moving directly from land
-                // to a naval carrier, but usually false when collection
-                // occurs in a colony (as for goods).
-                PathNode prev = (pick.previous == null) ? pick : pick.previous;
-                this.twait = Location.upLoc(prev.getLocation());
-            }
+            determinePickupNode(carrying, pick);
 
             // Can the carrier reach the pickup point?  If already
             // carrying this is obviously moot.
@@ -162,13 +151,7 @@ public class Cargo {
             // Where is the transportable dropped?  At the drop node,
             // or at its predecessor from the carrier point of view.
             PathNode drop = pick.getTransportDropNode();
-            if (drop == null || drop.previous == null) {
-                throw new IllegalStateException("Cargo failure " + t
-                    + " " + deliver.fullPathToString()
-                    + " " + pick.fullPathToString()
-                    + " " + drop);
-            }
-            this.cdst = Location.upLoc(drop.previous.getLocation());
+            findTransportable(t, deliver, pick, drop);
 
             // The transportable ends up at the end of the delivery path.
             this.tdst = Location.upLoc(deliver.getLastNode().getLocation());
@@ -181,7 +164,11 @@ public class Cargo {
             //
             // The mode depends whether the carrier and transportable
             // have the same terminal points.
-            if (carrying) {
+            return determineCarry(carrying, deliver, pick, collect);
+        }
+
+		private String determineCarry(final boolean carrying, PathNode deliver, PathNode pick, PathNode collect) {
+			if (carrying) {
                 this.turns = deliver.getTotalTurns();
                 this.mode = (this.cdst instanceof Europe
                     || this.cdst == this.tdst) ? CargoMode.UNLOAD
@@ -194,7 +181,32 @@ public class Cargo {
                     : CargoMode.PICKUP;
             }
             return null;
-        }
+		}
+
+		private void findTransportable(TransportableAIObject t, PathNode deliver, PathNode pick, PathNode drop) {
+			if (drop == null || drop.previous == null) {
+                throw new IllegalStateException("Cargo failure " + t
+                    + " " + deliver.fullPathToString()
+                    + " " + pick.fullPathToString()
+                    + " " + drop);
+            }
+            this.cdst = Location.upLoc(drop.previous.getLocation());
+		}
+
+		private void determinePickupNode(final boolean carrying, PathNode pick) {
+			if (carrying) {
+                this.twait = this.cwait = null;
+            } else {
+                this.cwait = Location.upLoc(pick.getLocation());
+                // If there is a previous non-carrier move on the delivery
+                // path, that is where the transportable should wait.
+                // This will be true for units moving directly from land
+                // to a naval carrier, but usually false when collection
+                // occurs in a colony (as for goods).
+                PathNode prev = (pick.previous == null) ? pick : pick.previous;
+                this.twait = Location.upLoc(prev.getLocation());
+            }
+		}
     }
 
     /** The AI object to be transported. */
@@ -466,13 +478,17 @@ public class Cargo {
     public int getNewSpace() {
         if (!isValid()) return 0;
         int ret = 0;
-        ret += (getMode().isCollection()) ? getTransportable().getSpaceTaken()
+        return getSpace(ret);
+    }
+
+	private int getSpace(int ret) {
+		ret += (getMode().isCollection()) ? getTransportable().getSpaceTaken()
             : -getTransportable().getSpaceTaken();
         if (hasWrapped()) {
             ret += wrapped.stream().mapToInt(c -> c.getNewSpace()).sum();
         }
         return ret;
-    }
+	}
 
     /**
      * Does this cargo wrap others?
@@ -631,7 +647,12 @@ public class Cargo {
     @Override
     public String toString() {
         LogBuilder lb = new LogBuilder(64);
-        lb.add("[", transportable,
+        addLog(lb);
+        return lb.toString();
+    }
+
+	private void addLog(LogBuilder lb) {
+		lb.add("[", transportable,
             " ", getModeString(),
             " ", getTurns(), "/", tries, " space=", spaceLeft,
             ((wrapped == null) ? "" : " wrap"));
@@ -644,8 +665,7 @@ public class Cargo {
                 "/", plan.tdst.toShortString());
         }
         lb.add(" ", plan.fallback, "]");
-        return lb.toString();
-    }            
+	}            
 
 
     // Serialization
@@ -706,18 +726,7 @@ public class Cargo {
 
         String tid = xr.readId();
         TransportableAIObject tao = null;
-        if (tid != null) {
-            AIObject aio = aiMain.getAIObject(tid);
-            if (aio == null) {
-                if (tid.startsWith(Unit.getXMLElementTagName())) {
-                    tao = new AIUnit(aiMain, tid);
-                } else if (tid.startsWith(AIGoods.getXMLElementTagName())) {
-                    tao = new AIGoods(aiMain, tid);
-                }
-            } else {
-                tao = (TransportableAIObject)aio;
-            }
-        }
+        tao = read(aiMain, tid, tao);
         if (tao == null) {
             throw new XMLStreamException("Transportable expected: " + tid);
         }
@@ -751,6 +760,22 @@ public class Cargo {
 
         xr.closeTag(getXMLElementTagName());
     }
+
+	private TransportableAIObject read(AIMain aiMain, String tid, TransportableAIObject tao) {
+		if (tid != null) {
+            AIObject aio = aiMain.getAIObject(tid);
+            if (aio == null) {
+                if (tid.startsWith(Unit.getXMLElementTagName())) {
+                    tao = new AIUnit(aiMain, tid);
+                } else if (tid.startsWith(AIGoods.getXMLElementTagName())) {
+                    tao = new AIGoods(aiMain, tid);
+                }
+            } else {
+                tao = (TransportableAIObject)aio;
+            }
+        }
+		return tao;
+	}
 
     /**
      * Gets the tag name of the root element representing this object.

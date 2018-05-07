@@ -232,14 +232,18 @@ public class AIUnit extends TransportableAIObject {
         AIUnit aiCarrier = (carrier == null) ? null
             : getAIMain().getAIUnit(carrier);
         AIUnit transport = getTransport();
-        if (transport != aiCarrier) {
+        applyTransport(aiCarrier, transport);
+    }
+
+	private void applyTransport(AIUnit aiCarrier, AIUnit transport) {
+		if (transport != aiCarrier) {
             if (transport != null) {
                 logger.warning("Taking different transport: " + aiCarrier);
                 dropTransport();
             }
             setTransport(aiCarrier);
         }
-    }
+	}
 
 
     // Public routines
@@ -389,7 +393,11 @@ public class AIUnit extends TransportableAIObject {
         Location loc = Location.upLoc(unit.getLocation());
         if (!(loc instanceof UnitLocation)) return false;
         int count = role.getMaximumCount();
-        if (count > 0) {
+        return equip(role, player, loc, count);
+    }
+
+	private boolean equip(Role role, final Player player, Location loc, int count) {
+		if (count > 0) {
             for (; count > 0; count--) {
                 List<AbstractGoods> req = unit.getGoodsDifference(role, count);
                 int price = ((UnitLocation)loc).priceGoods(req);
@@ -400,7 +408,7 @@ public class AIUnit extends TransportableAIObject {
         }
         return AIMessage.askEquipForRole(this, role, count)
             && unit.getRole() == role && unit.getRoleCount() == count;
-    }
+	}
 
         
     // Implement TransportableAIObject
@@ -451,8 +459,12 @@ public class AIUnit extends TransportableAIObject {
         }
         dst = Location.upLoc(dst);
 
-        PathNode path;
-        if (unit.getLocation() == carrier) {
+        PathNode path = null;
+        return getPath(carrier, dst, path);
+    }
+
+	private PathNode getPath(Unit carrier, Location dst, PathNode path) {
+		if (unit.getLocation() == carrier) {
             path = unit.findPath(carrier.getLocation(), dst, carrier, null);
             if (path == null && dst.getTile() != null) {
                 path = unit.findPathToNeighbour(carrier.getLocation(),
@@ -469,7 +481,7 @@ public class AIUnit extends TransportableAIObject {
         }
         if (path != null) path.ensureDisembark();
         return path;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -560,12 +572,21 @@ public class AIUnit extends TransportableAIObject {
 
         // Pick the available tile with the shortest path to one of our
         // settlements, or the tile with the highest defence value.
-        final Player player = unit.getOwner();
+        return pickTile(unit, tile, tiles);
+    }
+
+	private boolean pickTile(final Unit unit, final Tile tile, List<Tile> tiles) {
+		final Player player = unit.getOwner();
         Tile safe = tiles.get(0);
         Tile best = null;
         int bestTurns = Unit.MANY_TURNS;
         Settlement settlement = null;
-        for (Tile t : tiles) {
+        return getTile(unit, tile, tiles, player, safe, best, bestTurns, settlement);
+	}
+
+	private boolean getTile(final Unit unit, final Tile tile, List<Tile> tiles, final Player player, Tile safe,
+			Tile best, int bestTurns, Settlement settlement) {
+		for (Tile t : tiles) {
             if (settlement == null || t.isConnectedTo(settlement.getTile())) {
                 settlement = t.getNearestSettlement(player, 10, true);
             }
@@ -581,7 +602,7 @@ public class AIUnit extends TransportableAIObject {
             }
         }
         return leaveTransport(tile.getDirection((best != null) ? best : safe));
-    }               
+	}               
 
     /**
      * {@inheritDoc}
@@ -590,7 +611,11 @@ public class AIUnit extends TransportableAIObject {
     public boolean leaveTransport(Direction direction) {
         if (!unit.isOnCarrier()) return false;
         final Unit carrier = unit.getCarrier();
-        boolean result = (direction == null)
+        return transport(direction, carrier);
+    }
+
+	private boolean transport(Direction direction, final Unit carrier) {
+		boolean result = (direction == null)
             ? (AIMessage.askDisembark(this)
                 && unit.getLocation() == carrier.getLocation())
             : move(direction);
@@ -600,7 +625,7 @@ public class AIUnit extends TransportableAIObject {
             dropTransport();
         }
         return result;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -730,7 +755,12 @@ public class AIUnit extends TransportableAIObject {
         final String tag = xr.getLocalName();
 
         mission = null;
-        if (BuildColonyMission.getXMLElementTagName().equals(tag)) {
+        determineMission(xr, aiMain, tag);
+    }
+
+	private void determineMission(FreeColXMLReader xr, final AIMain aiMain, final String tag)
+			throws XMLStreamException {
+		if (BuildColonyMission.getXMLElementTagName().equals(tag)) {
             mission = new BuildColonyMission(aiMain, this, xr);
 
         } else if (CashInTreasureTrainMission.getXMLElementTagName().equals(tag)) {
@@ -789,7 +819,7 @@ public class AIUnit extends TransportableAIObject {
         } else {
             super.readChild(xr);
         }
-    }
+	}
 
     /**
      * {@inheritDoc}

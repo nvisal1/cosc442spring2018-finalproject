@@ -83,7 +83,16 @@ public final class AIInGameInputHandler implements MessageHandler {
      */
     public AIInGameInputHandler(FreeColServer freeColServer, ServerPlayer me,
                                 AIMain aiMain) {
-        if (freeColServer == null) {
+        initHandler(freeColServer, me, aiMain);
+
+        this.freeColServer = freeColServer;
+        this.serverPlayer = me;
+        this.aiMain = aiMain;
+    }
+
+
+	private void initHandler(FreeColServer freeColServer, ServerPlayer me, AIMain aiMain) {
+		if (freeColServer == null) {
             throw new NullPointerException("freeColServer == null");
         } else if (me == null) {
             throw new NullPointerException("me == null");
@@ -92,11 +101,7 @@ public final class AIInGameInputHandler implements MessageHandler {
         } else if (aiMain == null) {
             throw new NullPointerException("aiMain == null");
         }
-
-        this.freeColServer = freeColServer;
-        this.serverPlayer = me;
-        this.aiMain = aiMain;
-    }
+	}
 
 
     /**
@@ -134,7 +139,13 @@ public final class AIInGameInputHandler implements MessageHandler {
         if (element == null) return null;
         final String tag = element.getTagName();
         Element reply = null;
-        try {
+        reply = determineReply(connection, element, tag, reply);
+        return reply;
+    }
+
+
+	private Element determineReply(Connection connection, Element element, final String tag, Element reply) {
+		try {
             switch (tag) {
             case "reconnect":
                 logger.warning("Reconnect on illegal operation, refer to any previous error message."); break;
@@ -180,8 +191,8 @@ public final class AIInGameInputHandler implements MessageHandler {
             logger.log(Level.WARNING, "AI input handler for " + serverPlayer
                 + " caught error handling " + tag, e);
         }
-        return reply;
-    }
+		return reply;
+	}
 
     // Individual message handlers
 
@@ -202,10 +213,16 @@ public final class AIInGameInputHandler implements MessageHandler {
         ChooseFoundingFatherMessage message
             = new ChooseFoundingFatherMessage(game, element);
         FoundingFather ff = aiPlayer.selectFoundingFather(message.getFathers());
-        logger.finest(aiPlayer.getId() + " chose founding father: " + ff);
+        return returnFatherMessage(aiPlayer, message, ff);
+    }
+
+
+	private Element returnFatherMessage(final AIPlayer aiPlayer, ChooseFoundingFatherMessage message,
+			FoundingFather ff) {
+		logger.finest(aiPlayer.getId() + " chose founding father: " + ff);
         if (ff != null) message.setFather(ff);
         return message.toXMLElement();
-    }
+	}
 
     /**
      * Handles an "diplomacy"-message.
@@ -221,7 +238,12 @@ public final class AIInGameInputHandler implements MessageHandler {
         final DiplomacyMessage message = new DiplomacyMessage(game, element);
         final DiplomaticTrade agreement = message.getAgreement();
 
-        StringBuilder sb = new StringBuilder(256);
+        return returnDiplomacy(game, message, agreement);
+    }
+
+
+	private Element returnDiplomacy(final Game game, final DiplomacyMessage message, final DiplomaticTrade agreement) {
+		StringBuilder sb = new StringBuilder(256);
         sb.append("AI Diplomacy: ").append(agreement);
         TradeStatus status = getAIPlayer().acceptDiplomaticTrade(agreement);
         agreement.setStatus(status);
@@ -231,7 +253,7 @@ public final class AIInGameInputHandler implements MessageHandler {
         return new DiplomacyMessage(message.getOurFCGO(game),
                                     message.getOtherFCGO(game), agreement)
             .toXMLElement();
-    }
+	}
 
     /**
      * Replies to a first contact offer.
@@ -293,11 +315,16 @@ public final class AIInGameInputHandler implements MessageHandler {
         GoodsType type = message.getType(game);
         int amount = message.getAmount();
         boolean accept = aiPlayer.indianDemand(unit, colony, type, amount);
-        message.setResult(accept);
+        return returnDemandMessage(message, unit, colony, accept);
+    }
+
+
+	private Element returnDemandMessage(IndianDemandMessage message, Unit unit, Colony colony, boolean accept) {
+		message.setResult(accept);
         logger.finest("AI handling native demand by " + unit
             + " at " + colony.getName() + " result: " + accept);
         return message.toXMLElement();
-    }
+	}
 
     /**
      * Replies to loot cargo offer.
@@ -327,7 +354,13 @@ public final class AIInGameInputHandler implements MessageHandler {
             });
         List<Goods> loot = new ArrayList<>();
         int space = unit.getSpaceLeft();
-        while (!goods.isEmpty()) {
+        return returnLootFromCargo(message, unit, goods, loot, space);
+    }
+
+
+	private Element returnLootFromCargo(LootCargoMessage message, Unit unit, List<Goods> goods, List<Goods> loot,
+			int space) {
+		while (!goods.isEmpty()) {
             Goods g = goods.remove(0);
             if (g.getSpaceTaken() > space) continue; // Approximate
             loot.add(g);
@@ -335,7 +368,7 @@ public final class AIInGameInputHandler implements MessageHandler {
         }
         AIMessage.askLoot(getAIUnit(unit), message.getDefenderId(), loot);
         return null;
-    }
+	}
 
     /**
      * Handles a "monarchAction"-message.
@@ -385,7 +418,12 @@ public final class AIInGameInputHandler implements MessageHandler {
         NodeList nodes = element.getChildNodes();
         List<Element> results = new ArrayList<>();
 
-        for (int i = 0; i < nodes.getLength(); i++) {
+        return findMessage(connection, nodes, results);
+    }
+
+
+	private Element findMessage(Connection connection, NodeList nodes, List<Element> results) {
+		for (int i = 0; i < nodes.getLength(); i++) {
             try {
                 Element reply = handle(connection, (Element) nodes.item(i));
                 if (reply != null) results.add(reply);
@@ -395,7 +433,7 @@ public final class AIInGameInputHandler implements MessageHandler {
             }
         }
         return DOMMessage.collapseElements(results);
-    }
+	}
 
     /**
      * Replies to offer to name the new land.

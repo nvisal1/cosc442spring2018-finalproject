@@ -405,7 +405,12 @@ public class ColonyPlan {
      */
     private Map<GoodsType, Map<WorkLocation, Integer>> createProductionMap() {
         Map<GoodsType, Map<WorkLocation, Integer>> production = new HashMap<>();
-        for (WorkLocation wl : colony.getAvailableWorkLocations()) {
+        return findMap(production);
+    }
+
+
+	private Map<GoodsType, Map<WorkLocation, Integer>> findMap(Map<GoodsType, Map<WorkLocation, Integer>> production) {
+		for (WorkLocation wl : colony.getAvailableWorkLocations()) {
             for (GoodsType g : spec().getGoodsTypeList()) {
                 int p = wl.getGenericPotential(g);
                 if (p > 0) {
@@ -419,7 +424,7 @@ public class ColonyPlan {
             }
         }
         return production;
-    }
+	}
 
     /**
      * Updates the goods type lists.  The categories are:<UL>
@@ -451,33 +456,38 @@ public class ColonyPlan {
         luxuryGoodsTypes.clear();
         otherRawGoodsTypes.clear();
         for (GoodsType g : new ArrayList<>(production.keySet())) {
-            if (g.isFoodType()) {
-                foodGoodsTypes.add(g);
-            } else if (g.isLibertyType()) {
-                libertyGoodsTypes.add(g);
-            } else if (g.isImmigrationType()) {
-                immigrationGoodsTypes.add(g);
-            } else if (g.isMilitaryGoods()) {
-                militaryGoodsTypes.add(g);
-            } else if (g.isRawBuildingMaterial()) {
-                rawBuildingGoodsTypes.add(g);
-            } else if (g.isBuildingMaterial()
-                && g.getInputType().isRawBuildingMaterial()) {
-                buildingGoodsTypes.add(g);
-            } else if (g.isNewWorldGoodsType()) {
-                rawLuxuryGoodsTypes.add(g);
-            } else if (g.isRefined()
-                && g.getInputType().isNewWorldGoodsType()) {
-                luxuryGoodsTypes.add(g);
-            } else if (g.isFarmed()) {
-                otherRawGoodsTypes.add(g);
-            } else { // Not interested in this goods type.  Should not happen.
-                logger.warning("Ignoring goods type " + g
-                    + " at " + colony.getName());
-                production.remove(g);
-            }
+            setProduction(production, g);
         }
     }
+
+
+	private void setProduction(Map<GoodsType, Map<WorkLocation, Integer>> production, GoodsType g) {
+		if (g.isFoodType()) {
+		    foodGoodsTypes.add(g);
+		} else if (g.isLibertyType()) {
+		    libertyGoodsTypes.add(g);
+		} else if (g.isImmigrationType()) {
+		    immigrationGoodsTypes.add(g);
+		} else if (g.isMilitaryGoods()) {
+		    militaryGoodsTypes.add(g);
+		} else if (g.isRawBuildingMaterial()) {
+		    rawBuildingGoodsTypes.add(g);
+		} else if (g.isBuildingMaterial()
+		    && g.getInputType().isRawBuildingMaterial()) {
+		    buildingGoodsTypes.add(g);
+		} else if (g.isNewWorldGoodsType()) {
+		    rawLuxuryGoodsTypes.add(g);
+		} else if (g.isRefined()
+		    && g.getInputType().isNewWorldGoodsType()) {
+		    luxuryGoodsTypes.add(g);
+		} else if (g.isFarmed()) {
+		    otherRawGoodsTypes.add(g);
+		} else { // Not interested in this goods type.  Should not happen.
+		    logger.warning("Ignoring goods type " + g
+		        + " at " + colony.getName());
+		    production.remove(g);
+		}
+	}
 
     /**
      * Chooses the two best raw materials, updating the production
@@ -641,7 +651,13 @@ public class ColonyPlan {
             // Handles building, agriculture, furTrapping advantages
             factor *= 1.2;
         }
-        if (goodsType.isMilitaryGoods()) {
+        return determineGoods(type, goodsType, player, advantage, ret, factor);
+    }
+
+
+	private boolean determineGoods(BuildableType type, GoodsType goodsType, Player player, String advantage,
+			boolean ret, double factor) {
+		if (goodsType.isMilitaryGoods()) {
             if ("conquest".equals(advantage)) factor = 1.2;
             ret = prioritize(type, MILITARY_WEIGHT * factor,
                 1.0/*FIXME: amount present wrt amount to equip*/);
@@ -663,7 +679,7 @@ public class ColonyPlan {
                 f/*FIXME: improvement?*/);
         }
         return ret;
-    }
+	}
 
     /**
      * Updates the build plans for this colony.
@@ -735,15 +751,7 @@ public class ColonyPlan {
             }
 
             if (type.hasAbility(Ability.BUILD)) {
-                double factor = 1.0;
-                if ("building".equals(advantage)) factor = 1.1;
-                double support = 1.0;
-                for (Ability a : type.getAbilities(Ability.BUILD)) {
-                    List<Scope> scopes = a.getScopes();
-                    if (scopes != null && !scopes.isEmpty()) support = 0.1;
-                }
-                prioritize(type, BUILDING_WEIGHT * factor,
-                    support/*FIXME: need for the thing now buildable*/);
+                checkAbility(advantage, type);
             }
 
             if (type.hasAbility(Ability.TEACH)) {
@@ -798,25 +806,18 @@ public class ColonyPlan {
         }
         for (UnitType unitType : spec().getUnitTypeList()) {
             if (!colony.canBuild(unitType)) continue;
-            if (unitType.hasAbility(Ability.NAVAL_UNIT)) {
-                ; // FIXME: decide to build a ship
-            } else if (unitType.isDefensive()) {
-                if (colony.isBadlyDefended()) {
-                    prioritize(unitType, DEFENCE_WEIGHT,
-                        1.0/*FIXME: how badly defended?*/);
-                }
-            } else if (unitType.hasAbility(Ability.CARRY_GOODS)) {
-                if (wagonNeed > 0.0) {
-                    double factor = 1.0;
-                    if ("trade".equals(advantage)) factor = 1.1;
-                    prioritize(unitType, TRANSPORT_WEIGHT * factor,
-                        wagonNeed/*FIXME: type.getSpace()*/);
-                }
-            }
+            getType(advantage, wagonNeed, unitType);
         }
 
         // Weight by lower required goods.
-        for (BuildPlan bp : buildPlans) {
+        lowerRequiredGoods();
+
+        Collections.sort(buildPlans, buildPlanComparator);
+    }
+
+
+	private void lowerRequiredGoods() {
+		for (BuildPlan bp : buildPlans) {
             double difficulty = bp.type.getRequiredGoods().stream()
                 .filter(ag -> ag.getAmount() > colony.getGoodsCount(ag.getType()))
                 .mapToDouble(ag -> {
@@ -829,9 +830,39 @@ public class ColonyPlan {
                     }).sum();
             bp.difficulty = Math.max(1.0f, Math.sqrt(difficulty));
         }
+	}
 
-        Collections.sort(buildPlans, buildPlanComparator);
-    }
+
+	private void getType(String advantage, double wagonNeed, UnitType unitType) {
+		if (unitType.hasAbility(Ability.NAVAL_UNIT)) {
+		    ; // FIXME: decide to build a ship
+		} else if (unitType.isDefensive()) {
+		    if (colony.isBadlyDefended()) {
+		        prioritize(unitType, DEFENCE_WEIGHT,
+		            1.0/*FIXME: how badly defended?*/);
+		    }
+		} else if (unitType.hasAbility(Ability.CARRY_GOODS)) {
+		    if (wagonNeed > 0.0) {
+		        double factor = 1.0;
+		        if ("trade".equals(advantage)) factor = 1.1;
+		        prioritize(unitType, TRANSPORT_WEIGHT * factor,
+		            wagonNeed/*FIXME: type.getSpace()*/);
+		    }
+		}
+	}
+
+
+	private void checkAbility(String advantage, BuildingType type) {
+		double factor = 1.0;
+		if ("building".equals(advantage)) factor = 1.1;
+		double support = 1.0;
+		for (Ability a : type.getAbilities(Ability.BUILD)) {
+		    List<Scope> scopes = a.getScopes();
+		    if (scopes != null && !scopes.isEmpty()) support = 0.1;
+		}
+		prioritize(type, BUILDING_WEIGHT * factor,
+		    support/*FIXME: need for the thing now buildable*/);
+	}
 
     /**
      * Makes a plan for each type of possible production, that is
@@ -852,17 +883,7 @@ public class ColonyPlan {
         workPlans.clear();
         for (Entry<GoodsType, Map<WorkLocation, Integer>> entry
                  : production.entrySet()) {
-            GoodsType g = entry.getKey();
-            // Do not make plans to produce into a full warehouse.
-            if (g.isStorable()
-                && colony.getGoodsCount(g) >= colony.getWarehouseCapacity()
-                && !g.limitIgnored()) continue;
-
-            for (WorkLocation wl : entry.getValue().keySet()) {
-                if (wl.canBeWorked() || wl.canAutoProduce()) {
-                    workPlans.add(new WorkLocationPlan(getAIMain(), wl, g));
-                }
-            }
+            determineGoodsType(entry);
         }
 
         // Now we have lots of plans, determine what goods to produce.
@@ -898,6 +919,22 @@ public class ColonyPlan {
             });
     }
 
+
+	private void determineGoodsType(Entry<GoodsType, Map<WorkLocation, Integer>> entry) {
+		GoodsType g = entry.getKey();
+		// Do not make plans to produce into a full warehouse.
+		if (g.isStorable()
+		    && colony.getGoodsCount(g) >= colony.getWarehouseCapacity()
+		    && !g.limitIgnored())
+			return;
+
+		for (WorkLocation wl : entry.getValue().keySet()) {
+		    if (wl.canBeWorked() || wl.canAutoProduce()) {
+		        workPlans.add(new WorkLocationPlan(getAIMain(), wl, g));
+		    }
+		}
+	}
+
     /**
      * Add the other goods types to the production list.  When this is
      * called the new world goods production is already present on the
@@ -918,26 +955,10 @@ public class ColonyPlan {
         List<GoodsType> toAdd = new ArrayList<>();
 
         // If we need liberty put it before the new world production.
-        if (colony.getSoL() < 100) {
-            for (GoodsType g : libertyGoodsTypes) {
-                if (production.containsKey(g)) toAdd.add(g);
-            }
-            Collections.sort(toAdd, productionComparator);
-            produce.addAll(0, toAdd);
-            toAdd.clear();
-        }
+        putLibertyFirst(production, productionComparator, toAdd);
 
         // Always add raw/building materials first.
-        Collections.sort(rawBuildingGoodsTypes, productionComparator);
-        for (GoodsType g : buildingGoodsTypes) {
-            if (production.containsKey(g)) {
-                GoodsType raw = g.getInputType();
-                if (colony.getGoodsCount(raw) >= GoodsContainer.CARGO_SIZE/2
-                    || production.containsKey(raw)) {
-                    toAdd.add(g);
-                }
-            }
-        }
+        addMaterialFirst(production, productionComparator, toAdd);
         Collections.sort(toAdd, new Comparator<GoodsType>() {
                 @Override
                 public int compare(GoodsType g1, GoodsType g2) {
@@ -964,15 +985,16 @@ public class ColonyPlan {
         toAdd.clear();
 
         // Military goods after lucrative production.
-        for (GoodsType g : militaryGoodsTypes) {
-            if (production.containsKey(g)) toAdd.add(g);
-        }
-        Collections.sort(toAdd, productionComparator);
-        produce.addAll(toAdd);
-        toAdd.clear();
+        militaryProductionOrder(production, productionComparator, toAdd);
 
         // Immigration last.
-        if (colony.getOwner().getEurope() != null) {
+        setImmigrantLast(production, productionComparator, toAdd);
+    }
+
+
+	private void setImmigrantLast(final Map<GoodsType, Map<WorkLocation, Integer>> production,
+			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
+		if (colony.getOwner().getEurope() != null) {
             for (GoodsType g : immigrationGoodsTypes) {
                 if (production.containsKey(g)) toAdd.add(g);
             }
@@ -980,7 +1002,46 @@ public class ColonyPlan {
             produce.addAll(toAdd);
             toAdd.clear();
         }
-    }
+	}
+
+
+	private void militaryProductionOrder(final Map<GoodsType, Map<WorkLocation, Integer>> production,
+			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
+		for (GoodsType g : militaryGoodsTypes) {
+            if (production.containsKey(g)) toAdd.add(g);
+        }
+        Collections.sort(toAdd, productionComparator);
+        produce.addAll(toAdd);
+        toAdd.clear();
+	}
+
+
+	private void addMaterialFirst(final Map<GoodsType, Map<WorkLocation, Integer>> production,
+			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
+		Collections.sort(rawBuildingGoodsTypes, productionComparator);
+        for (GoodsType g : buildingGoodsTypes) {
+            if (production.containsKey(g)) {
+                GoodsType raw = g.getInputType();
+                if (colony.getGoodsCount(raw) >= GoodsContainer.CARGO_SIZE/2
+                    || production.containsKey(raw)) {
+                    toAdd.add(g);
+                }
+            }
+        }
+	}
+
+
+	private void putLibertyFirst(final Map<GoodsType, Map<WorkLocation, Integer>> production,
+			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
+		if (colony.getSoL() < 100) {
+            for (GoodsType g : libertyGoodsTypes) {
+                if (production.containsKey(g)) toAdd.add(g);
+            }
+            Collections.sort(toAdd, productionComparator);
+            produce.addAll(0, toAdd);
+            toAdd.clear();
+        }
+	}
 
     /**
      * Tries to swap an expert unit for another doing its job.
@@ -995,7 +1056,13 @@ public class ColonyPlan {
         int oldRoleCount = expert.getRoleCount();
         GoodsType work = expert.getType().getExpertProduction();
         GoodsType oldWork = expert.getWorkType();
-        for (Unit other : others) {
+        return unitSwap(expert, others, colony, oldRole, oldRoleCount, work, oldWork);
+    }
+
+
+	private Unit unitSwap(Unit expert, List<Unit> others, Colony colony, Role oldRole, int oldRoleCount, GoodsType work,
+			GoodsType oldWork) {
+		for (Unit other : others) {
             if (!other.isPerson()) continue;
             if (other.getWorkType() == work
                 && other.getType().getExpertProduction() != work) {
@@ -1014,7 +1081,7 @@ public class ColonyPlan {
             }
         }
         return null;
-    }
+	}
 
     /**
      * Finds a plan on a list that produces a given goods type.
@@ -1225,19 +1292,7 @@ public class ColonyPlan {
             outdoorRoles[2] = tmp;
         }
         for (Role outdoorRole : outdoorRoles) {
-            for (Unit u : new ArrayList<>(workers)) {
-                if (workers.size() <= 1) break;
-                Role role = outdoorRole;
-                if (role == null) {
-                    if ((role = u.getMilitaryRole()) == null) continue;
-                }
-                if (u.getType() == role.getExpertUnit()
-                        && fullEquipUnit(spec(), u, role, col)) {
-                    workers.remove(u);
-                    lb.add(u.getId(), "(", u.getType().getSuffix(),
-                            ") -> ", role.getSuffix(), "\n");
-                }
-            }
+            setOutdoor(workers, lb, col, outdoorRole);
         }
 
         // Consider the defence situation.
@@ -1266,16 +1321,7 @@ public class ColonyPlan {
             }
         };
         Collections.sort(workers, soldierComparator);
-        for (Unit u : new ArrayList<>(workers)) {
-            if (workers.size() <= 1) break;
-            if (!col.isBadlyDefended()) break;
-            Role role = u.getMilitaryRole();
-            if (role != null && fullEquipUnit(spec(), u, role, col)) {
-                workers.remove(u);
-                lb.add(u.getId(), "(", u.getType().getSuffix(), ") -> ",
-                       u.getRoleSuffix(), "\n");
-            }
-        }
+        findWorkerSize(workers, lb, col);
 
         // Greedy assignment of other workers to plans.
         List<AbstractGoods> buildGoods = new ArrayList<>();
@@ -1549,6 +1595,37 @@ plans:          for (WorkLocationPlan w : getFoodPlans()) {
         if (col.getUnitCount() <= 0) col = null;
         return col;
     }
+
+
+	private void findWorkerSize(List<Unit> workers, LogBuilder lb, Colony col) {
+		for (Unit u : new ArrayList<>(workers)) {
+            if (workers.size() <= 1) break;
+            if (!col.isBadlyDefended()) break;
+            Role role = u.getMilitaryRole();
+            if (role != null && fullEquipUnit(spec(), u, role, col)) {
+                workers.remove(u);
+                lb.add(u.getId(), "(", u.getType().getSuffix(), ") -> ",
+                       u.getRoleSuffix(), "\n");
+            }
+        }
+	}
+
+
+	private void setOutdoor(List<Unit> workers, LogBuilder lb, Colony col, Role outdoorRole) {
+		for (Unit u : new ArrayList<>(workers)) {
+		    if (workers.size() <= 1) break;
+		    Role role = outdoorRole;
+		    if (role == null) {
+		        if ((role = u.getMilitaryRole()) == null) continue;
+		    }
+		    if (u.getType() == role.getExpertUnit()
+		            && fullEquipUnit(spec(), u, role, col)) {
+		        workers.remove(u);
+		        lb.add(u.getId(), "(", u.getType().getSuffix(),
+		                ") -> ", role.getSuffix(), "\n");
+		    }
+		}
+	}
 
     /**
      * Gets a concise textual description of a location associated with

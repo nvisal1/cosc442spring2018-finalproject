@@ -312,12 +312,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         // included in any new colony plan.
         exploreLCRs();
         stealTiles(lb);
-        for (Tile t : tile.getSurroundingTiles(1)) {
-            if (!player.owns(t) && player.canClaimForSettlement(t)) {
-                AIMessage.askClaimLand(t, this, 0);
-                if (player.owns(t)) lb.add(", claimed tile ", t);
-            }
-        }
+        tileSteal(lb, tile, player);
 
         // Update the colony plan.
         if (colonyPlan == null) colonyPlan = new ColonyPlan(aiMain, colony);
@@ -331,12 +326,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         // have changed.
         BuildableType oldBuild = colony.getCurrentlyBuilding();
         BuildableType build = colonyPlan.getBestBuildableType();
-        if (build != oldBuild) {
-            List<BuildableType> queue = new ArrayList<>();
-            if (build != null) queue.add(build);
-            AIMessage.askSetBuildQueue(this, queue);
-            build = colony.getCurrentlyBuilding();
-        }
+        build = findBuildable(oldBuild, build);
         colonyPlan.refine(build, lb);
 
         // Collect all potential workers from the colony and from the tile,
@@ -350,23 +340,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
             Location loc = u.getLocation();
             was.add(new UnitWas(u));
         }
-        for (Unit u : tile.getUnitList()) {
-            if (!u.isPerson() || u.hasAbility(Ability.REF_UNIT)
-                || getAIUnit(u) == null) continue;
-            Mission m = getAIUnit(u).getMission();
-            if (m == null
-                || (m instanceof BuildColonyMission
-                    && (Map.isSameLocation(m.getTarget(), tile)
-                        || colony.getUnitCount() <= 1))
-                // FIXME: drop this when the AI stops building excessive armies
-                || m instanceof DefendSettlementMission
-                || m instanceof IdleAtSettlementMission
-                || m instanceof WorkInsideColonyMission
-                ) {
-                workers.add(u);
-                was.add(new UnitWas(u));
-            }
-        }
+        findUnit(tile, workers, was);
         // Assign the workers according to the colony plan.
         // ATM we just accept this assignment unless it failed, in
         // which case restore original state.
@@ -402,15 +376,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         // sufficiently complex that we can not be confident that this
         // will not loop indefinitely.  The compromise is to just
         // rearrange next turn until we get out of this state.
-        if (build != null && !colony.canBuild(build)) {
-            BuildableType newBuild = colonyPlan.getBestBuildableType();
-            lb.add(", reneged building ", build.getSuffix(),
-                   " (", colony.getNoBuildReason(build, null), ")");
-            List<BuildableType> queue = new ArrayList<>();
-            if (newBuild != null) queue.add(newBuild);
-            AIMessage.askSetBuildQueue(this, queue);
-            nextRearrange = 1;
-        }
+        nextRearrange = buildValidation(lb, nextRearrange, build);
 
         // Now that all production has been stabilized, plan to
         // rearrange when the warehouse hits a limit.
@@ -432,42 +398,32 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 
         // Return any units with the wrong mission
-        for (Unit u : colony.getUnitList()) {
-            final AIUnit aiu = getAIUnit(u);
-            WorkInsideColonyMission wic
-                = aiu.getMission(WorkInsideColonyMission.class);
-            if (wic == null) {
-                if (aiPlayer.getWorkInsideColonyMission(aiu, this) == null) {
-                    result.add(aiu); 
-                } else {
-                    lb.add(", ", aiu.getMission());
-                    aiu.dropTransport();
-                }
-            }
-        }
+        returnUnits(lb, result, aiPlayer);
 
         // Allocate pioneers if possible.
-        int tipSize = tileImprovementPlans.size();
-        if (tipSize > 0) {
-            List<Unit> pioneers = new ArrayList<>();
-            for (Unit u : tile.getUnitList()) {
-                if (u.getPioneerScore() >= 0) pioneers.add(u);
-            }
-            Collections.sort(pioneers, pioneerComparator);
-            for (Unit u : pioneers) {
-                final AIUnit aiu = getAIUnit(u);
-                Mission m = aiu.getMission();
-                Location oldTarget = (m == null) ? null : m.getTarget();
-
-                if ((m = aiPlayer.getPioneeringMission(aiu, null)) != null) {
-                    lb.add(", ", aiu.getMission());
-                    aiPlayer.updateTransport(aiu, oldTarget, lb);
-                    if (--tipSize <= 0) break;
-                }
-            }
-        }
+        allocatePioneers(lb, tile, aiPlayer);
                 
-        for (Unit u : tile.getUnitList()) {
+        findUnitList(lb, result, tile, aiPlayer);
+
+        // Log the changes.
+        build = colony.getCurrentlyBuilding();
+        String buildStr = (build != null) ? build.toString()
+            : ((build = colonyPlan.getBestBuildableType()) != null)
+            ? "unexpected-null(" + build + ")"
+            : "expected-null";
+        lb.add(", building ", buildStr, ", population ", colony.getUnitCount(),
+            ", rearrange ", nextRearrange, ".\n");
+        lb.add(aw.toString());
+        lb.shrink("\n");
+        for (UnitWas uw : was) lb.add("\n  ", uw);
+
+        // Set the next rearrangement turn.
+        rearrangeTurn = new Turn(turn + nextRearrange);
+        return result;
+    }
+
+	private void findUnitList(LogBuilder lb, Set<AIUnit> result, final Tile tile, EuropeanAIPlayer aiPlayer) {
+		for (Unit u : tile.getUnitList()) {
             final AIUnit aiu = getAIUnit(u);
             Mission m = aiu.getMission();
             if (m instanceof BuildColonyMission
@@ -496,23 +452,97 @@ public class AIColony extends AIObject implements PropertyChangeListener {
             }
             result.add(aiu);
         }
+	}
 
-        // Log the changes.
-        build = colony.getCurrentlyBuilding();
-        String buildStr = (build != null) ? build.toString()
-            : ((build = colonyPlan.getBestBuildableType()) != null)
-            ? "unexpected-null(" + build + ")"
-            : "expected-null";
-        lb.add(", building ", buildStr, ", population ", colony.getUnitCount(),
-            ", rearrange ", nextRearrange, ".\n");
-        lb.add(aw.toString());
-        lb.shrink("\n");
-        for (UnitWas uw : was) lb.add("\n  ", uw);
+	private void allocatePioneers(LogBuilder lb, final Tile tile, EuropeanAIPlayer aiPlayer) {
+		int tipSize = tileImprovementPlans.size();
+        if (tipSize > 0) {
+            List<Unit> pioneers = new ArrayList<>();
+            for (Unit u : tile.getUnitList()) {
+                if (u.getPioneerScore() >= 0) pioneers.add(u);
+            }
+            Collections.sort(pioneers, pioneerComparator);
+            for (Unit u : pioneers) {
+                final AIUnit aiu = getAIUnit(u);
+                Mission m = aiu.getMission();
+                Location oldTarget = (m == null) ? null : m.getTarget();
 
-        // Set the next rearrangement turn.
-        rearrangeTurn = new Turn(turn + nextRearrange);
-        return result;
-    }
+                if ((m = aiPlayer.getPioneeringMission(aiu, null)) != null) {
+                    lb.add(", ", aiu.getMission());
+                    aiPlayer.updateTransport(aiu, oldTarget, lb);
+                    if (--tipSize <= 0) break;
+                }
+            }
+        }
+	}
+
+	private void returnUnits(LogBuilder lb, Set<AIUnit> result, EuropeanAIPlayer aiPlayer) {
+		for (Unit u : colony.getUnitList()) {
+            final AIUnit aiu = getAIUnit(u);
+            WorkInsideColonyMission wic
+                = aiu.getMission(WorkInsideColonyMission.class);
+            if (wic == null) {
+                if (aiPlayer.getWorkInsideColonyMission(aiu, this) == null) {
+                    result.add(aiu); 
+                } else {
+                    lb.add(", ", aiu.getMission());
+                    aiu.dropTransport();
+                }
+            }
+        }
+	}
+
+	private int buildValidation(LogBuilder lb, int nextRearrange, BuildableType build) {
+		if (build != null && !colony.canBuild(build)) {
+            BuildableType newBuild = colonyPlan.getBestBuildableType();
+            lb.add(", reneged building ", build.getSuffix(),
+                   " (", colony.getNoBuildReason(build, null), ")");
+            List<BuildableType> queue = new ArrayList<>();
+            if (newBuild != null) queue.add(newBuild);
+            AIMessage.askSetBuildQueue(this, queue);
+            nextRearrange = 1;
+        }
+		return nextRearrange;
+	}
+
+	private void findUnit(final Tile tile, List<Unit> workers, List<UnitWas> was) {
+		for (Unit u : tile.getUnitList()) {
+            if (!u.isPerson() || u.hasAbility(Ability.REF_UNIT)
+                || getAIUnit(u) == null) continue;
+            Mission m = getAIUnit(u).getMission();
+            if (m == null
+                || (m instanceof BuildColonyMission
+                    && (Map.isSameLocation(m.getTarget(), tile)
+                        || colony.getUnitCount() <= 1))
+                // FIXME: drop this when the AI stops building excessive armies
+                || m instanceof DefendSettlementMission
+                || m instanceof IdleAtSettlementMission
+                || m instanceof WorkInsideColonyMission
+                ) {
+                workers.add(u);
+                was.add(new UnitWas(u));
+            }
+        }
+	}
+
+	private BuildableType findBuildable(BuildableType oldBuild, BuildableType build) {
+		if (build != oldBuild) {
+            List<BuildableType> queue = new ArrayList<>();
+            if (build != null) queue.add(build);
+            AIMessage.askSetBuildQueue(this, queue);
+            build = colony.getCurrentlyBuilding();
+        }
+		return build;
+	}
+
+	private void tileSteal(LogBuilder lb, final Tile tile, final Player player) {
+		for (Tile t : tile.getSurroundingTiles(1)) {
+            if (!player.owns(t) && player.canClaimForSettlement(t)) {
+                AIMessage.askClaimLand(t, this, 0);
+                if (player.owns(t)) lb.add(", claimed tile ", t);
+            }
+        }
+	}
 
     /**
      * Reset the export settings.
@@ -532,30 +562,14 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         // we do not produce (might have been gifted) should always be
         // fully exported.  Other raw and manufactured goods should be
         // exported only to the extent of not filling the warehouse.
-        for (GoodsType g : spec.getStorableGoodsTypeList()) {
-            if (!g.isFoodType()
-                && !g.isBuildingMaterial()
-                && !g.isMilitaryGoods()
-                && !g.isTradeGoods()) {
-                if (g.isRawMaterial()) {
-                    partExport.add(g);
-                } else {
-                    fullExport.add(g);
-                }
-            }
-        }
-        for (Role role : spec.getRoles()) {
-            if (role.isAvailableTo(player, spec.getDefaultUnitType(player))) {
-                for (AbstractGoods ag : role.getRequiredGoods()) {
-                    if (fullExport.contains(ag.getType())) {
-                        fullExport.remove(ag.getType());
-                        partExport.add(ag.getType());
-                    }
-                }
-            }
-        }
+        initExport(spec);
+        findExport(spec, player);
 
-        if (colony.getOwner().getMarket() == null) {
+        checkOwner(spec);
+    }
+
+	private void checkOwner(final Specification spec) {
+		if (colony.getOwner().getMarket() == null) {
             // Do not export when there is no market!
             for (GoodsType g : spec.getGoodsTypeList()) {
                 colony.getExportData(g).setExported(false);
@@ -574,7 +588,35 @@ public class AIColony extends AIObject implements PropertyChangeListener {
                 }
             }
         }
-    }
+	}
+
+	private void findExport(final Specification spec, final Player player) {
+		for (Role role : spec.getRoles()) {
+            if (role.isAvailableTo(player, spec.getDefaultUnitType(player))) {
+                for (AbstractGoods ag : role.getRequiredGoods()) {
+                    if (fullExport.contains(ag.getType())) {
+                        fullExport.remove(ag.getType());
+                        partExport.add(ag.getType());
+                    }
+                }
+            }
+        }
+	}
+
+	private void initExport(final Specification spec) {
+		for (GoodsType g : spec.getStorableGoodsTypeList()) {
+            if (!g.isFoodType()
+                && !g.isBuildingMaterial()
+                && !g.isMilitaryGoods()
+                && !g.isTradeGoods()) {
+                if (g.isRawMaterial()) {
+                    partExport.add(g);
+                } else {
+                    fullExport.add(g);
+                }
+            }
+        }
+	}
 
     /**
      * Explores any neighbouring LCRs.
@@ -655,7 +697,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
                 }
             }
         }
-        if (steal != null) {
+        checkSteal(lb, player, steal, score);
+    }
+
+	private void checkSteal(LogBuilder lb, final Player player, Tile steal, double score) {
+		if (steal != null) {
             Player owner = steal.getOwner();
             if (AIMessage.askClaimLand(steal, this, NetworkConstants.STEAL_LAND)
                 && player.owns(steal)) {
@@ -663,7 +709,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
                       ") from ", owner.getName());
             }
         }
-    }
+	}
 
     /**
      * Something bad happened, there is no remaining unit working in
@@ -794,13 +840,18 @@ public class AIColony extends AIObject implements PropertyChangeListener {
      */
     private void dropExportGoods(AIGoods ag) {
         TransportMission tm;
-        if (ag.getTransport() != null
+        dropExport(ag);
+    }
+
+	private void dropExport(AIGoods ag) {
+		TransportMission tm;
+		if (ag.getTransport() != null
             && (tm = ag.getTransport().getMission(TransportMission.class)) != null) {
             tm.removeTransportable(ag);
         }
         removeExportGoods(ag);
         ag.dispose();
-    }
+	}
 
     /**
      * Emits a standard message regarding the state of AIGoods.
@@ -814,10 +865,14 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         int amount = (goods == null) ? -1 : goods.getAmount();
         String type = (goods == null) ? "(null)"
             : ag.getGoods().getType().getSuffix();
-        lb.add(", ", action, " ", ((ag == null) ? "(null)" : ag.getId()),
+        addLog(ag, action, lb, amount, type);
+    }
+
+	private void addLog(AIGoods ag, String action, LogBuilder lb, int amount, String type) {
+		lb.add(", ", action, " ", ((ag == null) ? "(null)" : ag.getId()),
             " ", ((amount >= GoodsContainer.CARGO_SIZE) ? "full "
                 : Integer.toString(amount) + " "), type);
-    }
+	}
 
     /**
      * Creates a list of the goods which should be shipped out of this colony.
@@ -951,7 +1006,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
     public boolean completeWish(Goods goods, LogBuilder lb) {
         boolean ret = false;
         int i = 0;
-        while (i < wishes.size()) {
+        return checkWish(goods, lb, ret, i);
+    }
+
+	private boolean checkWish(Goods goods, LogBuilder lb, boolean ret, int i) {
+		while (i < wishes.size()) {
             if (wishes.get(i) instanceof GoodsWish) {
                 GoodsWish gw = (GoodsWish)wishes.get(i);
                 if (gw.satisfiedBy(goods)
@@ -963,7 +1022,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
             i++;
         }
         return ret;
-    }
+	}
 
     /**
      * Tries to complete any wishes for a unit that has just arrived.
@@ -975,7 +1034,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
     public boolean completeWish(Unit unit, LogBuilder lb) {
         boolean ret = false;
         int i = 0;
-        while (i < wishes.size()) {
+        return returnWish(unit, lb, ret, i);
+    }
+
+	private boolean returnWish(Unit unit, LogBuilder lb, boolean ret, int i) {
+		while (i < wishes.size()) {
             if (wishes.get(i) instanceof WorkerWish) {
                 WorkerWish ww = (WorkerWish)wishes.get(i);
                 if (ww.satisfiedBy(unit)
@@ -987,7 +1050,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
             i++;
         }
         return ret;
-    }
+	}
 
     /**
      * Tries to complete any wishes for a transportable that has just arrived.
@@ -997,7 +1060,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
      * @return True if a wish was successfully completed.
      */
     public boolean completeWish(TransportableAIObject t, LogBuilder lb) {
-        if (t instanceof AIGoods) {
+        return completedWish(t, lb);
+    }
+
+	private boolean completedWish(TransportableAIObject t, LogBuilder lb) {
+		if (t instanceof AIGoods) {
             return completeWish((Goods)t.getTransportLocatable(), lb);
         } else if (t instanceof AIUnit) {
             AIUnit aiUnit = (AIUnit)t;
@@ -1011,7 +1078,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
             }
         }
         return false;
-    }
+	}
             
     /**
      * Gets the wishes this colony has.
@@ -1216,82 +1283,31 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         TypeCountMap<GoodsType> required = new TypeCountMap<>();
 
         // Add building materials.
-        if (colony.getCurrentlyBuilding() != null) {
-            for (AbstractGoods ag : colony.getCurrentlyBuilding()
-                     .getRequiredGoods()) {
-                if (colony.getAdjustedNetProductionOf(ag.getType()) <= 0) {
-                    required.incrementCount(ag.getType(), ag.getAmount());
-                }
-            }
-        }
+        addBuildingMaterial(required);
 
         // Add materials required to improve tiles.
-        for (TileImprovementPlan plan : tileImprovementPlans) {
-            Role role = plan.getType().getRequiredRole();
-            if (role == null) continue;
-            for (AbstractGoods ag : role.getRequiredGoods()) {
-                required.incrementCount(ag.getType(), ag.getAmount());
-            }
-        }
+        improveTileMaterial(required);
 
         // Add raw materials for buildings.
-        for (WorkLocation workLocation : colony.getCurrentWorkLocations()) {
-            if (workLocation instanceof Building) {
-                Building building = (Building) workLocation;
-                List<AbstractGoods> inputs = building.getInputs();
-                if (!inputs.isEmpty()) {
-                    ProductionInfo info = colony.getProductionInfo(building);
-                    if (!info.hasMaximumProduction()) {
-                        for (AbstractGoods goods : inputs) {
-                            // FIXME: find better heuristics
-                            required.incrementCount(goods.getType(), 100);
-                        }
-                    }
-                }
-            }
-        }
+        addRawMaterial(required);
 
         // Add breedable goods
-        for (GoodsType g : spec.getGoodsTypeList()) {
-            if (g.isBreedable()
-                && colony.getGoodsCount(g) < g.getBreedingNumber()) {
-                required.incrementCount(g, g.getBreedingNumber());
-            }
-        }
+        addBreedable(spec, required);
 
         // Add materials required to build military equipment,
         // but make sure there is a unit present that can use it.
-        if (isBadlyDefended()) {
-            Role role = spec.getMilitaryRoles().get(0);
-            Player owner = colony.getOwner();
-            for (Unit unit : colony.getTile().getUnitList()) {
-                if (!unit.roleIsAvailable(role)
-                    || (!unit.hasDefaultRole()
-                        && !Role.isCompatibleWith(role, unit.getRole())))
-                    continue;
-                for (AbstractGoods ag : role.getRequiredGoods()) {
-                    required.incrementCount(ag.getType(), ag.getAmount());
-                }
-                break;
-            }
-        }
+        addMilitaryMaterial(spec, required);
 
         // Drop wishes that are no longer needed.
-        int i = 0;
-        while (i < wishes.size()) {
-            if (wishes.get(i) instanceof GoodsWish) {
-                GoodsWish g = (GoodsWish)wishes.get(i);
-                GoodsType t = g.getGoodsType();
-                if (required.getCount(t) < colony.getGoodsCount(t)) {
-                    completeWish(g, "redundant", lb);
-                    continue;
-                }
-            }
-            i++;
-        }
+        dropWish(lb, required);
 
         // Require wishes for what is missing.
-        for (GoodsType type : required.keySet()) {
+        requireWish(lb, goodsWishValue, required);
+
+    }
+
+	private void requireWish(LogBuilder lb, int goodsWishValue, TypeCountMap<GoodsType> required) {
+		for (GoodsType type : required.keySet()) {
             GoodsType requiredType = type;
             while (requiredType != null) {
                 if (requiredType.isStorable()) break;
@@ -1307,8 +1323,87 @@ public class AIColony extends AIObject implements PropertyChangeListener {
                 requireGoodsWish(requiredType, amount, value, lb);
             }
         }
+	}
 
-    }
+	private void dropWish(LogBuilder lb, TypeCountMap<GoodsType> required) {
+		int i = 0;
+        while (i < wishes.size()) {
+            if (wishes.get(i) instanceof GoodsWish) {
+                GoodsWish g = (GoodsWish)wishes.get(i);
+                GoodsType t = g.getGoodsType();
+                if (required.getCount(t) < colony.getGoodsCount(t)) {
+                    completeWish(g, "redundant", lb);
+                    continue;
+                }
+            }
+            i++;
+        }
+	}
+
+	private void addMilitaryMaterial(final Specification spec, TypeCountMap<GoodsType> required) {
+		if (isBadlyDefended()) {
+            Role role = spec.getMilitaryRoles().get(0);
+            Player owner = colony.getOwner();
+            for (Unit unit : colony.getTile().getUnitList()) {
+                if (!unit.roleIsAvailable(role)
+                    || (!unit.hasDefaultRole()
+                        && !Role.isCompatibleWith(role, unit.getRole())))
+                    continue;
+                for (AbstractGoods ag : role.getRequiredGoods()) {
+                    required.incrementCount(ag.getType(), ag.getAmount());
+                }
+                break;
+            }
+        }
+	}
+
+	private void addBreedable(final Specification spec, TypeCountMap<GoodsType> required) {
+		for (GoodsType g : spec.getGoodsTypeList()) {
+            if (g.isBreedable()
+                && colony.getGoodsCount(g) < g.getBreedingNumber()) {
+                required.incrementCount(g, g.getBreedingNumber());
+            }
+        }
+	}
+
+	private void addRawMaterial(TypeCountMap<GoodsType> required) {
+		for (WorkLocation workLocation : colony.getCurrentWorkLocations()) {
+            if (workLocation instanceof Building) {
+                Building building = (Building) workLocation;
+                List<AbstractGoods> inputs = building.getInputs();
+                if (!inputs.isEmpty()) {
+                    ProductionInfo info = colony.getProductionInfo(building);
+                    if (!info.hasMaximumProduction()) {
+                        for (AbstractGoods goods : inputs) {
+                            // FIXME: find better heuristics
+                            required.incrementCount(goods.getType(), 100);
+                        }
+                    }
+                }
+            }
+        }
+	}
+
+	private void improveTileMaterial(TypeCountMap<GoodsType> required) {
+		for (TileImprovementPlan plan : tileImprovementPlans) {
+            Role role = plan.getType().getRequiredRole();
+            if (role == null) continue;
+            for (AbstractGoods ag : role.getRequiredGoods()) {
+                required.incrementCount(ag.getType(), ag.getAmount());
+            }
+        }
+	}
+
+	private void addBuildingMaterial(TypeCountMap<GoodsType> required) {
+		if (colony.getCurrentlyBuilding() != null) {
+            for (AbstractGoods ag : colony.getCurrentlyBuilding()
+                     .getRequiredGoods()) {
+                if (colony.getAdjustedNetProductionOf(ag.getType()) <= 0) {
+                    required.incrementCount(ag.getType(), ag.getAmount());
+                }
+            }
+        }
+	}
 
     /**
      * Gets the tile improvements planned for this colony.

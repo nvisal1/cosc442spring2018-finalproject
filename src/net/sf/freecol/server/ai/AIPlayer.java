@@ -208,7 +208,11 @@ public abstract class AIPlayer extends AIObject {
      */
     private void createAIUnits() {
         clearAIUnits();
-        for (Unit u : getPlayer().getUnits()) {
+        createUnits();
+    }
+
+	private void createUnits() {
+		for (Unit u : getPlayer().getUnits()) {
             if (u.isDisposed()) {
                 logger.warning("createAIUnits ignoring: " + u.getId());
                 continue;
@@ -225,7 +229,7 @@ public abstract class AIPlayer extends AIObject {
                                + u + " (" + u.getId() + ")");
             }
         }
-    }
+	}
 
     /**
      * Gets the advantage of this AI player from the nation type.
@@ -281,7 +285,11 @@ public abstract class AIPlayer extends AIObject {
      */
     public List<AIColony> getAIColonies() {
         List<AIColony> ac = new ArrayList<>();
-        for (Colony colony : getPlayer().getColonies()) {
+        return getAc(ac);
+    }
+
+	private List<AIColony> getAc(List<AIColony> ac) {
+		for (Colony colony : getPlayer().getColonies()) {
             AIColony a = getAIColony(colony);
             if (a != null) {
                 ac.add(a);
@@ -290,7 +298,7 @@ public abstract class AIPlayer extends AIObject {
             }
         }
         return ac;
-    }
+	}
 
     /**
      * Remove an AI colony.
@@ -350,7 +358,11 @@ public abstract class AIPlayer extends AIObject {
      */
     public int getSettlementDefenders(Settlement settlement) {
         int defenders = 0;
-        for (AIUnit au : getAIUnits()) {
+        return findDefenders(settlement, defenders);
+    }
+
+	private int findDefenders(Settlement settlement, int defenders) {
+		for (AIUnit au : getAIUnits()) {
             Mission dm = au.getMission(DefendSettlementMission.class);
             if (dm != null
                 && dm.getTarget() == settlement
@@ -359,7 +371,7 @@ public abstract class AIPlayer extends AIObject {
             }
         }
         return defenders;
-    }
+	}
 
     /**
      * Find out if a tile contains a suitable target for seek-and-destroy.
@@ -393,7 +405,12 @@ public abstract class AIPlayer extends AIObject {
         // If native, do not attack if not at war and at least content.
         // Otherwise some attacks are allowed even if not at war.
         boolean atWar = attackerPlayer.atWarWith(defenderPlayer);
-        if (attackerPlayer.isEuropean()) {
+        return canAttack(attacker, attackerPlayer, defender, defenderPlayer, atWar);
+    }
+
+	private boolean canAttack(Unit attacker, Player attackerPlayer, Unit defender, Player defenderPlayer,
+			boolean atWar) {
+		if (attackerPlayer.isEuropean()) {
             if (!atWar) return false;
         } else if (attackerPlayer.isIndian()) {
             if (!atWar && attackerPlayer.getTension(defenderPlayer)
@@ -402,7 +419,7 @@ public abstract class AIPlayer extends AIObject {
             }
         }
         return attacker.canAttack(defender);
-    }
+	}
 
     // Mission support
 
@@ -557,7 +574,11 @@ public abstract class AIPlayer extends AIObject {
     protected List<AIUnit> doMissions(List<AIUnit> aiUnits, LogBuilder lb) {
         lb.add("\n  Do Missions:");
         List<AIUnit> result = new ArrayList<>();
-        for (AIUnit aiu : aiUnits) {
+        return activeMission(aiUnits, lb, result);
+    }
+
+	private List<AIUnit> activeMission(List<AIUnit> aiUnits, LogBuilder lb, List<AIUnit> result) {
+		for (AIUnit aiu : aiUnits) {
             final Unit unit = aiu.getUnit();
             if (unit == null || unit.isDisposed()) continue;
             lb.add("\n  ", unit, " ");
@@ -569,7 +590,7 @@ public abstract class AIPlayer extends AIObject {
             if (!unit.isDisposed() && unit.getMovesLeft() > 0) result.add(aiu);
         }
         return result;
-    }
+	}
 
     /**
      * Adjusts the score of this proposed mission for this player type.

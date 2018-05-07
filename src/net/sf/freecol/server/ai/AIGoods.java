@@ -184,7 +184,12 @@ public class AIGoods extends TransportableAIObject {
         final AIUnit aiCarrier = getAIMain().getAIUnit(carrier);
         int oldAmount = carrier.getGoodsCount(type);
         boolean result = AIMessage.askUnloadGoods(type, amount, aiCarrier);
-        if (result) {
+        return checkTransport(amount, carrier, type, oldAmount, result);
+    }
+
+	private boolean checkTransport(int amount, final Unit carrier, final GoodsType type, int oldAmount,
+			boolean result) {
+		if (result) {
             int newAmount = carrier.getGoodsCount(type);
             if (oldAmount - newAmount != amount) {
                 // FIXME: sort this out.
@@ -198,7 +203,7 @@ public class AIGoods extends TransportableAIObject {
                 + " off of " + carrier + " at " + carrier.getLocation());
         }   
         return result;
-    }
+	}
 
 
     // Implement TransportableAIObject
@@ -242,12 +247,16 @@ public class AIGoods extends TransportableAIObject {
     public PathNode getDeliveryPath(Unit carrier, Location dst) {
         if (dst == null) dst = Location.upLoc(getTransportDestination());
 
-        PathNode path = (goods.getLocation() == carrier) ? carrier.findPath(dst)
+        return getPathNode(carrier, dst);
+    }
+
+	private PathNode getPathNode(Unit carrier, Location dst) {
+		PathNode path = (goods.getLocation() == carrier) ? carrier.findPath(dst)
             : (goods.getLocation() instanceof Unit) ? null
             : carrier.findPath(goods.getLocation(), dst, null, null);
         if (path != null) path.convertToGoodsDeliveryPath();
         return path;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -304,7 +313,12 @@ public class AIGoods extends TransportableAIObject {
         int oldAmount = carrier.getGoodsCount(type),
             goodsAmount = goods.getAmount(),
             amount = Math.min(goodsAmount, carrier.getLoadableAmount(type));
-        if (AIMessage.askLoadGoods(goods.getLocation(), type, amount,
+        return returnTransport(carrier, aiCarrier, type, failed, oldAmount, goodsAmount, amount);
+    }
+
+	private boolean returnTransport(Unit carrier, final AIUnit aiCarrier, final GoodsType type, boolean failed,
+			int oldAmount, int goodsAmount, int amount) {
+		if (AIMessage.askLoadGoods(goods.getLocation(), type, amount,
                                    aiCarrier)) {
             setGoods(new Goods(getGame(), carrier, type, amount));
             final Colony colony = carrier.getColony();
@@ -316,7 +330,7 @@ public class AIGoods extends TransportableAIObject {
             + " over " + oldAmount + " leaving " + (goodsAmount - amount)
             + " onto " + carrier + " at " + carrier.getLocation());
         return !failed;
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -345,7 +359,13 @@ public class AIGoods extends TransportableAIObject {
     @Override
     public void dispose() {
         dropTransport();
-        if (destination != null) {
+        disposalCheck();
+        goods = null;
+        super.dispose();
+    }
+
+	private void disposalCheck() {
+		if (destination != null) {
             if (destination instanceof Colony) {
                 AIColony aic = getAIMain().getAIColony((Colony)destination);
                 if (aic != null) aic.removeExportGoods(this);
@@ -356,9 +376,7 @@ public class AIGoods extends TransportableAIObject {
             }
             destination = null;
         }
-        goods = null;
-        super.dispose();
-    }
+	}
 
     /**
      * Checks the integrity of a this AIGoods.
@@ -377,7 +395,11 @@ public class AIGoods extends TransportableAIObject {
             : (goods.getLocation() == null) ? "null-location"
             : (((FreeColGameObject)goods.getLocation()).isDisposed()) ? "disposed-location"
             : null;
-        if (destination != null
+        return returnIntegrity(fix, result, why);
+    }
+
+	private int returnIntegrity(boolean fix, int result, String why) {
+		if (destination != null
             && ((FreeColGameObject)destination).isDisposed()) {
             if (fix) {
                 logger.warning("Fixing disposed destination for " + this);
@@ -392,7 +414,7 @@ public class AIGoods extends TransportableAIObject {
             result = -1;
         }
         return result;
-    }
+	}
 
 
     // Serialization
