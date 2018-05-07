@@ -195,7 +195,12 @@ public class TileImprovementPlan extends ValuedAIObject {
         GoodsType goodsType) {
         int bestValue = 0;
         TileImprovementType bestType = null;
-        for (TileImprovementType impType
+        return getBestType(tile, goodsType, bestValue, bestType);
+    }
+
+	private static TileImprovementType getBestType(Tile tile, GoodsType goodsType, int bestValue,
+			TileImprovementType bestType) {
+		for (TileImprovementType impType
                  : tile.getSpecification().getTileImprovementTypeList()) {
             if (!impType.isNatural()
                 && impType.isTileTypeAllowed(tile.getType())
@@ -213,7 +218,7 @@ public class TileImprovementPlan extends ValuedAIObject {
             }
         }
         return bestType;
-    }
+	}
 
     /**
      * Updates this tile improvement plan to the best available for its

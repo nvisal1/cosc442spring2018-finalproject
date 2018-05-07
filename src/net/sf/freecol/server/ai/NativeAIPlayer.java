@@ -140,7 +140,11 @@ public class NativeAIPlayer extends AIPlayer {
 
         // Give defensive missions up to the minimum expected defence,
         // leave the rest with the default wander-hostile mission.
-        List<Unit> units = new ArrayList<>();
+        giveDefensiveMissions(lb, player);
+    }
+
+	private void giveDefensiveMissions(LogBuilder lb, final Player player) {
+		List<Unit> units = new ArrayList<>();
         for (IndianSettlement is : player.getIndianSettlements()) {
             units.clear();
             units.addAll(is.getTile().getUnitList());
@@ -157,7 +161,7 @@ public class NativeAIPlayer extends AIPlayer {
                 if (m != null) lb.add(" ", m);
             }
         }
-    }
+	}
 
     /**
      * Determines the stances towards each player.
@@ -169,7 +173,11 @@ public class NativeAIPlayer extends AIPlayer {
         final ServerPlayer serverPlayer = (ServerPlayer)getPlayer();
         lb.mark();
 
-        for (Player p : getGame().getLivePlayers(serverPlayer)) {
+        getStance(lb, serverPlayer);
+    }
+
+	private void getStance(LogBuilder lb, final ServerPlayer serverPlayer) {
+		for (Player p : getGame().getLivePlayers(serverPlayer)) {
             Stance newStance = determineStance(p);
             if (newStance != serverPlayer.getStance(p)) {
                 getAIMain().getFreeColServer().getInGameController()
@@ -179,7 +187,7 @@ public class NativeAIPlayer extends AIPlayer {
             }
         }
         if (lb.grew("\n  Stance changes:")) lb.shrink(", ");
-    }
+	}
 
     /**
      * Takes the necessary actions to secure the settlements.
@@ -193,7 +201,11 @@ public class NativeAIPlayer extends AIPlayer {
         int randomIdx = 0;
         List<IndianSettlement> settlements
             = getPlayer().getIndianSettlements();
-        for (IndianSettlement is : settlements) {
+        secureSettlement(randoms, lb, randomIdx, settlements);
+    }
+
+	private void secureSettlement(int[] randoms, LogBuilder lb, int randomIdx, List<IndianSettlement> settlements) {
+		for (IndianSettlement is : settlements) {
             // Spread arms and horses between camps
             // FIXME: maybe make this dependent on difficulty level?
             int n = randoms[randomIdx++];
@@ -208,7 +220,7 @@ public class NativeAIPlayer extends AIPlayer {
             secureIndianSettlement(is, lb);
             if (lb.grew("\n  At ", is.getName())) lb.shrink(", ");
         }
-    }
+	}
 
     /**
      * Greedily equips braves with horses and muskets.
@@ -229,7 +241,11 @@ public class NativeAIPlayer extends AIPlayer {
             getGame().getCombatModel().getMilitaryStrengthComparator());
 
         boolean moreHorses = true, moreMuskets = true;
-        for (Unit u : units) {
+        addMilitaryLog(is, lb, units);
+    }
+
+	private void addMilitaryLog(IndianSettlement is, LogBuilder lb, List<Unit> units) {
+		for (Unit u : units) {
             Role r = is.canImproveUnitMilitaryRole(u);
             if (r != null) {
                 Role old = u.getRole();
@@ -238,7 +254,7 @@ public class NativeAIPlayer extends AIPlayer {
                 }
             }
         }
-    }
+	}
 
     /**
      * Takes the necessary actions to secure an indian settlement
@@ -258,31 +274,114 @@ public class NativeAIPlayer extends AIPlayer {
         // Collect native units and defenders
         List<Unit> units = new ArrayList<>();
         List<Unit> defenders = new ArrayList<>();
-        units.addAll(is.getUnitList());
-        units.addAll(is.getTile().getUnitList());
-        for (Unit u : is.getOwnedUnits()) {
-            if (!units.contains(u)) units.add(u);
-        }
+        collectNativeUnits(is, units);
 
         // Collect the current defenders
-        for (Unit u : new ArrayList<>(units)) {
-            AIUnit aiu = aiMain.getAIUnit(u);
-            if (aiu == null) {
-                units.remove(u);
-            } else if ((dm = aiu.getMission(DefendSettlementMission.class)) != null
-                && dm.getTarget() == is) {
-                defenders.add(u);
-                units.remove(u);
-            } else if (Mission.invalidNewMissionReason(aiu) != null) {
-                units.remove(u);
-            }
-        }
+        collectCurrentDefenders(is, aiMain, units, defenders);
 
         // Collect threats and other potential defenders
         final HashMap<Tile, Double> threats = new HashMap<>();
         Player enemy;
         Tension tension;
-        for (Tile t : is.getTile().getSurroundingTiles(is.getRadius() + 1)) {
+        determineSurroundings(is, aiMain, player, cm, units, defenders, threats);
+
+        // Sort the available units by proximity to the settlement.
+        // Simulates favouring the first warriors found by outgoing messengers.
+        // Also favour units native to the settlement.
+        final int homeBonus = 3;
+        final Tile isTile = is.getTile();
+        final Comparator<Unit> isComparator
+            = new Comparator<Unit>() {
+                @Override
+                public int compare(Unit u1, Unit u2) {
+                    Tile t1 = u1.getTile();
+                    int s1 = t1.getDistanceTo(isTile);
+                    Tile t2 = u2.getTile();
+                    int s2 = t2.getDistanceTo(isTile);
+                    if (u1.getHomeIndianSettlement() == is) s1 -= homeBonus;
+                    if (u2.getHomeIndianSettlement() == is) s2 -= homeBonus;
+                    return s1 - s2;
+                }
+           };
+
+        // Do we need more or less defenders?
+        int needed = minimumDefence + threats.size();
+        checkNumberOfDefenders(is, lb, aiMain, units, defenders, isComparator, needed);
+
+        // Sort threat tiles by threat value.
+        List<Tile> threatTiles = new ArrayList<>(threats.keySet());
+        Collections.sort(threatTiles, new Comparator<Tile>() {
+                @Override
+                public int compare(Tile t1, Tile t2) {
+                    return Double.compare(threats.get(t2),
+                            threats.get(t1));
+                }
+            });
+
+        if (!defenders.isEmpty()) {
+            lb.add(" defend with:");
+            for (Unit u : defenders) lb.add(" ", u);
+            lb.add(" minimum=", minimumDefence,
+                   " threats=", threats.size(), ", ");
+        }
+
+        // Assign units to attack the threats, greedily chosing closest unit.
+        assignUnitsToAttack(lb, aiMain, units, threatTiles);
+    }
+
+	private void assignUnitsToAttack(LogBuilder lb, final AIMain aiMain, List<Unit> units, List<Tile> threatTiles) {
+		while (!threatTiles.isEmpty() && !units.isEmpty()) {
+            Tile tile = threatTiles.remove(0);
+            int bestDistance = Integer.MAX_VALUE;
+            Unit unit = null;
+            for (Unit u : units) {
+                AIUnit aiu = aiMain.getAIUnit(u);
+                if (UnitSeekAndDestroyMission.invalidReason(aiu,
+                        tile.getDefendingUnit(u)) != null) continue;
+                int distance = u.getTile().getDistanceTo(tile);
+                if (bestDistance > distance) {
+                    bestDistance = distance;
+                    unit = u;
+                }
+            }
+            if (unit == null) continue; // Declined to attack.
+            units.remove(unit);
+            AIUnit aiUnit = aiMain.getAIUnit(unit);
+            Unit target = tile.getDefendingUnit(unit);
+            Mission m = getSeekAndDestroyMission(aiUnit, target);
+            if (m != null) lb.add(m, ", ");
+        }
+	}
+
+	private void checkNumberOfDefenders(final IndianSettlement is, LogBuilder lb, final AIMain aiMain, List<Unit> units,
+			List<Unit> defenders, final Comparator<Unit> isComparator, int needed) {
+		if (defenders.size() < needed) { // More needed, call some in.
+            Collections.sort(units, isComparator);
+            while (!units.isEmpty()) {
+                Unit u = units.remove(0);
+                AIUnit aiu = aiMain.getAIUnit(u);
+                Mission m = getDefendSettlementMission(aiu, is);
+                if (m != null) {
+                    lb.add(m, ", ");
+                    defenders.add(u);
+                    if (defenders.size() >= needed) break;
+                }
+            }
+        } else if (defenders.size() > needed) { // Less needed, release them
+            Collections.sort(defenders, isComparator);
+            Collections.reverse(defenders);
+            while (defenders.size() > needed) {
+                units.add(defenders.remove(0));
+            }
+        }
+	}
+
+	private void determineSurroundings(final IndianSettlement is, final AIMain aiMain, final Player player,
+			final CombatModel cm, List<Unit> units, List<Unit> defenders, final HashMap<Tile, Double> threats) {
+		DefendSettlementMission dm;
+		Player enemy;
+		Tension tension;
+		for (Tile t : is.getTile().getSurroundingTiles(is.getRadius() + 1)) {
             if (!t.isLand() || t.getUnitCount() == 0) {
                 ; // Do nothing
             } else if ((enemy = t.getFirstUnit().getOwner()) == player) {
@@ -319,88 +418,32 @@ public class NativeAIPlayer extends AIPlayer {
                 if (value > 0.0) threats.put(t, value);
             }
         }
+	}
 
-        // Sort the available units by proximity to the settlement.
-        // Simulates favouring the first warriors found by outgoing messengers.
-        // Also favour units native to the settlement.
-        final int homeBonus = 3;
-        final Tile isTile = is.getTile();
-        final Comparator<Unit> isComparator
-            = new Comparator<Unit>() {
-                @Override
-                public int compare(Unit u1, Unit u2) {
-                    Tile t1 = u1.getTile();
-                    int s1 = t1.getDistanceTo(isTile);
-                    Tile t2 = u2.getTile();
-                    int s2 = t2.getDistanceTo(isTile);
-                    if (u1.getHomeIndianSettlement() == is) s1 -= homeBonus;
-                    if (u2.getHomeIndianSettlement() == is) s2 -= homeBonus;
-                    return s1 - s2;
-                }
-           };
-
-        // Do we need more or less defenders?
-        int needed = minimumDefence + threats.size();
-        if (defenders.size() < needed) { // More needed, call some in.
-            Collections.sort(units, isComparator);
-            while (!units.isEmpty()) {
-                Unit u = units.remove(0);
-                AIUnit aiu = aiMain.getAIUnit(u);
-                Mission m = getDefendSettlementMission(aiu, is);
-                if (m != null) {
-                    lb.add(m, ", ");
-                    defenders.add(u);
-                    if (defenders.size() >= needed) break;
-                }
-            }
-        } else if (defenders.size() > needed) { // Less needed, release them
-            Collections.sort(defenders, isComparator);
-            Collections.reverse(defenders);
-            while (defenders.size() > needed) {
-                units.add(defenders.remove(0));
+	private void collectCurrentDefenders(final IndianSettlement is, final AIMain aiMain, List<Unit> units,
+			List<Unit> defenders) {
+		DefendSettlementMission dm;
+		for (Unit u : new ArrayList<>(units)) {
+            AIUnit aiu = aiMain.getAIUnit(u);
+            if (aiu == null) {
+                units.remove(u);
+            } else if ((dm = aiu.getMission(DefendSettlementMission.class)) != null
+                && dm.getTarget() == is) {
+                defenders.add(u);
+                units.remove(u);
+            } else if (Mission.invalidNewMissionReason(aiu) != null) {
+                units.remove(u);
             }
         }
+	}
 
-        // Sort threat tiles by threat value.
-        List<Tile> threatTiles = new ArrayList<>(threats.keySet());
-        Collections.sort(threatTiles, new Comparator<Tile>() {
-                @Override
-                public int compare(Tile t1, Tile t2) {
-                    return Double.compare(threats.get(t2),
-                            threats.get(t1));
-                }
-            });
-
-        if (!defenders.isEmpty()) {
-            lb.add(" defend with:");
-            for (Unit u : defenders) lb.add(" ", u);
-            lb.add(" minimum=", minimumDefence,
-                   " threats=", threats.size(), ", ");
+	private void collectNativeUnits(final IndianSettlement is, List<Unit> units) {
+		units.addAll(is.getUnitList());
+        units.addAll(is.getTile().getUnitList());
+        for (Unit u : is.getOwnedUnits()) {
+            if (!units.contains(u)) units.add(u);
         }
-
-        // Assign units to attack the threats, greedily chosing closest unit.
-        while (!threatTiles.isEmpty() && !units.isEmpty()) {
-            Tile tile = threatTiles.remove(0);
-            int bestDistance = Integer.MAX_VALUE;
-            Unit unit = null;
-            for (Unit u : units) {
-                AIUnit aiu = aiMain.getAIUnit(u);
-                if (UnitSeekAndDestroyMission.invalidReason(aiu,
-                        tile.getDefendingUnit(u)) != null) continue;
-                int distance = u.getTile().getDistanceTo(tile);
-                if (bestDistance > distance) {
-                    bestDistance = distance;
-                    unit = u;
-                }
-            }
-            if (unit == null) continue; // Declined to attack.
-            units.remove(unit);
-            AIUnit aiUnit = aiMain.getAIUnit(unit);
-            Unit target = tile.getDefendingUnit(unit);
-            Mission m = getSeekAndDestroyMission(aiUnit, target);
-            if (m != null) lb.add(m, ", ");
-        }
-    }
+	}
 
     /**
      * Gives a mission to all units.
@@ -417,24 +460,7 @@ public class NativeAIPlayer extends AIPlayer {
         lb.mark();
         List<AIUnit> done = new ArrayList<>();
         reasons.clear();
-        for (AIUnit aiUnit : aiUnits) {
-            final Unit unit = aiUnit.getUnit();
-            Mission m = aiUnit.getMission();
-            String reason = null;
-
-            if (unit.isUninitialized() || unit.isDisposed()) {
-                reasons.put(unit, "Invalid");
-
-            } else if (m != null && m.isValid() && !m.isOneTime()) {
-                reasons.put(unit, "Valid");
-
-            } else { // Unit needs a mission
-                continue;
-            }
-            done.add(aiUnit);
-        }
-        aiUnits.removeAll(done);
-        done.clear();
+        checkAIUnits(aiUnits, done);
 
         for (AIUnit aiUnit : aiUnits) {
             final Unit unit = aiUnit.getUnit();
@@ -488,6 +514,27 @@ public class NativeAIPlayer extends AIPlayer {
             player.getNumberOfSettlements(), ")");
         logMissions(reasons, lb);
     }
+
+	private void checkAIUnits(List<AIUnit> aiUnits, List<AIUnit> done) {
+		for (AIUnit aiUnit : aiUnits) {
+            final Unit unit = aiUnit.getUnit();
+            Mission m = aiUnit.getMission();
+            String reason = null;
+
+            if (unit.isUninitialized() || unit.isDisposed()) {
+                reasons.put(unit, "Invalid");
+
+            } else if (m != null && m.isValid() && !m.isOneTime()) {
+                reasons.put(unit, "Valid");
+
+            } else { // Unit needs a mission
+                continue;
+            }
+            done.add(aiUnit);
+        }
+        aiUnits.removeAll(done);
+        done.clear();
+	}
 
     /**
      * Brings gifts to nice players with nearby colonies.
@@ -611,16 +658,7 @@ public class NativeAIPlayer extends AIPlayer {
             // enough missions in operation.
             List<Unit> availableUnits = new ArrayList<>();
             int alreadyAssignedUnits = 0;
-            for (Unit ou : is.getOwnedUnits()) {
-                AIUnit aiu = getAIUnit(ou);
-                if (Mission.invalidNewMissionReason(aiu) == null) {
-                    if (aiu.hasMission(IndianDemandMission.class)) {
-                        alreadyAssignedUnits++;
-                    } else {
-                        availableUnits.add(ou);
-                    }
-                }
-            }
+            alreadyAssignedUnits = findOwnedUnit(is, availableUnits, alreadyAssignedUnits);
             if (alreadyAssignedUnits > MAX_NUMBER_OF_DEMANDS) {
                 lb.add(is.getName(), " has ", alreadyAssignedUnits,
                        " already, ");
@@ -651,21 +689,7 @@ public class NativeAIPlayer extends AIPlayer {
             // Collect nearby colonies.  Filter out ones which are unreachable
             // or with which the settlement is on adequate terms.
             List<RandomChoice<Colony>> nearbyColonies = new ArrayList<>();
-            for (Tile t : home.getSurroundingTiles(MAX_DISTANCE_TO_MAKE_DEMANDS)) {
-                Colony c = t.getColony();
-                PathNode path;
-                if (c == null
-                    || !is.hasContacted(c.getOwner())
-                    || IndianDemandMission.invalidReason(aiUnit, c) != null
-                    || (path = unit.findPath(home, c.getTile(),
-                                             null, cd)) == null) continue;
-                int alarm = is.getAlarm(c.getOwner()).getValue();
-                int defence = c.getUnitCount() + ((c.getStockade() == null) ? 1
-                    : (c.getStockade().getLevel() * 10));
-                int weight = 1 + alarm * (1000000 / defence
-                                                  / path.getTotalTurns());
-                nearbyColonies.add(new RandomChoice<>(c, weight));
-            }
+            collectNearbyColonies(cd, is, home, unit, aiUnit, nearbyColonies);
             // If there are any suitable colonies, pick one to demand from.
             // Sometimes a random one, sometimes the weakest, sometimes the
             // most annoying.
@@ -687,6 +711,39 @@ public class NativeAIPlayer extends AIPlayer {
         }
         if (lb.grew("\n  Tribute: ")) lb.shrink(", ");
     }
+
+	private void collectNearbyColonies(final CostDecider cd, IndianSettlement is, Tile home, Unit unit, AIUnit aiUnit,
+			List<RandomChoice<Colony>> nearbyColonies) {
+		for (Tile t : home.getSurroundingTiles(MAX_DISTANCE_TO_MAKE_DEMANDS)) {
+		    Colony c = t.getColony();
+		    PathNode path;
+		    if (c == null
+		        || !is.hasContacted(c.getOwner())
+		        || IndianDemandMission.invalidReason(aiUnit, c) != null
+		        || (path = unit.findPath(home, c.getTile(),
+		                                 null, cd)) == null) continue;
+		    int alarm = is.getAlarm(c.getOwner()).getValue();
+		    int defence = c.getUnitCount() + ((c.getStockade() == null) ? 1
+		        : (c.getStockade().getLevel() * 10));
+		    int weight = 1 + alarm * (1000000 / defence
+		                                      / path.getTotalTurns());
+		    nearbyColonies.add(new RandomChoice<>(c, weight));
+		}
+	}
+
+	private int findOwnedUnit(IndianSettlement is, List<Unit> availableUnits, int alreadyAssignedUnits) {
+		for (Unit ou : is.getOwnedUnits()) {
+		    AIUnit aiu = getAIUnit(ou);
+		    if (Mission.invalidNewMissionReason(aiu) == null) {
+		        if (aiu.hasMission(IndianDemandMission.class)) {
+		            alreadyAssignedUnits++;
+		        } else {
+		            availableUnits.add(ou);
+		        }
+		    }
+		}
+		return alreadyAssignedUnits;
+	}
 
     /**
      * Gets the appropriate ship trade penalties.

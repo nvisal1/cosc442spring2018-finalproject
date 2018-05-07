@@ -182,15 +182,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         final Unit unit = aiu.getUnit();
         final Unit carrier = aiCarrier.getUnit();
         final List<TargetTuple> targets = new ArrayList<>();
-        for (Player p : player.getRebels()) {
-            for (Colony c : p.getColonies()) {
-                if (port && !c.isConnectedPort()) continue;
-                PathNode path = unit.findPath(carrier, c, carrier, null);
-                if (path == null) continue;
-                int score = UnitSeekAndDestroyMission.scorePath(aiu, path);
-                targets.add(new TargetTuple(c, path, score));
-            }
-        }
+        gatherColonyTargets(aiu, port, player, unit, carrier, targets);
 
         // Increase score for drydock/s, musket and tools suppliers,
         // but decrease for fortifications.
@@ -228,6 +220,19 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         lb.log(logger, Level.FINE);
         return targets;
     }
+
+	private void gatherColonyTargets(AIUnit aiu, boolean port, final Player player, final Unit unit, final Unit carrier,
+			final List<TargetTuple> targets) {
+		for (Player p : player.getRebels()) {
+            for (Colony c : p.getColonies()) {
+                if (port && !c.isConnectedPort()) continue;
+                PathNode path = unit.findPath(carrier, c, carrier, null);
+                if (path == null) continue;
+                int score = UnitSeekAndDestroyMission.scorePath(aiu, path);
+                targets.add(new TargetTuple(c, path, score));
+            }
+        }
+	}
 
     /**
      * Initialize the REF.
@@ -293,21 +298,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         // appear at this location, otherwise at the best entry
         // location for it.
         int fail = 0;
-        for (int i = 0; i < n; i++) {
-            final TargetTuple t = targets.get(i);
-            final GoalDecider gd = GoalDeciders
-                .getDisembarkGoalDecider(t.colony.getTile());
-            PathNode path = unit.search(t.entry, gd, null, 10, carrier);
-            if (path == null) {
-                t.disembarkTile = null;
-                fail++;
-            } else {
-                // Step forward to the point the unit is about to
-                // disembark.  This is where the carrier should teleport to.
-                t.disembarkTile = path.getTransportDropNode()
-                    .previous.getTile();
-            }
-        }
+        fail = searchFromPosition(unit, carrier, targets, n, fail);
         if (fail > 0) {
             if (fail < n) { // Drop targets without a decent disembark tile
                 lb.add(" (");
@@ -337,32 +328,84 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             : Math.min(3, targets.size());
         lb.add(" => #targets=", n);
 
-        if (!teleport) {
-            // Try to arrive on the map without being seen, while retaining
-            // a path to the disembark tile that is at worst one turn
-            // slower than the existing one.
-            GoalDecider stealthGD = GoalDeciders.getComposedGoalDecider(true,
-                GoalDeciders.getHighSeasGoalDecider(),
-                GoalDeciders.getStealthyGoalDecider(rebel));
-            for (int i = 0; i < n; i++) {
-                final TargetTuple t = targets.get(i);
-                if (!rebel.canSee(t.entry)) continue;
-                PathNode path = carrier.search(t.disembarkTile, stealthGD,
-                    CostDeciders.avoidSettlementsAndBlockingUnits(),
-                    t.path.getTotalTurns() + 1, null);
-                if (path != null) {
-                    t.entry = path.getLastNode().getTile();
-                    t.score *= 1.5; // Prefer invisible paths
-                }
-            }
-            Collections.sort(targets); // Re-sort with new scores
-        }
+        eliminateBadLandingSite(teleport, carrier, targets, rebel, n);
 
         // Give the land units seek-and-destroy missions for the
         // target.  A valid target is needed before giving the carrier
         // a valid transport missions.  Send roughly 2/3 of the force
         // at the best target, decreasing from there.
-        List<AIUnit> navy = new ArrayList<>();
+        Mission m;
+		List<AIUnit> navy = giveSeekAndDestoryMission(teleport, aiMain, targets, n, lb);
+
+        // Try to find some rebel naval units near the entry locations
+        // for the targets.
+        final List<Unit> rebelNavy = new ArrayList<>();
+        final GoalDecider navyGD = new GoalDecider() {
+                @Override
+                public PathNode getGoal() { return null; }
+                @Override
+                public boolean hasSubGoals() { return true; }
+                @Override
+                public boolean check(Unit unit, PathNode pathNode) {
+                    Tile tile = pathNode.getTile();
+                    if (tile != null && !tile.isEmpty()
+                        && !tile.isLand()
+                        && rebel.owns(tile.getFirstUnit())) {
+                        for (Unit u : tile.getUnitList()) {
+                            if (u.isOffensiveUnit() && u.isNaval()
+                                && !rebelNavy.contains(u)) rebelNavy.add(u);
+                        }
+                    }
+                    return false;
+                }
+            };
+        for (int i = 0; i < n; i++) {
+            carrier.search(targets.get(i).entry, navyGD, null,
+                           carrier.getInitialMovesLeft() * 2, null);
+        }
+
+        // Attack naval targets.
+        final Comparator<Unit> militaryStrength
+            = getGame().getCombatModel().getMilitaryStrengthComparator();
+        Collections.sort(rebelNavy, militaryStrength);
+        Iterator<Unit> ui = rebelNavy.iterator();
+        List<Tile> entries = new ArrayList<>();
+        entries.add(rebel.getEntryLocation().getTile());
+        attackNaval(aiRandom, lb, navy, ui, entries);
+        lb.log(logger, Level.FINE);
+        return true;
+    }
+
+	private void attackNaval(final Random aiRandom, LogBuilder lb, List<AIUnit> navy, Iterator<Unit> ui,
+			List<Tile> entries) {
+		Mission m;
+		while (!navy.isEmpty()) {
+            final AIUnit aiu = navy.remove(0);
+            final Unit u = aiu.getUnit();
+            final Unit enemy = (ui.hasNext()) ? ui.next() : null;
+            Tile start;
+            if (enemy == null) {
+                if ((m = getWanderHostileMission(aiu)) != null) {
+                    start = getRandomMember(logger, "REF patrol entry",
+                                            entries, aiRandom);
+                    u.setEntryLocation(start);
+                    lb.add("\n  Patrol from ", start, " with ", m);
+                }
+            } else {
+                if ((m = getSeekAndDestroyMission(aiu, enemy)) != null) {
+                    start = u.getBestEntryTile(enemy.getTile());
+                    u.setEntryLocation(start);
+                    entries.add(start);
+                    lb.add("\n  Suppress ", enemy, " from ", start,
+                        " with ", m);
+                }
+            }
+        }
+	}
+
+	private List<AIUnit> giveSeekAndDestoryMission(boolean teleport, final AIMain aiMain, List<TargetTuple> targets,
+			int n, LogBuilder lb) {
+		List<AIUnit> navy = new ArrayList<>();
         Iterator<AIUnit> auIterator = getAIUnits().iterator();
         int land = getPlayer().getNumberOfKingLandUnits();
         int used;
@@ -403,66 +446,51 @@ public class REFAIPlayer extends EuropeanAIPlayer {
                 }
             }
         }
+		return navy;
+	}
 
-        // Try to find some rebel naval units near the entry locations
-        // for the targets.
-        final List<Unit> rebelNavy = new ArrayList<>();
-        final GoalDecider navyGD = new GoalDecider() {
-                @Override
-                public PathNode getGoal() { return null; }
-                @Override
-                public boolean hasSubGoals() { return true; }
-                @Override
-                public boolean check(Unit unit, PathNode pathNode) {
-                    Tile tile = pathNode.getTile();
-                    if (tile != null && !tile.isEmpty()
-                        && !tile.isLand()
-                        && rebel.owns(tile.getFirstUnit())) {
-                        for (Unit u : tile.getUnitList()) {
-                            if (u.isOffensiveUnit() && u.isNaval()
-                                && !rebelNavy.contains(u)) rebelNavy.add(u);
-                        }
-                    }
-                    return false;
-                }
-            };
-        for (int i = 0; i < n; i++) {
-            carrier.search(targets.get(i).entry, navyGD, null,
-                           carrier.getInitialMovesLeft() * 2, null);
-        }
-
-        // Attack naval targets.
-        final Comparator<Unit> militaryStrength
-            = getGame().getCombatModel().getMilitaryStrengthComparator();
-        Collections.sort(rebelNavy, militaryStrength);
-        Iterator<Unit> ui = rebelNavy.iterator();
-        List<Tile> entries = new ArrayList<>();
-        entries.add(rebel.getEntryLocation().getTile());
-        while (!navy.isEmpty()) {
-            final AIUnit aiu = navy.remove(0);
-            final Unit u = aiu.getUnit();
-            final Unit enemy = (ui.hasNext()) ? ui.next() : null;
-            Tile start;
-            if (enemy == null) {
-                if ((m = getWanderHostileMission(aiu)) != null) {
-                    start = getRandomMember(logger, "REF patrol entry",
-                                            entries, aiRandom);
-                    u.setEntryLocation(start);
-                    lb.add("\n  Patrol from ", start, " with ", m);
-                }
-            } else {
-                if ((m = getSeekAndDestroyMission(aiu, enemy)) != null) {
-                    start = u.getBestEntryTile(enemy.getTile());
-                    u.setEntryLocation(start);
-                    entries.add(start);
-                    lb.add("\n  Suppress ", enemy, " from ", start,
-                        " with ", m);
+	private void eliminateBadLandingSite(boolean teleport, final Unit carrier, List<TargetTuple> targets,
+			final Player rebel, int n) {
+		if (!teleport) {
+            // Try to arrive on the map without being seen, while retaining
+            // a path to the disembark tile that is at worst one turn
+            // slower than the existing one.
+            GoalDecider stealthGD = GoalDeciders.getComposedGoalDecider(true,
+                GoalDeciders.getHighSeasGoalDecider(),
+                GoalDeciders.getStealthyGoalDecider(rebel));
+            for (int i = 0; i < n; i++) {
+                final TargetTuple t = targets.get(i);
+                if (!rebel.canSee(t.entry)) continue;
+                PathNode path = carrier.search(t.disembarkTile, stealthGD,
+                    CostDeciders.avoidSettlementsAndBlockingUnits(),
+                    t.path.getTotalTurns() + 1, null);
+                if (path != null) {
+                    t.entry = path.getLastNode().getTile();
+                    t.score *= 1.5; // Prefer invisible paths
                 }
             }
+            Collections.sort(targets); // Re-sort with new scores
         }
-        lb.log(logger, Level.FINE);
-        return true;
-    }
+	}
+
+	private int searchFromPosition(final Unit unit, final Unit carrier, List<TargetTuple> targets, int n, int fail) {
+		for (int i = 0; i < n; i++) {
+            final TargetTuple t = targets.get(i);
+            final GoalDecider gd = GoalDeciders
+                .getDisembarkGoalDecider(t.colony.getTile());
+            PathNode path = unit.search(t.entry, gd, null, 10, carrier);
+            if (path == null) {
+                t.disembarkTile = null;
+                fail++;
+            } else {
+                // Step forward to the point the unit is about to
+                // disembark.  This is where the carrier should teleport to.
+                t.disembarkTile = path.getTransportDropNode()
+                    .previous.getTile();
+            }
+        }
+		return fail;
+	}
 
     /**
      * Require more transport missions, recruiting from the privateering
@@ -485,15 +513,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         if (transports.size() < nt) {
             // Recruit privateers not currently chasing a unit.
             // Collect privateers that are on the map.
-            for (AIUnit aiu : privateers) {
-                Location target = aiu.getMission().getTarget();
-                if (target instanceof Unit && aiu.getUnit().hasTile()) {
-                    naval.add(aiu);
-                } else if ((m = getTransportMission(aiu)) != null) {
-                    lb.add(" notarget ", m);
-                    result.add(aiu);
-                }
-            }
+            recruitPrivateers(privateers, lb, naval, result);
         }
         if (transports.size() < nt) {
             // Sort by longest distance to target
@@ -523,6 +543,19 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         return result;
     }
 
+	private void recruitPrivateers(List<AIUnit> privateers, LogBuilder lb, List<AIUnit> naval, List<AIUnit> result) {
+		Mission m;
+		for (AIUnit aiu : privateers) {
+		    Location target = aiu.getMission().getTarget();
+		    if (target instanceof Unit && aiu.getUnit().hasTile()) {
+		        naval.add(aiu);
+		    } else if ((m = getTransportMission(aiu)) != null) {
+		        lb.add(" notarget ", m);
+		        result.add(aiu);
+		    }
+		}
+	}
+
     /**
      * {@inheritDoc}
      */
@@ -549,57 +582,13 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         List<AIUnit> todo = new ArrayList<>();
         List<AIUnit> land = new ArrayList<>();
         Mission m;
-        Colony colony;
+        Colony colony = null;
         lb.add("\n  REF mission changes:");
 
         // Collect the REF units, the privateers, the transports, the
         // unemployed navy, and the unemployed land units.
         targetMap.clear();
-        for (AIUnit aiu : getAIUnits()) {
-            Unit u = aiu.getUnit();
-            if (u.isDisposed() || !u.hasAbility(Ability.REF_UNIT)) continue;
-            Mission mission = aiu.getMission();
-            if (u.isNaval()) {
-                if (mission == null || !mission.isValid()) {
-                    todo.add(aiu);
-                } else if (mission instanceof TransportMission) {
-                    transports.add(aiu);
-                } else if (mission instanceof PrivateerMission) {
-                    privateers.add(aiu);
-                    Location loc = mission.getTarget();
-                    if (loc != null) incrementMapCount(targetMap, loc);
-                } else {
-                    todo.add(aiu);
-                }
-            } else {
-                if (mission == null) {
-                    land.add(aiu);
-                } else if (mission instanceof DefendSettlementMission) {
-                    if (mission.isValid()) {
-                        colony = (Colony)mission.getTarget();
-                        // Bleed off excessive defenders.
-                        if (u.isAtLocation(colony)
-                            && !colony.isBadlyDefended()
-                            && randomInt(logger, "REF defend " + colony.getName(), 
-                                         getAIRandom(), 3) == 0) {
-                            land.add(aiu);
-                        } else {
-                            incrementMapCount(targetMap, mission.getTarget());
-                        }                          
-                    } else {
-                        land.add(aiu);
-                    }                    
-                } else if (mission instanceof UnitSeekAndDestroyMission) {
-                    if (mission.isValid()) {
-                        incrementMapCount(targetMap, mission.getTarget());
-                        continue;
-                    }
-                    land.add(aiu);
-                } else {
-                    land.add(aiu);
-                }
-            }
-        }
+        colony = collectREF(privateers, transports, todo, land, colony);
 
         // Use free naval units as transports.
         for (AIUnit aiu : todo) {
@@ -688,21 +677,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
             requireTransports(0, transports, privateers, lb);
             todo.clear();
             Map<Location, List<AIUnit>> ready = new HashMap<>();
-            for (AIUnit aiu : transports) {
-                TransportMission tm = aiu.getMission(TransportMission.class);
-                if (!tm.isEmpty()) continue;
-                Unit u = aiu.getUnit();
-                Location key;
-                if (u.isInEurope()
-                    && idlers.containsKey(key = player.getEurope())) {
-                    appendToMapList(ready, key, aiu);
-                } else if ((key = u.getColony()) != null
-                    && idlers.containsKey(key)) {
-                    appendToMapList(ready, key, aiu);
-                } else {
-                    todo.add(aiu);
-                }
-            }
+            checkTransport(player, idlers, transports, todo, ready);
 
             // If there are idle units and carriers present at the
             // same colony, load the carriers and launch new USAD
@@ -837,6 +812,75 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         // Fall back to the normal EuropeanAI behaviour for remaining units.
         super.giveNormalMissions(lb);
     }
+
+	private void checkTransport(final Player player, final Map<Location, List<AIUnit>> idlers, List<AIUnit> transports,
+			List<AIUnit> todo, Map<Location, List<AIUnit>> ready) {
+		for (AIUnit aiu : transports) {
+		    TransportMission tm = aiu.getMission(TransportMission.class);
+		    if (!tm.isEmpty()) continue;
+		    Unit u = aiu.getUnit();
+		    Location key;
+		    if (u.isInEurope()
+		        && idlers.containsKey(key = player.getEurope())) {
+		        appendToMapList(ready, key, aiu);
+		    } else if ((key = u.getColony()) != null
+		        && idlers.containsKey(key)) {
+		        appendToMapList(ready, key, aiu);
+		    } else {
+		        todo.add(aiu);
+		    }
+		}
+	}
+
+	private Colony collectREF(List<AIUnit> privateers, List<AIUnit> transports, List<AIUnit> todo, List<AIUnit> land,
+			Colony colony) {
+		for (AIUnit aiu : getAIUnits()) {
+            Unit u = aiu.getUnit();
+            if (u.isDisposed() || !u.hasAbility(Ability.REF_UNIT)) continue;
+            Mission mission = aiu.getMission();
+            if (u.isNaval()) {
+                if (mission == null || !mission.isValid()) {
+                    todo.add(aiu);
+                } else if (mission instanceof TransportMission) {
+                    transports.add(aiu);
+                } else if (mission instanceof PrivateerMission) {
+                    privateers.add(aiu);
+                    Location loc = mission.getTarget();
+                    if (loc != null) incrementMapCount(targetMap, loc);
+                } else {
+                    todo.add(aiu);
+                }
+            } else {
+                if (mission == null) {
+                    land.add(aiu);
+                } else if (mission instanceof DefendSettlementMission) {
+                    if (mission.isValid()) {
+                        colony = (Colony)mission.getTarget();
+                        // Bleed off excessive defenders.
+                        if (u.isAtLocation(colony)
+                            && !colony.isBadlyDefended()
+                            && randomInt(logger, "REF defend " + colony.getName(), 
+                                         getAIRandom(), 3) == 0) {
+                            land.add(aiu);
+                        } else {
+                            incrementMapCount(targetMap, mission.getTarget());
+                        }                          
+                    } else {
+                        land.add(aiu);
+                    }                    
+                } else if (mission instanceof UnitSeekAndDestroyMission) {
+                    if (mission.isValid()) {
+                        incrementMapCount(targetMap, mission.getTarget());
+                        continue;
+                    }
+                    land.add(aiu);
+                } else {
+                    land.add(aiu);
+                }
+            }
+        }
+		return colony;
+	}
 
 
     // AI Player interface

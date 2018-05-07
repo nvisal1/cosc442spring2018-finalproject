@@ -130,7 +130,14 @@ public class ProductionCache {
     private List<Entry> createEntries(GoodsType goodsType) {
         // FIXME: OO/generic
         List<Entry> result = new ArrayList<>();
-        if (goodsType.isFarmed()) {
+        checkFarmed(goodsType, result);
+        Collections.sort(result, defaultComparator);
+        entries.put(goodsType, result);
+        return result;
+    }
+
+	private void checkFarmed(GoodsType goodsType, List<Entry> result) {
+		if (goodsType.isFarmed()) {
             for (ColonyTile colonyTile : colonyTiles) {
                 Tile tile = colonyTile.getWorkTile();
                 if (tile.getPotentialProduction(goodsType, null) > 0
@@ -153,10 +160,7 @@ public class ProductionCache {
                 }
             }
         }
-        Collections.sort(result, defaultComparator);
-        entries.put(goodsType, result);
-        return result;
-    }
+	}
 
     public Set<Unit> getUnits() {
         return units;
@@ -277,7 +281,12 @@ public class ProductionCache {
     public static List<Entry> removeEntries(Unit unit, WorkLocation workLocation, List<Entry> entryList) {
         Iterator<Entry> entryIterator = entryList.iterator();
         List<Entry> removedEntries = new ArrayList<>();
-        while (entryIterator.hasNext()) {
+        return returnRemoved(unit, workLocation, entryIterator, removedEntries);
+    }
+
+	private static List<Entry> returnRemoved(Unit unit, WorkLocation workLocation, Iterator<Entry> entryIterator,
+			List<Entry> removedEntries) {
+		while (entryIterator.hasNext()) {
             Entry entry = entryIterator.next();
             if (entry.getUnit() == unit
                 || entry.getWorkLocation() == workLocation) {
@@ -286,7 +295,7 @@ public class ProductionCache {
             }
         }
         return removedEntries;
-    }
+	}
 
 
     /**

@@ -1263,10 +1263,10 @@ public class EuropeanAIPlayer extends AIPlayer {
         List<Wish> demand = transportDemand.get(Location.upLoc(loc));
         if (demand == null) return Collections.<WorkerWish>emptyList();
         List<WorkerWish> result = new ArrayList<>();
-        return determineWorkerWished(type, demand, result);
+        return determineWorkerWishes(type, demand, result);
     }
 
-	private List<WorkerWish> determineWorkerWished(UnitType type, List<Wish> demand, List<WorkerWish> result) {
+	private List<WorkerWish> determineWorkerWishes(UnitType type, List<Wish> demand, List<WorkerWish> result) {
 		for (Wish w : demand) {
             if (w instanceof WorkerWish
                 && ((WorkerWish)w).getUnitType() == type) {
@@ -1311,7 +1311,12 @@ public class EuropeanAIPlayer extends AIPlayer {
         WorkerWish carried = null;
         WorkerWish other = null;
         double bestCarriedValue = -1.0, bestOtherValue = -1.0;
-        for (WorkerWish w : wishes) {
+        return getBestWishes(wishes, carrier, carried, other, bestCarriedValue, bestOtherValue);
+    }
+
+	private WorkerWish getBestWishes(List<WorkerWish> wishes, final Unit carrier, WorkerWish carried, WorkerWish other,
+			double bestCarriedValue, double bestOtherValue) {
+		for (WorkerWish w : wishes) {
             int turns = carrier.getTurnsToReach(w.getDestination());
             if (turns < Unit.MANY_TURNS) {
                 if (bestCarriedValue < (double)w.getValue() / turns) {
@@ -1326,7 +1331,7 @@ public class EuropeanAIPlayer extends AIPlayer {
             }
         }
         return (carried != null) ? carried : (other != null) ? other : null;
-    }
+	}
 
     /**
      * Gets the best goods wish for a carrier unit.
@@ -1342,7 +1347,12 @@ public class EuropeanAIPlayer extends AIPlayer {
         final Unit carrier = aiUnit.getUnit();
         double bestValue = 0.0f;
         GoodsWish best = null;
-        for (GoodsWish w : wishes) {
+        return determineBestGoodWishes(wishes, carrier, bestValue, best);
+    }
+
+	private GoodsWish determineBestGoodWishes(List<GoodsWish> wishes, final Unit carrier, double bestValue,
+			GoodsWish best) {
+		for (GoodsWish w : wishes) {
             int turns = carrier.getTurnsToReach(carrier.getLocation(),
                                                 w.getDestination());
             if (turns >= Unit.MANY_TURNS) continue;
@@ -1353,7 +1363,7 @@ public class EuropeanAIPlayer extends AIPlayer {
             }
         }
         return best;
-    }
+	}
 
     /**
      * Rebuilds the goods and worker wishes maps.
@@ -1361,7 +1371,38 @@ public class EuropeanAIPlayer extends AIPlayer {
      * @param lb A <code>LogBuilder</code> to log to.
      */
     private void buildWishMaps(LogBuilder lb) {
-        for (UnitType unitType : getSpecification().getUnitTypeList()) {
+        determineWishMap();
+
+        if (!workerWishes.isEmpty()) {
+            lb.add("\n  Wishes (workers):");
+            for (UnitType ut : workerWishes.keySet()) {
+                List<WorkerWish> wl = workerWishes.get(ut);
+                if (!wl.isEmpty()) {
+                    lb.add("\n    ", ut.getSuffix(), ":");
+                    for (WorkerWish ww : wl) {
+                        lb.add(" ", ww.getDestination(),
+                               "(", ww.getValue(), ")");
+                    }
+                }
+            }
+        }
+        if (!goodsWishes.isEmpty()) {
+            lb.add("\n  Wishes (goods):");
+            for (GoodsType gt : goodsWishes.keySet()) {
+                List<GoodsWish> gl = goodsWishes.get(gt);
+                if (!gl.isEmpty()) {
+                    lb.add("\n    ", gt.getSuffix(), ":");
+                    for (GoodsWish gw : gl) {
+                        lb.add(" ", gw.getDestination(),
+                               "(", gw.getValue(), ")");
+                    }
+                }
+            }
+        }
+    }
+
+	private void determineWishMap() {
+		for (UnitType unitType : getSpecification().getUnitTypeList()) {
             List<WorkerWish> wl = workerWishes.get(unitType);
             if (wl == null) {
                 workerWishes.put(unitType, new ArrayList<WorkerWish>());
@@ -1391,34 +1432,7 @@ public class EuropeanAIPlayer extends AIPlayer {
                 }
             }
         }
-
-        if (!workerWishes.isEmpty()) {
-            lb.add("\n  Wishes (workers):");
-            for (UnitType ut : workerWishes.keySet()) {
-                List<WorkerWish> wl = workerWishes.get(ut);
-                if (!wl.isEmpty()) {
-                    lb.add("\n    ", ut.getSuffix(), ":");
-                    for (WorkerWish ww : wl) {
-                        lb.add(" ", ww.getDestination(),
-                               "(", ww.getValue(), ")");
-                    }
-                }
-            }
-        }
-        if (!goodsWishes.isEmpty()) {
-            lb.add("\n  Wishes (goods):");
-            for (GoodsType gt : goodsWishes.keySet()) {
-                List<GoodsWish> gl = goodsWishes.get(gt);
-                if (!gl.isEmpty()) {
-                    lb.add("\n    ", gt.getSuffix(), ":");
-                    for (GoodsWish gw : gl) {
-                        lb.add(" ", gw.getDestination(),
-                               "(", gw.getValue(), ")");
-                    }
-                }
-            }
-        }
-    }
+	}
 
     /**
      * Notify that a wish has been completed.  Called from AIColony.
@@ -1558,7 +1572,11 @@ public class EuropeanAIPlayer extends AIPlayer {
         if (europe == null) return null;
         int n = europe.getUnitCount();
         final String selectAbility = Ability.SELECT_RECRUIT;
-        if (!Europe.MigrationType.validMigrantSlot(slot)) {
+        return getAIUnitsEU(slot, aiUnit, europe, n, selectAbility);
+    }
+
+	private AIUnit getAIUnitsEU(int slot, AIUnit aiUnit, Europe europe, int n, final String selectAbility) {
+		if (!Europe.MigrationType.validMigrantSlot(slot)) {
             slot = (getPlayer().hasAbility(selectAbility))
                 ? Europe.MigrationType.getDefaultSlot()
                 : Europe.MigrationType.getUnspecificSlot();
@@ -1569,7 +1587,7 @@ public class EuropeanAIPlayer extends AIPlayer {
             if (aiUnit != null) addAIUnit(aiUnit);
         }
         return aiUnit;
-    }
+	}
 
     /**
      * Helper function for server communication - Ask the server
@@ -1625,7 +1643,11 @@ public class EuropeanAIPlayer extends AIPlayer {
         final ServerPlayer serverPlayer = (ServerPlayer)getPlayer();
         lb.mark();
 
-        for (Player p : getGame().getLivePlayers(serverPlayer)) {
+        getStance(lb, serverPlayer);
+    }
+
+	private void getStance(LogBuilder lb, final ServerPlayer serverPlayer) {
+		for (Player p : getGame().getLivePlayers(serverPlayer)) {
             Stance newStance = determineStance(p);
             if (newStance != serverPlayer.getStance(p)) {
                 if (newStance == Stance.WAR && peaceHolds(p)) {
@@ -1639,7 +1661,7 @@ public class EuropeanAIPlayer extends AIPlayer {
             }
         }
         if (lb.grew("\n  Stance changes:")) lb.shrink(", ");
-    }
+	}
 
     /**
      * See if a recent peace treaty still has force.
