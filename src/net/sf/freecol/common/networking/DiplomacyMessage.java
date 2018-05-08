@@ -127,7 +127,11 @@ public class DiplomacyMessage extends DOMMessage {
         this.ourId = element.getAttribute("ourId");
         this.otherId = element.getAttribute("otherId");
         
-        NodeList nodes = element.getChildNodes();
+        checkChildNodes(game, element);
+    }
+
+	private void checkChildNodes(Game game, Element element) {
+		NodeList nodes = element.getChildNodes();
         this.agreement = (nodes.getLength() < 1) ? null
             : new DiplomaticTrade(game, (Element)nodes.item(0));
         if (nodes.getLength() < 2) {
@@ -138,7 +142,7 @@ public class DiplomacyMessage extends DOMMessage {
             this.extraUnit = game.getFreeColGameObject(id, Unit.class);
             if (this.extraUnit == null) this.extraUnit = new Unit(game, ue);
         }
-    }
+	}
 
 
     // Public interface

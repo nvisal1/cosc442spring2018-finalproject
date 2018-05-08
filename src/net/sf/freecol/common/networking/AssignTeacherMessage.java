@@ -89,8 +89,13 @@ public class AssignTeacherMessage extends DOMMessage {
             return DOMMessage.clientError(e.getMessage());
         }
 
-        Unit teacher;
-        try {
+        Unit teacher = null;
+        return determineTeacherStudent(server, player, serverPlayer, student, teacher);
+    }
+
+	private Element determineTeacherStudent(FreeColServer server, Player player, final ServerPlayer serverPlayer,
+			Unit student, Unit teacher) {
+		try {
             teacher = player.getOurFreeColGameObject(teacherId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -119,7 +124,7 @@ public class AssignTeacherMessage extends DOMMessage {
         // Proceed to assign.
         return server.getInGameController()
             .assignTeacher(serverPlayer, student, teacher);
-    }
+	}
 
     /**
      * Convert this AssignTeacherMessage to XML.

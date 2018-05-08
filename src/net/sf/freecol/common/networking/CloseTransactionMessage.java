@@ -86,8 +86,12 @@ public class CloseTransactionMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
-        try {
+        Unit unit = null;
+        return handleSettlement(server, player, serverPlayer, unit);
+    }
+
+	private Element handleSettlement(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
+		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -103,7 +107,7 @@ public class CloseTransactionMessage extends DOMMessage {
         // Proceed to close
         return server.getInGameController()
             .closeTransaction(serverPlayer, unit, settlement);
-    }
+	}
 
     /**
      * Convert this CloseTransactionMessage to XML.

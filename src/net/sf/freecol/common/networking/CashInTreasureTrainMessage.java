@@ -76,8 +76,12 @@ public class CashInTreasureTrainMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
-        try {
+        Unit unit = null;
+        return handleCashIn(server, player, serverPlayer, unit);
+    }
+
+	private Element handleCashIn(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
+		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -93,7 +97,7 @@ public class CashInTreasureTrainMessage extends DOMMessage {
         // Cash in.
         return server.getInGameController()
             .cashInTreasureTrain(serverPlayer, unit);
-    }
+	}
 
     /**
      * Convert this CashInTreasureTrainMessage to XML.

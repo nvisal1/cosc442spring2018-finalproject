@@ -83,8 +83,12 @@ public class ChangeStateMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
-        try {
+        Unit unit = null;
+        return handleChange(server, player, serverPlayer, unit);
+    }
+
+	private Element handleChange(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
+		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -106,7 +110,7 @@ public class ChangeStateMessage extends DOMMessage {
         // Proceed to change.
         return server.getInGameController()
             .changeState(serverPlayer, unit, state);
-    }
+	}
 
     /**
      * Convert this ChangeStateMessage to XML.

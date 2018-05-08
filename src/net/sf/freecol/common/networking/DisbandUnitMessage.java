@@ -76,7 +76,11 @@ public class DisbandUnitMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return tryToClear(server, player, serverPlayer);
+    }
+
+	private Element tryToClear(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -86,7 +90,7 @@ public class DisbandUnitMessage extends DOMMessage {
         // Try to clear.
         return server.getInGameController()
             .disbandUnit(serverPlayer, unit);
-    }
+	}
 
     /**
      * Convert this DisbandUnitMessage to XML.

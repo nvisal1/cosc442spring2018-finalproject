@@ -76,8 +76,12 @@ public class ClearSpecialityMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
-        try {
+        Unit unit = null;
+        return clear(server, player, serverPlayer, unit);
+    }
+
+	private Element clear(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
+		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -86,7 +90,7 @@ public class ClearSpecialityMessage extends DOMMessage {
         // Try to clear.
         return server.getInGameController()
             .clearSpeciality(serverPlayer, unit);
-    }
+	}
 
     /**
      * Convert this ClearSpecialityMessage to XML.

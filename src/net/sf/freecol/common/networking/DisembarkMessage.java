@@ -77,7 +77,11 @@ public class DisembarkMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        ServerUnit unit;
+        return disembark(server, player, serverPlayer);
+    }
+
+	private Element disembark(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		ServerUnit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, ServerUnit.class);
         } catch (Exception e) {
@@ -87,7 +91,7 @@ public class DisembarkMessage extends DOMMessage {
         // Do the disembark.
         return server.getInGameController()
             .disembarkUnit(serverPlayer, unit);
-    }
+	}
 
     /**
      * Convert this DisembarkMessage to XML.

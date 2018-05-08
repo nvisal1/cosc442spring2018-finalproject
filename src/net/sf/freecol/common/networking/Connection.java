@@ -267,7 +267,11 @@ public class Connection implements Closeable {
     public void reallyClose() {
         if (this.thread != null) thread.askToStop();
 
-        closeOutputStream();
+        logConnection();
+    }
+
+	private void logConnection() {
+		closeOutputStream();
         if (this.in != null) {
             try {
                 this.in.close();
@@ -288,7 +292,7 @@ public class Connection implements Closeable {
         }
 
         logger.fine("Connection really closed for " + this.name);
-    }
+	}
 
     /**
      * Log transfer of an element.
@@ -308,21 +312,25 @@ public class Connection implements Closeable {
      */
     protected void log(DOMSource source, boolean send) {
         if (this.logResult != null) {
-            try {
-                this.logWriter.write(name, 0, name.length());
-                if (send) {
-                    this.logWriter.write(SEND_SUFFIX, 0, SEND_SUFFIX.length());
-                } else {
-                    this.logWriter.write(REPLY_SUFFIX, 0, REPLY_SUFFIX.length());
-                }
-                this.xmlTransformer.transform(source, this.logResult);
-                this.logWriter.write('\n');
-                this.logWriter.flush();
-            } catch (IOException|TransformerException e) {
-                ; // Ignore logging failure
-            }
+            logTryCatch(source, send);
         }
     }
+
+	private void logTryCatch(DOMSource source, boolean send) {
+		try {
+		    this.logWriter.write(name, 0, name.length());
+		    if (send) {
+		        this.logWriter.write(SEND_SUFFIX, 0, SEND_SUFFIX.length());
+		    } else {
+		        this.logWriter.write(REPLY_SUFFIX, 0, REPLY_SUFFIX.length());
+		    }
+		    this.xmlTransformer.transform(source, this.logResult);
+		    this.logWriter.write('\n');
+		    this.logWriter.flush();
+		} catch (IOException|TransformerException e) {
+		    ; // Ignore logging failure
+		}
+	}
 
     /**
      * Low level routine to send a message over this Connection.
@@ -333,7 +341,11 @@ public class Connection implements Closeable {
      */
     private void sendInternal(Element element) throws IOException {
         OutputStream os = getOutputStream();
-        if (os != null) {
+        checkOs(element, os);
+    }
+
+	private void checkOs(Element element, OutputStream os) throws IOException {
+		if (os != null) {
             DOMSource source = new DOMSource(element);
             try {
                 xmlTransformer.transform(source, new StreamResult(os));
@@ -344,7 +356,7 @@ public class Connection implements Closeable {
             os.flush();
             log(source, true);
         }
-    }
+	}
 
     /**
      * Low level routine to sends a message and return the reply.
@@ -362,7 +374,11 @@ public class Connection implements Closeable {
             throw new IOException("wait(ReceivingThread) for: " + tag);
         }
 
-        Element question = element.getOwnerDocument()
+        return retrieveChild(element, networkReplyId);
+    }
+
+	private Element retrieveChild(Element element, int networkReplyId) throws IOException {
+		Element question = element.getOwnerDocument()
             .createElement(QUESTION_TAG);
         question.setAttribute(NETWORK_REPLY_ID_TAG,
                               Integer.toString(networkReplyId));
@@ -377,7 +393,7 @@ public class Connection implements Closeable {
 
         Element child = (reply==null) ? null : (Element)reply.getFirstChild();
         return child;
-    }
+	}
 
 
     /**
@@ -466,7 +482,12 @@ public class Connection implements Closeable {
 
         // Process the message in its own thread.
         final Connection conn = this;
-        Thread t = new Thread(msg.getType()) {
+        startThread(networkReplyId, question, msg, conn);
+    }
+
+	private void startThread(final String networkReplyId, final boolean question, final DOMMessage msg,
+			final Connection conn) {
+		Thread t = new Thread(msg.getType()) {
                 @Override
                 public void run() {
                     Element element = msg.getDocument().getDocumentElement();
@@ -498,7 +519,7 @@ public class Connection implements Closeable {
             };
         t.setName(name + "-MessageHandler-" + t.getName());
         t.start();
-    }
+	}
 
     /**
      * Handle a request.

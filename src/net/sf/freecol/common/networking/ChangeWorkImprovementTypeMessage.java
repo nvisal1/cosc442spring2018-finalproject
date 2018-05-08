@@ -87,8 +87,12 @@ public class ChangeWorkImprovementTypeMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
-        try {
+        Unit unit = null;
+        return handleChange(server, player, serverPlayer, unit);
+    }
+
+	private Element handleChange(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
+		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -129,7 +133,7 @@ public class ChangeWorkImprovementTypeMessage extends DOMMessage {
         // Proceed to change.
         return server.getInGameController()
             .changeWorkImprovementType(serverPlayer, unit, type);
-    }
+	}
 
     /**
      * Convert this ChangeWorkImprovementTypeMessage to XML.

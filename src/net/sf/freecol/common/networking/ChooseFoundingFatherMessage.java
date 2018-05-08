@@ -73,14 +73,18 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
 
         final Specification spec = game.getSpecification();
         this.fathers = new ArrayList<>();
-        for (FoundingFatherType type : FoundingFatherType.values()) {
+        checkFoundingFathers(element, spec);
+    }
+
+	private void checkFoundingFathers(Element element, final Specification spec) {
+		for (FoundingFatherType type : FoundingFatherType.values()) {
             String id = element.getAttribute(type.toString());
             if (id == null || id.isEmpty()) continue;
             FoundingFather ff = spec.getFoundingFather(id);
             this.fathers.add(ff);
         }
         foundingFatherId = element.getAttribute("foundingFather");
-    }
+	}
 
 
     // Public interface
@@ -133,7 +137,12 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
         final List<FoundingFather> offered = serverPlayer.getOfferedFathers();
         final FoundingFather ff = getFather(game);
 
-        if (!serverPlayer.canRecruitFoundingFather()) {
+        return handleServePlayer(serverPlayer, offered, ff);
+    }
+
+	private Element handleServePlayer(final ServerPlayer serverPlayer, final List<FoundingFather> offered,
+			final FoundingFather ff) {
+		if (!serverPlayer.canRecruitFoundingFather()) {
             return DOMMessage.clientError("Player can not recruit fathers: "
                 + serverPlayer.getId());
         } else if (ff == null) {
@@ -145,7 +154,7 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
 
         serverPlayer.updateCurrentFather(ff);
         return null;
-    }
+	}
 
     /**
      * Convert this ChooseFoundingFatherMessage to XML.

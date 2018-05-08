@@ -129,7 +129,12 @@ public class ClaimLandMessage extends DOMMessage {
         }
 
         // Request is well formed, but there are more possibilities...
-        int value = player.getLandPrice(tile);
+        return formRequest(server, player, serverPlayer, tile, settlement, price);
+    }
+
+	private Element formRequest(FreeColServer server, Player player, final ServerPlayer serverPlayer, Tile tile,
+			Settlement settlement, int price) {
+		int value = player.getLandPrice(tile);
         Player owner = tile.getOwner();
         Settlement ownerSettlement = tile.getOwningSettlement();
         if (owner == null) { // unclaimed, always free
@@ -178,7 +183,7 @@ public class ClaimLandMessage extends DOMMessage {
         // to set owning settlement.
         return server.getInGameController()
             .claimLand(serverPlayer, tile, settlement, price);
-    }
+	}
 
     /**
      * Convert this ClaimLandMessage to XML.

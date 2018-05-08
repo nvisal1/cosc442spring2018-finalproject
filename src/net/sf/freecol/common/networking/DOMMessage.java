@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -120,23 +121,28 @@ public class DOMMessage {
             // Xerces throws ArrayIndexOutOfBoundsException when it barfs on
             // some FreeCol messages. I'd like to see the messages upon which
             // it barfs
-            if (dumpMsgOnError) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                inputSource.getByteStream().reset();
-                while (true) {
-                    int i = inputSource.getByteStream().read();
-                    if (-1 == i) {
-                        break;
-                    }
-                    baos.write(i);
-                }
-                logger.severe(baos.toString("UTF-8"));
-            }
+            checkMsgOnError(inputSource, dumpMsgOnError);
             throw e;
         }
 
         document = tempDocument;
     }
+
+	private void checkMsgOnError(InputSource inputSource, boolean dumpMsgOnError)
+			throws IOException, UnsupportedEncodingException {
+		if (dumpMsgOnError) {
+		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		    inputSource.getByteStream().reset();
+		    while (true) {
+		        int i = inputSource.getByteStream().read();
+		        if (-1 == i) {
+		            break;
+		        }
+		        baos.write(i);
+		    }
+		    logger.severe(baos.toString("UTF-8"));
+		}
+	}
 
     /**
      * Constructs a new DOMMessage with data from the given XML-document.
@@ -347,7 +353,11 @@ public class DOMMessage {
         default:
             break;
         }
-        Element first = elements.remove(0);
+        return checkElements(elements);
+    }
+
+	private static Element checkElements(List<Element> elements) {
+		Element first = elements.remove(0);
         Document doc = first.getOwnerDocument();
         Element result = doc.createElement("multiple");
         result.appendChild(first);
@@ -355,7 +365,7 @@ public class DOMMessage {
             result.appendChild(doc.importNode(e, true));
         }
         return result;
-    }
+	}
 
     /**
      * Creates an error message.
@@ -430,14 +440,18 @@ public class DOMMessage {
      */
     public static Element getChildElement(Element element, String tagName) {
         NodeList n = element.getChildNodes();
-        for (int i = 0; i < n.getLength(); i++) {
+        return findNodes(tagName, n);
+    }
+
+	private static Element findNodes(String tagName, NodeList n) {
+		for (int i = 0; i < n.getLength(); i++) {
             if (n.item(i) instanceof Element
                 && ((Element)n.item(i)).getTagName().equals(tagName)) {
                 return (Element)n.item(i);
             }
         }
         return null;
-    }
+	}
 
     /**
      * Convert an element to a string.
@@ -454,19 +468,24 @@ public class DOMMessage {
             String result = sw.toString();
 
             // Drop the <?xml...?> part if present to keep logging concise.
-            if (result.startsWith("<?xml")) {
-                final String xmlEnd = "?>";
-                int index = result.indexOf(xmlEnd);
-                if (index > 0) {
-                    result = result.substring(index + xmlEnd.length());
-                }
-            }
+            result = dropXML(result);
             return result;
         } catch (TransformerException e) {
             logger.log(Level.WARNING, "TransformerException", e);
         }
         return null;
     }
+
+	private static String dropXML(String result) {
+		if (result.startsWith("<?xml")) {
+		    final String xmlEnd = "?>";
+		    int index = result.indexOf(xmlEnd);
+		    if (index > 0) {
+		        result = result.substring(index + xmlEnd.length());
+		    }
+		}
+		return result;
+	}
 
     /**
      * {@inheritDoc}

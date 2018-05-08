@@ -83,8 +83,13 @@ public class ChangeWorkTypeMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
-        try {
+        Unit unit = null;
+        return handleChangeWorkType(server, player, serverPlayer, unit);
+    }
+
+	private Element handleChangeWorkType(FreeColServer server, Player player, final ServerPlayer serverPlayer,
+			Unit unit) {
+		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
             return DOMMessage.clientError(e.getMessage());
@@ -101,7 +106,7 @@ public class ChangeWorkTypeMessage extends DOMMessage {
         // Proceed to changeWorkType.
         return server.getInGameController()
             .changeWorkType(serverPlayer, unit, type);
-    }
+	}
 
     /**
      * Convert this ChangeWorkTypeMessage to XML.

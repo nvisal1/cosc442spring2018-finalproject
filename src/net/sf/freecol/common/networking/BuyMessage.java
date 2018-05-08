@@ -129,7 +129,12 @@ public class BuyMessage extends DOMMessage {
         }
 
         // Make sure we are trying to buy something that is there
-        if (goods.getLocation() != settlement) {
+        return buyExisting(server, serverPlayer, unit, settlement);
+    }
+
+	private Element buyExisting(FreeColServer server, final ServerPlayer serverPlayer, Unit unit,
+			ServerIndianSettlement settlement) {
+		if (goods.getLocation() != settlement) {
             return DOMMessage.clientError("Goods " + goods.getId()
                 + " is not at settlement " + settlementId);
         }
@@ -140,7 +145,7 @@ public class BuyMessage extends DOMMessage {
         // Try to buy.
         return server.getInGameController()
             .buyFromSettlement(serverPlayer, unit, settlement, goods, gold);
-    }
+	}
 
     /**
      * Convert this BuyMessage to XML.
