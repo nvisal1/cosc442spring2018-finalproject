@@ -31,6 +31,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent to resolve natives making demands of a colony.
  */
@@ -97,6 +98,7 @@ public class IndianDemandMessage extends DOMMessage {
      * Client-side convenience function to get the unit in this message.
      *
      * @param game The <code>Game</code> to look for the unit in.
+     * @return the unit
      */
     public Unit getUnit(Game game) {
         return game.getFreeColGameObject(unitId, Unit.class);
@@ -106,6 +108,7 @@ public class IndianDemandMessage extends DOMMessage {
      * Client-side convenience function to get the colony in this message.
      *
      * @param game The <code>Game</code> to look for the colony in.
+     * @return the colony
      */
     public Colony getColony(Game game) {
         return game.getFreeColGameObject(colonyId, Colony.class);
@@ -113,6 +116,9 @@ public class IndianDemandMessage extends DOMMessage {
 
     /**
      * Client-side convenience function to get the goods type in this message.
+     *
+     * @param game the game
+     * @return the type
      */
     public GoodsType getType(Game game) {
         return (typeId == null) ? null
@@ -121,6 +127,8 @@ public class IndianDemandMessage extends DOMMessage {
 
     /**
      * Client-side convenience function to get the gold in this message.
+     *
+     * @return the amount
      */
     public int getAmount() {
         try {
@@ -165,6 +173,15 @@ public class IndianDemandMessage extends DOMMessage {
         return handleDemand(server, player, serverPlayer, game);
     }
 
+	/**
+	 * Handle demand.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleDemand(FreeColServer server, Player player, final ServerPlayer serverPlayer,
 			final Game game) {
 		Unit unit;

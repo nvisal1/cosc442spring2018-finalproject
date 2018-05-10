@@ -22,6 +22,7 @@ package net.sf.freecol.common.networking;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A network request handler knows how to handle in a given request type.
  */

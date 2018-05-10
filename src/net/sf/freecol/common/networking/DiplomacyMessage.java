@@ -36,6 +36,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when executing a diplomatic trade.
  */
@@ -130,6 +131,12 @@ public class DiplomacyMessage extends DOMMessage {
         checkChildNodes(game, element);
     }
 
+	/**
+	 * Check child nodes.
+	 *
+	 * @param game the game
+	 * @param element the element
+	 */
 	private void checkChildNodes(Game game, Element element) {
 		NodeList nodes = element.getChildNodes();
         this.agreement = (nodes.getLength() < 1) ? null
@@ -189,6 +196,7 @@ public class DiplomacyMessage extends DOMMessage {
      * Set the agreement (a <code>DiplomaticTrade</code>) in this message.
      *
      * @param agreement The <code>DiplomaticTrade</code> to set.
+     * @return the diplomacy message
      */
     public DiplomacyMessage setAgreement(DiplomaticTrade agreement) {
         this.agreement = agreement;

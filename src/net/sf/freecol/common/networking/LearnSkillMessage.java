@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when learning for the skill taught at a settlement.
  */
@@ -89,6 +90,14 @@ public class LearnSkillMessage extends DOMMessage {
         return handleLearning(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle learning.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleLearning(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when the client requests claiming land.
  */
@@ -132,6 +133,17 @@ public class ClaimLandMessage extends DOMMessage {
         return formRequest(server, player, serverPlayer, tile, settlement, price);
     }
 
+	/**
+	 * Form request.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param tile the tile
+	 * @param settlement the settlement
+	 * @param price the price
+	 * @return the element
+	 */
 	private Element formRequest(FreeColServer server, Player player, final ServerPlayer serverPlayer, Tile tile,
 			Settlement settlement, int price) {
 		int value = player.getLandPrice(tile);

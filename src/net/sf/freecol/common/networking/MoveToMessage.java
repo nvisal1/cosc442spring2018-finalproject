@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when moving a unit across the high seas.
  */
@@ -87,6 +88,15 @@ public class MoveToMessage extends DOMMessage {
         return handleMovement(server, player, serverPlayer, game);
     }
 
+	/**
+	 * Handle movement.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleMovement(FreeColServer server, Player player, final ServerPlayer serverPlayer,
 			final Game game) {
 		Unit unit;

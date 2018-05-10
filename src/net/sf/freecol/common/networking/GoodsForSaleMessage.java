@@ -35,6 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when querying a settlement for what it has for sale.
  */
@@ -89,6 +90,11 @@ public class GoodsForSaleMessage extends DOMMessage {
 
     // Public interface
 
+    /**
+     * Gets the goods.
+     *
+     * @return the goods
+     */
     public List<Goods> getGoods() {
         return this.sellGoods;
     }
@@ -111,6 +117,14 @@ public class GoodsForSaleMessage extends DOMMessage {
         return handleGoods(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle goods.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleGoods(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

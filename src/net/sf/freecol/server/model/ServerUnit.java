@@ -873,42 +873,13 @@ public class ServerUnit extends Unit implements ServerModelObject {
         List<Tile> newTiles = collectNewTiles(newTile);
 
         // Update unit state.
-        setState(UnitState.ACTIVE);
-        setStateToAllChildren(UnitState.SENTRY);
-        if (oldLocation instanceof HighSeas) {
-            ; // Do not try to calculate move cost from Europe!
-        } else if (oldLocation instanceof Unit) {
-            setMovesLeft(0); // Disembark always consumes all moves.
-        } else {
-            if (getMoveCost(newTile) <= 0) {
-                logger.warning("Move of unit: " + getId()
-                    + " from: " + ((oldLocation == null) ? "null"
-                        : oldLocation.getTile().getId())
-                    + " to: " + newTile.getId()
-                    + " has bogus cost: " + getMoveCost(newTile));
-                setMovesLeft(0);
-            }
-            setMovesLeft(getMovesLeft() - getMoveCost(newTile));
-        }
+        updateUnitState(newTile, oldLocation);
 
         // Do the move and explore a rumour if needed.
-        if (oldLocation instanceof WorkLocation) {
-            oldLocation.getTile().cacheUnseen();//+til
-        }
-        setLocation(newTile);//-vis(serverPlayer),-til if in colony
-        if (newTile.hasLostCityRumour() && serverPlayer.isEuropean()
-            && !csExploreLostCityRumour(random, cs)) {
-            cs.addRemove(See.perhaps().always(serverPlayer), oldLocation,
-                         this);//-vis(serverPlayer)
-            this.dispose();
-        }
-        serverPlayer.invalidateCanSeeTiles();//+vis(serverPlayer)
+        executeMove(newTile, random, cs, serverPlayer, oldLocation);
 
         // Update tiles that are now invisible.
-        Iterator<Tile> it = oldTiles.iterator();
-        while (it.hasNext()) {
-            if (serverPlayer.canSee(it.next())) it.remove();
-        }
+        updateTiles(serverPlayer, oldTiles);
         if (!oldTiles.isEmpty()) cs.add(See.only(serverPlayer), oldTiles);
         // Unless moving in from off-map, update the old location and
         // make sure the move is always visible even if the unit
@@ -947,16 +918,7 @@ public class ServerUnit extends Unit implements ServerModelObject {
             // Check for first landing
             String newLand = null;
             boolean firstLanding = !serverPlayer.isNewLandNamed();
-            if (serverPlayer.isEuropean() && firstLanding) {
-                newLand = serverPlayer.getNameForNewLand();
-                // Set the default value now to prevent multiple attempts.
-                // The user setNewLandName can override.
-                serverPlayer.setNewLandName(newLand);
-                cs.add(See.only(serverPlayer), ChangePriority.CHANGE_LATE,
-                    new NewLandNameMessage(this, newLand));
-                logger.finest("First landing for " + serverPlayer
-                    + " at " + newTile + " with " + this);
-            }
+            checkForFirstLanding(newTile, cs, serverPlayer, firstLanding);
 
             // Check for new contacts.
             List<ServerPlayer> pending = new ArrayList<>();
@@ -1044,17 +1006,86 @@ public class ServerUnit extends Unit implements ServerModelObject {
         }
 
         // Disembark in colony.
-        if (isCarrier() && !isEmpty() && newTile.getColony() != null
+        disembark(newTile, random, cs);
+                
+        // Check for slowing units.
+        Unit slowedBy = getSlowedBy(newTile, random);
+        checkForSlowUnits(cs, serverPlayer, slowedBy);
+
+        // Check for region discovery
+        Region region = newTile.getDiscoverableRegion();
+        checkForRegion(newTile, cs, serverPlayer, region);
+    }
+
+	private void updateUnitState(Tile newTile, final Location oldLocation) {
+		setState(UnitState.ACTIVE);
+        setStateToAllChildren(UnitState.SENTRY);
+        if (oldLocation instanceof HighSeas) {
+            ; // Do not try to calculate move cost from Europe!
+        } else if (oldLocation instanceof Unit) {
+            setMovesLeft(0); // Disembark always consumes all moves.
+        } else {
+            if (getMoveCost(newTile) <= 0) {
+                logger.warning("Move of unit: " + getId()
+                    + " from: " + ((oldLocation == null) ? "null"
+                        : oldLocation.getTile().getId())
+                    + " to: " + newTile.getId()
+                    + " has bogus cost: " + getMoveCost(newTile));
+                setMovesLeft(0);
+            }
+            setMovesLeft(getMovesLeft() - getMoveCost(newTile));
+        }
+	}
+
+	private void executeMove(Tile newTile, Random random, ChangeSet cs, final ServerPlayer serverPlayer,
+			final Location oldLocation) {
+		if (oldLocation instanceof WorkLocation) {
+            oldLocation.getTile().cacheUnseen();//+til
+        }
+        setLocation(newTile);//-vis(serverPlayer),-til if in colony
+        if (newTile.hasLostCityRumour() && serverPlayer.isEuropean()
+            && !csExploreLostCityRumour(random, cs)) {
+            cs.addRemove(See.perhaps().always(serverPlayer), oldLocation,
+                         this);//-vis(serverPlayer)
+            this.dispose();
+        }
+        serverPlayer.invalidateCanSeeTiles();//+vis(serverPlayer)
+	}
+
+	private void updateTiles(final ServerPlayer serverPlayer, List<Tile> oldTiles) {
+		Iterator<Tile> it = oldTiles.iterator();
+        while (it.hasNext()) {
+            if (serverPlayer.canSee(it.next())) it.remove();
+        }
+	}
+
+	private void checkForFirstLanding(Tile newTile, ChangeSet cs, final ServerPlayer serverPlayer,
+			boolean firstLanding) {
+		String newLand;
+		if (serverPlayer.isEuropean() && firstLanding) {
+		    newLand = serverPlayer.getNameForNewLand();
+		    // Set the default value now to prevent multiple attempts.
+		    // The user setNewLandName can override.
+		    serverPlayer.setNewLandName(newLand);
+		    cs.add(See.only(serverPlayer), ChangePriority.CHANGE_LATE,
+		        new NewLandNameMessage(this, newLand));
+		    logger.finest("First landing for " + serverPlayer
+		        + " at " + newTile + " with " + this);
+		}
+	}
+
+	private void disembark(Tile newTile, Random random, ChangeSet cs) {
+		if (isCarrier() && !isEmpty() && newTile.getColony() != null
             && getSpecification().getBoolean(GameOptions.DISEMBARK_IN_COLONY)) {
             for (Unit u : getUnitList()) {
                 ((ServerUnit)u).csMove(newTile, random, cs);
             }
             setMovesLeft(0);
         }
-                
-        // Check for slowing units.
-        Unit slowedBy = getSlowedBy(newTile, random);
-        if (slowedBy != null) {
+	}
+
+	private void checkForSlowUnits(ChangeSet cs, final ServerPlayer serverPlayer, Unit slowedBy) {
+		if (slowedBy != null) {
             StringTemplate enemy = slowedBy.getApparentOwnerName();
             cs.addMessage(See.only(serverPlayer),
                 new ModelMessage(ModelMessage.MessageType.FOREIGN_DIPLOMACY,
@@ -1063,17 +1094,17 @@ public class ServerUnit extends Unit implements ServerModelObject {
                 .addStringTemplate("%enemyUnit%", slowedBy.getLabel(UnitLabelType.NATIONAL))
                 .addStringTemplate("%enemyNation%", enemy));
         }
+	}
 
-        // Check for region discovery
-        Region region = newTile.getDiscoverableRegion();
-        if (serverPlayer.isEuropean() && region != null
+	private void checkForRegion(Tile newTile, ChangeSet cs, final ServerPlayer serverPlayer, Region region) {
+		if (serverPlayer.isEuropean() && region != null
             && region.getDiscoverer() == null) {
             cs.add(See.only(serverPlayer), ChangePriority.CHANGE_LATE,
                 new NewRegionNameMessage(region, newTile, this,
                     serverPlayer.getNameForRegion(region)));
             region.setDiscoverer(getId());
         }
-    }
+	}
 
 
     // Serialization

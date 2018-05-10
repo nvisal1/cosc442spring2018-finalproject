@@ -21,6 +21,7 @@
 package net.sf.freecol.common.networking;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Contains the network constants. These constants are used by the
  * controllers and input handlers when they are communicating.

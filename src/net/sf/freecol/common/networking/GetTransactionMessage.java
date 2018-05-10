@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent to initiate a transaction.
  */
@@ -90,6 +91,14 @@ public class GetTransactionMessage extends DOMMessage {
         return handleServer(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle server.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleServer(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

@@ -524,7 +524,11 @@ public class ServerIndianSettlement extends IndianSettlement
         
         // Inform the enemy of loss of mission
         ServerPlayer missionaryOwner = (ServerPlayer)missionary.getOwner();
-        if (destroy != null) {
+        informEnemy(destroy, cs, missionaryOwner);
+    }
+
+	private void informEnemy(Boolean destroy, ChangeSet cs, ServerPlayer missionaryOwner) {
+		if (destroy != null) {
             if (destroy) {
                 cs.addMessage(See.only(missionaryOwner),
                     new ModelMessage(ModelMessage.MessageType.UNIT_LOST,
@@ -539,7 +543,7 @@ public class ServerIndianSettlement extends IndianSettlement
                             getLocationLabelFor(missionaryOwner)));
             }
         }
-    }
+	}
 
     /**
      * Equip a unit for a specific role.

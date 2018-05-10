@@ -51,16 +51,20 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Class for parsing raw message data into an XML-tree and for creating new
  * XML-trees.
  */
 public class DOMMessage {
 
+    /** The Constant logger. */
     protected static final Logger logger = Logger.getLogger(DOMMessage.class.getName());
 
+    /** The Constant FREECOL_PROTOCOL_VERSION. */
     private static final String FREECOL_PROTOCOL_VERSION = "0.1.6";
 
+    /** The Constant INVALID_MESSAGE. */
     private static final String INVALID_MESSAGE = "invalid";
 
     /** The actual message data. */
@@ -69,6 +73,8 @@ public class DOMMessage {
 
     /**
      * Protected constructor for the benefit of the subclasses.
+     *
+     * @param tag the tag
      */
     protected DOMMessage(String tag) {
         this.document = createNewDocument();
@@ -81,8 +87,8 @@ public class DOMMessage {
      *
      * @param inputStream The <code>InputStream</code> to get the XML-data
      *            from.
-     * @exception IOException if thrown by the <code>InputStream</code>.
      * @exception SAXException if thrown during parsing.
+     * @exception IOException if thrown by the <code>InputStream</code>.
      */
     public DOMMessage(InputStream inputStream)
         throws SAXException, IOException {
@@ -95,8 +101,8 @@ public class DOMMessage {
      *
      * @param inputSource The <code>InputSource</code> to get the XML-data
      *            from.
-     * @exception IOException if thrown by the <code>InputSource</code>.
      * @exception SAXException if thrown during parsing.
+     * @exception IOException if thrown by the <code>InputSource</code>.
      */
     private DOMMessage(InputSource inputSource)
         throws SAXException, IOException {
@@ -128,6 +134,14 @@ public class DOMMessage {
         document = tempDocument;
     }
 
+	/**
+	 * Check msg on error.
+	 *
+	 * @param inputSource the input source
+	 * @param dumpMsgOnError the dump msg on error
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws UnsupportedEncodingException the unsupported encoding exception
+	 */
 	private void checkMsgOnError(InputSource inputSource, boolean dumpMsgOnError)
 			throws IOException, UnsupportedEncodingException {
 		if (dumpMsgOnError) {
@@ -356,6 +370,12 @@ public class DOMMessage {
         return checkElements(elements);
     }
 
+	/**
+	 * Check elements.
+	 *
+	 * @param elements the elements
+	 * @return the element
+	 */
 	private static Element checkElements(List<Element> elements) {
 		Element first = elements.remove(0);
         Document doc = first.getOwnerDocument();
@@ -443,6 +463,13 @@ public class DOMMessage {
         return findNodes(tagName, n);
     }
 
+	/**
+	 * Find nodes.
+	 *
+	 * @param tagName the tag name
+	 * @param n the n
+	 * @return the element
+	 */
 	private static Element findNodes(String tagName, NodeList n) {
 		for (int i = 0; i < n.getLength(); i++) {
             if (n.item(i) instanceof Element
@@ -476,6 +503,12 @@ public class DOMMessage {
         return null;
     }
 
+	/**
+	 * Drop XML.
+	 *
+	 * @param result the result
+	 * @return the string
+	 */
 	private static String dropXML(String result) {
 		if (result.startsWith("<?xml")) {
 		    final String xmlEnd = "?>";

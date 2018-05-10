@@ -31,6 +31,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when loading goods.
  */
@@ -100,6 +101,14 @@ public class LoadGoodsMessage extends DOMMessage {
         return handleLoadOfGoods(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle load of goods.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleLoadOfGoods(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		FreeColGameObject fcgo = player.getGame()
             .getFreeColGameObject(locationId);

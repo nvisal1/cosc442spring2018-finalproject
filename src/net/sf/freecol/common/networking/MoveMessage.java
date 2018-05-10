@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerUnit;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when moving a unit.
  */
@@ -89,6 +90,14 @@ public class MoveMessage extends DOMMessage {
         return handleMovement(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle movement.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleMovement(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		ServerUnit unit;
         try {

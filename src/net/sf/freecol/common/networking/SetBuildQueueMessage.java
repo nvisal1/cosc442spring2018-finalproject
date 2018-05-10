@@ -33,6 +33,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when setting the build queue.
  */
@@ -109,6 +110,15 @@ public class SetBuildQueueMessage extends DOMMessage {
         return handleBuildQueue(server, player, serverPlayer, spec);
     }
 
+	/**
+	 * Handle build queue.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param spec the spec
+	 * @return the element
+	 */
 	private Element handleBuildQueue(FreeColServer server, Player player, final ServerPlayer serverPlayer,
 			final Specification spec) {
 		Colony colony;

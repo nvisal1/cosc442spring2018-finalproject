@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when the client requests setting a unit destination.
  */
@@ -86,6 +87,14 @@ public class SetDestinationMessage extends DOMMessage {
         return handleDestination(server, serverPlayer, game);
     }
 
+	/**
+	 * Handle destination.
+	 *
+	 * @param server the server
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleDestination(FreeColServer server, final ServerPlayer serverPlayer, final Game game) {
 		Unit unit;
         try {

@@ -33,6 +33,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when speaking to a chief.
  */
@@ -90,6 +91,14 @@ public class ScoutSpeakToChiefMessage extends DOMMessage {
         return handleSpeak(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle speak.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleSpeak(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

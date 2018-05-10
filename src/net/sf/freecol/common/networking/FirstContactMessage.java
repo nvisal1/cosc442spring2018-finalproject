@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when making first contact between players.
  */
@@ -93,18 +94,41 @@ public class FirstContactMessage extends DOMMessage {
 
     // Public interface
 
+    /**
+     * Gets the player.
+     *
+     * @param game the game
+     * @return the player
+     */
     public Player getPlayer(Game game) {
         return game.getFreeColGameObject(playerId, Player.class);
     }
 
+    /**
+     * Gets the other player.
+     *
+     * @param game the game
+     * @return the other player
+     */
     public Player getOtherPlayer(Game game) {
         return game.getFreeColGameObject(otherId, Player.class);
     }
 
+    /**
+     * Gets the tile.
+     *
+     * @param game the game
+     * @return the tile
+     */
     public Tile getTile(Game game) {
         return game.getFreeColGameObject(tileId, Tile.class);
     }
 
+    /**
+     * Gets the settlement count.
+     *
+     * @return the settlement count
+     */
     public int getSettlementCount() {
         try {
             return Integer.parseInt(settlementCount);
@@ -112,10 +136,21 @@ public class FirstContactMessage extends DOMMessage {
         return -1;
     }
             
+    /**
+     * Gets the result.
+     *
+     * @return the result
+     */
     public boolean getResult() {
         return Boolean.parseBoolean(result);
     }
 
+    /**
+     * Sets the result.
+     *
+     * @param result the result
+     * @return the first contact message
+     */
     public FirstContactMessage setResult(boolean result) {
         this.result = String.valueOf(result);
         return this;
@@ -137,6 +172,14 @@ public class FirstContactMessage extends DOMMessage {
         return handleContact(server, serverPlayer, game);
     }
 
+	/**
+	 * Handle contact.
+	 *
+	 * @param server the server
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleContact(FreeColServer server, final ServerPlayer serverPlayer, final Game game) {
 		Player first = getPlayer(game);
         if (first == null) {
@@ -173,6 +216,12 @@ public class FirstContactMessage extends DOMMessage {
         return setElement(element);
     }
 
+	/**
+	 * Sets the element.
+	 *
+	 * @param element the element
+	 * @return the element
+	 */
 	private Element setElement(Element element) {
 		if (this.tileId != null) {
             element.setAttribute("tile", this.tileId);

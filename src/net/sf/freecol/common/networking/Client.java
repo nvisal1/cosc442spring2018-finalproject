@@ -29,11 +29,13 @@ import net.sf.freecol.common.FreeColException;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The client connection to a server.
  */
 public final class Client {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     /**
@@ -124,7 +126,7 @@ public final class Client {
      * @param message The <code>DOMMessage</code> to send.
      * @see #sendAndWait(Element)
      * @see #ask(Element)
-     * @exception IOException
+     * @exception IOException Signals that an I/O exception has occurred.
      */
     public void send(DOMMessage message) throws IOException {
         c.send(message.toXMLElement());
@@ -137,7 +139,7 @@ public final class Client {
      *                holds all the information
      * @see #sendAndWait(Element)
      * @see #ask(Element)
-     * @exception IOException
+     * @exception IOException Signals that an I/O exception has occurred.
      */
     public void send(Element element) throws IOException {
         c.send(element);
@@ -150,7 +152,7 @@ public final class Client {
      * @param message The <code>DOMMessage</code> to send.
      * @see #send(Element)
      * @see #ask(Element)
-     * @exception IOException
+     * @exception IOException Signals that an I/O exception has occurred.
      */
     public void sendAndWait(DOMMessage message) throws IOException {
         c.sendAndWait(message.toXMLElement());
@@ -164,7 +166,7 @@ public final class Client {
      *                holds all the information
      * @see #send(Element)
      * @see #ask(Element)
-     * @exception IOException
+     * @exception IOException Signals that an I/O exception has occurred.
      */
     public void sendAndWait(Element element) throws IOException {
         c.sendAndWait(element);
@@ -178,7 +180,7 @@ public final class Client {
      *       an error occured or the server did not send a reply.
      * @see #sendAndWait
      * @see #send
-     * @exception IOException
+     * @exception IOException Signals that an I/O exception has occurred.
      */
     public Element ask(DOMMessage message) throws IOException {
         return c.ask(message.toXMLElement());
@@ -193,7 +195,7 @@ public final class Client {
      *       an error occured or the server did not send a reply.
      * @see #sendAndWait
      * @see #send
-     * @exception IOException
+     * @exception IOException Signals that an I/O exception has occurred.
      */
     public Element ask(Element element) throws IOException {
         return c.ask(element);

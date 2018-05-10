@@ -67,11 +67,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The API for client->server messaging.
  */
 public abstract class ServerAPI {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ServerAPI.class.getName());
 
     /** The Client used to communicate with the server. */
@@ -378,6 +380,7 @@ public abstract class ServerAPI {
      * @param host The name of the machine running the
      *     <code>FreeColServer</code>.
      * @param port The port to use when connecting to the host.
+     * @param messageHandler the message handler
      * @return True if the connection succeeded.
      * @exception IOException on connection failure.
      */
@@ -576,6 +579,7 @@ public abstract class ServerAPI {
     /**
      * Send a chat message (pre and in-game).
      *
+     * @param player the player
      * @param chat The text of the message.
      * @return True if the send succeeded.
      */
@@ -697,6 +701,7 @@ public abstract class ServerAPI {
     /**
      * Handler server query-response for diplomatic messages.
      *
+     * @param game the game
      * @param ourUnit Our <code>Unit</code> conducting the diplomacy.
      * @param otherColony The other <code>Colony</code> to negotiate with.
      * @param agreement The <code>DiplomaticTrade</code> agreement to propose.
@@ -723,6 +728,7 @@ public abstract class ServerAPI {
     /**
      * Handler server query-response for diplomatic messages.
      *
+     * @param game the game
      * @param ourUnit Out <code>Unit</code> conducting the diplomacy.
      * @param otherUnit The other <code>Unit</code> to negotiate with.
      * @param agreement The <code>DiplomaticTrade</code> agreement to propose.
@@ -747,6 +753,7 @@ public abstract class ServerAPI {
     /**
      * Handler server query-response for diplomatic messages.
      *
+     * @param game the game
      * @param ourColony Out <code>Colony</code> conducting the diplomacy.
      * @param otherUnit The other <code>Unit</code> to negotiate with.
      * @param agreement The <code>DiplomaticTrade</code> agreement to propose.
@@ -869,6 +876,7 @@ public abstract class ServerAPI {
     /**
      * Server query-response to get a list of goods for sale from a settlement.
      *
+     * @param game the game
      * @param unit The <code>Unit</code> that is trading.
      * @param settlement The <code>Settlement</code> that is trading.
      * @return The goods for sale in the settlement,

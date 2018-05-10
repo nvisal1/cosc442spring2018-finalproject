@@ -30,6 +30,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when naming a new region.
  */
@@ -147,6 +148,15 @@ public class NewRegionNameMessage extends DOMMessage {
         return handleDiscovery(server, player, serverPlayer, tile);
     }
 
+	/**
+	 * Handle discovery.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param tile the tile
+	 * @return the element
+	 */
 	private Element handleDiscovery(FreeColServer server, Player player, final ServerPlayer serverPlayer, Tile tile) {
 		Unit unit;
         try {

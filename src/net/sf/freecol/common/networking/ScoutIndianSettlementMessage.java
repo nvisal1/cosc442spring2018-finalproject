@@ -33,6 +33,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when scouting a native settlement.
  */
@@ -90,6 +91,14 @@ public class ScoutIndianSettlementMessage extends DOMMessage {
         return handleScouting(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle scouting.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleScouting(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

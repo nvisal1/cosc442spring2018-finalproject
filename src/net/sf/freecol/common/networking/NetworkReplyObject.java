@@ -20,6 +20,7 @@
 package net.sf.freecol.common.networking;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Class for storing a network response.  If the response has not been
  * set when {@link #getResponse} has been called, this method will
@@ -27,8 +28,13 @@ package net.sf.freecol.common.networking;
  */
 public class NetworkReplyObject {
 
+    /** The response. */
     private Object response = null;
+    
+    /** The response given. */
     private boolean responseGiven = false;
+    
+    /** The network reply id. */
     private final int networkReplyId;
 
 

@@ -39,22 +39,29 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Class for parsing raw message data into an XML-tree and for creating new
  * XML-trees.
  */
 public class Message {
 
+    /** The Constant logger. */
     protected static final Logger logger = Logger.getLogger(Message.class.getName());
 
+    /** The Constant FREECOL_PROTOCOL_VERSION. */
     private static final String FREECOL_PROTOCOL_VERSION = "0.1.6";
 
+    /** The Constant INVALID_MESSAGE. */
     private static final String INVALID_MESSAGE = "invalid";
 
     /** The actual Message data. */
     protected Document document;
 
 
+    /**
+     * Instantiates a new message.
+     */
     protected Message() {
         // empty constructor
     }
@@ -62,10 +69,10 @@ public class Message {
     /**
      * Constructs a new Message with data from the given String. The
      * constructor to use if this is an INCOMING message.
-     * 
+     *
      * @param msg The raw message data.
-     * @exception IOException should not be thrown.
      * @exception SAXException if thrown during parsing.
+     * @exception IOException should not be thrown.
      */
     public Message(String msg) throws SAXException, IOException {
         this(new InputSource(new StringReader(msg)));
@@ -74,11 +81,11 @@ public class Message {
     /**
      * Constructs a new Message with data from the given InputStream. The
      * constructor to use if this is an INCOMING message.
-     * 
+     *
      * @param inputStream The <code>InputStream</code> to get the XML-data
      *            from.
-     * @exception IOException if thrown by the <code>InputStream</code>.
      * @exception SAXException if thrown during parsing.
+     * @exception IOException if thrown by the <code>InputStream</code>.
      */
     public Message(InputStream inputStream) throws SAXException, IOException {
         this(new InputSource(inputStream));
@@ -87,11 +94,11 @@ public class Message {
     /**
      * Constructs a new Message with data from the given InputSource. The
      * constructor to use if this is an INCOMING message.
-     * 
+     *
      * @param inputSource The <code>InputSource</code> to get the XML-data
      *            from.
-     * @exception IOException if thrown by the <code>InputSource</code>.
      * @exception SAXException if thrown during parsing.
+     * @exception IOException if thrown by the <code>InputSource</code>.
      */
     private Message(InputSource inputSource) throws SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

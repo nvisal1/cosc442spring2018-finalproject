@@ -392,15 +392,13 @@ public class ServerPlayer extends Player implements ServerModelObject {
         final Specification spec = getGame().getSpecification();
 
         // Set initial immigration target
-        int i0 = spec.getInteger(GameOptions.INITIAL_IMMIGRATION);
-        immigrationRequired = (int)applyModifiers((float)i0, null,
-            Modifier.RELIGIOUS_UNREST_BONUS);
+        initTarget(spec);
 
         // Add initial gold
-        modifyGold(spec.getInteger(GameOptions.STARTING_MONEY));
+        initGold(spec);
 
         // Choose starting immigrants
-        ((ServerEurope)getEurope()).initializeMigration(random);
+        chooseStarting(random);
 
         // Randomize the initial market prices
         Market market = getMarket();
@@ -410,31 +408,52 @@ public class ServerPlayer extends Player implements ServerModelObject {
             String prefix = "model.option."
                 + type.getSuffix("model.goods.");
             // these options are not available for all goods types
-            if (spec.hasOption(prefix + ".minimumPrice")
-                && spec.hasOption(prefix + ".maximumPrice")) {
-                int min = spec.getInteger(prefix + ".minimumPrice");
-                int max = spec.getInteger(prefix + ".maximumPrice");
-                if (max < min) { // User error
-                    int bad = min;
-                    min = max;
-                    max = bad;
-                } else if (max == min) continue;
-                int add = randomInt(null, null, random, max - min);
-                if (add > 0) {
-                    market.setInitialPrice(type, min + add);
-                    market.update(type);
-                    market.flushPriceChange(type);
-                    sb.append(", ").append(type.getId())
-                        .append(" -> ").append(min + add);
-                    changed = true;
-                }
-            }
+            changed = getAllGoods(random, spec, market, sb, changed, type, prefix);
         }
         if (changed) {
             logger.finest("randomizeGame(" + getId() + ") initial prices: "
                 + sb.toString().substring(2));
         }
     }
+
+	private boolean getAllGoods(Random random, final Specification spec, Market market, StringBuilder sb,
+			boolean changed, GoodsType type, String prefix) {
+		if (spec.hasOption(prefix + ".minimumPrice")
+		    && spec.hasOption(prefix + ".maximumPrice")) {
+		    int min = spec.getInteger(prefix + ".minimumPrice");
+		    int max = spec.getInteger(prefix + ".maximumPrice");
+		    if (max < min) { // User error
+		        int bad = min;
+		        min = max;
+		        max = bad;
+		    } else if (max == min)
+				return changed;
+		    int add = randomInt(null, null, random, max - min);
+		    if (add > 0) {
+		        market.setInitialPrice(type, min + add);
+		        market.update(type);
+		        market.flushPriceChange(type);
+		        sb.append(", ").append(type.getId())
+		            .append(" -> ").append(min + add);
+		        changed = true;
+		    }
+		}
+		return changed;
+	}
+
+	private void chooseStarting(Random random) {
+		((ServerEurope)getEurope()).initializeMigration(random);
+	}
+
+	private void initGold(final Specification spec) {
+		modifyGold(spec.getInteger(GameOptions.STARTING_MONEY));
+	}
+
+	private void initTarget(final Specification spec) {
+		int i0 = spec.getInteger(GameOptions.INITIAL_IMMIGRATION);
+        immigrationRequired = (int)applyModifiers((float)i0, null,
+            Modifier.RELIGIOUS_UNREST_BONUS);
+	}
 
     /**
      * Checks if this player has died.
@@ -555,7 +574,11 @@ public class ServerPlayer extends Player implements ServerModelObject {
         }
 
         // A colonist is required.
-        if (hasColonist) {
+        return colonistRequired(spec, hasColonist, europe, goldNeeded);
+    }
+
+	private int colonistRequired(final Specification spec, boolean hasColonist, final Europe europe, int goldNeeded) {
+		if (hasColonist) {
             logger.info(getName() + " alive, has waiting colonist.");
             return IS_ALIVE;
         } else if (europe == null) {
@@ -578,7 +601,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
         // the cutover year.
         logger.info(getName() + " survives by autorecruit.");
         return AUTORECRUIT;
-    }
+	}
 
     /**
      * Check if a REF player has been defeated and should surrender.
@@ -604,7 +627,12 @@ public class ServerPlayer extends Player implements ServerModelObject {
         boolean naval = false;
         int land = 0;
         int power = 0;
-        for (Unit u : getUnits()) {
+        return checkDefeated(landREFUnitsRequired, cm, naval, land, power);
+    }
+
+	private boolean checkDefeated(final int landREFUnitsRequired, final CombatModel cm, boolean naval, int land,
+			int power) {
+		for (Unit u : getUnits()) {
             if (u.isNaval()) naval = true; else {
                 if (u.hasAbility(Ability.REF_UNIT)) {
                     land++;
@@ -626,7 +654,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
 
         // REF is defeated
         return true;
-    }
+	}
 
     /**
      * Kill off a player and clear out its remains.
@@ -657,29 +685,13 @@ public class ServerPlayer extends Player implements ServerModelObject {
         }
 
         // Remove settlements.  Update formerly owned tiles.
-        List<Settlement> settlements = getSettlements();
-        while (!settlements.isEmpty()) {
-            csDisposeSettlement(settlements.remove(0), cs);
-        }
+        removeSettlements(cs);
 
         // Clean up remaining tile ownerships
-        for (Tile tile : getGame().getMap().getAllTiles()) {
-            if (tile.getOwner() == this) {
-                tile.cacheUnseen();//+til
-                tile.changeOwnership(null, null);//-til
-                cs.add(See.perhaps().always(this), tile);
-            }
-        }
+        cleanUpRemaining(cs);
 
         // Remove units
-        List<Unit> units = getUnits();
-        while (!units.isEmpty()) {
-            Unit u = units.remove(0);
-            if (u.hasTile()) cs.add(See.perhaps(), u.getTile());
-            cs.addRemove(See.perhaps().always(this),
-                         u.getLocation(), u);//-vis(this)
-            u.dispose();
-        }
+        removeUnits(cs);
 
         // Remove European stuff
         if (market != null) {
@@ -706,6 +718,34 @@ public class ServerPlayer extends Player implements ServerModelObject {
 
         invalidateCanSeeTiles();//+vis(this)
     }
+
+	private void removeUnits(ChangeSet cs) {
+		List<Unit> units = getUnits();
+        while (!units.isEmpty()) {
+            Unit u = units.remove(0);
+            if (u.hasTile()) cs.add(See.perhaps(), u.getTile());
+            cs.addRemove(See.perhaps().always(this),
+                         u.getLocation(), u);//-vis(this)
+            u.dispose();
+        }
+	}
+
+	private void cleanUpRemaining(ChangeSet cs) {
+		for (Tile tile : getGame().getMap().getAllTiles()) {
+            if (tile.getOwner() == this) {
+                tile.cacheUnseen();//+til
+                tile.changeOwnership(null, null);//-til
+                cs.add(See.perhaps().always(this), tile);
+            }
+        }
+	}
+
+	private void removeSettlements(ChangeSet cs) {
+		List<Settlement> settlements = getSettlements();
+        while (!settlements.isEmpty()) {
+            csDisposeSettlement(settlements.remove(0), cs);
+        }
+	}
 
     /**
      * Withdraw a player from the new world.
@@ -814,7 +854,12 @@ public class ServerPlayer extends Player implements ServerModelObject {
         }
 
         // Select one from each father type
-        List<FoundingFather> randomFathers = new ArrayList<>();
+        return selectFather(random, choices);
+    }
+
+	private List<FoundingFather> selectFather(Random random,
+			EnumMap<FoundingFatherType, List<RandomChoice<FoundingFather>>> choices) {
+		List<FoundingFather> randomFathers = new ArrayList<>();
         LogBuilder lb = new LogBuilder(64);
         lb.add("Random fathers for ", getDebugName());
         for (FoundingFatherType type : FoundingFatherType.values()) {
@@ -830,7 +875,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
         }
         lb.log(logger, Level.INFO);
         return randomFathers;
-    }
+	}
 
     /**
      * Add a HistoryEvent to this player.
@@ -1272,7 +1317,12 @@ public class ServerPlayer extends Player implements ServerModelObject {
         final int incomeBeforeTaxes = market.getSalePrice(type, amount);
         final int incomeAfterTaxes = ((100 - tax) * incomeBeforeTaxes) / 100;
         
-        modifyGold(incomeAfterTaxes);
+        return determineAmount(container, type, amount, market, incomeBeforeTaxes, incomeAfterTaxes);
+    }
+
+	private int determineAmount(GoodsContainer container, GoodsType type, int amount, final Market market,
+			final int incomeBeforeTaxes, final int incomeAfterTaxes) {
+		modifyGold(incomeAfterTaxes);
         market.modifySales(type, amount);
         if (container != null) container.addGoods(type, -amount);
         market.modifyIncomeBeforeTaxes(type, incomeBeforeTaxes);
@@ -1281,7 +1331,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
             getGame().getTurn(), Modifier.TRADE_BONUS, type);
         market.addGoodsToMarket(type, marketAmount);
         return marketAmount;
-    }
+	}
 
     /**
      * Adds a player to the list of players for whom the stance has changed.

@@ -36,11 +36,13 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import org.xml.sax.SAXException;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The thread that checks for incoming messages.
  */
 final class ReceivingThread extends Thread {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ReceivingThread.class.getName());
 
     /**
@@ -54,20 +56,28 @@ final class ReceivingThread extends Thread {
      */
     private static class FreeColNetworkInputStream extends InputStream {
 
+        /** The Constant BUFFER_SIZE. */
         private static final int BUFFER_SIZE = 16384;
 
+        /** The Constant END_OF_STREAM. */
         private static final char END_OF_STREAM = '\n';
 
+        /** The in. */
         private final InputStream in;
 
+        /** The buffer. */
         private final byte[] buffer = new byte[BUFFER_SIZE];
 
+        /** The b start. */
         private int bStart = 0;
 
+        /** The b end. */
         private int bEnd = 0;
 
+        /** The empty. */
         private boolean empty = true;
 
+        /** The wait. */
         private boolean wait = false;
 
 
@@ -103,6 +113,12 @@ final class ReceivingThread extends Thread {
             return checkFill();
         }
 
+		/**
+		 * Check fill.
+		 *
+		 * @return true, if successful
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
 		private boolean checkFill() throws IOException {
 			int r;
             if (this.bStart < this.bEnd) {
@@ -151,12 +167,13 @@ final class ReceivingThread extends Thread {
 
         /**
          * Reads from the buffer and returns the data.
-         * 
+         *
          * @param b The buffer to put the data in.
          * @param off The offset to use when writing the data.
          * @param len The maximum number of bytes to read.
-         * @return The actual number of bytes read, or -1 if the 
+         * @return The actual number of bytes read, or -1 if the
          *     message has ended ({@link #END_OF_STREAM} was encountered).
+         * @throws IOException Signals that an I/O exception has occurred.
          */
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
@@ -207,10 +224,11 @@ final class ReceivingThread extends Thread {
 
     /**
      * The constructor to use.
-     * 
+     *
      * @param connection The <code>Connection</code> this
      *            <code>ReceivingThread</code> belongs to.
      * @param in The stream to read from.
+     * @param threadName the thread name
      */
     ReceivingThread(Connection connection, InputStream in, String threadName) {
         super(threadName + "-ReceivingThread-" + connection);
@@ -248,6 +266,8 @@ final class ReceivingThread extends Thread {
 
     /**
      * Checks if this thread should run.
+     *
+     * @return true, if successful
      */
     private synchronized boolean shouldRun() {
         return this.shouldRun;
@@ -267,6 +287,8 @@ final class ReceivingThread extends Thread {
 
     /**
      * Disconnects this thread.
+     *
+     * @param reason the reason
      */
     private void disconnect(String reason) {
         askToStop();

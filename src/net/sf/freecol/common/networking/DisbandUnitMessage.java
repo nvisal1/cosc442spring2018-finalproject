@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when disbanding a unit.
  */
@@ -79,6 +80,14 @@ public class DisbandUnitMessage extends DOMMessage {
         return tryToClear(server, player, serverPlayer);
     }
 
+	/**
+	 * Try to clear.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element tryToClear(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

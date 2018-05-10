@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when looting cargo.
  */
@@ -92,7 +93,9 @@ public class LootCargoMessage extends DOMMessage {
     /**
      * Public accessor to help the client in game controller.
      *
+     * @param game the game
      * @return The winner unit.
+     * @throws ClassCastException the class cast exception
      */
     public Unit getUnit(Game game) throws ClassCastException {
         return game.getFreeColGameObject(winnerId, Unit.class);

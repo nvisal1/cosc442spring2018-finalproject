@@ -33,6 +33,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent to choose a founding father.
  */
@@ -76,6 +77,12 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
         checkFoundingFathers(element, spec);
     }
 
+	/**
+	 * Check founding fathers.
+	 *
+	 * @param element the element
+	 * @param spec the spec
+	 */
 	private void checkFoundingFathers(Element element, final Specification spec) {
 		for (FoundingFatherType type : FoundingFatherType.values()) {
             String id = element.getAttribute(type.toString());
@@ -104,6 +111,7 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
      * Sets the chosen father.
      *
      * @param ff The <code>FoundingFather</code> to choose.
+     * @return the choose founding father message
      */
     public final ChooseFoundingFatherMessage setFather(FoundingFather ff) {
         this.foundingFatherId = (ff == null) ? null : ff.getId();
@@ -140,6 +148,14 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
         return handleServePlayer(serverPlayer, offered, ff);
     }
 
+	/**
+	 * Handle serve player.
+	 *
+	 * @param serverPlayer the server player
+	 * @param offered the offered
+	 * @param ff the ff
+	 * @return the element
+	 */
 	private Element handleServePlayer(final ServerPlayer serverPlayer, final List<FoundingFather> offered,
 			final FoundingFather ff) {
 		if (!serverPlayer.canRecruitFoundingFather()) {
