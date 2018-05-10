@@ -60,16 +60,21 @@ import net.sf.freecol.server.control.ChangeSet.See;
 import net.sf.freecol.server.model.ServerPlayer;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The server version of a colony.
  */
 public class ServerColony extends Colony implements ServerModelObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ServerColony.class.getName());
 
 
     /**
      * Trivial constructor required for all ServerModelObjects.
+     *
+     * @param game the game
+     * @param id the id
      */
     public ServerColony(Game game, String id) {
         super(game, id);
@@ -111,7 +116,11 @@ public class ServerColony extends Colony implements ServerModelObject {
         // addBuilding because that will check build queue integrity,
         // and these might fail the population check.
         // FIXME: express this in the spec somehow.
-        if (isLandLocked()) {
+        defaultProductionQueue(spec);
+    }
+
+	private void defaultProductionQueue(Specification spec) {
+		if (isLandLocked()) {
             buildQueue.add(spec.getBuildingType("model.building.warehouse"));
         } else {
             buildQueue.add(spec.getBuildingType("model.building.docks"));
@@ -122,7 +131,7 @@ public class ServerColony extends Colony implements ServerModelObject {
                 populationQueue.add(unitType);
             }
         }
-    }
+	}
 
     /**
      * New turn for this colony.
@@ -157,28 +166,7 @@ public class ServerColony extends Colony implements ServerModelObject {
         container.saveState();
 
         // Check for learning by experience
-        for (WorkLocation workLocation : getCurrentWorkLocations()) {
-            ((ServerModelObject)workLocation).csNewTurn(random, lb, cs);
-            ProductionInfo productionInfo = getProductionInfo(workLocation);
-            if (productionInfo == null) continue;
-            if (!workLocation.isEmpty()) {
-                for (AbstractGoods goods : productionInfo.getProduction()) {
-                    UnitType expert = spec.getExpertForProducing(goods.getType());
-                    int experience = goods.getAmount() / workLocation.getUnitCount();
-                    for (Unit unit : workLocation.getUnitList()) {
-                        if (goods.getType() == unit.getExperienceType()
-                            && unit.getType().canBeUpgraded(expert, ChangeType.EXPERIENCE)) {
-                            unit.setExperience(unit.getExperience() + experience);
-                            cs.addPartial(See.only(owner), unit, "experience");
-                        }
-                    }
-                }
-            }
-            if (workLocation instanceof ServerBuilding) {
-                // FIXME: generalize to other WorkLocations?
-                ((ServerBuilding)workLocation).csCheckMissingInput(productionInfo, cs);
-            }
-        }
+        checkLearningExperience(random, lb, cs, spec, owner);
 
         // Check the build queues and build new stuff.  If a queue
         // does a build add it to the built list, so that we can
@@ -322,39 +310,7 @@ public class ServerColony extends Colony implements ServerModelObject {
         // Export goods if custom house is built.
         // Do not flush price changes yet, as any price change may change
         // yet again in csYearlyGoodsAdjust.
-        if (hasAbility(Ability.EXPORT)) {
-            LogBuilder lb2 = new LogBuilder(64);
-            lb2.add(" ");
-            lb2.mark();
-            for (Goods goods : getCompactGoods()) {
-                GoodsType type = goods.getType();
-                ExportData data = getExportData(type);
-                if (!data.getExported()
-                    || !owner.canTrade(goods.getType(), Market.Access.CUSTOM_HOUSE)) continue;
-                int amount = goods.getAmount() - data.getExportLevel();
-                if (amount <= 0) continue;
-                int oldGold = owner.getGold();
-                int marketAmount = owner.sell(container, type, amount);
-                if (marketAmount > 0) {
-                    owner.addExtraTrade(new AbstractGoods(type, marketAmount));
-                }
-                StringTemplate st = StringTemplate.template("model.colony.customs.saleData")
-                    .addAmount("%amount%", amount)
-                    .addNamed("%goods%", type)
-                    .addAmount("%gold%", (owner.getGold() - oldGold));
-                lb2.add(Messages.message(st), ", ");
-            }
-            if (lb2.grew()) {
-                lb2.shrink(", ");
-                cs.addMessage(See.only(owner),
-                    new ModelMessage(ModelMessage.MessageType.GOODS_MOVEMENT,
-                                     "model.colony.customs.sale", this)
-                        .addName("%colony%", getName())
-                        .addName("%data%", lb2.toString()));
-                cs.addPartial(See.only(owner), owner, "gold");
-                lb.add(lb2.toString());
-            }
-        }
+        exportGoods(lb, cs, owner, container);
 
         // Throw away goods there is no room for, and warn about
         // levels that will be exceeded next turn
@@ -407,30 +363,11 @@ public class ServerColony extends Colony implements ServerModelObject {
             }
 
             // No problem this turn, but what about the next?
-            if (!(exportData.getExported()
-                  && hasAbility(Ability.EXPORT)
-                  && owner.canTrade(type, Market.Access.CUSTOM_HOUSE))
-                && amount <= limit) {
-                int loss = amount + getNetProductionOf(type) - limit;
-                if (loss > 0) {
-                    cs.addMessage(See.only(owner),
-                        new ModelMessage(ModelMessage.MessageType.WAREHOUSE_CAPACITY,
-                                         "model.colony.warehouseSoonFull",
-                                         this, type)
-                            .addNamed("%goods%", goods)
-                            .addName("%colony%", getName())
-                            .addAmount("%amount%", loss));
-                }
-            }
+            checkNextTurn(cs, owner, limit, goods, type, exportData, amount);
         }
 
         // Check for free buildings
-        for (BuildingType buildingType : spec.getBuildingTypeList()) {
-            if (isAutomaticBuild(buildingType)) {
-                buildBuilding(new ServerBuilding(getGame(), this,
-                                                 buildingType));//-til
-            }
-        }
+        checkFreeBuildings(spec);
         checkBuildQueueIntegrity(true);
 
         // If a build queue is empty, check that we are not producing
@@ -462,7 +399,41 @@ public class ServerColony extends Colony implements ServerModelObject {
 
         // Update SoL.
         updateSoL();
-        if (sonsOfLiberty / 10 != oldSonsOfLiberty / 10) {
+        SoLUpdate(cs, spec, owner);
+        updateProductionBonus();
+        // We have to wait for the production bonus to stabilize
+        // before checking for completion of training.  This is a rare
+        // case so it is not worth reordering the work location calls
+        // to csNewTurn.
+        checkTurn(cs);
+
+        // Try to update minimally.
+        updateMinimum(lb, cs, owner, tile, tileDirty);
+    }
+
+	private void updateMinimum(LogBuilder lb, ChangeSet cs, final ServerPlayer owner, final Tile tile,
+			boolean tileDirty) {
+		if (tileDirty) {
+            cs.add(See.perhaps(), tile);
+        } else {
+            cs.add(See.only(owner), this);
+        }
+        lb.add(", ");
+	}
+
+	private void checkTurn(ChangeSet cs) {
+		for (WorkLocation workLocation : getCurrentWorkLocations()) {
+            if (workLocation.canTeach()) {
+                ServerBuilding building = (ServerBuilding)workLocation;
+                for (Unit teacher : building.getUnitList()) {
+                    building.csCheckTeach(teacher, cs);
+                }
+            }
+        }
+	}
+
+	private void SoLUpdate(ChangeSet cs, final Specification spec, final ServerPlayer owner) {
+		if (sonsOfLiberty / 10 != oldSonsOfLiberty / 10) {
             cs.addMessage(See.only(owner),
                 new ModelMessage(ModelMessage.MessageType.SONS_OF_LIBERTY,
                                  (sonsOfLiberty > oldSonsOfLiberty)
@@ -478,28 +449,97 @@ public class ServerColony extends Colony implements ServerModelObject {
                 cs.addMessage(See.only(owner), govMgtMessage);
             }
         }
-        updateProductionBonus();
-        // We have to wait for the production bonus to stabilize
-        // before checking for completion of training.  This is a rare
-        // case so it is not worth reordering the work location calls
-        // to csNewTurn.
-        for (WorkLocation workLocation : getCurrentWorkLocations()) {
-            if (workLocation.canTeach()) {
-                ServerBuilding building = (ServerBuilding)workLocation;
-                for (Unit teacher : building.getUnitList()) {
-                    building.csCheckTeach(teacher, cs);
-                }
+	}
+
+	private void checkFreeBuildings(final Specification spec) {
+		for (BuildingType buildingType : spec.getBuildingTypeList()) {
+            if (isAutomaticBuild(buildingType)) {
+                buildBuilding(new ServerBuilding(getGame(), this,
+                                                 buildingType));//-til
             }
         }
+	}
 
-        // Try to update minimally.
-        if (tileDirty) {
-            cs.add(See.perhaps(), tile);
-        } else {
-            cs.add(See.only(owner), this);
+	private void checkNextTurn(ChangeSet cs, final ServerPlayer owner, int limit, Goods goods, GoodsType type,
+			ExportData exportData, int amount) {
+		if (!(exportData.getExported()
+		      && hasAbility(Ability.EXPORT)
+		      && owner.canTrade(type, Market.Access.CUSTOM_HOUSE))
+		    && amount <= limit) {
+		    int loss = amount + getNetProductionOf(type) - limit;
+		    if (loss > 0) {
+		        cs.addMessage(See.only(owner),
+		            new ModelMessage(ModelMessage.MessageType.WAREHOUSE_CAPACITY,
+		                             "model.colony.warehouseSoonFull",
+		                             this, type)
+		                .addNamed("%goods%", goods)
+		                .addName("%colony%", getName())
+		                .addAmount("%amount%", loss));
+		    }
+		}
+	}
+
+	private void exportGoods(LogBuilder lb, ChangeSet cs, final ServerPlayer owner, GoodsContainer container) {
+		if (hasAbility(Ability.EXPORT)) {
+            LogBuilder lb2 = new LogBuilder(64);
+            lb2.add(" ");
+            lb2.mark();
+            for (Goods goods : getCompactGoods()) {
+                GoodsType type = goods.getType();
+                ExportData data = getExportData(type);
+                if (!data.getExported()
+                    || !owner.canTrade(goods.getType(), Market.Access.CUSTOM_HOUSE)) continue;
+                int amount = goods.getAmount() - data.getExportLevel();
+                if (amount <= 0) continue;
+                int oldGold = owner.getGold();
+                int marketAmount = owner.sell(container, type, amount);
+                if (marketAmount > 0) {
+                    owner.addExtraTrade(new AbstractGoods(type, marketAmount));
+                }
+                StringTemplate st = StringTemplate.template("model.colony.customs.saleData")
+                    .addAmount("%amount%", amount)
+                    .addNamed("%goods%", type)
+                    .addAmount("%gold%", (owner.getGold() - oldGold));
+                lb2.add(Messages.message(st), ", ");
+            }
+            if (lb2.grew()) {
+                lb2.shrink(", ");
+                cs.addMessage(See.only(owner),
+                    new ModelMessage(ModelMessage.MessageType.GOODS_MOVEMENT,
+                                     "model.colony.customs.sale", this)
+                        .addName("%colony%", getName())
+                        .addName("%data%", lb2.toString()));
+                cs.addPartial(See.only(owner), owner, "gold");
+                lb.add(lb2.toString());
+            }
         }
-        lb.add(", ");
-    }
+	}
+
+	private void checkLearningExperience(Random random, LogBuilder lb, ChangeSet cs, final Specification spec,
+			final ServerPlayer owner) {
+		for (WorkLocation workLocation : getCurrentWorkLocations()) {
+            ((ServerModelObject)workLocation).csNewTurn(random, lb, cs);
+            ProductionInfo productionInfo = getProductionInfo(workLocation);
+            if (productionInfo == null) continue;
+            if (!workLocation.isEmpty()) {
+                for (AbstractGoods goods : productionInfo.getProduction()) {
+                    UnitType expert = spec.getExpertForProducing(goods.getType());
+                    int experience = goods.getAmount() / workLocation.getUnitCount();
+                    for (Unit unit : workLocation.getUnitList()) {
+                        if (goods.getType() == unit.getExperienceType()
+                            && unit.getType().canBeUpgraded(expert, ChangeType.EXPERIENCE)) {
+                            unit.setExperience(unit.getExperience() + experience);
+                            cs.addPartial(See.only(owner), unit, "experience");
+                        }
+                    }
+                }
+            }
+            if (workLocation instanceof ServerBuilding) {
+                // FIXME: generalize to other WorkLocations?
+                ((ServerBuilding)workLocation).csCheckMissingInput(productionInfo, cs);
+            }
+        }
+	}
 
     /**
      * Is a goods type needed for a buildable that this colony could
@@ -552,15 +592,15 @@ public class ServerColony extends Colony implements ServerModelObject {
 
     /**
      * Eject units to any available work location.
-     *
+     * 
      * Called on building type changes, see below and
-     * @see ServerPlayer#csDamageBuilding
-     *
-     * -til: Might change the visible colony size.
      *
      * @param workLocation The <code>WorkLocation</code> to eject from.
      * @param units A list of <code>Unit</code>s to eject.
      * @return True if units were ejected.
+     * @see ServerPlayer#csDamageBuilding
+     * 
+     * -til: Might change the visible colony size.
      */
     public boolean ejectUnits(WorkLocation workLocation, List<Unit> units) {
         if (units == null || units.isEmpty()) return false;

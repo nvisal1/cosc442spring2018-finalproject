@@ -39,11 +39,13 @@ import net.sf.freecol.server.ai.Wish;
 import net.sf.freecol.server.ai.WorkerWish;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for realizing a <code>Wish</code>.
  */
 public class WishRealizationMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(WishRealizationMission.class.getName());
 
     /** The tag for this mission. */
@@ -97,7 +99,7 @@ public class WishRealizationMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -232,7 +234,10 @@ public class WishRealizationMission extends Mission {
 
     // Serialization
 
+    /** The Constant WISH_TAG. */
     private static final String WISH_TAG = "wish";
+    
+    /** The Constant OLD_GOODS_WISH_TAG. */
     // @compat 0.10.3
     private static final String OLD_GOODS_WISH_TAG = "GoodsWish";
     // end @compat

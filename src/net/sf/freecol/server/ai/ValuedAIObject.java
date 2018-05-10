@@ -30,6 +30,7 @@ import net.sf.freecol.common.model.FreeColObject;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Abstract class of AI object with a simple enclosed comparable
  * integer value.

@@ -50,11 +50,13 @@ import net.sf.freecol.server.ai.EuropeanAIPlayer;
 import net.sf.freecol.server.ai.TileImprovementPlan;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for controlling a pioneer.
  */
 public class PioneeringMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(PioneeringMission.class.getName());
 
     /** The tag for this mission. */
@@ -69,12 +71,7 @@ public class PioneeringMission extends Mission {
     /** The improvement this pioneer is to work on. */
     private TileImprovementPlan tileImprovementPlan;
 
-    /**
-     * The target location to go to:
-     *   - a tile where the tileImprovement is
-     *   - a colony to go to to equip
-     *   - just an initial colony to retarget from
-     */
+    /** The target location to go to:   - a tile where the tileImprovement is   - a colony to go to to equip   - just an initial colony to retarget from. */
     private Location target;
 
 
@@ -114,6 +111,7 @@ public class PioneeringMission extends Mission {
     /**
      * Get the best improvement associated with a tile.
      *
+     * @param tile the tile
      * @return The <code>TileImprovementPlan</code>, or null if not found.
      */
     private TileImprovementPlan getBestPlan(Tile tile) {
@@ -125,6 +123,8 @@ public class PioneeringMission extends Mission {
      * Take care to first check if the unit has a plan already, if so,
      * return that.
      *
+     * @param aiUnit the ai unit
+     * @param tile the tile
      * @return The <code>TileImprovementPlan</code>, or null if not found.
      */
     private static TileImprovementPlan getBestPlan(AIUnit aiUnit, Tile tile) {
@@ -183,7 +183,7 @@ public class PioneeringMission extends Mission {
     }
 
     /**
-     * Does a supplied unit have tools?
+     * Does a supplied unit have tools?.
      *
      * @param aiUnit The pioneer <code>AIUnit</code> to check.
      * @return True if the pioneer has tools.
@@ -193,7 +193,7 @@ public class PioneeringMission extends Mission {
     }
 
     /**
-     * Does this pioneer have tools?
+     * Does this pioneer have tools?.
      *
      * @return True if the pioneer has tools.
      */
@@ -435,7 +435,7 @@ public class PioneeringMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -445,7 +445,7 @@ public class PioneeringMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -743,6 +743,7 @@ public class PioneeringMission extends Mission {
 
     // Serialization
 
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
 
 

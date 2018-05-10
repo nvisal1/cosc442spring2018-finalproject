@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when changing a work improvement type.
  */
@@ -91,6 +92,15 @@ public class ChangeWorkImprovementTypeMessage extends DOMMessage {
         return handleChange(server, player, serverPlayer, unit);
     }
 
+	/**
+	 * Handle change.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param unit the unit
+	 * @return the element
+	 */
 	private Element handleChange(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
 		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);

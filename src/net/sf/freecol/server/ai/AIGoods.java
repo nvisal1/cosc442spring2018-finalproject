@@ -43,11 +43,13 @@ import net.sf.freecol.server.ai.mission.Mission;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single {@link Goods}.
  */
 public class AIGoods extends TransportableAIObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(AIGoods.class.getName());
 
     /** The underlying goods. */
@@ -187,6 +189,16 @@ public class AIGoods extends TransportableAIObject {
         return checkTransport(amount, carrier, type, oldAmount, result);
     }
 
+	/**
+	 * Check transport.
+	 *
+	 * @param amount the amount
+	 * @param carrier the carrier
+	 * @param type the type
+	 * @param oldAmount the old amount
+	 * @param result the result
+	 * @return true, if successful
+	 */
 	private boolean checkTransport(int amount, final Unit carrier, final GoodsType type, int oldAmount,
 			boolean result) {
 		if (result) {
@@ -250,6 +262,13 @@ public class AIGoods extends TransportableAIObject {
         return getPathNode(carrier, dst);
     }
 
+	/**
+	 * Gets the path node.
+	 *
+	 * @param carrier the carrier
+	 * @param dst the dst
+	 * @return the path node
+	 */
 	private PathNode getPathNode(Unit carrier, Location dst) {
 		PathNode path = (goods.getLocation() == carrier) ? carrier.findPath(dst)
             : (goods.getLocation() instanceof Unit) ? null
@@ -316,6 +335,18 @@ public class AIGoods extends TransportableAIObject {
         return returnTransport(carrier, aiCarrier, type, failed, oldAmount, goodsAmount, amount);
     }
 
+	/**
+	 * Return transport.
+	 *
+	 * @param carrier the carrier
+	 * @param aiCarrier the ai carrier
+	 * @param type the type
+	 * @param failed the failed
+	 * @param oldAmount the old amount
+	 * @param goodsAmount the goods amount
+	 * @param amount the amount
+	 * @return true, if successful
+	 */
 	private boolean returnTransport(Unit carrier, final AIUnit aiCarrier, final GoodsType type, boolean failed,
 			int oldAmount, int goodsAmount, int amount) {
 		if (AIMessage.askLoadGoods(goods.getLocation(), type, amount,
@@ -364,6 +395,9 @@ public class AIGoods extends TransportableAIObject {
         super.dispose();
     }
 
+	/**
+	 * Disposal check.
+	 */
 	private void disposalCheck() {
 		if (destination != null) {
             if (destination instanceof Colony) {
@@ -398,6 +432,14 @@ public class AIGoods extends TransportableAIObject {
         return returnIntegrity(fix, result, why);
     }
 
+	/**
+	 * Return integrity.
+	 *
+	 * @param fix the fix
+	 * @param result the result
+	 * @param why the why
+	 * @return the int
+	 */
 	private int returnIntegrity(boolean fix, int result, String why) {
 		if (destination != null
             && ((FreeColGameObject)destination).isDisposed()) {
@@ -419,6 +461,7 @@ public class AIGoods extends TransportableAIObject {
 
     // Serialization
 
+    /** The Constant DESTINATION_TAG. */
     private static final String DESTINATION_TAG = "destination";
 
 

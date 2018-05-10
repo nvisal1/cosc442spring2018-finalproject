@@ -45,11 +45,13 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for demanding goods from a specified player.
  */
 public class IndianDemandMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(IndianDemandMission.class.getName());
 
     /** The minimum amount of goods to demand. */
@@ -208,17 +210,30 @@ public class IndianDemandMission extends Mission {
         return goods;
     }
 
+    /**
+     * Cap amount.
+     *
+     * @param amount the amount
+     * @param difficulty the difficulty
+     * @return the int
+     */
     private int capAmount(int amount, int difficulty) {
         return Math.min(Math.max(amount * difficulty / 6, GOODS_DEMAND_MIN),
                         GoodsContainer.CARGO_SIZE); // One load of goods max
     }
 
+    /**
+     * Gets the home.
+     *
+     * @param aiUnit the ai unit
+     * @return the home
+     */
     private static IndianSettlement getHome(AIUnit aiUnit) {
         return aiUnit.getUnit().getHomeIndianSettlement();
     }
 
     /**
-     * Why would this mission be invalid with the given unit?
+     * Why would this mission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason why the mission would be invalid with the unit,
@@ -263,7 +278,7 @@ public class IndianDemandMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for invalidity, or null if none found.
@@ -273,7 +288,7 @@ public class IndianDemandMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -450,7 +465,10 @@ public class IndianDemandMission extends Mission {
 
     // Serialization
 
+    /** The Constant COLONY_TAG. */
     private static final String COLONY_TAG = "colony";
+    
+    /** The Constant DEMANDED_TAG. */
     private static final String DEMANDED_TAG = "demanded";
 
 

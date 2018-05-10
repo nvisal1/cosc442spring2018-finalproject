@@ -61,6 +61,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import net.sf.freecol.server.networking.DummyConnection;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single {@link
  * Player} and is used for controlling this player.
@@ -70,6 +71,7 @@ import net.sf.freecol.server.networking.DummyConnection;
  */
 public abstract class AIPlayer extends AIObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(AIPlayer.class.getName());
 
     /** A comparator to sort AI units by location. */
@@ -161,10 +163,7 @@ public abstract class AIPlayer extends AIObject {
      * Sets the ServerPlayer this AIPlayer is controlling.
      * Used by implementing subclasses.
      *
-     * @param p The new <code>Player</code>.
-    protected void setPlayer(ServerPlayer p) {
-        player = p;
-    }
+     * @return the AI random
      */
 
     /**
@@ -211,6 +210,9 @@ public abstract class AIPlayer extends AIObject {
         createUnits();
     }
 
+	/**
+	 * Creates the units.
+	 */
 	private void createUnits() {
 		for (Unit u : getPlayer().getUnits()) {
             if (u.isDisposed()) {
@@ -288,6 +290,12 @@ public abstract class AIPlayer extends AIObject {
         return getAc(ac);
     }
 
+	/**
+	 * Gets the ac.
+	 *
+	 * @param ac the ac
+	 * @return the ac
+	 */
 	private List<AIColony> getAc(List<AIColony> ac) {
 		for (Colony colony : getPlayer().getColonies()) {
             AIColony a = getAIColony(colony);
@@ -361,6 +369,13 @@ public abstract class AIPlayer extends AIObject {
         return findDefenders(settlement, defenders);
     }
 
+	/**
+	 * Find defenders.
+	 *
+	 * @param settlement the settlement
+	 * @param defenders the defenders
+	 * @return the int
+	 */
 	private int findDefenders(Settlement settlement, int defenders) {
 		for (AIUnit au : getAIUnits()) {
             Mission dm = au.getMission(DefendSettlementMission.class);
@@ -408,6 +423,16 @@ public abstract class AIPlayer extends AIObject {
         return canAttack(attacker, attackerPlayer, defender, defenderPlayer, atWar);
     }
 
+	/**
+	 * Can attack.
+	 *
+	 * @param attacker the attacker
+	 * @param attackerPlayer the attacker player
+	 * @param defender the defender
+	 * @param defenderPlayer the defender player
+	 * @param atWar the at war
+	 * @return true, if successful
+	 */
 	private boolean canAttack(Unit attacker, Player attackerPlayer, Unit defender, Player defenderPlayer,
 			boolean atWar) {
 		if (attackerPlayer.isEuropean()) {
@@ -577,6 +602,14 @@ public abstract class AIPlayer extends AIObject {
         return activeMission(aiUnits, lb, result);
     }
 
+	/**
+	 * Active mission.
+	 *
+	 * @param aiUnits the ai units
+	 * @param lb the lb
+	 * @param result the result
+	 * @return the list
+	 */
 	private List<AIUnit> activeMission(List<AIUnit> aiUnits, LogBuilder lb, List<AIUnit> result) {
 		for (AIUnit aiu : aiUnits) {
             final Unit unit = aiu.getUnit();
@@ -598,8 +631,8 @@ public abstract class AIPlayer extends AIObject {
      *
      * @param aiUnit The <code>AIUnit</code> to perform the mission.
      * @param path A <code>PathNode</code> to the target of this mission.
-     * @param value The proposed value.
      * @param type The mission type.
+     * @param value The proposed value.
      * @return A score representing the desirability of this mission.
      */
     public abstract int adjustMission(AIUnit aiUnit, PathNode path, Class type,
@@ -632,7 +665,7 @@ public abstract class AIPlayer extends AIObject {
 
     /**
      * Called after another <code>Player</code> sends a
-     * <code>trade</code> message
+     * <code>trade</code> message.
      *
      * @param goods The goods which we are going to offer
      */
@@ -703,6 +736,7 @@ public abstract class AIPlayer extends AIObject {
 
     // Serialization
 
+    /** The Constant RANDOM_STATE_TAG. */
     private static final String RANDOM_STATE_TAG = "randomState";
 
 

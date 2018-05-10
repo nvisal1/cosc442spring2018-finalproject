@@ -34,6 +34,7 @@ import net.sf.freecol.server.ai.mission.TransportMission;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A single item in a carrier's transport list.  Any {@link Locatable}
  * which should be able to be transported by a carrier using the
@@ -67,11 +68,7 @@ public abstract class TransportableAIObject extends ValuedAIObject {
      */
     public static final int TOOLS_FOR_IMPROVEMENT = 10;
 
-    /**
-     * The extra priority value added to the base value of
-     * {@link #TOOLS_FOR_COLONY_PRIORITY}
-     * if a Pioneer is lacking tools
-     */
+    /** The extra priority value added to the base value of {@link #TOOLS_FOR_COLONY_PRIORITY} if a Pioneer is lacking tools. */
     public static final int TOOLS_FOR_PIONEER = 90;
 
     /**
@@ -317,7 +314,7 @@ public abstract class TransportableAIObject extends ValuedAIObject {
     public abstract PathNode getIntermediatePath(Unit carrier, Location dst);
 
     /**
-     * Can this transportable be carried by a given carrier unit?
+     * Can this transportable be carried by a given carrier unit?.
      *
      * @param carrier The potential carrier <code>Unit</code>.
      * @return True if the unit can carry this transportable.
@@ -360,7 +357,7 @@ public abstract class TransportableAIObject extends ValuedAIObject {
     public abstract boolean joinTransport(Unit carrier, Direction direction);
 
     /**
-     * Is there a reason to invalidate transporting this object?
+     * Is there a reason to invalidate transporting this object?.
      *
      * @return A reason to abort transport, or null if none found.
      */
@@ -369,6 +366,7 @@ public abstract class TransportableAIObject extends ValuedAIObject {
 
     // Serialization
 
+    /** The Constant TRANSPORT_TAG. */
     private static final String TRANSPORT_TAG = "transport";
 
 

@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when spying on a settlement.
  */
@@ -90,6 +91,13 @@ public class SpySettlementMessage extends DOMMessage {
         return handleSpy(server, serverPlayer);
     }
 
+	/**
+	 * Handle spy.
+	 *
+	 * @param server the server
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleSpy(FreeColServer server, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

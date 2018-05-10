@@ -56,11 +56,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Handles the network messages that arrives while in the game.
  */
 public final class AIInGameInputHandler implements MessageHandler {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(AIInGameInputHandler.class.getName());
 
     /** The player for whom I work. */
@@ -91,6 +93,13 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Inits the handler.
+	 *
+	 * @param freeColServer the free col server
+	 * @param me the me
+	 * @param aiMain the ai main
+	 */
 	private void initHandler(FreeColServer freeColServer, ServerPlayer me, AIMain aiMain) {
 		if (freeColServer == null) {
             throw new NullPointerException("freeColServer == null");
@@ -144,6 +153,15 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Determine reply.
+	 *
+	 * @param connection the connection
+	 * @param element the element
+	 * @param tag the tag
+	 * @param reply the reply
+	 * @return the element
+	 */
 	private Element determineReply(Connection connection, Element element, final String tag, Element reply) {
 		try {
             switch (tag) {
@@ -217,6 +235,14 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Return father message.
+	 *
+	 * @param aiPlayer the ai player
+	 * @param message the message
+	 * @param ff the ff
+	 * @return the element
+	 */
 	private Element returnFatherMessage(final AIPlayer aiPlayer, ChooseFoundingFatherMessage message,
 			FoundingFather ff) {
 		logger.finest(aiPlayer.getId() + " chose founding father: " + ff);
@@ -242,6 +268,14 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Return diplomacy.
+	 *
+	 * @param game the game
+	 * @param message the message
+	 * @param agreement the agreement
+	 * @return the element
+	 */
 	private Element returnDiplomacy(final Game game, final DiplomacyMessage message, final DiplomaticTrade agreement) {
 		StringBuilder sb = new StringBuilder(256);
         sb.append("AI Diplomacy: ").append(agreement);
@@ -319,6 +353,15 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Return demand message.
+	 *
+	 * @param message the message
+	 * @param unit the unit
+	 * @param colony the colony
+	 * @param accept the accept
+	 * @return the element
+	 */
 	private Element returnDemandMessage(IndianDemandMessage message, Unit unit, Colony colony, boolean accept) {
 		message.setResult(accept);
         logger.finest("AI handling native demand by " + unit
@@ -358,6 +401,16 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Return loot from cargo.
+	 *
+	 * @param message the message
+	 * @param unit the unit
+	 * @param goods the goods
+	 * @param loot the loot
+	 * @param space the space
+	 * @return the element
+	 */
 	private Element returnLootFromCargo(LootCargoMessage message, Unit unit, List<Goods> goods, List<Goods> loot,
 			int space) {
 		while (!goods.isEmpty()) {
@@ -422,6 +475,14 @@ public final class AIInGameInputHandler implements MessageHandler {
     }
 
 
+	/**
+	 * Find message.
+	 *
+	 * @param connection the connection
+	 * @param nodes the nodes
+	 * @param results the results
+	 * @return the element
+	 */
 	private Element findMessage(Connection connection, NodeList nodes, List<Element> results) {
 		for (int i = 0; i < nodes.getLength(); i++) {
             try {

@@ -26,11 +26,13 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.server.control.ChangeSet;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A type of session to handle trading.
  */
 public class TradeSession extends TransactionSession {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(TradeSession.class.getName());
 
     /** The moves the trading unit has left at start of session. */
@@ -65,41 +67,78 @@ public class TradeSession extends TransactionSession {
         canGift = unit.hasGoodsCargo();
     }
 
+    /* (non-Javadoc)
+     * @see net.sf.freecol.server.model.TransactionSession#complete(net.sf.freecol.server.control.ChangeSet)
+     */
     @Override
     public void complete(ChangeSet cs) {
         super.complete(cs);
     }
 
+    /**
+     * Gets the moves left.
+     *
+     * @return the moves left
+     */
     public int getMovesLeft() {
         return movesLeft;
     }
 
+    /**
+     * Gets the action taken.
+     *
+     * @return the action taken
+     */
     public boolean getActionTaken() {
         return actionTaken;
     }
 
+    /**
+     * Gets the buy.
+     *
+     * @return the buy
+     */
     public boolean getBuy() {
         return canBuy;
     }
 
+    /**
+     * Gets the sell.
+     *
+     * @return the sell
+     */
     public boolean getSell() {
         return canSell;
     }
 
+    /**
+     * Gets the gift.
+     *
+     * @return the gift
+     */
     public boolean getGift() {
         return canGift;
     }
 
+    /**
+     * Sets the buy.
+     */
     public void setBuy() {
         actionTaken = true;
         canBuy = false;
     }
 
+    /**
+     * Sets the sell.
+     */
     public void setSell() {
         actionTaken = true;
         canSell = false;
     }
 
+    /**
+     * Sets the gift.
+     */
     public void setGift() {
         actionTaken = true;
         canGift = false;

@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerUnit;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when embarking.
  */

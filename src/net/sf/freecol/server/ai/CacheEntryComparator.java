@@ -22,15 +22,26 @@ package net.sf.freecol.server.ai;
 import java.util.Comparator;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A special comparator to sort the production cache with.
  */
 public class CacheEntryComparator implements Comparator<ProductionCache.Entry> {
 
+    /**
+     * Compare production.
+     *
+     * @param entry1 the entry 1
+     * @param entry2 the entry 2
+     * @return the int
+     */
     public int compareProduction(ProductionCache.Entry entry1, ProductionCache.Entry entry2) {
         return entry2.getProduction() - entry1.getProduction();
     }
 
+    /* (non-Javadoc)
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
     @Override
     public int compare(ProductionCache.Entry entry1, ProductionCache.Entry entry2) {
 

@@ -33,11 +33,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when setting the trade routes.
  */
 public class SetTradeRoutesMessage extends DOMMessage {
 
+    /** The Constant idPrefix. */
     private static final String idPrefix = "shadow-";
 
     /** The trade routes to set. */
@@ -102,14 +104,32 @@ public class SetTradeRoutesMessage extends DOMMessage {
         }
     }
 
+    /**
+     * Gets the prefix.
+     *
+     * @param route the route
+     * @return the prefix
+     */
     public static String getPrefix(TradeRoute route) {
         return route.getId().substring(0, idPrefix.length());
     }
 
+    /**
+     * Removes the prefix.
+     *
+     * @param route the route
+     * @return the string
+     */
     public static String removePrefix(TradeRoute route) {
         return route.getId().substring(idPrefix.length());
     }
 
+    /**
+     * Checks for prefix.
+     *
+     * @param route the route
+     * @return true, if successful
+     */
     public static boolean hasPrefix(TradeRoute route) {
         return idPrefix.equals(getPrefix(route));
     }

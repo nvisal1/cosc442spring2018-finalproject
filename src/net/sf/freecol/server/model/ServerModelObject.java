@@ -25,6 +25,7 @@ import net.sf.freecol.common.util.LogBuilder;
 import net.sf.freecol.server.control.ChangeSet;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Interface for server-side objects which needs to store
  * extra information to a save game.

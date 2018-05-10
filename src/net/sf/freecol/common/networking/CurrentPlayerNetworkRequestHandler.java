@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A network request handler for the current player will automatically
  * return an error (&quot;not your turn&quot;) if called by a

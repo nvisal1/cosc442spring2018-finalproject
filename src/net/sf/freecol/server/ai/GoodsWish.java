@@ -35,11 +35,13 @@ import net.sf.freecol.common.util.LogBuilder;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents the need for goods within a <code>Colony</code>.
  */
 public class GoodsWish extends Wish {
 
+    /** The Constant logger. */
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(GoodsWish.class.getName());
 
@@ -176,7 +178,7 @@ public class GoodsWish extends Wish {
     }
 
     /**
-     * Does some specified goods satisfy this wish?
+     * Does some specified goods satisfy this wish?.
      *
      * @param goods The <code>Goods</code> to test.
      * @return True if the goods type matches and amount is not less than
@@ -204,8 +206,13 @@ public class GoodsWish extends Wish {
 
     // Serialization
 
+    /** The Constant AMOUNT_REQUESTED_TAG. */
     private static final String AMOUNT_REQUESTED_TAG = "amountRequested";
+    
+    /** The Constant GOODS_TYPE_TAG. */
     private static final String GOODS_TYPE_TAG = "goodsType";
+    
+    /** The Constant TRANSPORTABLE_TAG. */
     private static final String TRANSPORTABLE_TAG = "transportable";
 
 

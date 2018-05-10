@@ -62,11 +62,13 @@ import net.sf.freecol.server.control.ChangeSet.ChangePriority;
 import net.sf.freecol.server.control.ChangeSet.See;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The server representation of the game.
  */
 public class ServerGame extends Game implements ServerModelObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ServerGame.class.getName());
 
     /** Timestamp of last move, if any.  Do not serialize. */
@@ -94,8 +96,8 @@ public class ServerGame extends Game implements ServerModelObject {
      *     this <code>Game</code>.
      * @param xr The input stream containing the XML.
      * @param specification The <code>Specification</code> to use in this game.
-     * @exception XMLStreamException if an error occurred during parsing.
      * @see net.sf.freecol.server.FreeColServer#loadGame
+     * @exception XMLStreamException if an error occurred during parsing.
      */
     public ServerGame(FreeColGameObjectListener freeColGameObjectListener,
                       FreeColXMLReader xr, Specification specification)
@@ -132,11 +134,15 @@ public class ServerGame extends Game implements ServerModelObject {
      */
     public void sendToAll(ChangeSet cs, ServerPlayer... serverPlayers) {
         List<ServerPlayer> live = getConnectedPlayers();
-        for (ServerPlayer sp : serverPlayers) {
+        getAll(cs, live, serverPlayers);
+    }
+
+	private void getAll(ChangeSet cs, List<ServerPlayer> live, ServerPlayer... serverPlayers) {
+		for (ServerPlayer sp : serverPlayers) {
             if (!live.contains(sp)) live.add(sp);
         }
         sendToList(live, cs);
-    }
+	}
     
     /**
      * Send a change set to all players, optionally excluding one.
@@ -152,6 +158,7 @@ public class ServerGame extends Game implements ServerModelObject {
      * Send a change set to a list of players.
      *
      * @param serverPlayers The list of <code>ServerPlayer</code>s to send to.
+     * @param cs the cs
      */
     public void sendToList(List<ServerPlayer> serverPlayers, ChangeSet cs) {
         for (ServerPlayer s : serverPlayers) s.send(cs);
@@ -165,6 +172,11 @@ public class ServerGame extends Game implements ServerModelObject {
      * @param type The server object tag.
      * @param id The object identifier.
      * @return A trivial server object.
+     * @throws ClassNotFoundException the class not found exception
+     * @throws IllegalAccessException the illegal access exception
+     * @throws InstantiationException the instantiation exception
+     * @throws InvocationTargetException the invocation target exception
+     * @throws NoSuchMethodException the no such method exception
      */
     private Object makeServerObject(String type, String id)
         throws ClassNotFoundException, IllegalAccessException,
@@ -172,10 +184,15 @@ public class ServerGame extends Game implements ServerModelObject {
                NoSuchMethodException {
         type = "net.sf.freecol.server.model."
             + type.substring(0,1).toUpperCase() + type.substring(1);
-        Class<?> c = Class.forName(type);
+        return getServerObject(type, id);
+    }
+
+	private Object getServerObject(String type, String id) throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Class<?> c = Class.forName(type);
         return c.getConstructor(Game.class, String.class)
             .newInstance(this, id);
-    }
+	}
 
     /**
      * Collects a list of all the ServerModelObjects in this game.
@@ -231,7 +248,11 @@ public class ServerGame extends Game implements ServerModelObject {
      */
     public Player checkForWinner() {
         final Specification spec = getSpecification();
-        if (spec.getBoolean(GameOptions.VICTORY_DEFEAT_REF)) {
+        return getWinner(spec);
+    }
+
+	private Player getWinner(final Specification spec) {
+		if (spec.getBoolean(GameOptions.VICTORY_DEFEAT_REF)) {
             Player winner = find(getLiveEuropeanPlayers(null),
                 p -> p.getPlayerType() == Player.PlayerType.INDEPENDENT);
             if (winner != null) return winner;
@@ -249,11 +270,13 @@ public class ServerGame extends Game implements ServerModelObject {
             if (winners.size() == 1) return winners.get(0);
         }
         return null;
-    }
+	}
 
 
     /**
-     * Is the next player in a new turn?
+     * Is the next player in a new turn?.
+     *
+     * @return true, if is next player in new turn
      */
     public boolean isNextPlayerInNewTurn() {
         Player nextPlayer = getNextPlayer();
@@ -297,14 +320,18 @@ public class ServerGame extends Game implements ServerModelObject {
         }
 
         final Specification spec = getSpecification();
-        Event succession = spec.getEvent("model.event.spanishSuccession");
+        checkTurn(lb, cs, spec);
+    }
+
+	private void checkTurn(LogBuilder lb, ChangeSet cs, final Specification spec) {
+		Event succession = spec.getEvent("model.event.spanishSuccession");
         if (succession != null && !getSpanishSuccession()) {
             ServerPlayer loser = csSpanishSuccession(cs, lb, succession);
             // TODO: send update to loser.  It will not see anything
             // because it is no longer a live player.
             // if (loser != null) sendElement(loser, cs);
         }
-    }
+	}
 
     /**
      * Checks for and if necessary performs the War of Spanish
@@ -370,7 +397,18 @@ public class ServerGame extends Game implements ServerModelObject {
         List<Tile> tiles = new ArrayList<>();
         ServerPlayer strongest = (ServerPlayer)strongestAIPlayer;
         ServerPlayer weakest = (ServerPlayer)weakestAIPlayer;
-        for (Player player : getLiveNativePlayers(null)) {
+        findPlayers(cs, lb, tiles, strongest, weakest);
+        findColony(cs, lb, tiles, strongest, weakest);
+        findWeakest(cs, lb, strongestAIPlayer, tiles, strongest, weakest);
+
+        addString(cs, weakestAIPlayer, strongestAIPlayer, tiles);
+        
+        return getWeakest(cs, strongest, weakest);
+    }
+
+	private void findPlayers(ChangeSet cs, LogBuilder lb, List<Tile> tiles, ServerPlayer strongest,
+			ServerPlayer weakest) {
+		for (Player player : getLiveNativePlayers(null)) {
             for (IndianSettlement is : player.getIndianSettlements()) {
                 if (!is.hasMissionary(weakest)) continue;
                 lb.add(" ", is.getName(), "(mission)");
@@ -385,7 +423,11 @@ public class ServerGame extends Game implements ServerModelObject {
                 }
             }
         }
-        for (Colony colony : weakest.getColonies()) {
+	}
+
+	private void findColony(ChangeSet cs, LogBuilder lb, List<Tile> tiles, ServerPlayer strongest,
+			ServerPlayer weakest) {
+		for (Colony colony : weakest.getColonies()) {
             for (Tile t : colony.getOwnedTiles()) {
                 t.cacheUnseen();//+til
                 tiles.add(t);
@@ -396,7 +438,11 @@ public class ServerGame extends Game implements ServerModelObject {
                 strongest.exploreForSettlement(colony));
             lb.add(" ", colony.getName());
         }
-        for (Unit unit : weakest.getUnits()) {
+	}
+
+	private void findWeakest(ChangeSet cs, LogBuilder lb, Player strongestAIPlayer, List<Tile> tiles,
+			ServerPlayer strongest, ServerPlayer weakest) {
+		for (Unit unit : weakest.getUnits()) {
             if (weakest.csChangeOwner(unit, strongest, 
                     ChangeType.CAPTURE, null, cs)) { //-vis(both)
                 unit.setMovesLeft(0);
@@ -414,8 +460,10 @@ public class ServerGame extends Game implements ServerModelObject {
                 }
             }
         }
+	}
 
-        StringTemplate loser = weakestAIPlayer.getNationLabel();
+	private void addString(ChangeSet cs, Player weakestAIPlayer, Player strongestAIPlayer, List<Tile> tiles) {
+		StringTemplate loser = weakestAIPlayer.getNationLabel();
         StringTemplate winner = strongestAIPlayer.getNationLabel();
         cs.addMessage(See.all(),
             new ModelMessage(ModelMessage.MessageType.FOREIGN_DIPLOMACY,
@@ -431,8 +479,10 @@ public class ServerGame extends Game implements ServerModelObject {
         setSpanishSuccession(true);
         cs.addPartial(See.all(), this, "spanishSuccession");
         cs.add(See.perhaps(), tiles);
-        
-        weakest.csKill(cs);//+vis(weakest)
+	}
+
+	private ServerPlayer getWeakest(ChangeSet cs, ServerPlayer strongest, ServerPlayer weakest) {
+		weakest.csKill(cs);//+vis(weakest)
         strongest.invalidateCanSeeTiles();//+vis(strongest)
 
         // Trace fail where not all units are transferred
@@ -445,7 +495,7 @@ public class ServerGame extends Game implements ServerModelObject {
         }
 
         return weakest;
-    }
+	}
 
 
     // Interface Object

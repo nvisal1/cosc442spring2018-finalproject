@@ -32,11 +32,13 @@ import net.sf.freecol.common.model.Location;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents a need for something at a given <code>Location</code>.
  */
 public abstract class Wish extends ValuedAIObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(Wish.class.getName());
 
     /** The requesting location of this wish. */
@@ -100,10 +102,10 @@ public abstract class Wish extends ValuedAIObject {
     /**
      * Gets the <code>TransportableAIObject</code> assigned to this wish.
      *
-     * @see #setTransportable
-     * @see net.sf.freecol.server.ai.mission.WishRealizationMission
      * @return The <code>TransportableAIObject</code> which will
      *     realize this wish, or null if none has been assigned.
+     * @see #setTransportable
+     * @see net.sf.freecol.server.ai.mission.WishRealizationMission
      */
     public TransportableAIObject getTransportable() {
         return transportable;
@@ -183,7 +185,10 @@ public abstract class Wish extends ValuedAIObject {
 
     // Serialization
 
+    /** The Constant DESTINATION_TAG. */
     private static final String DESTINATION_TAG = "destination";
+    
+    /** The Constant TRANSPORTABLE_TAG. */
     private static final String TRANSPORTABLE_TAG = "transportable";
 
 

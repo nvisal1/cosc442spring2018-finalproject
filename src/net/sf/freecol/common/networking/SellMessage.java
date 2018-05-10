@@ -31,6 +31,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when selling at an IndianSettlement.
  */
@@ -88,7 +89,7 @@ public class SellMessage extends DOMMessage {
     // Public interface
 
     /**
-     * What is the price currently negotiated for this transaction?
+     * What is the price currently negotiated for this transaction?.
      *
      * @return The current price.
      */
@@ -117,6 +118,14 @@ public class SellMessage extends DOMMessage {
         return handleSell(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle sell.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleSell(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

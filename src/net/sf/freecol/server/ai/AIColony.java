@@ -80,13 +80,16 @@ import net.sf.freecol.server.ai.mission.WishRealizationMission;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single {@link Colony}.
  */
 public class AIColony extends AIObject implements PropertyChangeListener {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(AIColony.class.getName());
 
+    /** The Constant LIST_ELEMENT. */
     private static final String LIST_ELEMENT = "ListElement";
 
     /**
@@ -114,7 +117,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
     private final List<TileImprovementPlan> tileImprovementPlans
         = new ArrayList<>();
 
-    /** When should the workers in this Colony be rearranged? */
+    /**  When should the workers in this Colony be rearranged?. */
     private Turn rearrangeTurn = new Turn(0);
 
     /**
@@ -122,6 +125,8 @@ public class AIColony extends AIObject implements PropertyChangeListener {
      * prevent the warehouse filling.
      */
     private static final Set<GoodsType> fullExport = new HashSet<>();
+    
+    /** The Constant partExport. */
     private static final Set<GoodsType> partExport = new HashSet<>();
 
     /**
@@ -230,16 +235,27 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         return colony;
     }
 
+    /**
+     * Gets the AI unit.
+     *
+     * @param unit the unit
+     * @return the AI unit
+     */
     protected AIUnit getAIUnit(Unit unit) {
         return getAIMain().getAIUnit(unit);
     }
 
+    /**
+     * Gets the AI owner.
+     *
+     * @return the AI owner
+     */
     protected AIPlayer getAIOwner() {
         return getAIMain().getAIPlayer(colony.getOwner());
     }
 
     /**
-     * Is this AI colony badly defended?
+     * Is this AI colony badly defended?.
      *
      * @return True if this colony needs more defenders.
      */
@@ -252,7 +268,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
      *   - export state
      *   - disposition of export goods in this colony
      *   - tile improvements (might ignore freshly grabbed tiles)
-     *   - wishes
+     *   - wishes.
      *
      * @param lb A <code>LogBuilder</code> to log to.
      */
@@ -422,6 +438,14 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         return result;
     }
 
+	/**
+	 * Find unit list.
+	 *
+	 * @param lb the lb
+	 * @param result the result
+	 * @param tile the tile
+	 * @param aiPlayer the ai player
+	 */
 	private void findUnitList(LogBuilder lb, Set<AIUnit> result, final Tile tile, EuropeanAIPlayer aiPlayer) {
 		for (Unit u : tile.getUnitList()) {
             final AIUnit aiu = getAIUnit(u);
@@ -454,6 +478,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Allocate pioneers.
+	 *
+	 * @param lb the lb
+	 * @param tile the tile
+	 * @param aiPlayer the ai player
+	 */
 	private void allocatePioneers(LogBuilder lb, final Tile tile, EuropeanAIPlayer aiPlayer) {
 		int tipSize = tileImprovementPlans.size();
         if (tipSize > 0) {
@@ -476,6 +507,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Return units.
+	 *
+	 * @param lb the lb
+	 * @param result the result
+	 * @param aiPlayer the ai player
+	 */
 	private void returnUnits(LogBuilder lb, Set<AIUnit> result, EuropeanAIPlayer aiPlayer) {
 		for (Unit u : colony.getUnitList()) {
             final AIUnit aiu = getAIUnit(u);
@@ -492,6 +530,14 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Builds the validation.
+	 *
+	 * @param lb the lb
+	 * @param nextRearrange the next rearrange
+	 * @param build the build
+	 * @return the int
+	 */
 	private int buildValidation(LogBuilder lb, int nextRearrange, BuildableType build) {
 		if (build != null && !colony.canBuild(build)) {
             BuildableType newBuild = colonyPlan.getBestBuildableType();
@@ -505,6 +551,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
 		return nextRearrange;
 	}
 
+	/**
+	 * Find unit.
+	 *
+	 * @param tile the tile
+	 * @param workers the workers
+	 * @param was the was
+	 */
 	private void findUnit(final Tile tile, List<Unit> workers, List<UnitWas> was) {
 		for (Unit u : tile.getUnitList()) {
             if (!u.isPerson() || u.hasAbility(Ability.REF_UNIT)
@@ -525,6 +578,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Find buildable.
+	 *
+	 * @param oldBuild the old build
+	 * @param build the build
+	 * @return the buildable type
+	 */
 	private BuildableType findBuildable(BuildableType oldBuild, BuildableType build) {
 		if (build != oldBuild) {
             List<BuildableType> queue = new ArrayList<>();
@@ -535,6 +595,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
 		return build;
 	}
 
+	/**
+	 * Tile steal.
+	 *
+	 * @param lb the lb
+	 * @param tile the tile
+	 * @param player the player
+	 */
 	private void tileSteal(LogBuilder lb, final Tile tile, final Player player) {
 		for (Tile t : tile.getSurroundingTiles(1)) {
             if (!player.owns(t) && player.canClaimForSettlement(t)) {
@@ -568,6 +635,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         checkOwner(spec);
     }
 
+	/**
+	 * Check owner.
+	 *
+	 * @param spec the spec
+	 */
 	private void checkOwner(final Specification spec) {
 		if (colony.getOwner().getMarket() == null) {
             // Do not export when there is no market!
@@ -590,6 +662,12 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Find export.
+	 *
+	 * @param spec the spec
+	 * @param player the player
+	 */
 	private void findExport(final Specification spec, final Player player) {
 		for (Role role : spec.getRoles()) {
             if (role.isAvailableTo(player, spec.getDefaultUnitType(player))) {
@@ -603,6 +681,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Inits the export.
+	 *
+	 * @param spec the spec
+	 */
 	private void initExport(final Specification spec) {
 		for (GoodsType g : spec.getStorableGoodsTypeList()) {
             if (!g.isFoodType()
@@ -700,6 +783,14 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         checkSteal(lb, player, steal, score);
     }
 
+	/**
+	 * Check steal.
+	 *
+	 * @param lb the lb
+	 * @param player the player
+	 * @param steal the steal
+	 * @param score the score
+	 */
 	private void checkSteal(LogBuilder lb, final Player player, Tile steal, double score) {
 		if (steal != null) {
             Player owner = steal.getOwner();
@@ -843,6 +934,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         dropExport(ag);
     }
 
+	/**
+	 * Drop export.
+	 *
+	 * @param ag the ag
+	 */
 	private void dropExport(AIGoods ag) {
 		TransportMission tm;
 		if (ag.getTransport() != null
@@ -868,6 +964,15 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         addLog(ag, action, lb, amount, type);
     }
 
+	/**
+	 * Adds the log.
+	 *
+	 * @param ag the ag
+	 * @param action the action
+	 * @param lb the lb
+	 * @param amount the amount
+	 * @param type the type
+	 */
 	private void addLog(AIGoods ag, String action, LogBuilder lb, int amount, String type) {
 		lb.add(", ", action, " ", ((ag == null) ? "(null)" : ag.getId()),
             " ", ((amount >= GoodsContainer.CARGO_SIZE) ? "full "
@@ -1009,6 +1114,15 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         return checkWish(goods, lb, ret, i);
     }
 
+	/**
+	 * Check wish.
+	 *
+	 * @param goods the goods
+	 * @param lb the lb
+	 * @param ret the ret
+	 * @param i the i
+	 * @return true, if successful
+	 */
 	private boolean checkWish(Goods goods, LogBuilder lb, boolean ret, int i) {
 		while (i < wishes.size()) {
             if (wishes.get(i) instanceof GoodsWish) {
@@ -1037,6 +1151,15 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         return returnWish(unit, lb, ret, i);
     }
 
+	/**
+	 * Return wish.
+	 *
+	 * @param unit the unit
+	 * @param lb the lb
+	 * @param ret the ret
+	 * @param i the i
+	 * @return true, if successful
+	 */
 	private boolean returnWish(Unit unit, LogBuilder lb, boolean ret, int i) {
 		while (i < wishes.size()) {
             if (wishes.get(i) instanceof WorkerWish) {
@@ -1063,6 +1186,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         return completedWish(t, lb);
     }
 
+	/**
+	 * Completed wish.
+	 *
+	 * @param t the t
+	 * @param lb the lb
+	 * @return true, if successful
+	 */
 	private boolean completedWish(TransportableAIObject t, LogBuilder lb) {
 		if (t instanceof AIGoods) {
             return completeWish((Goods)t.getTransportLocatable(), lb);
@@ -1306,6 +1436,13 @@ public class AIColony extends AIObject implements PropertyChangeListener {
 
     }
 
+	/**
+	 * Require wish.
+	 *
+	 * @param lb the lb
+	 * @param goodsWishValue the goods wish value
+	 * @param required the required
+	 */
 	private void requireWish(LogBuilder lb, int goodsWishValue, TypeCountMap<GoodsType> required) {
 		for (GoodsType type : required.keySet()) {
             GoodsType requiredType = type;
@@ -1325,6 +1462,12 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Drop wish.
+	 *
+	 * @param lb the lb
+	 * @param required the required
+	 */
 	private void dropWish(LogBuilder lb, TypeCountMap<GoodsType> required) {
 		int i = 0;
         while (i < wishes.size()) {
@@ -1340,6 +1483,12 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Adds the military material.
+	 *
+	 * @param spec the spec
+	 * @param required the required
+	 */
 	private void addMilitaryMaterial(final Specification spec, TypeCountMap<GoodsType> required) {
 		if (isBadlyDefended()) {
             Role role = spec.getMilitaryRoles().get(0);
@@ -1357,6 +1506,12 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Adds the breedable.
+	 *
+	 * @param spec the spec
+	 * @param required the required
+	 */
 	private void addBreedable(final Specification spec, TypeCountMap<GoodsType> required) {
 		for (GoodsType g : spec.getGoodsTypeList()) {
             if (g.isBreedable()
@@ -1366,6 +1521,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Adds the raw material.
+	 *
+	 * @param required the required
+	 */
 	private void addRawMaterial(TypeCountMap<GoodsType> required) {
 		for (WorkLocation workLocation : colony.getCurrentWorkLocations()) {
             if (workLocation instanceof Building) {
@@ -1384,6 +1544,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Improve tile material.
+	 *
+	 * @param required the required
+	 */
 	private void improveTileMaterial(TypeCountMap<GoodsType> required) {
 		for (TileImprovementPlan plan : tileImprovementPlans) {
             Role role = plan.getType().getRequiredRole();
@@ -1394,6 +1559,11 @@ public class AIColony extends AIObject implements PropertyChangeListener {
         }
 	}
 
+	/**
+	 * Adds the building material.
+	 *
+	 * @param required the required
+	 */
 	private void addBuildingMaterial(TypeCountMap<GoodsType> required) {
 		if (colony.getCurrentlyBuilding() != null) {
             for (AbstractGoods ag : colony.getCurrentlyBuilding()
@@ -1415,8 +1585,9 @@ public class AIColony extends AIObject implements PropertyChangeListener {
     }
 
     /**
-     * Removes a <code>TileImprovementPlan</code> from the list
+     * Removes a <code>TileImprovementPlan</code> from the list.
      *
+     * @param plan the plan
      * @return True if it was successfully deleted, false otherwise
      */
     public boolean removeTileImprovementPlan(TileImprovementPlan plan) {
@@ -1440,8 +1611,8 @@ public class AIColony extends AIObject implements PropertyChangeListener {
      * Creates a list of the <code>Tile</code>-improvements which will
      * increase the production by this <code>Colony</code>.
      *
-     * @see TileImprovementPlan
      * @param lb A <code>LogBuilder</code> to log to.
+     * @see TileImprovementPlan
      */
     public void updateTileImprovementPlans(LogBuilder lb) {
         List<TileImprovementPlan> newPlans = new ArrayList<>();
@@ -1608,7 +1779,7 @@ public class AIColony extends AIObject implements PropertyChangeListener {
     }
 
     /**
-     * Checks the integrity of a this AIColony
+     * Checks the integrity of a this AIColony.
      *
      * @param fix Fix problems if possible.
      * @return Negative if there are problems remaining, zero if
@@ -1624,19 +1795,32 @@ public class AIColony extends AIObject implements PropertyChangeListener {
 
     // Serialization
 
+    /** The Constant AI_GOODS_LIST_TAG. */
     private static final String AI_GOODS_LIST_TAG
         = AIGoods.getXMLElementTagName() + LIST_ELEMENT;
+    
+    /** The Constant GOODS_WISH_LIST_TAG. */
     private static final String GOODS_WISH_LIST_TAG
         = GoodsWish.getXMLElementTagName() + LIST_ELEMENT;
+    
+    /** The Constant TILE_IMPROVEMENT_PLAN_LIST_TAG. */
     private static final String TILE_IMPROVEMENT_PLAN_LIST_TAG
         = TileImprovementPlan.getXMLElementTagName() + LIST_ELEMENT;
+    
+    /** The Constant WORKER_WISH_LIST_TAG. */
     private static final String WORKER_WISH_LIST_TAG
         = WorkerWish.getXMLElementTagName() + LIST_ELEMENT;
+    
+    /** The Constant OLD_GOODS_WISH_TAG. */
     // @compat 0.10.3
     private static final String OLD_GOODS_WISH_TAG
         = GoodsWish.getXMLElementTagName() + "Wish" + LIST_ELEMENT;
+    
+    /** The Constant OLD_TILE_IMPROVEMENT_PLAN_LIST_TAG. */
     private static final String OLD_TILE_IMPROVEMENT_PLAN_LIST_TAG
         = "tileimprovementplan" + LIST_ELEMENT;
+    
+    /** The Constant OLD_WORKER_WISH_TAG. */
     private static final String OLD_WORKER_WISH_TAG
         = WorkerWish.getXMLElementTagName() + "Wish" + LIST_ELEMENT;
     // end @compat

@@ -98,6 +98,7 @@ import net.sf.freecol.server.ai.mission.WorkInsideColonyMission;
 import net.sf.freecol.server.model.ServerPlayer;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single European
  * {@link Player} and is used for controlling this player.
@@ -107,6 +108,7 @@ import net.sf.freecol.server.model.ServerPlayer;
  */
 public class EuropeanAIPlayer extends AIPlayer {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(EuropeanAIPlayer.class.getName());
 
     /** Maximum number of turns to travel to a building site. */
@@ -208,11 +210,23 @@ public class EuropeanAIPlayer extends AIPlayer {
 
     /** Cheat chances. */
     private static int liftBoycottCheatPercent;
+    
+    /** The equip scout cheat percent. */
     private static int equipScoutCheatPercent;
+    
+    /** The equip pioneer cheat percent. */
     private static int equipPioneerCheatPercent;
+    
+    /** The land unit cheat percent. */
     private static int landUnitCheatPercent;
+    
+    /** The offensive land unit cheat percent. */
     private static int offensiveLandUnitCheatPercent;
+    
+    /** The offensive naval unit cheat percent. */
     private static int offensiveNavalUnitCheatPercent;
+    
+    /** The transport naval unit cheat percent. */
     private static int transportNavalUnitCheatPercent;
     /** The pioneer role. */
     private static Role pioneerRole = null;
@@ -392,6 +406,12 @@ public class EuropeanAIPlayer extends AIPlayer {
         addBackupMission(lb, aiUnits);
     }
 
+	/**
+	 * Adds the backup mission.
+	 *
+	 * @param lb the lb
+	 * @param aiUnits the ai units
+	 */
 	private void addBackupMission(LogBuilder lb, List<AIUnit> aiUnits) {
 		Mission m;
 		for (AIUnit aiu : aiUnits) {
@@ -401,6 +421,13 @@ public class EuropeanAIPlayer extends AIPlayer {
         if (lb.grew("\n  Backup: ")) lb.shrink(", ");
 	}
 
+	/**
+	 * Inits the carrier mission.
+	 *
+	 * @param lb the lb
+	 * @param tm the tm
+	 * @param carrier the carrier
+	 */
 	private void initCarrierMission(LogBuilder lb, TransportMission tm, Unit carrier) {
 		if (tm != null) {
 		    lb.add(tm);
@@ -412,6 +439,16 @@ public class EuropeanAIPlayer extends AIPlayer {
 		}
 	}
 
+	/**
+	 * Player mission.
+	 *
+	 * @param lb the lb
+	 * @param aiMain the ai main
+	 * @param maxRange the max range
+	 * @param target the target
+	 * @param carrier the carrier
+	 * @return the location
+	 */
 	private Location playerMission(LogBuilder lb, final AIMain aiMain, final int maxRange, Location target,
 			Unit carrier) {
 		Mission m;
@@ -645,6 +682,14 @@ public class EuropeanAIPlayer extends AIPlayer {
         if (lb.grew("\n  Cheats: ")) lb.shrink(", ");
     }
 
+	/**
+	 * Determine unit type.
+	 *
+	 * @param player the player
+	 * @param europe the europe
+	 * @param rc the rc
+	 * @param unitType the unit type
+	 */
 	private void determineUnitType(final Player player, final Europe europe, List<RandomChoice<UnitType>> rc,
 			UnitType unitType) {
 		if (unitType.hasAbility(Ability.NAVAL_UNIT)
@@ -656,6 +701,16 @@ public class EuropeanAIPlayer extends AIPlayer {
 		}
 	}
 
+	/**
+	 * Gets the cheat unit.
+	 *
+	 * @param lb the lb
+	 * @param player the player
+	 * @param spec the spec
+	 * @param europe the europe
+	 * @param rc the rc
+	 * @return the cheat unit
+	 */
 	private void getCheatUnit(LogBuilder lb, final Player player, final Specification spec, final Europe europe,
 			List<RandomChoice<UnitType>> rc) {
 		rc.clear();
@@ -671,6 +726,15 @@ public class EuropeanAIPlayer extends AIPlayer {
 		cheatUnit(rc, "offensive-naval", lb);
 	}
 
+	/**
+	 * Attack weak colony.
+	 *
+	 * @param game the game
+	 * @param air the air
+	 * @param target the target
+	 * @param enemies the enemies
+	 * @return the location
+	 */
 	private Location attackWeakColony(final Game game, final Random air, Location target, List<Player> enemies) {
 		List<AIColony> bad = new ArrayList<>(getBadlyDefended());
 		if (bad.isEmpty()) bad.addAll(getAIColonies());
@@ -684,6 +748,14 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return target;
 	}
 
+	/**
+	 * Find player lives.
+	 *
+	 * @param player the player
+	 * @param game the game
+	 * @param enemies the enemies
+	 * @param preferred the preferred
+	 */
 	private void findPlayerLives(final Player player, final Game game, List<Player> enemies, List<Player> preferred) {
 		for (Player p : game.getLivePlayers(player)) {
 		    if (player.atWarWith(p)) {
@@ -696,6 +768,17 @@ public class EuropeanAIPlayer extends AIPlayer {
 		}
 	}
 
+	/**
+	 * Cheat goods.
+	 *
+	 * @param lb the lb
+	 * @param player the player
+	 * @param market the market
+	 * @param arrears the arrears
+	 * @param randoms the randoms
+	 * @param cheatIndex the cheat index
+	 * @return the int
+	 */
 	private int cheatGoods(LogBuilder lb, final Player player, final Market market, final List<GoodsType> arrears,
 			int[] randoms, int cheatIndex) {
 		for (GoodsType goodsType : arrears) {
@@ -888,6 +971,12 @@ public class EuropeanAIPlayer extends AIPlayer {
         }                
     }
 
+	/**
+	 * Determine tip map.
+	 *
+	 * @param aic the aic
+	 * @param tip the tip
+	 */
 	private void determineTipMap(AIColony aic, TileImprovementPlan tip) {
 		if (tip == null || tip.isComplete()) {
 		    aic.removeTileImprovementPlan(tip);
@@ -939,6 +1028,14 @@ public class EuropeanAIPlayer extends AIPlayer {
         return returnBestTile(colony, best, bestValue);
     }
 
+	/**
+	 * Return best tile.
+	 *
+	 * @param colony the colony
+	 * @param best the best
+	 * @param bestValue the best value
+	 * @return the tile
+	 */
 	private Tile returnBestTile(Colony colony, TileImprovementPlan best, int bestValue) {
 		for (Tile t : colony.getOwnedTiles()) {
             TileImprovementPlan tip = tipMap.get(t);
@@ -952,6 +1049,8 @@ public class EuropeanAIPlayer extends AIPlayer {
 
     /**
      * Remove a <code>TileImprovementPlan</code> from the relevant colony.
+     *
+     * @param plan the plan
      */
     public void removeTileImprovementPlan(TileImprovementPlan plan) {
         if (plan == null) return;
@@ -989,6 +1088,15 @@ public class EuropeanAIPlayer extends AIPlayer {
         }
     }
 
+	/**
+	 * Determine transport mission.
+	 *
+	 * @param aiu the aiu
+	 * @param lb the lb
+	 * @param aiCarrier the ai carrier
+	 * @param newTarget the new target
+	 * @param tm the tm
+	 */
 	private void determineTransportMission(AIUnit aiu, LogBuilder lb, final AIUnit aiCarrier, final Location newTarget,
 			TransportMission tm) {
 		if (aiu.getUnit().getLocation() != aiCarrier.getUnit()) {
@@ -1130,6 +1238,9 @@ public class EuropeanAIPlayer extends AIPlayer {
         }
     }
 
+	/**
+	 * Prime wagons needed.
+	 */
 	private void primeWagonsNeeded() {
 		for (AIColony aic : getAIColonies()) {
             Colony colony = aic.getColony();
@@ -1233,6 +1344,15 @@ public class EuropeanAIPlayer extends AIPlayer {
         addWishLog(type, lb, europe, n, wishes);
     }
 
+	/**
+	 * Adds the wish log.
+	 *
+	 * @param type the type
+	 * @param lb the lb
+	 * @param europe the europe
+	 * @param n the n
+	 * @param wishes the wishes
+	 */
 	private void addWishLog(GoodsType type, LogBuilder lb, final Europe europe, int n, List<GoodsWish> wishes) {
 		if (wishes != null) {
             for (GoodsWish gw : wishes) {
@@ -1266,6 +1386,14 @@ public class EuropeanAIPlayer extends AIPlayer {
         return determineWorkerWishes(type, demand, result);
     }
 
+	/**
+	 * Determine worker wishes.
+	 *
+	 * @param type the type
+	 * @param demand the demand
+	 * @param result the result
+	 * @return the list
+	 */
 	private List<WorkerWish> determineWorkerWishes(UnitType type, List<Wish> demand, List<WorkerWish> result) {
 		for (Wish w : demand) {
             if (w instanceof WorkerWish
@@ -1314,6 +1442,17 @@ public class EuropeanAIPlayer extends AIPlayer {
         return getBestWishes(wishes, carrier, carried, other, bestCarriedValue, bestOtherValue);
     }
 
+	/**
+	 * Gets the best wishes.
+	 *
+	 * @param wishes the wishes
+	 * @param carrier the carrier
+	 * @param carried the carried
+	 * @param other the other
+	 * @param bestCarriedValue the best carried value
+	 * @param bestOtherValue the best other value
+	 * @return the best wishes
+	 */
 	private WorkerWish getBestWishes(List<WorkerWish> wishes, final Unit carrier, WorkerWish carried, WorkerWish other,
 			double bestCarriedValue, double bestOtherValue) {
 		for (WorkerWish w : wishes) {
@@ -1350,6 +1489,15 @@ public class EuropeanAIPlayer extends AIPlayer {
         return determineBestGoodWishes(wishes, carrier, bestValue, best);
     }
 
+	/**
+	 * Determine best good wishes.
+	 *
+	 * @param wishes the wishes
+	 * @param carrier the carrier
+	 * @param bestValue the best value
+	 * @param best the best
+	 * @return the goods wish
+	 */
 	private GoodsWish determineBestGoodWishes(List<GoodsWish> wishes, final Unit carrier, double bestValue,
 			GoodsWish best) {
 		for (GoodsWish w : wishes) {
@@ -1401,6 +1549,9 @@ public class EuropeanAIPlayer extends AIPlayer {
         }
     }
 
+	/**
+	 * Determine wish map.
+	 */
 	private void determineWishMap() {
 		for (UnitType unitType : getSpecification().getUnitTypeList()) {
             List<WorkerWish> wl = workerWishes.get(unitType);
@@ -1575,6 +1726,16 @@ public class EuropeanAIPlayer extends AIPlayer {
         return getAIUnitsEU(slot, aiUnit, europe, n, selectAbility);
     }
 
+	/**
+	 * Gets the AI units EU.
+	 *
+	 * @param slot the slot
+	 * @param aiUnit the ai unit
+	 * @param europe the europe
+	 * @param n the n
+	 * @param selectAbility the select ability
+	 * @return the AI units EU
+	 */
 	private AIUnit getAIUnitsEU(int slot, AIUnit aiUnit, Europe europe, int n, final String selectAbility) {
 		if (!Europe.MigrationType.validMigrantSlot(slot)) {
             slot = (getPlayer().hasAbility(selectAbility))
@@ -1592,10 +1753,11 @@ public class EuropeanAIPlayer extends AIPlayer {
     /**
      * Helper function for server communication - Ask the server
      * to train a unit in Europe on behalf of the AIGetPlayer().
-     *
+     * 
      * FIXME: Move this to a specialized Handler class (AIEurope?)
      * FIXME: Give protected access?
      *
+     * @param unitType the unit type
      * @return the new AIUnit created by this action. May be null.
      */
     public AIUnit trainAIUnitInEurope(UnitType unitType) {
@@ -1646,6 +1808,13 @@ public class EuropeanAIPlayer extends AIPlayer {
         getStance(lb, serverPlayer);
     }
 
+	/**
+	 * Gets the stance.
+	 *
+	 * @param lb the lb
+	 * @param serverPlayer the server player
+	 * @return the stance
+	 */
 	private void getStance(LogBuilder lb, final ServerPlayer serverPlayer) {
 		for (Player p : getGame().getLivePlayers(serverPlayer)) {
             Stance newStance = determineStance(p);

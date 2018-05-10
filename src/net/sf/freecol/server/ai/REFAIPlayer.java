@@ -60,6 +60,7 @@ import net.sf.freecol.server.ai.mission.UnitSeekAndDestroyMission;
 import net.sf.freecol.server.model.ServerPlayer;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single REF player.
  *
@@ -67,6 +68,7 @@ import net.sf.freecol.server.model.ServerPlayer;
  */
 public class REFAIPlayer extends EuropeanAIPlayer {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(REFAIPlayer.class.getName());
 
     /** Limit on the number of REF units chasing a single hostile unit. */
@@ -75,13 +77,29 @@ public class REFAIPlayer extends EuropeanAIPlayer {
     /** Container class for REF target colony information. */
     private static class TargetTuple implements Comparable<TargetTuple> {
 
+        /** The colony. */
         public final Colony colony;
+        
+        /** The path. */
         public final PathNode path;
+        
+        /** The score. */
         public double score;
+        
+        /** The disembark tile. */
         public Tile disembarkTile;
+        
+        /** The entry. */
         public Tile entry;
 
 
+        /**
+         * Instantiates a new target tuple.
+         *
+         * @param colony the colony
+         * @param path the path
+         * @param score the score
+         */
         public TargetTuple(Colony colony, PathNode path, double score) {
             this.colony = colony;
             this.path = path;
@@ -101,6 +119,9 @@ public class REFAIPlayer extends EuropeanAIPlayer {
 
         // Implement Comparable<TargetTuple>
 
+        /* (non-Javadoc)
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
         @Override
         public int compareTo(TargetTuple other) {
             double cmp = other.score - score;
@@ -134,6 +155,7 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         }
     }
 
+    /** The Constant seekAndDestroyRange. */
     private static final int seekAndDestroyRange = 12;
 
     /** Map of target to count. */
@@ -221,6 +243,16 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         return targets;
     }
 
+	/**
+	 * Gather colony targets.
+	 *
+	 * @param aiu the aiu
+	 * @param port the port
+	 * @param player the player
+	 * @param unit the unit
+	 * @param carrier the carrier
+	 * @param targets the targets
+	 */
 	private void gatherColonyTargets(AIUnit aiu, boolean port, final Player player, final Unit unit, final Unit carrier,
 			final List<TargetTuple> targets) {
 		for (Player p : player.getRebels()) {
@@ -376,6 +408,15 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         return true;
     }
 
+	/**
+	 * Attack naval.
+	 *
+	 * @param aiRandom the ai random
+	 * @param lb the lb
+	 * @param navy the navy
+	 * @param ui the ui
+	 * @param entries the entries
+	 */
 	private void attackNaval(final Random aiRandom, LogBuilder lb, List<AIUnit> navy, Iterator<Unit> ui,
 			List<Tile> entries) {
 		Mission m;
@@ -403,6 +444,16 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         }
 	}
 
+	/**
+	 * Give seek and destory mission.
+	 *
+	 * @param teleport the teleport
+	 * @param aiMain the ai main
+	 * @param targets the targets
+	 * @param n the n
+	 * @param lb the lb
+	 * @return the list
+	 */
 	private List<AIUnit> giveSeekAndDestoryMission(boolean teleport, final AIMain aiMain, List<TargetTuple> targets,
 			int n, LogBuilder lb) {
 		List<AIUnit> navy = new ArrayList<>();
@@ -449,6 +500,15 @@ public class REFAIPlayer extends EuropeanAIPlayer {
 		return navy;
 	}
 
+	/**
+	 * Eliminate bad landing site.
+	 *
+	 * @param teleport the teleport
+	 * @param carrier the carrier
+	 * @param targets the targets
+	 * @param rebel the rebel
+	 * @param n the n
+	 */
 	private void eliminateBadLandingSite(boolean teleport, final Unit carrier, List<TargetTuple> targets,
 			final Player rebel, int n) {
 		if (!teleport) {
@@ -473,6 +533,16 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         }
 	}
 
+	/**
+	 * Search from position.
+	 *
+	 * @param unit the unit
+	 * @param carrier the carrier
+	 * @param targets the targets
+	 * @param n the n
+	 * @param fail the fail
+	 * @return the int
+	 */
 	private int searchFromPosition(final Unit unit, final Unit carrier, List<TargetTuple> targets, int n, int fail) {
 		for (int i = 0; i < n; i++) {
             final TargetTuple t = targets.get(i);
@@ -543,6 +613,14 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         return result;
     }
 
+	/**
+	 * Recruit privateers.
+	 *
+	 * @param privateers the privateers
+	 * @param lb the lb
+	 * @param naval the naval
+	 * @param result the result
+	 */
 	private void recruitPrivateers(List<AIUnit> privateers, LogBuilder lb, List<AIUnit> naval, List<AIUnit> result) {
 		Mission m;
 		for (AIUnit aiu : privateers) {
@@ -813,6 +891,15 @@ public class REFAIPlayer extends EuropeanAIPlayer {
         super.giveNormalMissions(lb);
     }
 
+	/**
+	 * Check transport.
+	 *
+	 * @param player the player
+	 * @param idlers the idlers
+	 * @param transports the transports
+	 * @param todo the todo
+	 * @param ready the ready
+	 */
 	private void checkTransport(final Player player, final Map<Location, List<AIUnit>> idlers, List<AIUnit> transports,
 			List<AIUnit> todo, Map<Location, List<AIUnit>> ready) {
 		for (AIUnit aiu : transports) {
@@ -832,6 +919,16 @@ public class REFAIPlayer extends EuropeanAIPlayer {
 		}
 	}
 
+	/**
+	 * Collect REF.
+	 *
+	 * @param privateers the privateers
+	 * @param transports the transports
+	 * @param todo the todo
+	 * @param land the land
+	 * @param colony the colony
+	 * @return the colony
+	 */
 	private Colony collectREF(List<AIUnit> privateers, List<AIUnit> transports, List<AIUnit> todo, List<AIUnit> land,
 			Colony colony) {
 		for (AIUnit aiu : getAIUnits()) {

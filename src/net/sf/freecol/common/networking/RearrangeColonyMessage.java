@@ -37,6 +37,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when the client requests rearrangeing of a colony.
  */
@@ -45,14 +46,35 @@ public class RearrangeColonyMessage extends DOMMessage {
     /** Container for the unit change information. */
     public static class UnitChange {
 
+        /** The unit. */
         public Unit unit;
+        
+        /** The loc. */
         public Location loc;
+        
+        /** The work. */
         public GoodsType work;
+        
+        /** The role. */
         public Role role;
+        
+        /** The role count. */
         public int roleCount;
 
+        /**
+         * Instantiates a new unit change.
+         */
         public UnitChange() {} // deliberately empty
 
+        /**
+         * Instantiates a new unit change.
+         *
+         * @param unit the unit
+         * @param loc the loc
+         * @param work the work
+         * @param role the role
+         * @param roleCount the role count
+         */
         public UnitChange(Unit unit, Location loc, GoodsType work,
                           Role role, int roleCount) {
             this.unit = unit;
@@ -62,12 +84,32 @@ public class RearrangeColonyMessage extends DOMMessage {
             this.roleCount = roleCount;
         }
 
+        /**
+         * Instantiates a new unit change.
+         *
+         * @param game the game
+         * @param unitId the unit id
+         * @param locId the loc id
+         * @param workId the work id
+         * @param roleId the role id
+         * @param roleCount the role count
+         */
         public UnitChange(Game game, String unitId,
                           String locId, String workId,
                           String roleId, String roleCount) {
             init(game, unitId, locId, workId, roleId, roleCount);
         }
 
+        /**
+         * Inits the.
+         *
+         * @param game the game
+         * @param unitId the unit id
+         * @param locId the loc id
+         * @param workId the work id
+         * @param roleId the role id
+         * @param roleCount the role count
+         */
         public final void init(Game game, String unitId, 
                                String locId, String workId, 
                                String roleId, String roleCount) {
@@ -83,6 +125,12 @@ public class RearrangeColonyMessage extends DOMMessage {
             }
         }
 
+        /**
+         * Write to element.
+         *
+         * @param e the e
+         * @param i the i
+         */
         public void writeToElement(Element e, int i) {
             e.setAttribute(unitKey(i), this.unit.getId());
             e.setAttribute(locKey(i), this.loc.getId());
@@ -93,6 +141,14 @@ public class RearrangeColonyMessage extends DOMMessage {
             e.setAttribute(roleCountKey(i), String.valueOf(this.roleCount));
         }
 
+        /**
+         * Read from element.
+         *
+         * @param game the game
+         * @param e the e
+         * @param i the i
+         * @return the unit change
+         */
         public UnitChange readFromElement(Game game, Element e, int i) {
             init(game,
                 e.getAttribute(unitKey(i)),
@@ -103,26 +159,59 @@ public class RearrangeColonyMessage extends DOMMessage {
             return this;
         }
 
+        /**
+         * Unit key.
+         *
+         * @param i the i
+         * @return the string
+         */
         public String unitKey(int i) {
             return "x" + i + "unit";
         }
 
+        /**
+         * Loc key.
+         *
+         * @param i the i
+         * @return the string
+         */
         public String locKey(int i) {
             return "x" + i + "loc";
         }
 
+        /**
+         * Work key.
+         *
+         * @param i the i
+         * @return the string
+         */
         public String workKey(int i) {
             return "x" + i + "work";
         }
 
+        /**
+         * Role key.
+         *
+         * @param i the i
+         * @return the string
+         */
         public String roleKey(int i) {
             return "x" + i + "role";
         }
 
+        /**
+         * Role count key.
+         *
+         * @param i the i
+         * @return the string
+         */
         public String roleCountKey(int i) {
             return "x" + i + "count";
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString() {
             return "[UnitChange " + unit.getId() + " at " + loc.getId()
@@ -189,7 +278,7 @@ public class RearrangeColonyMessage extends DOMMessage {
     // Public interface
 
     /**
-     * Are there no changes present?
+     * Are there no changes present?.
      *
      * @return True if no changes have been added.
      */
@@ -227,6 +316,14 @@ public class RearrangeColonyMessage extends DOMMessage {
         return handleUnitChange(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle unit change.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleUnitChange(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Colony colony;
         try {

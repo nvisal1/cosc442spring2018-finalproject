@@ -33,6 +33,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when a missionary establishes/denounces a mission.
  */
@@ -44,7 +45,7 @@ public class MissionaryMessage extends DOMMessage {
     /** The direction to the settlement. */
     private final String directionString;
 
-    /** Is this a denunciation? */
+    /**  Is this a denunciation?. */
     private final boolean denounce;
 
 
@@ -115,10 +116,20 @@ public class MissionaryMessage extends DOMMessage {
                 + tile.getId());
         }
 
-        return handleDeounce(server, player, serverPlayer, unit, is);
+        return handleDebounce(server, player, serverPlayer, unit, is);
     }
 
-	private Element handleDeounce(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit,
+	/**
+	 * Handle debounce.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param unit the unit
+	 * @param is the is
+	 * @return the element
+	 */
+	private Element handleDebounce(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit,
 			ServerIndianSettlement is) {
 		Unit missionary = is.getMissionary();
         if (denounce) {

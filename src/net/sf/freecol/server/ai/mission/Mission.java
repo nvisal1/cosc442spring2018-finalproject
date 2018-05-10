@@ -56,6 +56,7 @@ import net.sf.freecol.server.ai.EuropeanAIPlayer;
 import net.sf.freecol.server.ai.TransportableAIObject;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A mission describes what a unit should do; attack, build colony,
  * wander etc.  Every {@link AIUnit} should have a mission. By
@@ -63,6 +64,7 @@ import net.sf.freecol.server.ai.TransportableAIObject;
  */
 public abstract class Mission extends AIObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(Mission.class.getName());
 
     /** A transport can be used.*/
@@ -71,17 +73,33 @@ public abstract class Mission extends AIObject {
     /** Transport is required. */
     protected static final int NORMAL_TRANSPORT_PRIORITY = 100;
 
+    /** The Constant NO_MORE_MOVES_LEFT. */
     protected static final int NO_PATH_TO_TARGET = -2,
                                NO_MORE_MOVES_LEFT = -1;
 
+    /** The Constant AIUNITNULL. */
     // Common mission invalidity reasons.
     protected static final String AIUNITNULL = "aiUnit-null";
+    
+    /** The Constant TARGETNULL. */
     protected static final String TARGETNULL = "target-null";
+    
+    /** The Constant TARGETINVALID. */
     protected static final String TARGETINVALID = "target-invalid";
+    
+    /** The Constant TARGETOWNERSHIP. */
     protected static final String TARGETOWNERSHIP = "target-ownership";
+    
+    /** The Constant TARGETNOTFOUND. */
     protected static final String TARGETNOTFOUND = "target-not-found";
+    
+    /** The Constant UNITNOTAPERSON. */
     protected static final String UNITNOTAPERSON = "unit-not-a-person";
+    
+    /** The Constant UNITNOTOFFENSIVE. */
     protected static final String UNITNOTOFFENSIVE = "unit-not-offensive";
+    
+    /** The Constant UNITNOTONMAP. */
     protected static final String UNITNOTONMAP = "unit-not-on-map";
 
     /** The unit to undertake the mission. */
@@ -184,7 +202,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is this mission valid?
+     * Is this mission valid?.
      *
      * @return True if the mission is valid.
      */
@@ -193,8 +211,9 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is an invalidity reason due to a target failure?
+     * Is an invalidity reason due to a target failure?.
      *
+     * @param reason the reason
      * @return True if the reason starts with "target-".
      */
     public static boolean isTargetReason(String reason) {
@@ -202,7 +221,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is a unit able to perform a mission of a particular type?
+     * Is a unit able to perform a mission of a particular type?.
      *
      * @param unit The <code>Unit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -216,7 +235,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is an AI unit able to perform a mission of a particular type?
+     * Is an AI unit able to perform a mission of a particular type?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -230,8 +249,9 @@ public abstract class Mission extends AIObject {
 
     /**
      * Is an AI unable to perform a new mission because it already has
-     * a valid, non-onetime mission?
+     * a valid, non-onetime mission?.
      *
+     * @param aiUnit the ai unit
      * @return "mission-exists" if a valid mission is found, or null
      *     if none found.
      */
@@ -244,7 +264,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is a target a valid mission target?
+     * Is a target a valid mission target?.
      *
      * @param target The target <code>Location</code> to check.
      * @return A reason for the target to be invalid, or null if none found.
@@ -256,7 +276,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is a target a valid mission target?
+     * Is a target a valid mission target?.
      *
      * @param target The target <code>Location</code> to check.
      * @param owner A <code>Player</code> that should own
@@ -275,7 +295,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is there a reason to invalidate mission to move a transportable?
+     * Is there a reason to invalidate mission to move a transportable?.
      *
      * @param t The <code>TransportableAIObject</code> to check.
      * @return A reason for the transport to be invalid, or null if
@@ -319,7 +339,7 @@ public abstract class Mission extends AIObject {
     }
 
     /**
-     * Is another player a valid attack target?
+     * Is another player a valid attack target?.
      *
      * @param aiUnit The <code>AIUnit</code> that will attack.
      * @param other The <code>Player</code> to attack.

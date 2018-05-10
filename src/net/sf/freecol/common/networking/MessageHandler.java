@@ -25,6 +25,7 @@ import net.sf.freecol.common.FreeColException;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Handles complete incoming messages.
  */
@@ -36,7 +37,7 @@ public interface MessageHandler {
      * @param connection The <code>Connection</code> the message came from.
      * @param element The <code>Element</code> to handle.
      * @return The reply (if any) or <i>null</i>.
-     * @throws FreeColException
+     * @throws FreeColException the free col exception
      */
     public Element handle(Connection connection, Element element)
         throws FreeColException;

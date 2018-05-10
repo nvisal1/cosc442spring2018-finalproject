@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when a player declares independence.
  */
@@ -36,7 +37,7 @@ public class DeclareIndependenceMessage extends DOMMessage {
     /** The new name for the rebelling nation. */
     private final String nationName;
 
-    /** The new name for the rebelling country */
+    /**  The new name for the rebelling country. */
     private final String countryName;
 
 

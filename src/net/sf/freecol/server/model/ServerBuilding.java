@@ -39,16 +39,21 @@ import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The server version of a building.
  */
 public class ServerBuilding extends Building implements ServerModelObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ServerBuilding.class.getName());
 
 
     /**
      * Trivial constructor required for all ServerModelObjects.
+     *
+     * @param game the game
+     * @param id the id
      */
     public ServerBuilding(Game game, String id) {
         super(game, id);
@@ -98,24 +103,39 @@ public class ServerBuilding extends Building implements ServerModelObject {
             if (student != null && student.getTeacher() != teacher) {
                 // Sanitation, make sure we have the proper
                 // teacher/student relation.
-                logger.warning("Bogus teacher/student assignment.");
-                teacher.setStudent(null);
-                student = null;
+                student = relation(teacher);
             }
 
             // Student may have changed
-            if (student == null && csAssignStudent(teacher, cs)) {
-                student = teacher.getStudent();
-            }
+            student = checkStudentChanged(cs, teacher, student);
 
             // Update teaching amount.
-            teacher.setTurnsOfTraining((student == null) ? 0
-                : teacher.getTurnsOfTraining() + 1);
-            cs.add(See.only(owner), teacher);
+            updateTeacherAmount(cs, owner, teacher, student);
 
             // Do not check for completed training, see csCheckTeach below.
         }
     }
+
+	private void updateTeacherAmount(ChangeSet cs, final ServerPlayer owner, Unit teacher, Unit student) {
+		teacher.setTurnsOfTraining((student == null) ? 0
+		    : teacher.getTurnsOfTraining() + 1);
+		cs.add(See.only(owner), teacher);
+	}
+
+	private Unit checkStudentChanged(ChangeSet cs, Unit teacher, Unit student) {
+		if (student == null && csAssignStudent(teacher, cs)) {
+		    student = teacher.getStudent();
+		}
+		return student;
+	}
+
+	private Unit relation(Unit teacher) {
+		Unit student;
+		logger.warning("Bogus teacher/student assignment.");
+		teacher.setStudent(null);
+		student = null;
+		return student;
+	}
 
     /**
      * Check and complete teaching if possible.
@@ -131,7 +151,11 @@ public class ServerBuilding extends Building implements ServerModelObject {
     public boolean csCheckTeach(Unit teacher, ChangeSet cs) {
         final ServerPlayer owner = (ServerPlayer)getColony().getOwner();
 
-        Unit student = teacher.getStudent();
+        return checkTeacherTraining(teacher, cs, owner);
+    }
+
+	private boolean checkTeacherTraining(Unit teacher, ChangeSet cs, final ServerPlayer owner) {
+		Unit student = teacher.getStudent();
         if (student != null
             && teacher.getTurnsOfTraining()
                 >= teacher.getNeededTurnsOfTraining()) {
@@ -142,7 +166,7 @@ public class ServerBuilding extends Building implements ServerModelObject {
             return true;
         }
         return false;
-    }
+	}
         
     /**
      * Train a student.
@@ -157,7 +181,12 @@ public class ServerBuilding extends Building implements ServerModelObject {
         StringTemplate oldName = student.getLabel();
         UnitType teach = teacher.getType().getSkillTaught();
         UnitType skill = Unit.getUnitTypeTeaching(teach, student.getType());
-        boolean ret = skill != null;
+        return getStudentTrained(teacher, student, cs, owner, oldName, skill);
+    }
+
+	private boolean getStudentTrained(Unit teacher, Unit student, ChangeSet cs, final ServerPlayer owner,
+			StringTemplate oldName, UnitType skill) {
+		boolean ret = skill != null;
         if (skill == null) {
             logger.warning("Student " + student.getId()
                            + " can not learn from " + teacher.getId());
@@ -181,7 +210,7 @@ public class ServerBuilding extends Building implements ServerModelObject {
             teacher.setStudent(null);
         }
         return ret;
-    }
+	}
 
     /**
      * Assigns a student to a teacher within a building.
@@ -194,7 +223,12 @@ public class ServerBuilding extends Building implements ServerModelObject {
         final Colony colony = getColony();
         final ServerPlayer owner = (ServerPlayer)colony.getOwner();
         final Unit student = colony.findStudent(teacher);
-        if (student == null) {
+        return getStudentAssignment(teacher, cs, colony, owner, student);
+    }
+
+	private boolean getStudentAssignment(Unit teacher, ChangeSet cs, final Colony colony, final ServerPlayer owner,
+			final Unit student) {
+		if (student == null) {
             cs.addMessage(See.only(owner),
                 new ModelMessage(ModelMessage.MessageType.WARNING,
                                  "model.building.noStudent",
@@ -208,7 +242,7 @@ public class ServerBuilding extends Building implements ServerModelObject {
         student.setTeacher(teacher);
         cs.add(See.only(owner), student);
         return true;
-    }
+	}
 
     /**
      * Repair the units in this building.

@@ -32,11 +32,13 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for idling in a settlement.
  */
 public class IdleAtSettlementMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(IdleAtSettlementMission.class.getName());
 
     /** The tag for this mission. */
@@ -73,7 +75,7 @@ public class IdleAtSettlementMission extends Mission {
 
 
     /**
-     * Is the unit in a safe location where it can idle, or should it move?
+     * Is the unit in a safe location where it can idle, or should it move?.
      *
      * @return True if the unit is safe.
      */

@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerUnit;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when disembarking.
  */
@@ -80,6 +81,14 @@ public class DisembarkMessage extends DOMMessage {
         return disembark(server, player, serverPlayer);
     }
 
+	/**
+	 * Disembark.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element disembark(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		ServerUnit unit;
         try {

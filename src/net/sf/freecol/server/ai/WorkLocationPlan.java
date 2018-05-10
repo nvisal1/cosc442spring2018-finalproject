@@ -27,12 +27,14 @@ import net.sf.freecol.common.model.WorkLocation;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single
  * {@link net.sf.freecol.common.model.WorkLocation}.
  */
 public class WorkLocationPlan extends AIObject {
 
+    /** The Constant logger. */
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(WorkLocationPlan.class.getName());
 
@@ -108,7 +110,7 @@ public class WorkLocationPlan extends AIObject {
     }
 
     /**
-     * Is this a food producing plan?
+     * Is this a food producing plan?.
      *
      * @return True if this plan produces food.
      */

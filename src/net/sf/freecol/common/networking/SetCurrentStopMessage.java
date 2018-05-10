@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerUnit;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent updating a unit's current stop.
  */
@@ -46,6 +47,7 @@ public class SetCurrentStopMessage extends DOMMessage {
      * supplied unit.
      *
      * @param unit A <code>Unit</code> whose stop is to be setd.
+     * @param index the index
      */
     public SetCurrentStopMessage(Unit unit, int index) {
         super(getXMLElementTagName());
@@ -83,6 +85,13 @@ public class SetCurrentStopMessage extends DOMMessage {
         return handleValidSet(server, serverPlayer);
     }
 
+	/**
+	 * Handle valid set.
+	 *
+	 * @param server the server
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleValidSet(FreeColServer server, final ServerPlayer serverPlayer) {
 		ServerUnit serverUnit;
         try {

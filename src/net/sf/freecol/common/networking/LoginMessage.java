@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when logging in.
  */
@@ -121,35 +122,75 @@ public class LoginMessage extends DOMMessage {
 
     // Public interface
 
+    /**
+     * Gets the user name.
+     *
+     * @return the user name
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     * Gets the version.
+     *
+     * @return the version
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * Checks if is admin.
+     *
+     * @return true, if is admin
+     */
     public boolean isAdmin() {
         return admin;
     }
 
+    /**
+     * Gets the start game.
+     *
+     * @return the start game
+     */
     public boolean getStartGame() {
         return startGame;
     }
 
+    /**
+     * Checks if is single player.
+     *
+     * @return true, if is single player
+     */
     public boolean isSinglePlayer() {
         return singlePlayer;
     }
 
+    /**
+     * Checks if is current player.
+     *
+     * @return true, if is current player
+     */
     public boolean isCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Gets the active unit.
+     *
+     * @return the active unit
+     */
     public Unit getActiveUnit() {
         return (activeUnitId == null) ? null
             : game.getFreeColGameObject(activeUnitId, Unit.class);
     }
 
+    /**
+     * Gets the game.
+     *
+     * @return the game
+     */
     public Game getGame() {
         return game;
     }

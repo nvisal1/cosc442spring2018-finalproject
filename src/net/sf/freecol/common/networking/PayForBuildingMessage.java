@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when paying for a building.
  */
@@ -80,6 +81,14 @@ public class PayForBuildingMessage extends DOMMessage {
         return handleColony(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle colony.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleColony(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Colony colony;
         try {

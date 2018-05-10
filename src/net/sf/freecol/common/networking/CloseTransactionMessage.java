@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent to initiate a transaction.
  */
@@ -90,6 +91,15 @@ public class CloseTransactionMessage extends DOMMessage {
         return handleSettlement(server, player, serverPlayer, unit);
     }
 
+	/**
+	 * Handle settlement.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param unit the unit
+	 * @return the element
+	 */
 	private Element handleSettlement(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
 		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);

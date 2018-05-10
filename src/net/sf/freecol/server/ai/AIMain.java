@@ -46,6 +46,7 @@ import net.sf.freecol.server.FreeColServer;
 import net.sf.freecol.server.model.ServerPlayer;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The main AI-class.
  * Keeps references to all other AI-classes.
@@ -53,6 +54,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 public class AIMain extends FreeColObject
     implements FreeColGameObjectListener {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(AIMain.class.getName());
 
     /** The server that this AI is operating within. */
@@ -84,9 +86,9 @@ public class AIMain extends FreeColObject
      * @param freeColServer The main controller object for the
      *     server.
      * @param xr The input stream containing the XML.
+     * @see #readFromXML
      * @exception XMLStreamException if a problem was encountered
      *     during parsing.
-     * @see #readFromXML
      */
     public AIMain(FreeColServer freeColServer,
                   FreeColXMLReader xr) throws XMLStreamException {
@@ -180,8 +182,8 @@ public class AIMain extends FreeColObject
      *
      * @param fcgo The <code>FreeColGameObject</code> to find the
      *     <code>AIObject</code> for.
-     * @see #getAIObject(String)
      * @return The <code>AIObject</code>.
+     * @see #getAIObject(String)
      */
     public AIObject getAIObject(FreeColGameObject fcgo) {
         return getAIObject(fcgo.getId());
@@ -191,8 +193,8 @@ public class AIMain extends FreeColObject
      * Gets the <code>AIObject</code> for a given object identifier.
      *
      * @param id The object identifier.
-     * @see #getAIObject(FreeColGameObject)
      * @return The <code>AIObject</code>.
+     * @see #getAIObject(FreeColGameObject)
      */
     public AIObject getAIObject(String id) {
         synchronized (aiObjects) {
@@ -215,6 +217,12 @@ public class AIMain extends FreeColObject
         syncPresent(id, aiObject);
     }
 
+	/**
+	 * Sync present.
+	 *
+	 * @param id the id
+	 * @param aiObject the ai object
+	 */
 	private void syncPresent(String id, AIObject aiObject) {
 		boolean present;
 		synchronized (aiObjects) {
@@ -256,6 +264,7 @@ public class AIMain extends FreeColObject
      * Gets the <code>AIObject</code> with the specified object
      * identifier and class.
      *
+     * @param <T> the generic type
      * @param id The object identifier.
      * @param returnClass The expected class of the object.
      * @return The <code>AIObject</code> found, or null if not.
@@ -301,7 +310,9 @@ public class AIMain extends FreeColObject
 
     /**
      * Computes how many objects of each class have been created, to
-     * track memory leaks over time
+     * track memory leaks over time.
+     *
+     * @return the AI statistics
      */
     public Map<String, String> getAIStatistics() {
         Map<String, String> stats = new HashMap<>();
@@ -309,6 +320,13 @@ public class AIMain extends FreeColObject
         return getStats(stats, objStats);
     }
 
+	/**
+	 * Gets the stats.
+	 *
+	 * @param stats the stats
+	 * @param objStats the obj stats
+	 * @return the stats
+	 */
 	private Map<String, String> getStats(Map<String, String> stats, Map<String, Long> objStats) {
 		for (AIObject aio : getAIObjects()) {
             String className = aio.getClass().getSimpleName();
@@ -346,6 +364,13 @@ public class AIMain extends FreeColObject
         return getResult(fix, result);
     }
 
+	/**
+	 * Gets the result.
+	 *
+	 * @param fix the fix
+	 * @param result the result
+	 * @return the result
+	 */
 	private int getResult(boolean fix, int result) {
 		for (FreeColGameObject fcgo : getGame().getFreeColGameObjects()) {
             if (shouldHaveAIObject(fcgo)
@@ -363,6 +388,15 @@ public class AIMain extends FreeColObject
         return result;
 	}
 
+	/**
+	 * Gets the integrity.
+	 *
+	 * @param fix the fix
+	 * @param result the result
+	 * @param aio the aio
+	 * @param integ the integ
+	 * @return the integrity
+	 */
 	private int getIntegrity(boolean fix, int result, AIObject aio, int integ) {
 		if (integ < 0 && fix) {
 		    logger.warning("Invalid AIObject: " + aio.getId()
@@ -405,6 +439,11 @@ public class AIMain extends FreeColObject
         }
     }
 
+	/**
+	 * Find serve player.
+	 *
+	 * @param fcgo the fcgo
+	 */
 	private void findServePlayer(FreeColGameObject fcgo) {
 		ServerPlayer player = (ServerPlayer)fcgo;
 		if (player.getPlayerType() == null) {
@@ -458,6 +497,12 @@ public class AIMain extends FreeColObject
         }
     }
 
+	/**
+	 * Check ai player.
+	 *
+	 * @param ao the ao
+	 * @param aiOwner the ai owner
+	 */
 	private void checkAiPlayer(AIObject ao, AIPlayer aiOwner) {
 		if (aiOwner != null) {
             if (ao instanceof AIColony) {
@@ -482,14 +527,21 @@ public class AIMain extends FreeColObject
 
     // Serialization
 
+    /** The Constant NEXT_ID_TAG. */
     private static final String NEXT_ID_TAG = "nextId";
+    
+    /** The Constant COLONIAL_AI_PLAYER_TAG. */
     // @compat 0.10.3
     private static final String COLONIAL_AI_PLAYER_TAG = "colonialAIPlayer";
+    
+    /** The Constant GOODS_WISH_TAG. */
     private static final String GOODS_WISH_TAG = "GoodsWish";
     // end @compat
+    /** The Constant OLD_NEXT_ID_TAG. */
     // @compat 0.10.7
     private static final String OLD_NEXT_ID_TAG = "nextID";
     // end @compat
+    /** The Constant OLD_TILE_IMPROVEMENT_PLAN_TAG. */
     // @compat 0.11.3
     private static final String OLD_TILE_IMPROVEMENT_PLAN_TAG = "tileimprovementplan";
     // end @compat 0.11.3

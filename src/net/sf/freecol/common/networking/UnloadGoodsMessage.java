@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when unloading goods.
  */
@@ -91,6 +92,14 @@ public class UnloadGoodsMessage extends DOMMessage {
         return handleUnload(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle unload.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleUnload(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit carrier;
         try {

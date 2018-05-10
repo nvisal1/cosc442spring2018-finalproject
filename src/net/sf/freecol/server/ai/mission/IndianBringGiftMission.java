@@ -40,6 +40,7 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for bringing a gift to a specified player.
  *
@@ -53,6 +54,7 @@ import net.sf.freecol.server.ai.AIUnit;
  */
 public class IndianBringGiftMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(IndianBringGiftMission.class.getName());
 
     /** The tag for this mission. */
@@ -61,7 +63,7 @@ public class IndianBringGiftMission extends Mission {
     /** The Colony to receive the gift. */
     private Colony colony;
 
-    /** Has the gift been collected? */
+    /**  Has the gift been collected?. */
     private boolean collected;
 
 
@@ -96,6 +98,11 @@ public class IndianBringGiftMission extends Mission {
     }
 
 
+    /**
+     * Gets the colony.
+     *
+     * @return the colony
+     */
     public Colony getColony() { return this.colony; }
 
     /**
@@ -108,7 +115,7 @@ public class IndianBringGiftMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given unit?
+     * Why would this mission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason why the mission would be invalid with the unit,
@@ -153,7 +160,7 @@ public class IndianBringGiftMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -163,7 +170,7 @@ public class IndianBringGiftMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -327,7 +334,10 @@ public class IndianBringGiftMission extends Mission {
 
     // Serialization
 
+    /** The Constant COLLECTED_TAG. */
     private static final String COLLECTED_TAG = "collected";
+    
+    /** The Constant COLONY_TAG. */
     private static final String COLONY_TAG = "colony";
 
 

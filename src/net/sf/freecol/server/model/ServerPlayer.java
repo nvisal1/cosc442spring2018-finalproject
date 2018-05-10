@@ -103,6 +103,7 @@ import net.sf.freecol.server.control.ChangeSet.See;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A <code>Player</code> with additional (server specific) information.
  *
@@ -111,33 +112,51 @@ import org.w3c.dom.Element;
  */
 public class ServerPlayer extends Player implements ServerModelObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ServerPlayer.class.getName());
 
+    /** The Constant ALARM_RADIUS. */
     // FIXME: move to options or spec?
     public static final int ALARM_RADIUS = 2;
+    
+    /** The Constant ALARM_TILE_IN_USE. */
     public static final int ALARM_TILE_IN_USE = 2;
 
+    /** The Constant IS_DEAD. */
     // checkForDeath results
     public static final int IS_DEAD = -1;
+    
+    /** The Constant IS_ALIVE. */
     public static final int IS_ALIVE = 0;
+    
+    /** The Constant AUTORECRUIT. */
     public static final int AUTORECRUIT = 1;
 
+    /** The Constant SCORE_SETTLEMENT_DESTROYED. */
     // Penalty for destroying a settlement (Col1)
     public static final int SCORE_SETTLEMENT_DESTROYED = -5;
 
+    /** The Constant SCORE_NATION_DESTROYED. */
     // Penalty for destroying a nation (FreeCol extension)
     public static final int SCORE_NATION_DESTROYED = -50;
 
+    /** The Constant SCORE_GOLD. */
     // Gold converts to score at 1 pt per 1000 gp (Col1)
     public static final double SCORE_GOLD = 0.001;
 
+    /** The Constant SCORE_FOUNDING_FATHER. */
     // Score bonus for each founding father (Col1)
     public static final int SCORE_FOUNDING_FATHER = 5;
 
     // Percentage bonuses for being the 1st,2nd and 3rd player to
+    /** The Constant SCORE_INDEPENDENCE_BONUS_FIRST. */
     // achieve independence. (Col1)
     public static final int SCORE_INDEPENDENCE_BONUS_FIRST = 100;
+    
+    /** The Constant SCORE_INDEPENDENCE_BONUS_SECOND. */
     public static final int SCORE_INDEPENDENCE_BONUS_SECOND = 50;
+    
+    /** The Constant SCORE_INDEPENDENCE_BONUS_THIRD. */
     public static final int SCORE_INDEPENDENCE_BONUS_THIRD = 25;
 
     /** The network socket to the player's client. */
@@ -146,9 +165,10 @@ public class ServerPlayer extends Player implements ServerModelObject {
     /** The connection for this player. */
     private Connection connection;
 
+    /** The connected. */
     private boolean connected = false;
 
-    /** Remaining emigrants to select due to a fountain of youth */
+    /**  Remaining emigrants to select due to a fountain of youth. */
     private int remainingEmigrants = 0;
 
     /** Players with respect to which stance has changed. */
@@ -160,6 +180,9 @@ public class ServerPlayer extends Player implements ServerModelObject {
 
     /**
      * Trivial constructor required for all ServerModelObjects.
+     *
+     * @param game the game
+     * @param id the id
      */
     public ServerPlayer(Game game, String id) {
         super(game, id);
@@ -239,7 +262,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
 
 
     /**
-     * Is this player is currently connected to the server?
+     * Is this player is currently connected to the server?.
      *
      * @return True if this player is currently connected to the server.
      */
@@ -706,10 +729,20 @@ public class ServerPlayer extends Player implements ServerModelObject {
     }
 
 
+    /**
+     * Gets the remaining emigrants.
+     *
+     * @return the remaining emigrants
+     */
     public int getRemainingEmigrants() {
         return remainingEmigrants;
     }
 
+    /**
+     * Sets the remaining emigrants.
+     *
+     * @param emigrants the new remaining emigrants
+     */
     public void setRemainingEmigrants(int emigrants) {
         remainingEmigrants = emigrants;
     }
@@ -877,9 +910,10 @@ public class ServerPlayer extends Player implements ServerModelObject {
     /**
      * Sets the given tile to be explored by this player and updates
      * the player's information about the tile.
-     *
+     * 
      * +til: Exploring the tile also updates the pet.
      *
+     * @param tile the tile
      * @return True if the tile is newly explored by this action.
      */
     public boolean exploreTile(Tile tile) {
@@ -910,6 +944,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
      * tiles.  Note that the player does not necessarily own the settlement
      * (e.g. missionary at native settlement).
      *
+     * @param settlement the settlement
      * @return A list of newly explored <code>Tile</code>s.
      */
     public Set<Tile> exploreForSettlement(Settlement settlement) {
@@ -1508,6 +1543,12 @@ public class ServerPlayer extends Player implements ServerModelObject {
         }
     }
 
+    /**
+     * Cs pay upkeep.
+     *
+     * @param random the random
+     * @param cs the cs
+     */
     public void csPayUpkeep(Random random, ChangeSet cs) {
         final Specification spec = getSpecification();
         final Disaster bankruptcy = spec.getDisaster(Disaster.BANKRUPTCY);
@@ -1546,6 +1587,13 @@ public class ServerPlayer extends Player implements ServerModelObject {
         if (changed) cs.addPartial(See.only(this), this, "bankrupt");
     }
 
+    /**
+     * Cs natural disasters.
+     *
+     * @param random the random
+     * @param cs the cs
+     * @param probability the probability
+     */
     public void csNaturalDisasters(Random random, ChangeSet cs,
                                    int probability) {
         if (randomInt(logger, "Natural disaster", random, 100) < probability) {
@@ -1742,6 +1790,14 @@ public class ServerPlayer extends Player implements ServerModelObject {
         return messages;
     }
 
+    /**
+     * Gets the building for effect.
+     *
+     * @param colony the colony
+     * @param effect the effect
+     * @param random the random
+     * @return the building for effect
+     */
     public Building getBuildingForEffect(Colony colony, Effect effect, Random random) {
         List<Building> buildings = colony.getBurnableBuildings();
         if (buildings.isEmpty()) return null;
@@ -1749,6 +1805,14 @@ public class ServerPlayer extends Player implements ServerModelObject {
                                buildings, random);
     }
 
+    /**
+     * Gets the unit for effect.
+     *
+     * @param colony the colony
+     * @param effect the effect
+     * @param random the random
+     * @return the unit for effect
+     */
     public Unit getUnitForEffect(Colony colony, Effect effect, Random random) {
         List<Unit> units = new ArrayList<>();
         for (Unit unit : colony.getUnitList()) {
@@ -2314,6 +2378,7 @@ public class ServerPlayer extends Player implements ServerModelObject {
      * @param crs A list of <code>CombatResult</code>s defining the result.
      * @param random A pseudo-random number source.
      * @param cs A <code>ChangeSet</code> to update.
+     * @throws IllegalStateException the illegal state exception
      */
     public void csCombat(FreeColGameObject attacker,
                          FreeColGameObject defender,

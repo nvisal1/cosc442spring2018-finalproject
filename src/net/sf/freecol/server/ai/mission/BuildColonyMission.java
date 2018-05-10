@@ -46,6 +46,7 @@ import net.sf.freecol.server.ai.AIUnit;
 import net.sf.freecol.server.ai.EuropeanAIPlayer;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for building a <code>Colony</code>.
  *
@@ -53,6 +54,7 @@ import net.sf.freecol.server.ai.EuropeanAIPlayer;
  */
 public class BuildColonyMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(BuildColonyMission.class.getName());
 
     /** The tag for this mission. */
@@ -222,7 +224,7 @@ public class BuildColonyMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given unit?
+     * Why would this mission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason why the mission would be invalid with the unit,
@@ -240,7 +242,7 @@ public class BuildColonyMission extends Mission {
     }
 
     /**
-     * Why is this mission invalid with a given colony target?
+     * Why is this mission invalid with a given colony target?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param colony The potential target <code>Colony</code>.
@@ -251,7 +253,7 @@ public class BuildColonyMission extends Mission {
     }
 
     /**
-     * Why is this mission invalid with a given tile target?
+     * Why is this mission invalid with a given tile target?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param tile The potential target <code>Tile</code>.
@@ -271,7 +273,7 @@ public class BuildColonyMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -288,7 +290,7 @@ public class BuildColonyMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -523,6 +525,7 @@ public class BuildColonyMission extends Mission {
 
     // Serialization
 
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
 
 

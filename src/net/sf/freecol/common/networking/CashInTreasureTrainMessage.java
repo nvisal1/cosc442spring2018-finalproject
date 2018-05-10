@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when cashing in a treasure train.
  */
@@ -80,6 +81,15 @@ public class CashInTreasureTrainMessage extends DOMMessage {
         return handleCashIn(server, player, serverPlayer, unit);
     }
 
+	/**
+	 * Handle cash in.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param unit the unit
+	 * @return the element
+	 */
 	private Element handleCashIn(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit) {
 		try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);

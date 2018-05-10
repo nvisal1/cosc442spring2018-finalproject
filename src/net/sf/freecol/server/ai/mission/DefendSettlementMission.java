@@ -43,11 +43,13 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for defending a <code>Settlement</code>.
  */
 public class DefendSettlementMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(DefendSettlementMission.class.getName());
 
     /** The tag for this mission. */
@@ -188,7 +190,7 @@ public class DefendSettlementMission extends Mission {
     }
 
     /**
-     * Why would a DefendSettlementMission be invalid with the given unit?
+     * Why would a DefendSettlementMission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason why the mission would be invalid with the unit,
@@ -204,7 +206,7 @@ public class DefendSettlementMission extends Mission {
     }
     
     /**
-     * Why is this mission invalid with a given settlement target?
+     * Why is this mission invalid with a given settlement target?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param settlement The potential target <code>Settlement</code>.
@@ -216,7 +218,7 @@ public class DefendSettlementMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -231,7 +233,7 @@ public class DefendSettlementMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -420,6 +422,7 @@ public class DefendSettlementMission extends Mission {
 
     // Serialization
 
+    /** The Constant SETTLEMENT_TAG. */
     private static final String SETTLEMENT_TAG = "settlement";
 
 

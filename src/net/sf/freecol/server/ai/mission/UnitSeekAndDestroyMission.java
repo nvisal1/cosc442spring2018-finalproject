@@ -44,11 +44,13 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for attacking a specific target, be it a Unit or a Settlement.
  */
 public class UnitSeekAndDestroyMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(UnitSeekAndDestroyMission.class.getName());
 
     /** The tag for this mission. */
@@ -348,7 +350,7 @@ public class UnitSeekAndDestroyMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -358,7 +360,7 @@ public class UnitSeekAndDestroyMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -535,6 +537,7 @@ public class UnitSeekAndDestroyMission extends Mission {
 
     // Serialization
 
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
 
 

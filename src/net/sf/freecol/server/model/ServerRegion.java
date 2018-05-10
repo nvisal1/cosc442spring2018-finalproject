@@ -40,6 +40,7 @@ import net.sf.freecol.server.control.ChangeSet.See;
 import net.sf.freecol.common.util.LogBuilder;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The server version of a region.
  */
@@ -59,6 +60,7 @@ public class ServerRegion extends Region {
      * Trivial constructor for serialization.
      *
      * @param game The <code>Game</code> to create in.
+     * @param id the id
      */
     public ServerRegion(Game game, String id) {
         super(game, id);
@@ -66,6 +68,9 @@ public class ServerRegion extends Region {
 
     /**
      * Constructor for copying in a new region from an imported game.
+     *
+     * @param game the game
+     * @param region the region
      */
     public ServerRegion(Game game, Region region) {
         super(game);
@@ -162,7 +167,7 @@ public class ServerRegion extends Region {
     }
 
     /**
-     * Is this a geographic region?
+     * Is this a geographic region?.
      *
      * @return True if this is a geographic region.
      */
@@ -181,7 +186,7 @@ public class ServerRegion extends Region {
     }
 
     /**
-     * Does this region contain the center of another?
+     * Does this region contain the center of another?.
      *
      * @param other The other <code>ServerRegion</code> to check.
      * @return True if the center of the other region is within this one.
@@ -237,6 +242,7 @@ public class ServerRegion extends Region {
      *
      * @param map The <code>Map</code> to check.
      * @param lb A <code>LogBuilder</code> to log to.
+     * @return the list
      */     
     public static List<ServerRegion> requireFixedRegions(Map map, LogBuilder lb) {
         final Game game = map.getGame();

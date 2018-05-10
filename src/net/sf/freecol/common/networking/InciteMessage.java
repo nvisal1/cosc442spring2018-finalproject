@@ -32,6 +32,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when inciting a native settlement.
  */
@@ -104,6 +105,15 @@ public class InciteMessage extends DOMMessage {
         return handleIncite(server, player, serverPlayer, game);
     }
 
+	/**
+	 * Handle incite.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleIncite(FreeColServer server, Player player, final ServerPlayer serverPlayer,
 			final Game game) {
 		Unit unit;

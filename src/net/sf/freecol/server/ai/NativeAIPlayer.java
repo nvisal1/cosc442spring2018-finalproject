@@ -67,6 +67,7 @@ import net.sf.freecol.server.ai.mission.UnitWanderHostileMission;
 import net.sf.freecol.server.model.ServerPlayer;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single {@link
  * Player} and is used for controlling this player.
@@ -76,14 +77,19 @@ import net.sf.freecol.server.model.ServerPlayer;
  */
 public class NativeAIPlayer extends AIPlayer {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(NativeAIPlayer.class.getName());
 
+    /** The Constant MAX_DISTANCE_TO_BRING_GIFTS. */
     public static final int MAX_DISTANCE_TO_BRING_GIFTS = 5;
 
+    /** The Constant MAX_NUMBER_OF_GIFTS_BEING_DELIVERED. */
     public static final int MAX_NUMBER_OF_GIFTS_BEING_DELIVERED = 1;
 
+    /** The Constant MAX_DISTANCE_TO_MAKE_DEMANDS. */
     public static final int MAX_DISTANCE_TO_MAKE_DEMANDS = 5;
 
+    /** The Constant MAX_NUMBER_OF_DEMANDS. */
     public static final int MAX_NUMBER_OF_DEMANDS = 1;
 
     /**
@@ -143,6 +149,12 @@ public class NativeAIPlayer extends AIPlayer {
         giveDefensiveMissions(lb, player);
     }
 
+	/**
+	 * Give defensive missions.
+	 *
+	 * @param lb the lb
+	 * @param player the player
+	 */
 	private void giveDefensiveMissions(LogBuilder lb, final Player player) {
 		List<Unit> units = new ArrayList<>();
         for (IndianSettlement is : player.getIndianSettlements()) {
@@ -176,6 +188,13 @@ public class NativeAIPlayer extends AIPlayer {
         getStance(lb, serverPlayer);
     }
 
+	/**
+	 * Gets the stance.
+	 *
+	 * @param lb the lb
+	 * @param serverPlayer the server player
+	 * @return the stance
+	 */
 	private void getStance(LogBuilder lb, final ServerPlayer serverPlayer) {
 		for (Player p : getGame().getLivePlayers(serverPlayer)) {
             Stance newStance = determineStance(p);
@@ -204,6 +223,14 @@ public class NativeAIPlayer extends AIPlayer {
         secureSettlement(randoms, lb, randomIdx, settlements);
     }
 
+	/**
+	 * Secure settlement.
+	 *
+	 * @param randoms the randoms
+	 * @param lb the lb
+	 * @param randomIdx the random idx
+	 * @param settlements the settlements
+	 */
 	private void secureSettlement(int[] randoms, LogBuilder lb, int randomIdx, List<IndianSettlement> settlements) {
 		for (IndianSettlement is : settlements) {
             // Spread arms and horses between camps
@@ -244,6 +271,13 @@ public class NativeAIPlayer extends AIPlayer {
         addMilitaryLog(is, lb, units);
     }
 
+	/**
+	 * Adds the military log.
+	 *
+	 * @param is the is
+	 * @param lb the lb
+	 * @param units the units
+	 */
 	private void addMilitaryLog(IndianSettlement is, LogBuilder lb, List<Unit> units) {
 		for (Unit u : units) {
             Role r = is.canImproveUnitMilitaryRole(u);
@@ -329,6 +363,14 @@ public class NativeAIPlayer extends AIPlayer {
         assignUnitsToAttack(lb, aiMain, units, threatTiles);
     }
 
+	/**
+	 * Assign units to attack.
+	 *
+	 * @param lb the lb
+	 * @param aiMain the ai main
+	 * @param units the units
+	 * @param threatTiles the threat tiles
+	 */
 	private void assignUnitsToAttack(LogBuilder lb, final AIMain aiMain, List<Unit> units, List<Tile> threatTiles) {
 		while (!threatTiles.isEmpty() && !units.isEmpty()) {
             Tile tile = threatTiles.remove(0);
@@ -353,6 +395,17 @@ public class NativeAIPlayer extends AIPlayer {
         }
 	}
 
+	/**
+	 * Check number of defenders.
+	 *
+	 * @param is the is
+	 * @param lb the lb
+	 * @param aiMain the ai main
+	 * @param units the units
+	 * @param defenders the defenders
+	 * @param isComparator the is comparator
+	 * @param needed the needed
+	 */
 	private void checkNumberOfDefenders(final IndianSettlement is, LogBuilder lb, final AIMain aiMain, List<Unit> units,
 			List<Unit> defenders, final Comparator<Unit> isComparator, int needed) {
 		if (defenders.size() < needed) { // More needed, call some in.
@@ -376,6 +429,17 @@ public class NativeAIPlayer extends AIPlayer {
         }
 	}
 
+	/**
+	 * Determine surroundings.
+	 *
+	 * @param is the is
+	 * @param aiMain the ai main
+	 * @param player the player
+	 * @param cm the cm
+	 * @param units the units
+	 * @param defenders the defenders
+	 * @param threats the threats
+	 */
 	private void determineSurroundings(final IndianSettlement is, final AIMain aiMain, final Player player,
 			final CombatModel cm, List<Unit> units, List<Unit> defenders, final HashMap<Tile, Double> threats) {
 		DefendSettlementMission dm;
@@ -420,6 +484,14 @@ public class NativeAIPlayer extends AIPlayer {
         }
 	}
 
+	/**
+	 * Collect current defenders.
+	 *
+	 * @param is the is
+	 * @param aiMain the ai main
+	 * @param units the units
+	 * @param defenders the defenders
+	 */
 	private void collectCurrentDefenders(final IndianSettlement is, final AIMain aiMain, List<Unit> units,
 			List<Unit> defenders) {
 		DefendSettlementMission dm;
@@ -437,6 +509,12 @@ public class NativeAIPlayer extends AIPlayer {
         }
 	}
 
+	/**
+	 * Collect native units.
+	 *
+	 * @param is the is
+	 * @param units the units
+	 */
 	private void collectNativeUnits(final IndianSettlement is, List<Unit> units) {
 		units.addAll(is.getUnitList());
         units.addAll(is.getTile().getUnitList());
@@ -515,6 +593,12 @@ public class NativeAIPlayer extends AIPlayer {
         logMissions(reasons, lb);
     }
 
+	/**
+	 * Check AI units.
+	 *
+	 * @param aiUnits the ai units
+	 * @param done the done
+	 */
 	private void checkAIUnits(List<AIUnit> aiUnits, List<AIUnit> done) {
 		for (AIUnit aiUnit : aiUnits) {
             final Unit unit = aiUnit.getUnit();
@@ -712,6 +796,16 @@ public class NativeAIPlayer extends AIPlayer {
         if (lb.grew("\n  Tribute: ")) lb.shrink(", ");
     }
 
+	/**
+	 * Collect nearby colonies.
+	 *
+	 * @param cd the cd
+	 * @param is the is
+	 * @param home the home
+	 * @param unit the unit
+	 * @param aiUnit the ai unit
+	 * @param nearbyColonies the nearby colonies
+	 */
 	private void collectNearbyColonies(final CostDecider cd, IndianSettlement is, Tile home, Unit unit, AIUnit aiUnit,
 			List<RandomChoice<Colony>> nearbyColonies) {
 		for (Tile t : home.getSurroundingTiles(MAX_DISTANCE_TO_MAKE_DEMANDS)) {
@@ -731,6 +825,14 @@ public class NativeAIPlayer extends AIPlayer {
 		}
 	}
 
+	/**
+	 * Find owned unit.
+	 *
+	 * @param is the is
+	 * @param availableUnits the available units
+	 * @param alreadyAssignedUnits the already assigned units
+	 * @return the int
+	 */
 	private int findOwnedUnit(IndianSettlement is, List<Unit> availableUnits, int alreadyAssignedUnits) {
 		for (Unit ou : is.getOwnedUnits()) {
 		    AIUnit aiu = getAIUnit(ou);

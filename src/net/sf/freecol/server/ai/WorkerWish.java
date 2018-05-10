@@ -34,11 +34,13 @@ import net.sf.freecol.common.util.LogBuilder;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents the need for a worker within a <code>Colony</code>.
  */
 public class WorkerWish extends Wish {
 
+    /** The Constant logger. */
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(WorkerWish.class.getName());
 
@@ -147,7 +149,7 @@ public class WorkerWish extends Wish {
     }
 
     /**
-     * Does a specified unit satisfy this wish?
+     * Does a specified unit satisfy this wish?.
      *
      * @param unit The <code>Unit</code> to test.
      * @return True if the unit either matches exactly if expertRequired,
@@ -179,8 +181,13 @@ public class WorkerWish extends Wish {
 
     // Serialization
 
+    /** The Constant EXPERT_NEEDED_TAG. */
     private static final String EXPERT_NEEDED_TAG = "expertNeeded";
+    
+    /** The Constant TRANSPORTABLE_TAG. */
     private static final String TRANSPORTABLE_TAG = "transportable";
+    
+    /** The Constant UNIT_TYPE_TAG. */
     private static final String UNIT_TYPE_TAG = "unitType";
 
 

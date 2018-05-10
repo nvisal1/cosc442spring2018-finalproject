@@ -27,6 +27,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message that contains a chat string.
  */
@@ -78,7 +79,7 @@ public class ChatMessage extends DOMMessage {
     // Public interface
 
     /**
-     * Who sent this ChatMessage?
+     * Who sent this ChatMessage?.
      *
      * @param game The <code>Game</code> the player is in.
      * @return The player that sent this ChatMessage.
@@ -88,7 +89,7 @@ public class ChatMessage extends DOMMessage {
     }
 
     /**
-     * What is the text of this ChatMessage?
+     * What is the text of this ChatMessage?.
      *
      * @return The text of this ChatMessage.
      */
@@ -97,7 +98,7 @@ public class ChatMessage extends DOMMessage {
     }
 
     /**
-     * Is this ChatMessage private?
+     * Is this ChatMessage private?.
      *
      * @return True if this ChatMessage is private.
      */

@@ -33,6 +33,7 @@ import net.sf.freecol.common.model.TileImprovementType;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents a plan to improve a <code>Tile</code> in some way.
  * For instance by plowing or by building a road.
@@ -41,6 +42,7 @@ import org.w3c.dom.Element;
  */
 public class TileImprovementPlan extends ValuedAIObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(TileImprovementPlan.class.getName());
 
     /** The type of improvement, from TileImprovementTypes. */
@@ -198,6 +200,15 @@ public class TileImprovementPlan extends ValuedAIObject {
         return getBestType(tile, goodsType, bestValue, bestType);
     }
 
+	/**
+	 * Gets the best type.
+	 *
+	 * @param tile the tile
+	 * @param goodsType the goods type
+	 * @param bestValue the best value
+	 * @param bestType the best type
+	 * @return the best type
+	 */
 	private static TileImprovementType getBestType(Tile tile, GoodsType goodsType, int bestValue,
 			TileImprovementType bestType) {
 		for (TileImprovementType impType
@@ -236,7 +247,7 @@ public class TileImprovementPlan extends ValuedAIObject {
     }
 
     /**
-     * Is this improvement complete?
+     * Is this improvement complete?.
      *
      * @return True if the tile improvement has been completed.
      */
@@ -304,8 +315,13 @@ public class TileImprovementPlan extends ValuedAIObject {
 
     // Serialization
 
+    /** The Constant PIONEER_TAG. */
     private static final String PIONEER_TAG = "pioneer";
+    
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
+    
+    /** The Constant TYPE_TAG. */
     private static final String TYPE_TAG = "type";
 
 

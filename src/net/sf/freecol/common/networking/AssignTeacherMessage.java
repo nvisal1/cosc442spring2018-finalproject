@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when assigning a teacher.
  */
@@ -93,6 +94,16 @@ public class AssignTeacherMessage extends DOMMessage {
         return determineTeacherStudent(server, player, serverPlayer, student, teacher);
     }
 
+	/**
+	 * Determine teacher student.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param student the student
+	 * @param teacher the teacher
+	 * @return the element
+	 */
 	private Element determineTeacherStudent(FreeColServer server, Player player, final ServerPlayer serverPlayer,
 			Unit student, Unit teacher) {
 		try {

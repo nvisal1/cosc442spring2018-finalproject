@@ -66,6 +66,7 @@ import net.sf.freecol.server.ai.mission.WorkInsideColonyMission;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class contains AI-information for a single {@link Unit}.
  *
@@ -78,6 +79,7 @@ import org.w3c.dom.Element;
  */
 public class AIUnit extends TransportableAIObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(AIUnit.class.getName());
 
     /** The Unit this AIObject contains AI-information for. */
@@ -235,6 +237,12 @@ public class AIUnit extends TransportableAIObject {
         applyTransport(aiCarrier, transport);
     }
 
+	/**
+	 * Apply transport.
+	 *
+	 * @param aiCarrier the ai carrier
+	 * @param transport the transport
+	 */
 	private void applyTransport(AIUnit aiCarrier, AIUnit transport) {
 		if (transport != aiCarrier) {
             if (transport != null) {
@@ -289,8 +297,9 @@ public class AIUnit extends TransportableAIObject {
     }
 
     /**
-     * Does this unit have a particular class of mission?
+     * Does this unit have a particular class of mission?.
      *
+     * @param <T> the generic type
      * @param returnClass The <code>Class</code> of mission to check.
      * @return True if the mission is of the given class.
      */
@@ -301,6 +310,7 @@ public class AIUnit extends TransportableAIObject {
     /**
      * Get the unit mission if it is of a given class.
      *
+     * @param <T> the generic type
      * @param returnClass The <code>Class</code> of the mission.
      * @return The <code>Mission</code>, or null if it is not of the
      *     given class.
@@ -396,6 +406,15 @@ public class AIUnit extends TransportableAIObject {
         return equip(role, player, loc, count);
     }
 
+	/**
+	 * Equip.
+	 *
+	 * @param role the role
+	 * @param player the player
+	 * @param loc the loc
+	 * @param count the count
+	 * @return true, if successful
+	 */
 	private boolean equip(Role role, final Player player, Location loc, int count) {
 		if (count > 0) {
             for (; count > 0; count--) {
@@ -463,6 +482,14 @@ public class AIUnit extends TransportableAIObject {
         return getPath(carrier, dst, path);
     }
 
+	/**
+	 * Gets the path.
+	 *
+	 * @param carrier the carrier
+	 * @param dst the dst
+	 * @param path the path
+	 * @return the path
+	 */
 	private PathNode getPath(Unit carrier, Location dst, PathNode path) {
 		if (unit.getLocation() == carrier) {
             path = unit.findPath(carrier.getLocation(), dst, carrier, null);
@@ -575,6 +602,14 @@ public class AIUnit extends TransportableAIObject {
         return pickTile(unit, tile, tiles);
     }
 
+	/**
+	 * Pick tile.
+	 *
+	 * @param unit the unit
+	 * @param tile the tile
+	 * @param tiles the tiles
+	 * @return true, if successful
+	 */
 	private boolean pickTile(final Unit unit, final Tile tile, List<Tile> tiles) {
 		final Player player = unit.getOwner();
         Tile safe = tiles.get(0);
@@ -584,6 +619,19 @@ public class AIUnit extends TransportableAIObject {
         return getTile(unit, tile, tiles, player, safe, best, bestTurns, settlement);
 	}
 
+	/**
+	 * Gets the tile.
+	 *
+	 * @param unit the unit
+	 * @param tile the tile
+	 * @param tiles the tiles
+	 * @param player the player
+	 * @param safe the safe
+	 * @param best the best
+	 * @param bestTurns the best turns
+	 * @param settlement the settlement
+	 * @return the tile
+	 */
 	private boolean getTile(final Unit unit, final Tile tile, List<Tile> tiles, final Player player, Tile safe,
 			Tile best, int bestTurns, Settlement settlement) {
 		for (Tile t : tiles) {
@@ -614,6 +662,13 @@ public class AIUnit extends TransportableAIObject {
         return transport(direction, carrier);
     }
 
+	/**
+	 * Transport.
+	 *
+	 * @param direction the direction
+	 * @param carrier the carrier
+	 * @return true, if successful
+	 */
 	private boolean transport(Direction direction, final Unit carrier) {
 		boolean result = (direction == null)
             ? (AIMessage.askDisembark(this)
@@ -698,9 +753,11 @@ public class AIUnit extends TransportableAIObject {
 
     // Serialization
 
+    /** The Constant TILE_IMPROVEMENT_PLAN_MISSION_TAG. */
     // @compat 0.10.3
     private static final String TILE_IMPROVEMENT_PLAN_MISSION_TAG = "tileImprovementPlanMission";
     // end @compat
+    /** The Constant IDLE_AT_COLONY_MISSION_TAG. */
     // @compat 0.10.5
     private static final String IDLE_AT_COLONY_MISSION_TAG = "idleAtColonyMission";
     // end @compat
@@ -758,6 +815,14 @@ public class AIUnit extends TransportableAIObject {
         determineMission(xr, aiMain, tag);
     }
 
+	/**
+	 * Determine mission.
+	 *
+	 * @param xr the xr
+	 * @param aiMain the ai main
+	 * @param tag the tag
+	 * @throws XMLStreamException the XML stream exception
+	 */
 	private void determineMission(FreeColXMLReader xr, final AIMain aiMain, final String tag)
 			throws XMLStreamException {
 		if (BuildColonyMission.getXMLElementTagName().equals(tag)) {

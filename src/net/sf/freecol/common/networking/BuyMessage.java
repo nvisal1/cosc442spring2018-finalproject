@@ -31,6 +31,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when purchasing at an IndianSettlement.
  */
@@ -88,7 +89,7 @@ public class BuyMessage extends DOMMessage {
     // Public interface
 
     /**
-     * What is the price currently negotiated for this transaction?
+     * What is the price currently negotiated for this transaction?.
      *
      * @return The current price.
      */
@@ -132,6 +133,15 @@ public class BuyMessage extends DOMMessage {
         return buyExisting(server, serverPlayer, unit, settlement);
     }
 
+	/**
+	 * Buy existing.
+	 *
+	 * @param server the server
+	 * @param serverPlayer the server player
+	 * @param unit the unit
+	 * @param settlement the settlement
+	 * @return the element
+	 */
 	private Element buyExisting(FreeColServer server, final ServerPlayer serverPlayer, Unit unit,
 			ServerIndianSettlement settlement) {
 		if (goods.getLocation() != settlement) {

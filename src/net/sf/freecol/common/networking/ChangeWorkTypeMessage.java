@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when changing the work type of a unit.
  */
@@ -87,6 +88,15 @@ public class ChangeWorkTypeMessage extends DOMMessage {
         return handleChangeWorkType(server, player, serverPlayer, unit);
     }
 
+	/**
+	 * Handle change work type.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param unit the unit
+	 * @return the element
+	 */
 	private Element handleChangeWorkType(FreeColServer server, Player player, final ServerPlayer serverPlayer,
 			Unit unit) {
 		try {

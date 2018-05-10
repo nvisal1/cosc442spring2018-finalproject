@@ -42,6 +42,7 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for cashing in a treasure train.
  * FIXME: acquire protection
@@ -49,6 +50,7 @@ import net.sf.freecol.server.ai.AIUnit;
  */
 public class CashInTreasureTrainMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(CashInTreasureTrainMission.class.getName());
 
     /** The tag for this mission. */
@@ -264,7 +266,7 @@ public class CashInTreasureTrainMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given unit?
+     * Why would this mission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason why the mission would be invalid with the unit,
@@ -311,7 +313,7 @@ public class CashInTreasureTrainMission extends Mission {
     }
 
     /**
-     * Why is this mission invalid with a given Europe target?
+     * Why is this mission invalid with a given Europe target?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param europe The potential target <code>Europe</code>.
@@ -322,7 +324,7 @@ public class CashInTreasureTrainMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -340,7 +342,7 @@ public class CashInTreasureTrainMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason for invalidity, or null if none found.
@@ -457,6 +459,7 @@ public class CashInTreasureTrainMission extends Mission {
 
     // Serialization
 
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
 
 

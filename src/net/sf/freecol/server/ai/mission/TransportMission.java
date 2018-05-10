@@ -55,6 +55,7 @@ import net.sf.freecol.server.ai.EuropeanAIPlayer;
 import net.sf.freecol.server.ai.TransportableAIObject;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for transporting units and goods on a carrier.
  *
@@ -62,15 +63,30 @@ import net.sf.freecol.server.ai.TransportableAIObject;
  */
 public class TransportMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(TransportMission.class.getName());
 
+    /** The Constant tag. */
     private static final String tag = "AI transport";
 
+    /**
+     * The Enum CargoResult.
+     */
     private static enum CargoResult {
-        TCONTINUE,  // Cargo should continue
-        TDONE,      // Cargo completed successfully
-        TFAIL,      // Cargo failed badly
-        TNEXT,      // Cargo changed to its next state
+        
+        /** The tcontinue. */
+        TCONTINUE,  
+  /** The tdone. */
+  // Cargo should continue
+        TDONE,      
+      /** The tfail. */
+      // Cargo completed successfully
+        TFAIL,      
+      /** The tnext. */
+      // Cargo failed badly
+        TNEXT,      
+      /** The tretry. */
+      // Cargo changed to its next state
         TRETRY      // Cargo has blocked, retry
     }
 
@@ -80,6 +96,7 @@ public class TransportMission extends Mission {
      */
     private static final int DESTINATION_UPPER_BOUND = 4;
 
+    /** The Constant MINIMUM_GOLD_TO_STAY_IN_EUROPE. */
     private static final int MINIMUM_GOLD_TO_STAY_IN_EUROPE = 600;
 
     /** A list of <code>Cargo</code>s to work on. */
@@ -143,7 +160,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * Is a transportable waiting for delivery on the cargoes list?
+     * Is a transportable waiting for delivery on the cargoes list?.
      *
      * @param t The <code>TransportableAIObject</code> to check.
      * @return True if the transportable is queued in this mission.
@@ -467,7 +484,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * Is there nothing currently queued for this carrier?
+     * Is there nothing currently queued for this carrier?.
      *
      * @return True if there is no work allocated to this carrier.
      */
@@ -566,7 +583,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * Is there space available for a new cargo?
+     * Is there space available for a new cargo?.
      *
      * @param cargo The <code>Cargo</code> to check.
      * @return True if there is space available for this cargo.
@@ -576,7 +593,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * Is there space available for a new cargo?
+     * Is there space available for a new cargo?.
      *
      * @param t The <code>TransportableAIObject</code> to check.
      * @return True if there is space available for this transportable.
@@ -1150,7 +1167,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * What is the best transportable for a carrier to collect?
+     * What is the best transportable for a carrier to collect?.
      *
      * @param carrier The carrier <code>Unit</code> to consider.
      * @return The best available new <code>Cargo</code>, or null if
@@ -1189,7 +1206,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * Why would an TransportMission be invalid with the given unit?
+     * Why would an TransportMission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason why the mission would be invalid with the unit,
@@ -1225,7 +1242,7 @@ public class TransportMission extends Mission {
     }
             
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -1243,7 +1260,7 @@ public class TransportMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -1470,7 +1487,10 @@ public class TransportMission extends Mission {
 
     // Serialization
 
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
+    
+    /** The Constant OLD_TRANSPORTABLE_TAG. */
     // @compat 0.10.5
     private static final String OLD_TRANSPORTABLE_TAG = "transportable";
     // end @compat

@@ -27,6 +27,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when updating a trade route.
  */
@@ -79,6 +80,12 @@ public class UpdateTradeRouteMessage extends DOMMessage {
         return handleChangeRoute(serverPlayer);
     }
 
+	/**
+	 * Handle change route.
+	 *
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handleChangeRoute(final ServerPlayer serverPlayer) {
 		if (tradeRoute == null || tradeRoute.getId() == null
             || !SetTradeRoutesMessage.hasPrefix(tradeRoute)) {

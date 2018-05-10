@@ -78,16 +78,21 @@ import net.sf.freecol.server.control.ChangeSet.ChangePriority;
 import net.sf.freecol.server.control.ChangeSet.See;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Server version of a unit.
  */
 public class ServerUnit extends Unit implements ServerModelObject {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ServerUnit.class.getName());
 
 
     /**
      * Trivial constructor required for all ServerModelObjects.
+     *
+     * @param game the game
+     * @param id the id
      */
     public ServerUnit(Game game, String id) {
         super(game, id);

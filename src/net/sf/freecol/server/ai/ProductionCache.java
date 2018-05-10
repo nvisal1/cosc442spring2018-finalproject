@@ -43,6 +43,7 @@ import net.sf.freecol.common.model.WorkLocation;
 import net.sf.freecol.common.model.UnitTypeChange.ChangeType;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The production cache is intended to record all possible
  * combinations of units producing goods in a colony's work
@@ -51,6 +52,7 @@ import net.sf.freecol.common.model.UnitTypeChange.ChangeType;
  */
 public class ProductionCache {
 
+    /** The colony. */
     private final Colony colony;
 
     /**
@@ -112,6 +114,11 @@ public class ProductionCache {
     private final TypeCountMap<BuildingType> unitCounts = new TypeCountMap<>();
 
 
+    /**
+     * Instantiates a new production cache.
+     *
+     * @param colony the colony
+     */
     public ProductionCache(Colony colony) {
         this.colony = colony;
         this.units = new HashSet<>(colony.getUnitList());
@@ -127,6 +134,12 @@ public class ProductionCache {
         this.entries = new HashMap<>();
     }
 
+    /**
+     * Creates the entries.
+     *
+     * @param goodsType the goods type
+     * @return the list
+     */
     private List<Entry> createEntries(GoodsType goodsType) {
         // FIXME: OO/generic
         List<Entry> result = new ArrayList<>();
@@ -136,6 +149,12 @@ public class ProductionCache {
         return result;
     }
 
+	/**
+	 * Check farmed.
+	 *
+	 * @param goodsType the goods type
+	 * @param result the result
+	 */
 	private void checkFarmed(GoodsType goodsType, List<Entry> result) {
 		if (goodsType.isFarmed()) {
             for (ColonyTile colonyTile : colonyTiles) {
@@ -162,32 +181,70 @@ public class ProductionCache {
         }
 	}
 
+    /**
+     * Gets the units.
+     *
+     * @return the units
+     */
     public Set<Unit> getUnits() {
         return units;
     }
 
+    /**
+     * Gets the unit count.
+     *
+     * @return the unit count
+     */
     public int getUnitCount() {
         return unitCount;
     }
 
+    /**
+     * Gets the unit count.
+     *
+     * @param buildingType the building type
+     * @return the unit count
+     */
     public int getUnitCount(BuildingType buildingType) {
         return unitCounts.getCount(buildingType);
     }
 
+    /**
+     * Decrement unit count.
+     *
+     * @param buildingType the building type
+     * @return the int
+     */
     public int decrementUnitCount(BuildingType buildingType) {
         Integer result = unitCounts.incrementCount(buildingType, -1);
         return (result == null) ? 0 : result;
     }
 
+    /**
+     * Gets the assigned.
+     *
+     * @return the assigned
+     */
     public List<Entry> getAssigned() {
         return assigned;
     }
 
+    /**
+     * Gets the reserved.
+     *
+     * @return the reserved
+     */
     public List<Entry> getReserved() {
         return reserved;
     }
 
 
+    /**
+     * Gets the entries.
+     *
+     * @param goodsType the goods type
+     * @return the entries
+     */
     public List<Entry> getEntries(GoodsType goodsType) {
         List<Entry> result = entries.get(goodsType);
         if (result == null) {
@@ -196,10 +253,23 @@ public class ProductionCache {
         return result;
     }
 
+    /**
+     * Gets the entries.
+     *
+     * @param goodsTypes the goods types
+     * @return the entries
+     */
     public List<Entry> getEntries(List<GoodsType> goodsTypes) {
         return getEntries(goodsTypes, false);
     }
 
+    /**
+     * Gets the entries.
+     *
+     * @param goodsTypes the goods types
+     * @param useMarketValues the use market values
+     * @return the entries
+     */
     public List<Entry> getEntries(List<GoodsType> goodsTypes, boolean useMarketValues) {
         List<Entry> result = new ArrayList<>();
         for (GoodsType goodsType : goodsTypes) {
@@ -284,6 +354,15 @@ public class ProductionCache {
         return returnRemoved(unit, workLocation, entryIterator, removedEntries);
     }
 
+	/**
+	 * Return removed.
+	 *
+	 * @param unit the unit
+	 * @param workLocation the work location
+	 * @param entryIterator the entry iterator
+	 * @param removedEntries the removed entries
+	 * @return the list
+	 */
 	private static List<Entry> returnRemoved(Unit unit, WorkLocation workLocation, Iterator<Entry> entryIterator,
 			List<Entry> removedEntries) {
 		while (entryIterator.hasNext()) {
@@ -307,15 +386,38 @@ public class ProductionCache {
      *
      */
     public static class Entry {
+        
+        /** The goods type. */
         private final GoodsType goodsType;
+        
+        /** The work location. */
         private final WorkLocation workLocation;
+        
+        /** The unit. */
         private final Unit unit;
+        
+        /** The production. */
         private final int production;
+        
+        /** The is expert. */
         private boolean isExpert = false;
+        
+        /** The is other expert. */
         private boolean isOtherExpert = false;
+        
+        /** The unit upgrades. */
         private boolean unitUpgrades = false;
+        
+        /** The unit upgrades to expert. */
         private boolean unitUpgradesToExpert = false;
 
+        /**
+         * Instantiates a new entry.
+         *
+         * @param g the g
+         * @param w the w
+         * @param u the u
+         */
         public Entry(GoodsType g, WorkLocation w, Unit u) {
             goodsType = g;
             workLocation = w;

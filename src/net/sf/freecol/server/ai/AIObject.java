@@ -31,6 +31,7 @@ import net.sf.freecol.common.model.Specification;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * An <code>AIObject</code> contains AI-related information and methods.
  * Each <code>FreeColGameObject</code>, that is owned by an AI-controlled
@@ -38,6 +39,7 @@ import org.w3c.dom.Element;
  */
 public abstract class AIObject extends FreeColObject {
 
+    /** The Constant logger. */
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(FreeColObject.class.getName());
 
@@ -95,9 +97,9 @@ public abstract class AIObject extends FreeColObject {
      *
      * @param aiMain The main AI-object.
      * @param xr The input stream containing the XML.
+     * @see AIObject#readFromXML
      * @exception XMLStreamException if a problem was encountered
      *     during parsing.
-     * @see AIObject#readFromXML
      */
     public AIObject(AIMain aiMain,
                     FreeColXMLReader xr) throws XMLStreamException {
@@ -147,7 +149,7 @@ public abstract class AIObject extends FreeColObject {
     }
 
     /**
-     * Has this AIObject been disposed?
+     * Has this AIObject been disposed?.
      *
      * @return True if this AIObject was disposed.
      */

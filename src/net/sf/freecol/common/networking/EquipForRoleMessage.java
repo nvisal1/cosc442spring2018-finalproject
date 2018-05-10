@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent to equip a unit for a particular role.
  */
@@ -91,6 +92,15 @@ public class EquipForRoleMessage extends DOMMessage {
         return handleEquip(server, player, serverPlayer, game); 
     }
 
+	/**
+	 * Handle equip.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleEquip(FreeColServer server, Player player, final ServerPlayer serverPlayer, final Game game) {
 		Unit unit;
         try {

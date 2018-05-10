@@ -45,11 +45,13 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for sending a missionary to a native settlement.
  */
 public class MissionaryMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(MissionaryMission.class.getName());
 
     /** The tag for this mission. */
@@ -226,7 +228,7 @@ public class MissionaryMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given unit?
+     * Why would this mission be invalid with the given unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason to not perform the mission, or null if none.
@@ -248,7 +250,7 @@ public class MissionaryMission extends Mission {
     }
 
     /**
-     * Why would a MissionaryMission be invalid with the given Colony?
+     * Why would a MissionaryMission be invalid with the given Colony?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param colony The <code>Colony</code> to check.
@@ -260,7 +262,7 @@ public class MissionaryMission extends Mission {
 
     /**
      * Why would a MissionaryMission be invalid with the given
-     * IndianSettlement?
+     * IndianSettlement?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param is The <code>IndianSettlement</code> to check.
@@ -281,7 +283,7 @@ public class MissionaryMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to test.
      * @return A reason for invalidity, or null if none found.
@@ -291,7 +293,7 @@ public class MissionaryMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -414,6 +416,7 @@ public class MissionaryMission extends Mission {
 
     // Serialization
     
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
 
 

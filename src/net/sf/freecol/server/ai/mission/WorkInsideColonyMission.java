@@ -35,11 +35,13 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for working inside an AI colony.
  */
 public class WorkInsideColonyMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(WorkInsideColonyMission.class.getName());
 
     /** The tag for this mission. */
@@ -91,7 +93,7 @@ public class WorkInsideColonyMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -187,6 +189,7 @@ public class WorkInsideColonyMission extends Mission {
 
     // Serialization
 
+    /** The Constant COLONY_TAG. */
     private static final String COLONY_TAG = "colony";
 
 

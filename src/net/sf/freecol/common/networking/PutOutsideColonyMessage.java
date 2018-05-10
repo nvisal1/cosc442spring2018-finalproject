@@ -28,6 +28,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when putting a unit outside a colony.
  */
@@ -79,6 +80,14 @@ public class PutOutsideColonyMessage extends DOMMessage {
         return handlePutOutside(server, player, serverPlayer);
     }
 
+	/**
+	 * Handle put outside.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @return the element
+	 */
 	private Element handlePutOutside(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
 		Unit unit;
         try {

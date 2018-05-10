@@ -23,6 +23,7 @@ package net.sf.freecol.common.networking;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A trivial message.  That is, it contains only simple string
  * attributes.
@@ -36,6 +37,12 @@ class TrivialMessage extends DOMMessage {
     private final String[] attributes;
 
 
+    /**
+     * Instantiates a new trivial message.
+     *
+     * @param tag the tag
+     * @param attributes the attributes
+     */
     public TrivialMessage(String tag, String... attributes) {
         super(tag);
 
@@ -44,6 +51,9 @@ class TrivialMessage extends DOMMessage {
     }
 
 
+    /* (non-Javadoc)
+     * @see net.sf.freecol.common.networking.DOMMessage#toXMLElement()
+     */
     @Override
     public Element toXMLElement() {
         return DOMMessage.createMessage(tag, attributes);

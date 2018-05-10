@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent when summarizing a nation.
  */
@@ -98,6 +99,14 @@ public class GetNationSummaryMessage extends DOMMessage {
         return getSummary(server, serverPlayer, game);
     }
 
+	/**
+	 * Gets the summary.
+	 *
+	 * @param server the server
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the summary
+	 */
 	private Element getSummary(FreeColServer server, final ServerPlayer serverPlayer, final Game game) {
 		Player player = game.getFreeColGameObject(playerId, Player.class);
         if (player == null) {

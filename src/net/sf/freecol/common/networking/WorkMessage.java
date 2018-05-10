@@ -29,6 +29,7 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The message sent to handle changes in work location.
  */
@@ -86,6 +87,15 @@ public class WorkMessage extends DOMMessage {
         return handleWork(server, player, serverPlayer, game);
     }
 
+	/**
+	 * Handle work.
+	 *
+	 * @param server the server
+	 * @param player the player
+	 * @param serverPlayer the server player
+	 * @param game the game
+	 * @return the element
+	 */
 	private Element handleWork(FreeColServer server, Player player, final ServerPlayer serverPlayer, final Game game) {
 		Unit unit;
         try {

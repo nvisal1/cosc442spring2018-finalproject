@@ -54,6 +54,7 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.LogBuilder;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Objects of this class describes the plan the AI has for a
  * <code>Colony</code>.
@@ -76,6 +77,7 @@ import net.sf.freecol.common.util.LogBuilder;
  */
 public class ColonyPlan {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ColonyPlan.class.getName());
 
     /** Require production plans to always produce an amount exceeding this. */
@@ -89,16 +91,27 @@ public class ColonyPlan {
 
     /** The profile of the colony (a sort of general flavour). */
     private static enum ProfileType {
+        
+        /** The outpost. */
         OUTPOST,
+        
+        /** The small. */
         SMALL,
+        
+        /** The medium. */
         MEDIUM,
+        
+        /** The large. */
         LARGE,
+        
+        /** The capital. */
         CAPITAL;
 
         /**
          * Chooses a suitable profile type given a size of colony.
          *
          * @param size A proposed colony size.
+         * @return the profile type from size
          */
         public static ProfileType getProfileTypeFromSize(int size) {
             return (size <= 1) ? ProfileType.OUTPOST
@@ -108,6 +121,8 @@ public class ColonyPlan {
                 : ProfileType.CAPITAL;
         }
     };
+    
+    /** The profile type. */
     private ProfileType profileType;
 
     /** Private copy of the AIMain. */
@@ -119,11 +134,25 @@ public class ColonyPlan {
     /** The things to build, and their priority. */
     private static class BuildPlan {
 
+        /** The type. */
         public final BuildableType type;
+        
+        /** The weight. */
         public double weight;
+        
+        /** The support. */
         public double support;
+        
+        /** The difficulty. */
         public double difficulty;
 
+        /**
+         * Instantiates a new builds the plan.
+         *
+         * @param type the type
+         * @param weight the weight
+         * @param support the support
+         */
         public BuildPlan(BuildableType type, double weight, double support) {
             this.type = type;
             this.weight = weight;
@@ -131,6 +160,11 @@ public class ColonyPlan {
             this.difficulty = 1.0f;
         }
 
+        /**
+         * Gets the value.
+         *
+         * @return the value
+         */
         public double getValue() {
             return weight * support / difficulty;
         }
@@ -145,6 +179,8 @@ public class ColonyPlan {
                                  difficulty, getValue());
         }
     };
+    
+    /** The build plans. */
     private final List<BuildPlan> buildPlans = new ArrayList<>();
 
     /**
@@ -171,13 +207,29 @@ public class ColonyPlan {
      * Temporary variables that do not need to be serialized.
      */
     private final List<GoodsType> foodGoodsTypes = new ArrayList<>();
+    
+    /** The liberty goods types. */
     private final List<GoodsType> libertyGoodsTypes = new ArrayList<>();
+    
+    /** The immigration goods types. */
     private final List<GoodsType> immigrationGoodsTypes = new ArrayList<>();
+    
+    /** The military goods types. */
     private final List<GoodsType> militaryGoodsTypes = new ArrayList<>();
+    
+    /** The raw building goods types. */
     private final List<GoodsType> rawBuildingGoodsTypes = new ArrayList<>();
+    
+    /** The building goods types. */
     private final List<GoodsType> buildingGoodsTypes = new ArrayList<>();
+    
+    /** The raw luxury goods types. */
     private final List<GoodsType> rawLuxuryGoodsTypes = new ArrayList<>();
+    
+    /** The luxury goods types. */
     private final List<GoodsType> luxuryGoodsTypes = new ArrayList<>();
+    
+    /** The other raw goods types. */
     private final List<GoodsType> otherRawGoodsTypes = new ArrayList<>();
 
 
@@ -409,6 +461,12 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Find map.
+	 *
+	 * @param production the production
+	 * @return the map
+	 */
 	private Map<GoodsType, Map<WorkLocation, Integer>> findMap(Map<GoodsType, Map<WorkLocation, Integer>> production) {
 		for (WorkLocation wl : colony.getAvailableWorkLocations()) {
             for (GoodsType g : spec().getGoodsTypeList()) {
@@ -461,6 +519,12 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Sets the production.
+	 *
+	 * @param production the production
+	 * @param g the g
+	 */
 	private void setProduction(Map<GoodsType, Map<WorkLocation, Integer>> production, GoodsType g) {
 		if (g.isFoodType()) {
 		    foodGoodsTypes.add(g);
@@ -569,32 +633,59 @@ public class ColonyPlan {
     // Relative weights of the various building categories.
     // FIXME: split out/parameterize into a "building strategy"
     //
+    /** The Constant BREEDING_WEIGHT. */
     // BuildableTypes that improve breeding.
     private static final double BREEDING_WEIGHT    = 0.1;
+    
+    /** The Constant BUILDING_WEIGHT. */
     // BuildableTypes that improve building production.
     private static final double BUILDING_WEIGHT    = 0.9;
+    
+    /** The Constant DEFENCE_WEIGHT. */
     // BuildableTypes that produce defensive units.
     private static final double DEFENCE_WEIGHT     = 0.1;
+    
+    /** The Constant EXPORT_WEIGHT. */
     // BuildableTypes that provide export ability.
     private static final double EXPORT_WEIGHT      = 0.6;
+    
+    /** The Constant FISH_WEIGHT. */
     // BuildableTypes that allow water to be used.
     private static final double FISH_WEIGHT        = 0.25;
+    
+    /** The Constant FORTIFY_WEIGHT. */
     // BuildableTypes that improve the colony fortifications.
     private static final double FORTIFY_WEIGHT     = 0.3;
+    
+    /** The Constant IMMIGRATION_WEIGHT. */
     // BuildableTypes that improve immigration production.
     private static final double IMMIGRATION_WEIGHT = 0.05;
+    
+    /** The Constant LIBERTY_WEIGHT. */
     // BuildableTypes that improve liberty production.
     private static final double LIBERTY_WEIGHT     = 0.75;
+    
+    /** The Constant MILITARY_WEIGHT. */
     // BuildableTypes that improve military goods production.
     private static final double MILITARY_WEIGHT    = 0.4;
+    
+    /** The Constant PRODUCTION_WEIGHT. */
     // BuildableTypes that improve luxury goods production.
     private static final double PRODUCTION_WEIGHT  = 0.25;
+    
+    /** The Constant REPAIR_WEIGHT. */
     // BuildableTypes that improve colony storage.
     private static final double REPAIR_WEIGHT      = 0.1;
+    
+    /** The Constant STORAGE_WEIGHT. */
     // BuildableTypes that improve colony storage.
     private static final double STORAGE_WEIGHT     = 0.85;
+    
+    /** The Constant TEACH_WEIGHT. */
     // BuildableTypes that improve education.
     private static final double TEACH_WEIGHT       = 0.2;
+    
+    /** The Constant TRANSPORT_WEIGHT. */
     // BuildableTypes that improve transport.
     private static final double TRANSPORT_WEIGHT   = 0.15;
 
@@ -655,6 +746,17 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Determine goods.
+	 *
+	 * @param type the type
+	 * @param goodsType the goods type
+	 * @param player the player
+	 * @param advantage the advantage
+	 * @param ret the ret
+	 * @param factor the factor
+	 * @return true, if successful
+	 */
 	private boolean determineGoods(BuildableType type, GoodsType goodsType, Player player, String advantage,
 			boolean ret, double factor) {
 		if (goodsType.isMilitaryGoods()) {
@@ -816,6 +918,9 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Lower required goods.
+	 */
 	private void lowerRequiredGoods() {
 		for (BuildPlan bp : buildPlans) {
             double difficulty = bp.type.getRequiredGoods().stream()
@@ -833,6 +938,14 @@ public class ColonyPlan {
 	}
 
 
+	/**
+	 * Gets the type.
+	 *
+	 * @param advantage the advantage
+	 * @param wagonNeed the wagon need
+	 * @param unitType the unit type
+	 * @return the type
+	 */
 	private void getType(String advantage, double wagonNeed, UnitType unitType) {
 		if (unitType.hasAbility(Ability.NAVAL_UNIT)) {
 		    ; // FIXME: decide to build a ship
@@ -852,6 +965,12 @@ public class ColonyPlan {
 	}
 
 
+	/**
+	 * Check ability.
+	 *
+	 * @param advantage the advantage
+	 * @param type the type
+	 */
 	private void checkAbility(String advantage, BuildingType type) {
 		double factor = 1.0;
 		if ("building".equals(advantage)) factor = 1.1;
@@ -870,14 +989,16 @@ public class ColonyPlan {
      * Note that this will almost certainly include clashes over work
      * locations.  That gets sorted out elsewhere as ColonyPlans do
      * not examine the units present.
-     *
+     * 
      * With the complete list of work plans, finish creating the list
      * of goods to produce.
-     *
+     * 
      * Then filter out the auto-production plans as they are not
      * going to be helpful for unit allocation.
-     *
+     * 
      * Finally sort by desirability.
+     *
+     * @param production the production
      */
     private void updatePlans(Map<GoodsType, Map<WorkLocation, Integer>> production) {
         workPlans.clear();
@@ -920,6 +1041,11 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Determine goods type.
+	 *
+	 * @param entry the entry
+	 */
 	private void determineGoodsType(Entry<GoodsType, Map<WorkLocation, Integer>> entry) {
 		GoodsType g = entry.getKey();
 		// Do not make plans to produce into a full warehouse.
@@ -939,6 +1065,8 @@ public class ColonyPlan {
      * Add the other goods types to the production list.  When this is
      * called the new world goods production is already present on the
      * produce list.  Ignores food which is treated separately.
+     *
+     * @param production the production
      */
     private void updateProductionList(final Map<GoodsType, Map<WorkLocation, Integer>> production) {
         final Comparator<GoodsType> productionComparator
@@ -992,6 +1120,13 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Sets the immigrant last.
+	 *
+	 * @param production the production
+	 * @param productionComparator the production comparator
+	 * @param toAdd the to add
+	 */
 	private void setImmigrantLast(final Map<GoodsType, Map<WorkLocation, Integer>> production,
 			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
 		if (colony.getOwner().getEurope() != null) {
@@ -1005,6 +1140,13 @@ public class ColonyPlan {
 	}
 
 
+	/**
+	 * Military production order.
+	 *
+	 * @param production the production
+	 * @param productionComparator the production comparator
+	 * @param toAdd the to add
+	 */
 	private void militaryProductionOrder(final Map<GoodsType, Map<WorkLocation, Integer>> production,
 			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
 		for (GoodsType g : militaryGoodsTypes) {
@@ -1016,6 +1158,13 @@ public class ColonyPlan {
 	}
 
 
+	/**
+	 * Adds the material first.
+	 *
+	 * @param production the production
+	 * @param productionComparator the production comparator
+	 * @param toAdd the to add
+	 */
 	private void addMaterialFirst(final Map<GoodsType, Map<WorkLocation, Integer>> production,
 			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
 		Collections.sort(rawBuildingGoodsTypes, productionComparator);
@@ -1031,6 +1180,13 @@ public class ColonyPlan {
 	}
 
 
+	/**
+	 * Put liberty first.
+	 *
+	 * @param production the production
+	 * @param productionComparator the production comparator
+	 * @param toAdd the to add
+	 */
 	private void putLibertyFirst(final Map<GoodsType, Map<WorkLocation, Integer>> production,
 			final Comparator<GoodsType> productionComparator, List<GoodsType> toAdd) {
 		if (colony.getSoL() < 100) {
@@ -1060,6 +1216,18 @@ public class ColonyPlan {
     }
 
 
+	/**
+	 * Unit swap.
+	 *
+	 * @param expert the expert
+	 * @param others the others
+	 * @param colony the colony
+	 * @param oldRole the old role
+	 * @param oldRoleCount the old role count
+	 * @param work the work
+	 * @param oldWork the old work
+	 * @return the unit
+	 */
 	private Unit unitSwap(Unit expert, List<Unit> others, Colony colony, Role oldRole, int oldRoleCount, GoodsType work,
 			GoodsType oldWork) {
 		for (Unit other : others) {
@@ -1227,6 +1395,7 @@ public class ColonyPlan {
     /**
      * Equips a unit for a role, trying extra possibilities.
      *
+     * @param spec the spec
      * @param unit The <code>Unit</code> to equip if possible.
      * @param role The <code>Role</code> for the unit to take.
      * @param colony The <code>Colony</code> storing the equipment.
@@ -1597,6 +1766,13 @@ plans:          for (WorkLocationPlan w : getFoodPlans()) {
     }
 
 
+	/**
+	 * Find worker size.
+	 *
+	 * @param workers the workers
+	 * @param lb the lb
+	 * @param col the col
+	 */
 	private void findWorkerSize(List<Unit> workers, LogBuilder lb, Colony col) {
 		for (Unit u : new ArrayList<>(workers)) {
             if (workers.size() <= 1) break;
@@ -1611,6 +1787,14 @@ plans:          for (WorkLocationPlan w : getFoodPlans()) {
 	}
 
 
+	/**
+	 * Sets the outdoor.
+	 *
+	 * @param workers the workers
+	 * @param lb the lb
+	 * @param col the col
+	 * @param outdoorRole the outdoor role
+	 */
 	private void setOutdoor(List<Unit> workers, LogBuilder lb, Colony col, Role outdoorRole) {
 		for (Unit u : new ArrayList<>(workers)) {
 		    if (workers.size() <= 1) break;

@@ -30,11 +30,13 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for wandering in random directions.
  */
 public class UnitWanderMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(UnitWanderMission.class.getName());
 
     /** The tag for this mission. */

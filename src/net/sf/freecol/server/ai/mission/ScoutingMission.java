@@ -46,11 +46,13 @@ import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Mission for controlling a scout.
  */
 public class ScoutingMission extends Mission {
 
+    /** The Constant logger. */
     private static final Logger logger = Logger.getLogger(ScoutingMission.class.getName());
 
     /** The tag for this mission. */
@@ -95,7 +97,7 @@ public class ScoutingMission extends Mission {
 
 
     /**
-     * Does a supplied unit have horses?
+     * Does a supplied unit have horses?.
      *
      * @param aiUnit The scout <code>AIUnit</code> to check.
      * @return True if the scout has horses.
@@ -255,7 +257,7 @@ public class ScoutingMission extends Mission {
     }
 
     /**
-     * Why is this mission invalid with a given colony target?
+     * Why is this mission invalid with a given colony target?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param colony The potential target <code>Colony</code>.
@@ -266,7 +268,7 @@ public class ScoutingMission extends Mission {
     }
 
     /**
-     * Why is this mission invalid with a given native settlement target?
+     * Why is this mission invalid with a given native settlement target?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param is The potential target <code>IndianSettlement</code>.
@@ -319,7 +321,7 @@ public class ScoutingMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit?
+     * Why would this mission be invalid with the given AI unit?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @return A reason for mission invalidity, or null if none found.
@@ -329,7 +331,7 @@ public class ScoutingMission extends Mission {
     }
 
     /**
-     * Why would this mission be invalid with the given AI unit and location?
+     * Why would this mission be invalid with the given AI unit and location?.
      *
      * @param aiUnit The <code>AIUnit</code> to check.
      * @param loc The <code>Location</code> to check.
@@ -480,6 +482,7 @@ public class ScoutingMission extends Mission {
 
     // Serialization
 
+    /** The Constant TARGET_TAG. */
     private static final String TARGET_TAG = "target";
 
 
