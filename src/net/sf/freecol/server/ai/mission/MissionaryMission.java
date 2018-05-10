@@ -213,7 +213,11 @@ public class MissionaryMission extends Mission {
      */
     public static String prepare(AIUnit aiUnit) {
         String reason = invalidReason(aiUnit);
-        if (reason == null) {
+        return checkPreparations(aiUnit, reason);
+    }
+
+	private static String checkPreparations(AIUnit aiUnit, String reason) {
+		if (reason == null) {
             final Unit unit = aiUnit.getUnit();
             if (!unit.hasAbility(Ability.ESTABLISH_MISSION)
                 && (((FreeColGameObject)unit.getLocation())
@@ -225,7 +229,7 @@ public class MissionaryMission extends Mission {
                 : "unit-can-not-establish-mission";
         }
         return reason;
-    }
+	}
 
     /**
      * Why would this mission be invalid with the given unit?.
@@ -403,7 +407,11 @@ public class MissionaryMission extends Mission {
         }
 
         // Establish the mission.
-        lbAt(lb);
+        return establishMission(lb, aiUnit, unit);
+    }
+
+	private Mission establishMission(LogBuilder lb, final AIUnit aiUnit, final Unit unit) {
+		lbAt(lb);
         Direction d = unit.getTile().getDirection(getTarget().getTile());
         assert d != null;
         IndianSettlement is = (IndianSettlement)getTarget();
@@ -411,7 +419,7 @@ public class MissionaryMission extends Mission {
         return (is.hasMissionary(unit.getOwner()) && unit.isInMission())
             ? lbDone(lb, false, "established")
             : lbFail(lb, false, "establish");
-    }
+	}
 
 
     // Serialization

@@ -411,13 +411,17 @@ public class DefendSettlementMission extends Mission {
         }
 
         // Attack if a target is available.
-        if (bestTarget != null) {
+        return attackTarget(lb, bestTarget, bestDirection);
+    }
+
+	private Mission attackTarget(LogBuilder lb, Unit bestTarget, Direction bestDirection) {
+		if (bestTarget != null) {
             AIMessage.askAttack(getAIUnit(), bestDirection);
             return lbAttack(lb, bestTarget);
         }
 
         return lbWait(lb, ", alert at ", getTarget());
-    }
+	}
     
 
     // Serialization

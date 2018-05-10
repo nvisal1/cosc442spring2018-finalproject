@@ -692,7 +692,11 @@ public class TransportMission extends Mission {
         boolean ret = false;
         assert tFind(t) == cargo;
         String reason = cargo.update();
-        if (reason != null) {
+        return returnCargo(cargo, lb, t, ret, reason);
+    }
+
+	private boolean returnCargo(Cargo cargo, LogBuilder lb, final TransportableAIObject t, boolean ret, String reason) {
+		if (reason != null) {
             lb.add(" requeue/update fail(", reason, ") ",
                    cargo.toShortString());
             dumpCargo(cargo, lb);
@@ -708,7 +712,7 @@ public class TransportMission extends Mission {
             ret = true;
         }
         return ret;
-    }
+	}
 
     /**
      * Checks for invalid cargoes, and units and goods on board but
@@ -789,14 +793,7 @@ public class TransportMission extends Mission {
         }
 
         // Find anything that was not on the cargoes list
-        if (!unitsPresent.isEmpty()) {
-            lb.add(", found unexpected units");
-            for (Unit u : unitsPresent) {
-                AIUnit aiu = getAIMain().getAIUnit(u);
-                if (aiu == null) throw new IllegalStateException("Bogus:" + u);
-                todo.add(aiu);
-            }
-        }
+        findNotOnList(lb, unitsPresent, todo);
         if (!goodsPresent.isEmpty()) {
             lb.add(", found unexpected goods");
             for (Goods g : goodsPresent) {
@@ -807,14 +804,16 @@ public class TransportMission extends Mission {
         }
 
         // Try to queue the surprise transportables.
-        while (!todo.isEmpty()) {
-            TransportableAIObject t = todo.remove(0);
-            if (!queueTransportable(t, false, lb)) drop.add(t);
-        }
+        queueToSuprise(lb, todo, drop);
 
         // Drop transportables on the drop list, or queue them to be
         // dropped at the next port.
-        if (!drop.isEmpty()) {
+        dropTransport(lb, carrier, drop);
+    }
+
+	private void dropTransport(LogBuilder lb, final Unit carrier, List<TransportableAIObject> drop) {
+		PathNode path;
+		if (!drop.isEmpty()) {
             path = carrier.getTrivialPath();
             Location end = (path == null) ? null
                 : path.getLastNode().getLocation();
@@ -839,7 +838,25 @@ public class TransportMission extends Mission {
         }
 
         lb.add("]");
-    }
+	}
+
+	private void queueToSuprise(LogBuilder lb, List<TransportableAIObject> todo, List<TransportableAIObject> drop) {
+		while (!todo.isEmpty()) {
+            TransportableAIObject t = todo.remove(0);
+            if (!queueTransportable(t, false, lb)) drop.add(t);
+        }
+	}
+
+	private void findNotOnList(LogBuilder lb, List<Unit> unitsPresent, List<TransportableAIObject> todo) {
+		if (!unitsPresent.isEmpty()) {
+            lb.add(", found unexpected units");
+            for (Unit u : unitsPresent) {
+                AIUnit aiu = getAIMain().getAIUnit(u);
+                if (aiu == null) throw new IllegalStateException("Bogus:" + u);
+                todo.add(aiu);
+            }
+        }
+	}
 
     /**
      * Check a <code>Cargo</code> for continued validity and

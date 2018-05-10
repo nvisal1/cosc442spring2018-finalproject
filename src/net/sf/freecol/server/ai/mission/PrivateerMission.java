@@ -143,7 +143,11 @@ public class PrivateerMission extends Mission {
         final Unit attacker = aiUnit.getUnit();
         int value = 100;
         // Pirates want cargo
-        value += defender.getVisibleGoodsCount() * 200;
+        return pirateCargo(defender, attacker, value);
+    }
+
+	private static int pirateCargo(Unit defender, final Unit attacker, int value) {
+		value += defender.getVisibleGoodsCount() * 200;
         // But they are wary of danger
         if (defender.isOffensiveUnit()) {
             CombatModel.CombatOdds co = attacker.getGame().getCombatModel()
@@ -151,7 +155,7 @@ public class PrivateerMission extends Mission {
             if (co != null) value += (co.win - 0.5) * 200;
         }
         return value;
-    }
+	}
 
     /**
      * Evaluate a potential mission for a given unit and path.

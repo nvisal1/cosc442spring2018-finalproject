@@ -426,10 +426,7 @@ public class IndianDemandMission extends Mission {
             int tension = Math.max(unitTension,
                 unit.getOwner().getTension(enemy).getValue());
             d = unit.getTile().getDirection(colony.getTile());
-            if (tension >= Tension.Level.CONTENT.getLimit() && d != null) {
-                if (AIMessage.askAttack(aiUnit, d)) lbAttack(lb, colony);
-            }
-            return lbDone(lb, false, "refused at ", colony);
+            return considerAttack(lb, aiUnit, d, colony, tension);
         }
 
         // Take the goods home
@@ -452,15 +449,26 @@ public class IndianDemandMission extends Mission {
             }
         
             // Unload the goods
-            lbAt(lb);
-            GoodsContainer container = unit.getGoodsContainer();
-            for (Goods goods : container.getCompactGoods()) {
-                Goods tribute = container.removeGoods(goods.getType());
-                is.addGoods(tribute);
-            }
-            return lbDone(lb, false, "unloaded tribute");
+            return unloadGoods(lb, unit, is);
         }
     }
+
+	private Mission considerAttack(LogBuilder lb, final AIUnit aiUnit, Direction d, Colony colony, int tension) {
+		if (tension >= Tension.Level.CONTENT.getLimit() && d != null) {
+		    if (AIMessage.askAttack(aiUnit, d)) lbAttack(lb, colony);
+		}
+		return lbDone(lb, false, "refused at ", colony);
+	}
+
+	private Mission unloadGoods(LogBuilder lb, final Unit unit, final IndianSettlement is) {
+		lbAt(lb);
+		GoodsContainer container = unit.getGoodsContainer();
+		for (Goods goods : container.getCompactGoods()) {
+		    Goods tribute = container.removeGoods(goods.getType());
+		    is.addGoods(tribute);
+		}
+		return lbDone(lb, false, "unloaded tribute");
+	}
 
 
     // Serialization

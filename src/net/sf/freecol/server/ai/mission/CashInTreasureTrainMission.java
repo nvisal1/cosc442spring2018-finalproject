@@ -123,7 +123,14 @@ public class CashInTreasureTrainMission extends Mission {
         final AIMain aiMain = getAIMain();
         TransportMission tm;
         AIUnit aiCarrier;
-        if (closest != null
+        return pickClosest(lb, aiUnit, europe, closest, aiMain);
+    }
+
+	private AIUnit pickClosest(LogBuilder lb, final AIUnit aiUnit, final Europe europe, Unit closest,
+			final AIMain aiMain) {
+		TransportMission tm;
+		AIUnit aiCarrier;
+		if (closest != null
             && (aiCarrier = aiMain.getAIUnit(closest)) != null
             && (tm = aiCarrier.getMission(TransportMission.class)) != null) {
             setTarget(europe);
@@ -134,7 +141,7 @@ public class CashInTreasureTrainMission extends Mission {
             }
         }
         return null;
-    }
+	}
 
     /**
      * Extract a valid target for this mission from a path.
@@ -235,7 +242,12 @@ public class CashInTreasureTrainMission extends Mission {
             = CostDeciders.avoidSettlementsAndBlockingUnits();
         PathNode path;
 
-        if (player.getNumberOfSettlements() <= 0 || start == null) {
+        return getToCash(aiUnit, range, deferOK, unit, start, player, europe, carrier, standardCd);
+    }
+
+	private static PathNode getToCash(AIUnit aiUnit, int range, boolean deferOK, final Unit unit, final Location start,
+			final Player player, final Europe europe, final Unit carrier, final CostDecider standardCd) {
+		if (player.getNumberOfSettlements() <= 0 || start == null) {
             // No settlements or not on the map, so go straight to
             // Europe.  If Europe does not exist then this mission is
             // doomed.
@@ -247,7 +259,7 @@ public class CashInTreasureTrainMission extends Mission {
         // Can the unit get to a cash in site?
         return unit.search(start, getGoalDecider(aiUnit, deferOK),
                            standardCd, range, carrier);
-    }
+	}
 
     /**
      * Finds a suitable cashin target for the supplied unit.

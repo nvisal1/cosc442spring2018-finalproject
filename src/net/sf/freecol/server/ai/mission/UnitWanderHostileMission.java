@@ -176,7 +176,12 @@ public class UnitWanderHostileMission extends Mission {
         int check = 0, checkTurns = randomInt(logger, "Hostile",
                                               getAIRandom(), 4);
         Direction d = Direction.getRandomDirection(tag, logger, getAIRandom());
-        while (unit.getMovesLeft() > 0) {
+        return checkTurn(lb, unit, aiUnit, check, checkTurns, d);
+    }
+
+	private Mission checkTurn(LogBuilder lb, final Unit unit, final AIUnit aiUnit, int check, int checkTurns,
+			Direction d) {
+		while (unit.getMovesLeft() > 0) {
             // Every checkTurns, look for a target of opportunity.
             if (check == 0) {
                 Mission m = getAIPlayer().getSeekAndDestroyMission(aiUnit, 1);
@@ -189,7 +194,7 @@ public class UnitWanderHostileMission extends Mission {
             if ((d = moveRandomly(tag, d)) == null) break;
         }
         return lbAt(lb);
-    }
+	}
 
 
     // Serialization

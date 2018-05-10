@@ -438,15 +438,7 @@ public class BuildColonyMission extends Mission {
                 // Go to the nearest smaller colony?
                 Colony best = null;
                 int bestValue = INFINITY;
-                for (Colony c : player.getColonies()) {
-                    if (c == colony) continue;
-                    if (c.getUnitCount() < colony.getUnitCount()) continue;
-                    PathNode path = unit.findPath(c);
-                    if (path != null && path.getTotalTurns() < bestValue) {
-                        bestValue = path.getTotalTurns();
-                        best = c;
-                    }
-                }
+                best = goToNearest(unit, player, colony, best, bestValue);
                 if (best != null) {
                     lb.add(", going to smaller ", best.getUnitCount(), "<",
                         colony.getUnitCount(), " colony");
@@ -521,6 +513,19 @@ public class BuildColonyMission extends Mission {
             return lbFail(lb, false, "build at ", tile);
         }
     }
+
+	private Colony goToNearest(final Unit unit, final Player player, Colony colony, Colony best, int bestValue) {
+		for (Colony c : player.getColonies()) {
+		    if (c == colony) continue;
+		    if (c.getUnitCount() < colony.getUnitCount()) continue;
+		    PathNode path = unit.findPath(c);
+		    if (path != null && path.getTotalTurns() < bestValue) {
+		        bestValue = path.getTotalTurns();
+		        best = c;
+		    }
+		}
+		return best;
+	}
 
 
     // Serialization

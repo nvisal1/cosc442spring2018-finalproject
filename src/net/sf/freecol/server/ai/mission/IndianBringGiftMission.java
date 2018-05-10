@@ -274,16 +274,7 @@ public class IndianBringGiftMission extends Mission {
             }
 
             // Load the goods.
-            lbAt(lb);
-            Goods gift = is.getRandomGift(getAIRandom());
-            if (gift == null) return lbFail(lb, false, "found no gift");
-            if (!AIMessage.askLoadGoods(is, gift.getType(), gift.getAmount(),
-                                        aiUnit) || !hasGift()) {
-                return lbFail(lb, false, "failed to collect gift");
-            }
-            this.collected = true;
-            lb.add(", collected gift");
-            return lbRetarget(lb);
+            return loadTheGoods(lb, aiUnit, is);
         }
 
         // Move to the target's colony and deliver, avoiding trouble
@@ -317,19 +308,36 @@ public class IndianBringGiftMission extends Mission {
             }
         
             // Deliver the goods.
-            lbAt(lb);
-            Settlement settlement = (Settlement)getTarget();
-            boolean result = false;
-            if (AIMessage.askGetTransaction(aiUnit, settlement)) {
-                result = AIMessage.askDeliverGift(aiUnit, settlement,
-                    unit.getGoodsList().get(0));
-                AIMessage.askCloseTransaction(aiUnit, settlement);
-            }
-            return (result)
-                ? lbDone(lb, false, "delivered")
-                : lbFail(lb, false, "delivery");
+            return deliverGoods(lb, aiUnit, unit);
         }
     }
+
+	private Mission loadTheGoods(LogBuilder lb, final AIUnit aiUnit, final IndianSettlement is) {
+		lbAt(lb);
+		Goods gift = is.getRandomGift(getAIRandom());
+		if (gift == null) return lbFail(lb, false, "found no gift");
+		if (!AIMessage.askLoadGoods(is, gift.getType(), gift.getAmount(),
+		                            aiUnit) || !hasGift()) {
+		    return lbFail(lb, false, "failed to collect gift");
+		}
+		this.collected = true;
+		lb.add(", collected gift");
+		return lbRetarget(lb);
+	}
+
+	private Mission deliverGoods(LogBuilder lb, final AIUnit aiUnit, final Unit unit) {
+		lbAt(lb);
+		Settlement settlement = (Settlement)getTarget();
+		boolean result = false;
+		if (AIMessage.askGetTransaction(aiUnit, settlement)) {
+		    result = AIMessage.askDeliverGift(aiUnit, settlement,
+		        unit.getGoodsList().get(0));
+		    AIMessage.askCloseTransaction(aiUnit, settlement);
+		}
+		return (result)
+		    ? lbDone(lb, false, "delivered")
+		    : lbFail(lb, false, "delivery");
+	}
 
 
     // Serialization

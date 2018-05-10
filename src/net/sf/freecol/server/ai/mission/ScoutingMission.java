@@ -465,7 +465,11 @@ public class ScoutingMission extends Mission {
         // Retarget on failure or complete, but do not retarget from
         // one colony to another, just drop equipment and invalidate
         // the mission.
-        lbAt(lb);
+        return retarget(lb, aiUnit);
+    }
+
+	private Mission retarget(LogBuilder lb, final AIUnit aiUnit) {
+		lbAt(lb);
         Location completed = getTarget();
         Location newTarget = findTarget(aiUnit, 20, false);
         if (newTarget == null
@@ -477,7 +481,7 @@ public class ScoutingMission extends Mission {
         }
         setTarget(newTarget);
         return lbRetarget(lb);
-    }
+	}
 
 
     // Serialization

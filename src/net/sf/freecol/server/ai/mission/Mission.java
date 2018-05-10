@@ -562,7 +562,11 @@ public abstract class Mission extends AIObject {
         final Unit unit = aiUnit.getUnit();
         PathNode path = unit.findPath(target);
         Direction d = null;
-        if (path != null && path.next != null) {
+        return resolveBlock(aiUnit, unit, path);
+    }
+
+	private static Location resolveBlock(AIUnit aiUnit, final Unit unit, PathNode path) {
+		if (path != null && path.next != null) {
             Tile tile = path.next.getTile();
             Settlement settlement = tile.getSettlement();
             Location blocker = (settlement != null) ? settlement
@@ -571,7 +575,7 @@ public abstract class Mission extends AIObject {
                 == null) return blocker;
         }
         return null;
-    }
+	}
 
     /**
      * Moves a unit one step randomly.
@@ -623,7 +627,11 @@ public abstract class Mission extends AIObject {
     protected static Settlement getBestSettlement(Player player) {
         int bestValue = -1;
         Settlement best = null;
-        for (Settlement settlement : player.getSettlements()) {
+        return getSettlement(player, bestValue, best);
+    }
+
+	private static Settlement getSettlement(Player player, int bestValue, Settlement best) {
+		for (Settlement settlement : player.getSettlements()) {
             int value = settlement.getUnitCount()
                 + settlement.getTile().getUnitCount();
             if (settlement instanceof Colony) {
@@ -637,7 +645,7 @@ public abstract class Mission extends AIObject {
             }
         }
         return (best == null) ? null : best;
-    }
+	}
 
     /**
      * Tries to move this mission's unit to a target location.
@@ -854,7 +862,11 @@ public abstract class Mission extends AIObject {
         }
 
         // Follow the path to the target.  If there is one.
-        if (path == null) {
+        return followTargetPath(target, lb, unit, path);
+    }
+
+	private MoveType followTargetPath(Location target, LogBuilder lb, final Unit unit, PathNode path) {
+		if (path == null) {
             lbAt(lb);
             lb.add(", no path to ", target);
             return MoveType.MOVE_NO_TILE;
@@ -868,7 +880,7 @@ public abstract class Mission extends AIObject {
                 + " result=" +  unit.isAtLocation(target));
         }            
         return followMapPath(path.next, lb);
-    }
+	}
 
     /**
      * Follow a path that is on the map (except perhaps the last node)
@@ -934,13 +946,17 @@ public abstract class Mission extends AIObject {
         lb.add(", failing(", reason, ")");
 
         Location newTarget = findTarget();
-        if (newTarget != null) {
+        return getNewTarget(lb, newTarget);
+    }
+
+	private Mission getNewTarget(LogBuilder lb, Location newTarget) {
+		if (newTarget != null) {
             setTarget(newTarget);
             return lbRetarget(lb);
         }
         lb.add(", retarget failed");
         return lbDrop(lb);
-    }
+	}
 
 
     // Mission interface to be implemented/overridden by descendants.

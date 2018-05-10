@@ -512,14 +512,18 @@ public class PioneeringMission extends Mission {
     @Override
     public String invalidReason() {
         // Prevent invalidation for improvements that are just completing.
-        if (tileImprovementPlan != null) {
+        return preventInvalidation();
+    }
+
+	private String preventInvalidation() {
+		if (tileImprovementPlan != null) {
             if (tileImprovementPlan.isDisposed()) {
                 return "target-plan-disposed";
             }
             if (tileImprovementPlan.isComplete()) return null;
         }
         return invalidReason(getAIUnit(), getTarget());
-    }
+	}
 
     /**
      * {@inheritDoc}
@@ -596,24 +600,7 @@ public class PioneeringMission extends Mission {
             }
 
             // Try to equip
-            lbAt(lb);
-            if (aiUnit.equipForRole(getSpecification().getPioneerRole())
-                && hasTools()) {
-                lb.add(", equips");
-                newTarget = findTarget(aiUnit, 10, false);
-                if (newTarget == null) {
-                    return lbFail(lb, false, "no pioneering target");
-                }
-            } else {
-                lb.add(", fails to equip");
-                newTarget = findTarget(aiUnit, 10, false);
-                if (newTarget == null
-                    || Map.isSameLocation(newTarget, getTarget())) {
-                    return lbFail(lb, false, "no tools target");
-                }
-            }
-            setTarget(newTarget);
-            return lbRetarget(lb);
+            return equip(lb, aiUnit);
         }
 
         // Going to an intermediate colony?
@@ -739,6 +726,28 @@ public class PioneeringMission extends Mission {
         // Probably just out of moves.
         return lbWait(lb, ", waiting to improve at ", tile);
     }
+
+	private Mission equip(LogBuilder lb, final AIUnit aiUnit) {
+		Location newTarget;
+		lbAt(lb);
+		if (aiUnit.equipForRole(getSpecification().getPioneerRole())
+		    && hasTools()) {
+		    lb.add(", equips");
+		    newTarget = findTarget(aiUnit, 10, false);
+		    if (newTarget == null) {
+		        return lbFail(lb, false, "no pioneering target");
+		    }
+		} else {
+		    lb.add(", fails to equip");
+		    newTarget = findTarget(aiUnit, 10, false);
+		    if (newTarget == null
+		        || Map.isSameLocation(newTarget, getTarget())) {
+		        return lbFail(lb, false, "no tools target");
+		    }
+		}
+		setTarget(newTarget);
+		return lbRetarget(lb);
+	}
 
 
     // Serialization
