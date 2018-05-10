@@ -76,7 +76,11 @@ public class UpdateTradeRouteMessage extends DOMMessage {
     public Element handle(FreeColServer server, Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        if (tradeRoute == null || tradeRoute.getId() == null
+        return handleChangeRoute(serverPlayer);
+    }
+
+	private Element handleChangeRoute(final ServerPlayer serverPlayer) {
+		if (tradeRoute == null || tradeRoute.getId() == null
             || !SetTradeRoutesMessage.hasPrefix(tradeRoute)) {
             return DOMMessage.clientError("Bogus route");
         }
@@ -93,7 +97,7 @@ public class UpdateTradeRouteMessage extends DOMMessage {
         realRoute.updateFrom(tradeRoute);
         tradeRoute.dispose();
         return null;
-    }
+	}
 
     /**
      * Convert this UpdateTradeRouteMessage to XML.

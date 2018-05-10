@@ -87,7 +87,11 @@ public class ScoutIndianSettlementMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handleScouting(server, player, serverPlayer);
+    }
+
+	private Element handleScouting(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -120,7 +124,7 @@ public class ScoutIndianSettlementMessage extends DOMMessage {
         // Valid request, do the scouting.
         return server.getInGameController()
             .scoutIndianSettlement(serverPlayer, unit, is);
-    }
+	}
 
     /**
      * Convert this ScoutIndianSettlementMessage to XML.

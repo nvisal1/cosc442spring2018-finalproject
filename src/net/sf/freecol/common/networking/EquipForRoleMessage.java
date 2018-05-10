@@ -88,7 +88,11 @@ public class EquipForRoleMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = server.getGame();
 
-        Unit unit;
+        return handleEquip(server, player, serverPlayer, game); 
+    }
+
+	private Element handleEquip(FreeColServer server, Player player, final ServerPlayer serverPlayer, final Game game) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -121,8 +125,8 @@ public class EquipForRoleMessage extends DOMMessage {
 
         // Proceed to equip.
         return server.getInGameController()
-            .equipForRole(serverPlayer, unit, role, count); 
-    }
+            .equipForRole(serverPlayer, unit, role, count);
+	}
 
     /**
      * Convert this EquipForRoleMessage to XML.

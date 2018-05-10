@@ -80,7 +80,11 @@ public class SetCurrentStopMessage extends DOMMessage {
     public Element handle(FreeColServer server, Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        ServerUnit serverUnit;
+        return handleValidSet(server, serverPlayer);
+    }
+
+	private Element handleValidSet(FreeColServer server, final ServerPlayer serverPlayer) {
+		ServerUnit serverUnit;
         try {
             serverUnit = serverPlayer.getOurFreeColGameObject(unitId,
                 ServerUnit.class);
@@ -107,7 +111,7 @@ public class SetCurrentStopMessage extends DOMMessage {
         // Valid, set.
         return server.getInGameController()
             .setCurrentStop(serverPlayer, serverUnit, count);
-    }
+	}
 
     /**
      * Convert this SetCurrentStopMessage to XML.

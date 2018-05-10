@@ -97,7 +97,11 @@ public class LoadGoodsMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        FreeColGameObject fcgo = player.getGame()
+        return handleLoadOfGoods(server, player, serverPlayer);
+    }
+
+	private Element handleLoadOfGoods(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		FreeColGameObject fcgo = player.getGame()
             .getFreeColGameObject(locationId);
         if (fcgo == null || !(fcgo instanceof Location)) {
             return DOMMessage.clientError("Not a location: " + locationId);
@@ -134,7 +138,7 @@ public class LoadGoodsMessage extends DOMMessage {
         // Load the goods
         return server.getInGameController()
             .loadGoods(serverPlayer, (Location)fcgo, type, amount, carrier);
-    }
+	}
 
     /**
      * Convert this LoadGoodsMessage to XML.

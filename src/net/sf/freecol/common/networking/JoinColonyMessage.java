@@ -83,7 +83,11 @@ public class JoinColonyMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handlePurchase(server, player, serverPlayer);
+    }
+
+	private Element handlePurchase(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(builderId, Unit.class);
         } catch (Exception e) {
@@ -100,7 +104,7 @@ public class JoinColonyMessage extends DOMMessage {
         // Try to buy.
         return server.getInGameController()
             .joinColony(serverPlayer, unit, colony);
-    }
+	}
 
     /**
      * Convert this JoinColonyMessage to XML.

@@ -77,7 +77,11 @@ public class PayForBuildingMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Colony colony;
+        return handleColony(server, player, serverPlayer);
+    }
+
+	private Element handleColony(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Colony colony;
         try {
             colony = player.getOurFreeColGameObject(colonyId, Colony.class);
         } catch (Exception e) {
@@ -87,7 +91,7 @@ public class PayForBuildingMessage extends DOMMessage {
         // Proceed to pay.
         return server.getInGameController()
             .payForBuilding(serverPlayer, colony);
-    }
+	}
 
     /**
      * Convert this PayForBuildingMessage to XML.

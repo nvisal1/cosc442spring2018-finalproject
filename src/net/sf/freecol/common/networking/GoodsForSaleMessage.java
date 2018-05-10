@@ -108,7 +108,11 @@ public class GoodsForSaleMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handleGoods(server, player, serverPlayer);
+    }
+
+	private Element handleGoods(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -125,7 +129,7 @@ public class GoodsForSaleMessage extends DOMMessage {
         // Try to collect the goods for sale.
         return server.getInGameController()
             .getGoodsForSale(serverPlayer, unit, settlement);
-    }
+	}
 
     /**
      * Convert this GoodsForSaleMessage to XML.

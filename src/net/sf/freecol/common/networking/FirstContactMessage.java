@@ -134,7 +134,11 @@ public class FirstContactMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = serverPlayer.getGame();
 
-        Player first = getPlayer(game);
+        return handleContact(server, serverPlayer, game);
+    }
+
+	private Element handleContact(FreeColServer server, final ServerPlayer serverPlayer, final Game game) {
+		Player first = getPlayer(game);
         if (first == null) {
             return DOMMessage.clientError("Invalid player: " + playerId);
         } else if (serverPlayer.getId().equals(playerId)) {
@@ -154,7 +158,7 @@ public class FirstContactMessage extends DOMMessage {
         return server.getInGameController()
             .nativeFirstContact(serverPlayer, otherPlayer,
                                 getTile(game), getResult());
-    }
+	}
 
     /**
      * Convert this FirstContactMessage to XML.
@@ -166,7 +170,11 @@ public class FirstContactMessage extends DOMMessage {
         Element element = createMessage(getXMLElementTagName(),
             "player", this.playerId,
             "other", this.otherId);
-        if (this.tileId != null) {
+        return setElement(element);
+    }
+
+	private Element setElement(Element element) {
+		if (this.tileId != null) {
             element.setAttribute("tile", this.tileId);
         }
         if (this.settlementCount != null) {
@@ -176,7 +184,7 @@ public class FirstContactMessage extends DOMMessage {
             element.setAttribute("result", this.result);
         }
         return element;
-    }
+	}
 
     /**
      * The tag name of the root element representing this object.

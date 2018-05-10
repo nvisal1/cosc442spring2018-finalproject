@@ -87,7 +87,11 @@ public class ScoutSpeakToChiefMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handleSpeak(server, player, serverPlayer);
+    }
+
+	private Element handleSpeak(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -120,7 +124,7 @@ public class ScoutSpeakToChiefMessage extends DOMMessage {
         // Valid request, do the scouting.
         return server.getInGameController()
             .scoutSpeakToChief(serverPlayer, unit, is);
-    }
+	}
 
     /**
      * Convert this ScoutSpeakToChiefMessage to XML.

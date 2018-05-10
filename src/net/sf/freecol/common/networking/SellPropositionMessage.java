@@ -113,7 +113,11 @@ public class SellPropositionMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handlePrice(server, player, serverPlayer);
+    }
+
+	private Element handlePrice(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -136,7 +140,7 @@ public class SellPropositionMessage extends DOMMessage {
         // Proceed to price.
         return server.getInGameController()
             .sellProposition(serverPlayer, unit, settlement, goods, getGold());
-    }
+	}
 
     /**
      * Convert this SellPropositionMessage to XML.

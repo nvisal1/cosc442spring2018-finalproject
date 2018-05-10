@@ -224,7 +224,11 @@ public class RearrangeColonyMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Colony colony;
+        return handleUnitChange(server, player, serverPlayer);
+    }
+
+	private Element handleUnitChange(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Colony colony;
         try {
             colony = player.getOurFreeColGameObject(colonyId, Colony.class);
         } catch (Exception e) {
@@ -253,7 +257,7 @@ public class RearrangeColonyMessage extends DOMMessage {
         // Rearrange can proceed.
         return server.getInGameController()
             .rearrangeColony(serverPlayer, colony, unitChanges);
-    }
+	}
 
     /**
      * Convert this RearrangeColonyMessage to XML.

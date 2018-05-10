@@ -87,7 +87,11 @@ public class SpySettlementMessage extends DOMMessage {
     public Element handle(FreeColServer server, Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handleSpy(server, serverPlayer);
+    }
+
+	private Element handleSpy(FreeColServer server, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = serverPlayer.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -120,7 +124,7 @@ public class SpySettlementMessage extends DOMMessage {
         // Spy on the settlement
         return server.getInGameController()
             .spySettlement(serverPlayer, unit, settlement);
-    }
+	}
 
     /**
      * Convert this SpySettlementMessage to XML.

@@ -144,7 +144,11 @@ public class NewRegionNameMessage extends DOMMessage {
             return DOMMessage.clientError("Can not claim discovery in unexplored tile: " + tileId);
         }
 
-        Unit unit;
+        return handleDiscovery(server, player, serverPlayer, tile);
+    }
+
+	private Element handleDiscovery(FreeColServer server, Player player, final ServerPlayer serverPlayer, Tile tile) {
+		Unit unit;
         try {
             unit = getUnit(player);
         } catch (Exception e) {
@@ -164,7 +168,7 @@ public class NewRegionNameMessage extends DOMMessage {
         // Do the discovery
         return server.getInGameController()
             .setNewRegionName(serverPlayer, unit, region, newRegionName);
-    }
+	}
 
     /**
      * Convert this NewRegionNameMessage to XML.

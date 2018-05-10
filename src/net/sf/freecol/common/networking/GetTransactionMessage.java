@@ -87,7 +87,11 @@ public class GetTransactionMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handleServer(server, player, serverPlayer);
+    }
+
+	private Element handleServer(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -103,7 +107,7 @@ public class GetTransactionMessage extends DOMMessage {
 
         return server.getInGameController()
             .getTransaction(serverPlayer, unit, settlement);
-    }
+	}
 
     /**
      * Convert this GetTransactionMessage to XML.

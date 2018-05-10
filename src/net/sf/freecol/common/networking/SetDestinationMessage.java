@@ -83,7 +83,11 @@ public class SetDestinationMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = serverPlayer.getGame();
 
-        Unit unit;
+        return handleDestination(server, serverPlayer, game);
+    }
+
+	private Element handleDestination(FreeColServer server, final ServerPlayer serverPlayer, final Game game) {
+		Unit unit;
         try {
             unit = serverPlayer.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -97,7 +101,7 @@ public class SetDestinationMessage extends DOMMessage {
         // Set destination
         return server.getInGameController()
             .setDestination(serverPlayer, unit, destination);
-    }
+	}
 
     /**
      * Convert this SetDestinationMessage to XML.

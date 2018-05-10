@@ -83,7 +83,11 @@ public class WorkMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = server.getGame();
 
-        Unit unit;
+        return handleWork(server, player, serverPlayer, game);
+    }
+
+	private Element handleWork(FreeColServer server, Player player, final ServerPlayer serverPlayer, final Game game) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -118,7 +122,7 @@ public class WorkMessage extends DOMMessage {
         // Work.
         return server.getInGameController()
             .work(serverPlayer, unit, workLocation);
-    }
+	}
 
     /**
      * Convert this WorkMessage to XML.

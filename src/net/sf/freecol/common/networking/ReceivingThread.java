@@ -100,7 +100,11 @@ final class ReceivingThread extends Thread {
         private boolean fill() throws IOException {
             if (!this.empty) throw new IllegalStateException("Not empty.");
 
-            int r;
+            return checkFill();
+        }
+
+		private boolean checkFill() throws IOException {
+			int r;
             if (this.bStart < this.bEnd) {
                 r = this.in.read(buffer, this.bEnd, BUFFER_SIZE - this.bEnd);
             } else if (this.bStart == this.bEnd) {
@@ -115,7 +119,7 @@ final class ReceivingThread extends Thread {
             this.bEnd += r;
             if (this.bEnd >= BUFFER_SIZE) this.bEnd = 0;
             return true;
-        }
+		}
 
         /**
          * Reads a single byte.

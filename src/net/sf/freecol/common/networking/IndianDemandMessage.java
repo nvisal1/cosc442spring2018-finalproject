@@ -162,7 +162,12 @@ public class IndianDemandMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = player.getGame();
 
-        Unit unit;
+        return handleDemand(server, player, serverPlayer, game);
+    }
+
+	private Element handleDemand(FreeColServer server, Player player, final ServerPlayer serverPlayer,
+			final Game game) {
+		Unit unit;
         try {
             if (result == null) { // Initial demand
                 unit = player.getOurFreeColGameObject(unitId, Unit.class);
@@ -200,7 +205,7 @@ public class IndianDemandMessage extends DOMMessage {
         return server.getInGameController()
             .indianDemand(serverPlayer, unit, colony,
                           getType(game), getAmount());
-    }
+	}
 
     /**
      * Convert this IndianDemandMessage to XML.

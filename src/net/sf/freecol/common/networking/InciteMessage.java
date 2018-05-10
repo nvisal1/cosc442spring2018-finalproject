@@ -101,7 +101,12 @@ public class InciteMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = server.getGame();
 
-        Unit unit;
+        return handleIncite(server, player, serverPlayer, game);
+    }
+
+	private Element handleIncite(FreeColServer server, Player player, final ServerPlayer serverPlayer,
+			final Game game) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -147,7 +152,7 @@ public class InciteMessage extends DOMMessage {
         // Valid, proceed to incite.
         return server.getInGameController()
             .incite(serverPlayer, unit, is, enemy, gold);
-    }
+	}
 
     /**
      * Convert this InciteMessage to XML.

@@ -86,7 +86,11 @@ public class MoveMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        ServerUnit unit;
+        return handleMovement(server, player, serverPlayer);
+    }
+
+	private Element handleMovement(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		ServerUnit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, ServerUnit.class);
         } catch (Exception e) {
@@ -111,7 +115,7 @@ public class MoveMessage extends DOMMessage {
         // Proceed to move.
         return server.getInGameController()
             .move(serverPlayer, unit, tile);
-    }
+	}
 
     /**
      * Convert this MoveMessage to XML.

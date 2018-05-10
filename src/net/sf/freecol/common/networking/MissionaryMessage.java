@@ -115,7 +115,12 @@ public class MissionaryMessage extends DOMMessage {
                 + tile.getId());
         }
 
-        Unit missionary = is.getMissionary();
+        return handleDeounce(server, player, serverPlayer, unit, is);
+    }
+
+	private Element handleDeounce(FreeColServer server, Player player, final ServerPlayer serverPlayer, Unit unit,
+			ServerIndianSettlement is) {
+		Unit missionary = is.getMissionary();
         if (denounce) {
             if (missionary == null) {
                 return DOMMessage.clientError("Denouncing an empty mission at: "
@@ -149,7 +154,7 @@ public class MissionaryMessage extends DOMMessage {
                 .denounceMission(serverPlayer, unit, is)
             : server.getInGameController()
                 .establishMission(serverPlayer, unit, is);
-    }
+	}
 
     /**
      * Convert this MissionaryMessage to XML.

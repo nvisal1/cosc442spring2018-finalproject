@@ -86,7 +86,11 @@ public class LearnSkillMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handleLearning(server, player, serverPlayer);
+    }
+
+	private Element handleLearning(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -119,7 +123,7 @@ public class LearnSkillMessage extends DOMMessage {
         // Learn the skill if possible.
         return server.getInGameController()
             .learnFromIndianSettlement(serverPlayer, unit, is);
-    }
+	}
 
     /**
      * Convert this LearnSkillMessage to XML.

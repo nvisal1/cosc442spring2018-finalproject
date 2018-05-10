@@ -76,7 +76,11 @@ public class PutOutsideColonyMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit unit;
+        return handlePutOutside(server, player, serverPlayer);
+    }
+
+	private Element handlePutOutside(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit unit;
         try {
             unit = player.getOurFreeColGameObject(unitId, Unit.class);
         } catch (Exception e) {
@@ -92,7 +96,7 @@ public class PutOutsideColonyMessage extends DOMMessage {
         // Proceed to put outside.
         return server.getInGameController()
             .putOutsideColony(serverPlayer, unit);
-    }
+	}
 
     /**
      * Convert this PutOutsideColonyMessage to XML.

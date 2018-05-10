@@ -95,7 +95,11 @@ public class GetNationSummaryMessage extends DOMMessage {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
         final Game game = serverPlayer.getGame();
 
-        Player player = game.getFreeColGameObject(playerId, Player.class);
+        return getSummary(server, serverPlayer, game);
+    }
+
+	private Element getSummary(FreeColServer server, final ServerPlayer serverPlayer, final Game game) {
+		Player player = game.getFreeColGameObject(playerId, Player.class);
         if (player == null) {
             return DOMMessage.clientError("Not a player: " + playerId);
         } else if (player.isIndian() && !serverPlayer.hasContacted(player)) {
@@ -106,7 +110,7 @@ public class GetNationSummaryMessage extends DOMMessage {
         summary = server.getInGameController()
             .getNationSummary(serverPlayer, player);
         return toXMLElement();
-    }
+	}
 
     /**
      * Convert this GetNationSummaryMessage to XML.

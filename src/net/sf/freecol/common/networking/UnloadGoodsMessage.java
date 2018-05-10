@@ -88,7 +88,11 @@ public class UnloadGoodsMessage extends DOMMessage {
                           Connection connection) {
         final ServerPlayer serverPlayer = server.getPlayer(connection);
 
-        Unit carrier;
+        return handleUnload(server, player, serverPlayer);
+    }
+
+	private Element handleUnload(FreeColServer server, Player player, final ServerPlayer serverPlayer) {
+		Unit carrier;
         try {
             carrier = player.getOurFreeColGameObject(carrierId, Unit.class);
         } catch (Exception e) {
@@ -123,7 +127,7 @@ public class UnloadGoodsMessage extends DOMMessage {
         // Try to unload.
         return server.getInGameController()
             .unloadGoods(serverPlayer, type, amount, carrier);
-    }
+	}
 
     /**
      * Convert this UnloadGoodsMessage to XML.

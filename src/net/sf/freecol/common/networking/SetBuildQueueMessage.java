@@ -106,7 +106,12 @@ public class SetBuildQueueMessage extends DOMMessage {
         final Game game = server.getGame();
         final Specification spec = game.getSpecification();
 
-        Colony colony;
+        return handleBuildQueue(server, player, serverPlayer, spec);
+    }
+
+	private Element handleBuildQueue(FreeColServer server, Player player, final ServerPlayer serverPlayer,
+			final Specification spec) {
+		Colony colony;
         try {
             colony = player.getOurFreeColGameObject(colonyId, Colony.class);
         } catch (Exception e) {
@@ -129,7 +134,7 @@ public class SetBuildQueueMessage extends DOMMessage {
         // Proceed to set the build queue.
         return server.getInGameController()
             .setBuildQueue(serverPlayer, colony, buildQueue);
-    }
+	}
 
     /**
      * Convert this SetBuildQueueMessage to XML.
